@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Radio, Globe, Flame, Newspaper, Loader2 } from "lucide-react";
+import { Radio, Globe, Flame, Newspaper, Loader2, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import LiveSessionCard from "@/components/LiveSessionCard";
 import TrainingGlobe from "@/components/TrainingGlobe";
+import NearbyMap from "@/components/NearbyMap";
 import PostCard from "@/components/PostCard";
 import { useT } from "@/lib/i18n";
 
@@ -51,6 +52,13 @@ export default function Home() {
             {liveSessions.length} {t("home.trainingCount")}
           </div>
         </div>
+      </section>
+
+      {/* 📍 Nearby map — find local training partners */}
+      <section>
+        <SectionTitle icon={MapPin} title={t("home.nearbyMap")} accent="text-primary" />
+        <p className="text-sm text-muted-foreground mb-3">{t("home.nearbyMapSub")}</p>
+        <NearbyMap />
       </section>
 
       {/* 🔥 Now training */}
