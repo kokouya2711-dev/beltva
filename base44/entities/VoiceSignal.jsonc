@@ -1,0 +1,38 @@
+{
+  "name": "VoiceSignal",
+  "type": "object",
+  "properties": {
+    "room_id": {
+      "type": "string",
+      "title": "\u30eb\u30fc\u30e0ID"
+    },
+    "from_id": {
+      "type": "string",
+      "title": "\u9001\u4fe1\u8005"
+    },
+    "to_id": {
+      "type": "string",
+      "title": "\u53d7\u4fe1\u8005"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "offer",
+        "answer",
+        "ice"
+      ],
+      "title": "\u7a2e\u5225"
+    },
+    "payload": {
+      "type": "string",
+      "title": "\u30da\u30a4\u30ed\u30fc\u30c9"
+    }
+  },
+  "required": [
+    "room_id",
+    "from_id",
+    "to_id",
+    "type",
+    "payload"
+  ]
+}

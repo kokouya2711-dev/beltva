@@ -8,7 +8,9 @@ import {
   Trophy,
   Flame,
   Menu,
-  X
+  X,
+  MessageSquare,
+  Headphones
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 
@@ -16,7 +18,9 @@ const nav = [
   { to: "/", label: "ホーム", icon: HomeIcon },
   { to: "/live", label: "ライブ", icon: Radio },
   { to: "/map", label: "マップ", icon: MapIcon },
-  { to: "/rankings", label: "ランキング", icon: Trophy }
+  { to: "/rankings", label: "ランキング", icon: Trophy },
+  { to: "/timeline", label: "タイムライン", icon: MessageSquare },
+  { to: "/voice", label: "ボイス", icon: Headphones }
 ];
 
 export default function AppLayout() {

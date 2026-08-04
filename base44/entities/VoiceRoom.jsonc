@@ -1,0 +1,48 @@
+{
+  "name": "VoiceRoom",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "\u30eb\u30fc\u30e0\u540d"
+    },
+    "topic": {
+      "type": "string",
+      "title": "\u30c8\u30d4\u30c3\u30af"
+    },
+    "capacity": {
+      "type": "number",
+      "default": 8,
+      "title": "\u5b9a\u54e1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "live",
+        "ended"
+      ],
+      "default": "open",
+      "title": "\u30b9\u30c6\u30fc\u30bf\u30b9"
+    },
+    "members_count": {
+      "type": "number",
+      "default": 0,
+      "title": "\u53c2\u52a0\u4eba\u6570"
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u30d7\u30e9\u30a4\u30d9\u30fc\u30c8"
+    },
+    "description": {
+      "type": "string",
+      "title": "\u8aac\u660e"
+    }
+  },
+  "required": [
+    "name",
+    "capacity",
+    "status"
+  ]
+}

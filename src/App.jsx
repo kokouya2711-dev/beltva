@@ -16,6 +16,8 @@ import Home from '@/pages/Home';
 import LivePage from '@/pages/LivePage';
 import MapPage from '@/pages/MapPage';
 import RankingsPage from '@/pages/RankingsPage';
+import TimelinePage from '@/pages/TimelinePage';
+import VoiceRoomsPage from '@/pages/VoiceRoomsPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -54,6 +56,8 @@ const AuthenticatedApp = () => {
           <Route path="/live" element={<LivePage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/rankings" element={<RankingsPage />} />
+          <Route path="/timeline" element={<TimelinePage />} />
+          <Route path="/voice" element={<VoiceRoomsPage />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

@@ -1,0 +1,39 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "title": "\u672c\u6587"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "\u76f8\u8ac7",
+        "\u8cea\u554f",
+        "\u30b7\u30a7\u30a2",
+        "\u5831\u544a"
+      ],
+      "default": "\u30b7\u30a7\u30a2",
+      "title": "\u30ab\u30c6\u30b4\u30ea"
+    },
+    "workout_type": {
+      "type": "string",
+      "title": "\u95a2\u9023\u7a2e\u76ee"
+    },
+    "likes": {
+      "type": "number",
+      "default": 0,
+      "title": "\u3044\u3044\u306d\u6570"
+    },
+    "comments_count": {
+      "type": "number",
+      "default": 0,
+      "title": "\u30b3\u30e1\u30f3\u30c8\u6570"
+    }
+  },
+  "required": [
+    "content",
+    "category"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "VoiceRoomMember",
+  "type": "object",
+  "properties": {
+    "room_id": {
+      "type": "string",
+      "title": "\u30eb\u30fc\u30e0ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "joined",
+        "left"
+      ],
+      "default": "joined",
+      "title": "\u30b9\u30c6\u30fc\u30bf\u30b9"
+    },
+    "is_speaker": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u30b9\u30d4\u30fc\u30ab\u30fc"
+    },
+    "is_muted": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u30df\u30e5\u30fc\u30c8"
+    },
+    "is_host": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u30db\u30b9\u30c8"
+    }
+  },
+  "required": [
+    "room_id",
+    "status"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "title": "\u6295\u7a3fID"
+    },
+    "content": {
+      "type": "string",
+      "title": "\u672c\u6587"
+    },
+    "likes": {
+      "type": "number",
+      "default": 0,
+      "title": "\u3044\u3044\u306d\u6570"
+    }
+  },
+  "required": [
+    "post_id",
+    "content"
+  ]
+}
