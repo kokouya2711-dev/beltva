@@ -81,6 +81,9 @@
   background: hsl(240 6% 8%);
   font-family: inherit;
 }
-.leaflet-tile {
+.leaflet-tile.dark-tiles {
   filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+}
+.leaflet-tile.sat-tiles {
+  filter: brightness(0.92) contrast(1.05) saturate(1.1);
 }

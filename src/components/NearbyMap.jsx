@@ -8,6 +8,7 @@ import { useT } from "@/lib/i18n";
 
 const ONLINE_WINDOW = 120000; // 2 min — matches UsersPage online definition
 const NORMAL_TILE = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+// Esri World Imagery — high quality worldwide satellite imagery
 const SAT_TILE = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 const FILTERS = ["all", "online", "training", "following", "nearby"];
@@ -112,7 +113,11 @@ export default function NearbyMap() {
         className="w-full h-[500px] md:h-[640px]"
         attributionControl={false}
       >
-        <TileLayer url={satellite ? SAT_TILE : NORMAL_TILE} />
+        <TileLayer
+          url={satellite ? SAT_TILE : NORMAL_TILE}
+          className={satellite ? "sat-tiles" : "dark-tiles"}
+          maxZoom={satellite ? 19 : 19}
+        />
 
         {/* current user */}
         <CircleMarker
