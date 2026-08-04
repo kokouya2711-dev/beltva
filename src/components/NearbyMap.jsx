@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip } from "react-leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
@@ -120,11 +120,16 @@ export default function NearbyMap() {
           maxZoom={satellite ? 19 : 19}
         />
 
-        {/* current user */}
+        {/* current user — shown as an approximate area for privacy */}
+        <Circle
+          center={center}
+          radius={900}
+          pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.18, weight: 1.5, dashArray: "4 4" }}
+        />
         <CircleMarker
           center={center}
-          radius={9}
-          pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.9, weight: 2 }}
+          radius={6}
+          pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.7, weight: 2 }}
         >
           <Tooltip direction="top" offset={[0, -8]} opacity={1}>{t("home.you")}</Tooltip>
         </CircleMarker>
