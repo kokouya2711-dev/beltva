@@ -10,6 +10,8 @@ function latLngToVector3(lat, lng, radius) {
   return new THREE.Vector3(x, y, z);
 }
 
+const EARTH_TEXTURE = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
+
 export default function TrainingGlobe({ points = [] }) {
   const mountRef = useRef(null);
   const buildRef = useRef(null);
@@ -19,40 +21,64 @@ export default function TrainingGlobe({ points = [] }) {
   useEffect(() => {
     const mount = mountRef.current;
     let width = mount.clientWidth || 600;
-    let height = mount.clientHeight || 420;
+    let height = mount.clientHeight || 460;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 3.4);
+    camera.position.set(0, 0.5, 3.6);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mount.appendChild(renderer.domElement);
 
+    const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+    scene.add(ambient);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.05);
+    dir.position.set(5, 3, 5);
+    scene.add(dir);
+
     const R = 1;
     const group = new THREE.Group();
     scene.add(group);
 
-    const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(R, 64, 64),
-      new THREE.MeshBasicMaterial({ color: 0x0a1018 })
-    );
-    group.add(sphere);
+    // earth sphere with texture (solid fallback color if texture fails)
+    const earthMat = new THREE.MeshPhongMaterial({
+      color: 0x16414a,
+      shininess: 8,
+      specular: 0x223344
+    });
+    const earth = new THREE.Mesh(new THREE.SphereGeometry(R, 64, 64), earthMat);
+    group.add(earth);
 
-    const wire = new THREE.Mesh(
-      new THREE.SphereGeometry(R * 1.001, 36, 24),
-      new THREE.MeshBasicMaterial({ color: 0x1f3d2a, wireframe: true, transparent: true, opacity: 0.45 })
+    const loader = new THREE.TextureLoader();
+    loader.setCrossOrigin("anonymous");
+    loader.load(
+      EARTH_TEXTURE,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        earthMat.map = tex;
+        earthMat.color.set(0xffffff);
+        earthMat.needsUpdate = true;
+      },
+      undefined,
+      () => { /* keep solid color fallback */ }
     );
-    group.add(wire);
 
+    // subtle tech grid overlay
+    const grid = new THREE.Mesh(
+      new THREE.SphereGeometry(R * 1.002, 48, 32),
+      new THREE.MeshBasicMaterial({ color: 0x2a4a3a, wireframe: true, transparent: true, opacity: 0.1 })
+    );
+    group.add(grid);
+
+    // atmosphere rim glow
     const atm = new THREE.Mesh(
-      new THREE.SphereGeometry(R * 1.09, 40, 40),
-      new THREE.MeshBasicMaterial({ color: 0x6ee7b7, transparent: true, opacity: 0.07, side: THREE.BackSide })
+      new THREE.SphereGeometry(R * 1.12, 48, 48),
+      new THREE.MeshBasicMaterial({ color: 0x6ee7b7, transparent: true, opacity: 0.09, side: THREE.BackSide })
     );
     scene.add(atm);
 
     const markers = new THREE.Group();
     group.add(markers);
-
     const markerColor = new THREE.Color(0xccff00);
 
     function build() {
@@ -65,9 +91,9 @@ export default function TrainingGlobe({ points = [] }) {
       const pts = pointsRef.current || [];
       pts.forEach((p) => {
         if (p.lat == null || p.lng == null) return;
-        const pos = latLngToVector3(p.lat, p.lng, R * 1.02);
+        const pos = latLngToVector3(p.lat, p.lng, R * 1.012);
         const dot = new THREE.Mesh(
-          new THREE.SphereGeometry(0.018, 12, 12),
+          new THREE.SphereGeometry(0.022, 14, 14),
           new THREE.MeshBasicMaterial({ color: markerColor })
         );
         dot.position.copy(pos);
@@ -75,8 +101,8 @@ export default function TrainingGlobe({ points = [] }) {
         markers.add(dot);
 
         const glow = new THREE.Mesh(
-          new THREE.SphereGeometry(0.045, 16, 16),
-          new THREE.MeshBasicMaterial({ color: markerColor, transparent: true, opacity: 0.22 })
+          new THREE.SphereGeometry(0.055, 16, 16),
+          new THREE.MeshBasicMaterial({ color: markerColor, transparent: true, opacity: 0.28 })
         );
         glow.position.copy(pos);
         glow.userData.phase = Math.random() * Math.PI * 2;
@@ -87,6 +113,7 @@ export default function TrainingGlobe({ points = [] }) {
     buildRef.current = build;
     build();
 
+    // drag to rotate
     let dragging = false;
     let px = 0, py = 0;
     const onDown = (e) => {
@@ -116,12 +143,12 @@ export default function TrainingGlobe({ points = [] }) {
     const animate = () => {
       raf = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
-      if (!dragging) group.rotation.y += 0.0016;
+      if (!dragging) group.rotation.y += 0.0014;
       markers.children.forEach((c) => {
-        const s = 1 + Math.sin(t * 2.2 + c.userData.phase) * 0.35;
+        const s = 1 + Math.sin(t * 2.2 + c.userData.phase) * 0.4;
         if (c.userData.isGlow) {
-          c.scale.setScalar(s * 1.25);
-          c.material.opacity = 0.12 + Math.abs(Math.sin(t * 2.2 + c.userData.phase)) * 0.22;
+          c.scale.setScalar(s * 1.3);
+          c.material.opacity = 0.14 + Math.abs(Math.sin(t * 2.2 + c.userData.phase)) * 0.26;
         } else {
           c.scale.setScalar(s);
         }
@@ -132,7 +159,7 @@ export default function TrainingGlobe({ points = [] }) {
 
     const onResize = () => {
       width = mount.clientWidth || 600;
-      height = mount.clientHeight || 420;
+      height = mount.clientHeight || 460;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
@@ -157,5 +184,5 @@ export default function TrainingGlobe({ points = [] }) {
     if (buildRef.current) buildRef.current();
   }, [points]);
 
-  return <div ref={mountRef} className="w-full h-[420px] md:h-[560px]" />;
+  return <div ref={mountRef} className="w-full h-[460px] md:h-[600px]" />;
 }
