@@ -44,13 +44,16 @@ varying vec3 vNormalW;
 void main() {
   float intensity = dot(normalize(vNormalW), normalize(sunDirection));
   float dayWeight = smoothstep(-0.18, 0.22, intensity);
-  vec3 day = mix(vec3(0.04, 0.08, 0.14), texture2D(dayTexture, vUv).rgb, dayReady);
-  vec3 night = mix(vec3(0.01, 0.01, 0.02), texture2D(nightTexture, vUv).rgb * 1.3, nightReady);
-  // day side: bright texture; night side: city lights
+  vec3 dayTex = texture2D(dayTexture, vUv).rgb;
+  vec3 day = mix(vec3(0.12, 0.18, 0.26), dayTex, dayReady) * 1.3;
+  // night side: dim terrain (so it's not pure black) + city lights
+  vec3 dimTerrain = dayTex * 0.30;
+  vec3 cityLights = mix(vec3(0.0), texture2D(nightTexture, vUv).rgb * 1.8, nightReady);
+  vec3 night = mix(vec3(0.06, 0.08, 0.12), dimTerrain + cityLights, dayReady);
   vec3 color = mix(night, day, dayWeight);
   // soft twilight band
-  float twilight = (1.0 - abs(dayWeight - 0.5) * 2.0) * 0.12;
-  color += vec3(0.25, 0.12, 0.04) * twilight * (1.0 - dayWeight);
+  float twilight = (1.0 - abs(dayWeight - 0.5) * 2.0) * 0.20;
+  color += vec3(0.32, 0.16, 0.06) * twilight;
   gl_FragColor = vec4(color, 1.0);
 }
 `;
@@ -77,6 +80,9 @@ export default function TrainingGlobe({ points = [] }) {
 
     const R = 1;
     const group = new THREE.Group();
+    // face the sunlit hemisphere toward the camera initially
+    const sun0 = sunDirection(new Date());
+    group.rotation.y = -Math.atan2(sun0.x, sun0.z);
     scene.add(group);
 
     // Day/night earth shader
@@ -163,7 +169,7 @@ export default function TrainingGlobe({ points = [] }) {
     let pinching = false;
     let px = 0, py = 0;
     let pinchDist = 0;
-    const MIN_Z = 1.8, MAX_Z = 6;
+    const MIN_Z = 1.12, MAX_Z = 6;
 
     const onDown = (e) => {
       dragging = true;
@@ -201,7 +207,7 @@ export default function TrainingGlobe({ points = [] }) {
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const dist = Math.hypot(dx, dy);
         if (pinchDist) {
-          camera.position.z = Math.max(MIN_Z, Math.min(MAX_Z, camera.position.z - (dist - pinchDist) * 0.006));
+          camera.position.z = Math.max(MIN_Z, Math.min(MAX_Z, camera.position.z - (dist - pinchDist) * 0.01));
         }
         pinchDist = dist;
       } else if (e.touches.length === 1 && dragging) {
@@ -217,7 +223,7 @@ export default function TrainingGlobe({ points = [] }) {
     // wheel zoom (prevent page scroll)
     const onWheel = (e) => {
       e.preventDefault();
-      camera.position.z = Math.max(MIN_Z, Math.min(MAX_Z, camera.position.z + e.deltaY * 0.0022));
+      camera.position.z = Math.max(MIN_Z, Math.min(MAX_Z, camera.position.z + e.deltaY * 0.004));
     };
 
     el.addEventListener("mousedown", onDown);
