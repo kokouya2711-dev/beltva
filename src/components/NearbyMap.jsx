@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
 import { base44 } from "@/api/base44Client";
-import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
+import { getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame } from "lucide-react";
 import { useT } from "@/lib/i18n";
@@ -50,7 +50,9 @@ export default function NearbyMap() {
         const geo = await getGeolocation();
         if (geo) c = [geo.lat, geo.lng];
         if (!c) c = [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng];
-        setCenter(c);
+        // Privacy: blur own location to ~5km grid before displaying
+        const fuzzed = fuzzCoords(c[0], c[1]);
+        setCenter([fuzzed.lat, fuzzed.lng]);
       } finally {
         setLoading(false);
       }
@@ -109,7 +111,8 @@ export default function NearbyMap() {
         scrollWheelZoom
         touchZoom
         zoomControl={false}
-        worldCopyJump
+        maxBounds={[[-90, -180], [90, 180]]}
+        maxBoundsViscosity={1.0}
         className="w-full h-[500px] md:h-[640px]"
         attributionControl={false}
       >
