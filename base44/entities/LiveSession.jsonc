@@ -1,0 +1,70 @@
+{
+  "name": "LiveSession",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "live",
+        "ended"
+      ],
+      "title": "\u30b9\u30c6\u30fc\u30bf\u30b9",
+      "default": "live"
+    },
+    "workout_type": {
+      "type": "string",
+      "enum": [
+        "\u30d9\u30f3\u30c1\u30d7\u30ec\u30b9",
+        "\u30b9\u30af\u30ef\u30c3\u30c8",
+        "\u30c7\u30c3\u30c9\u30ea\u30d5\u30c8",
+        "\u8155\u7acb\u3066\u4f0f\u305b",
+        "\u61f8\u5782",
+        "\u30e9\u30f3\u30cb\u30f3\u30b0",
+        "\u30d7\u30e9\u30f3\u30af",
+        "\u30c0\u30f3\u30d9\u30eb\u30ab\u30fc\u30eb"
+      ],
+      "title": "\u7a2e\u76ee"
+    },
+    "location_name": {
+      "type": "string",
+      "title": "\u5834\u6240\u540d"
+    },
+    "lat": {
+      "type": "number",
+      "title": "\u7def\u5ea6"
+    },
+    "lng": {
+      "type": "number",
+      "title": "\u7d4c\u5ea6"
+    },
+    "viewers_count": {
+      "type": "number",
+      "title": "\u8996\u8074\u8005\u6570",
+      "default": 0
+    },
+    "hype_count": {
+      "type": "number",
+      "title": "\u5fdc\u63f4\u6570",
+      "default": 0
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u958b\u59cb\u65e5\u6642"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u7d42\u4e86\u65e5\u6642"
+    },
+    "message": {
+      "type": "string",
+      "title": "\u5b9f\u6cc1\u30e1\u30c3\u30bb\u30fc\u30b8"
+    }
+  },
+  "required": [
+    "status",
+    "workout_type",
+    "started_at"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "name": "WorkoutRecord",
+  "type": "object",
+  "properties": {
+    "workout_type": {
+      "type": "string",
+      "enum": [
+        "\u30d9\u30f3\u30c1\u30d7\u30ec\u30b9",
+        "\u30b9\u30af\u30ef\u30c3\u30c8",
+        "\u30c7\u30c3\u30c9\u30ea\u30d5\u30c8",
+        "\u8155\u7acb\u3066\u4f0f\u305b",
+        "\u61f8\u5782",
+        "\u30e9\u30f3\u30cb\u30f3\u30b0",
+        "\u30d7\u30e9\u30f3\u30af",
+        "\u30c0\u30f3\u30d9\u30eb\u30ab\u30fc\u30eb"
+      ],
+      "title": "\u7a2e\u76ee"
+    },
+    "sets": {
+      "type": "number",
+      "title": "\u30bb\u30c3\u30c8\u6570"
+    },
+    "reps": {
+      "type": "number",
+      "title": "\u30ec\u30c3\u30d7\u6570"
+    },
+    "weight": {
+      "type": "number",
+      "title": "\u91cd\u91cf(kg)",
+      "default": 0
+    },
+    "duration_sec": {
+      "type": "number",
+      "title": "\u6642\u9593(\u79d2)",
+      "default": 0
+    },
+    "volume": {
+      "type": "number",
+      "title": "\u30dc\u30ea\u30e5\u30fc\u30e0(kg)",
+      "default": 0
+    },
+    "notes": {
+      "type": "string",
+      "title": "\u30e1\u30e2"
+    }
+  },
+  "required": [
+    "workout_type",
+    "sets",
+    "reps"
+  ]
+}

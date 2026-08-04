@@ -1,0 +1,65 @@
+{
+  "name": "Battle",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "\u5bfe\u6c7a\u540d"
+    },
+    "workout_type": {
+      "type": "string",
+      "enum": [
+        "\u30d9\u30f3\u30c1\u30d7\u30ec\u30b9",
+        "\u30b9\u30af\u30ef\u30c3\u30c8",
+        "\u30c7\u30c3\u30c9\u30ea\u30d5\u30c8",
+        "\u8155\u7acb\u3066\u4f0f\u305b",
+        "\u61f8\u5782",
+        "\u30e9\u30f3\u30cb\u30f3\u30b0",
+        "\u30d7\u30e9\u30f3\u30af",
+        "\u30c0\u30f3\u30d9\u30eb\u30ab\u30fc\u30eb"
+      ],
+      "title": "\u5bfe\u8c61\u7a2e\u76ee"
+    },
+    "metric": {
+      "type": "string",
+      "enum": [
+        "volume",
+        "reps",
+        "duration"
+      ],
+      "title": "\u96c6\u8a08\u6307\u6a19",
+      "default": "volume"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "finished"
+      ],
+      "title": "\u30b9\u30c6\u30fc\u30bf\u30b9",
+      "default": "active"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u958b\u59cb\u65e5"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u7d42\u4e86\u65e5"
+    },
+    "description": {
+      "type": "string",
+      "title": "\u8aac\u660e"
+    }
+  },
+  "required": [
+    "title",
+    "workout_type",
+    "metric",
+    "status",
+    "start_date",
+    "end_date"
+  ]
+}
