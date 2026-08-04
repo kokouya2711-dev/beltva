@@ -28,6 +28,7 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
       } else {
         await base44.entities.Follow.create({ follower_id: meId, followee_id: targetId });
         setFollowing(true);
+        base44.entities.Notification.create({ user_id: targetId, type: "follow", actor_id: meId, text: "あなたをフォローしました", read: false, target_id: meId, target_type: "follow" }).catch(() => {});
       }
       onChange && onChange();
     } finally {

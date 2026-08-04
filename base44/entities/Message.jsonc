@@ -1,0 +1,32 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string",
+      "title": "\u4f1a\u8a71ID"
+    },
+    "sender_id": {
+      "type": "string",
+      "title": "\u9001\u4fe1\u8005"
+    },
+    "content": {
+      "type": "string",
+      "title": "\u672c\u6587",
+      "default": ""
+    },
+    "image_url": {
+      "type": "string",
+      "title": "\u753b\u50cf"
+    },
+    "reactions": {
+      "type": "string",
+      "title": "\u30ea\u30a2\u30af\u30b7\u30e7\u30f3",
+      "default": "[]"
+    }
+  },
+  "required": [
+    "conversation_id",
+    "sender_id"
+  ]
+}

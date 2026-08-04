@@ -1,0 +1,14 @@
+{
+  "name": "Presence",
+  "type": "object",
+  "properties": {
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u6700\u7d42\u30aa\u30f3\u30e9\u30a4\u30f3"
+    }
+  },
+  "required": [
+    "last_seen"
+  ]
+}

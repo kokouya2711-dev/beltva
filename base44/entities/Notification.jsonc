@@ -1,0 +1,41 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "\u53d7\u4fe1\u8005"
+    },
+    "type": {
+      "type": "string",
+      "title": "\u7a2e\u5225"
+    },
+    "actor_id": {
+      "type": "string",
+      "title": "\u767a\u751f\u5143"
+    },
+    "text": {
+      "type": "string",
+      "title": "\u5185\u5bb9"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u65e2\u8aad"
+    },
+    "target_id": {
+      "type": "string",
+      "title": "\u5bfe\u8c61ID"
+    },
+    "target_type": {
+      "type": "string",
+      "title": "\u5bfe\u8c61\u7a2e\u5225"
+    }
+  },
+  "required": [
+    "user_id",
+    "type",
+    "actor_id",
+    "text"
+  ]
+}

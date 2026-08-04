@@ -3,8 +3,10 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, flagEmoji, computeStats, formatDuration, fetchUser } from "@/lib/profile";
 import FollowButton from "@/components/FollowButton";
+import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
-import { Pencil, Target, Dumbbell, Ruler, Weight, Trophy, Flame, Clock, Calendar, Users, Activity, Loader2 } from "lucide-react";
+import { getOrCreateConversation, blockExists } from "@/lib/dm";
+import { Pencil, Target, Dumbbell, Ruler, Weight, Trophy, Flame, Clock, Calendar, Users, Activity, Loader2, Mail } from "lucide-react";
 
 export default function Profile() {
   const { id } = useParams();
@@ -15,6 +17,7 @@ export default function Profile() {
   const [posts, setPosts] = useState([]);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
+  const [blocked, setBlocked] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,6 +38,7 @@ export default function Profile() {
         setPosts(ps);
         setFollowers(fols.length);
         setFollowing(fols2.length);
+        if (meUser && meUser.id !== id) setBlocked(await blockExists(meUser.id, id));
       } finally {
         setLoading(false);
       }
@@ -47,6 +51,12 @@ export default function Profile() {
   const stats = computeStats(records);
   const isMe = me && me.id === id;
   const name = displayName(user);
+
+  async function startDm() {
+    if (blocked) return;
+    const conv = await getOrCreateConversation(me.id, id);
+    navigate(`/messages/${conv.id}`);
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-6">
@@ -71,13 +81,19 @@ export default function Profile() {
               <Link to={`/profile/${id}/following`} className="hover:text-primary"><b className="text-foreground">{following}</b> <span className="text-muted-foreground">フォロー中</span></Link>
             </div>
           </div>
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-2">
             {isMe ? (
               <button onClick={() => navigate(`/profile/edit`)} className="flex items-center gap-1.5 bg-secondary/60 border border-border px-4 py-2 rounded-xl text-sm font-semibold hover:border-primary">
                 <Pencil className="w-4 h-4" /> 編集
               </button>
             ) : (
-              <FollowButton targetId={id} meId={me?.id} />
+              <>
+                <FollowButton targetId={id} meId={me?.id} />
+                <button onClick={startDm} disabled={blocked} className="flex items-center gap-1.5 bg-secondary/60 border border-border px-3 py-2 rounded-xl text-sm font-semibold hover:border-primary disabled:opacity-50">
+                  <Mail className="w-4 h-4" /> メッセージ
+                </button>
+                <UserMenu meId={me?.id} targetId={id} />
+              </>
             )}
           </div>
         </div>

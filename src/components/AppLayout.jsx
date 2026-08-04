@@ -12,9 +12,12 @@ import {
   MessageSquare,
   Headphones,
   Dumbbell,
-  Globe
+  Globe,
+  Send
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
+import NotificationsBell from "@/components/NotificationsBell";
+import { updatePresence } from "@/lib/dm";
 
 const nav = [
   { to: "/", label: "ホーム", icon: HomeIcon },
@@ -22,7 +25,8 @@ const nav = [
   { to: "/map", label: "グローブ", icon: Globe },
   { to: "/rankings", label: "ランキング", icon: Trophy },
   { to: "/timeline", label: "タイムライン", icon: MessageSquare },
-  { to: "/voice", label: "ボイス", icon: Headphones }
+  { to: "/voice", label: "ボイス", icon: Headphones },
+  { to: "/messages", label: "メッセージ", icon: Send }
 ];
 
 export default function AppLayout() {
@@ -35,6 +39,13 @@ export default function AppLayout() {
     base44.auth.me().then(setMe).catch(() => {});
   }, []);
 
+  React.useEffect(() => {
+    if (!me) return;
+    updatePresence(me.id);
+    const i = setInterval(() => updatePresence(me.id), 60000);
+    return () => clearInterval(i);
+  }, [me]);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Sidebar (desktop) */}
@@ -43,10 +54,11 @@ export default function AppLayout() {
           <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
             <Flame className="w-5 h-5 text-primary-foreground" />
           </div>
-          <div className="leading-tight">
+          <div className="leading-tight flex-1">
             <div className="font-bold tracking-tight">PULSE</div>
             <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Train · Live · Rank</div>
           </div>
+          <NotificationsBell meId={me?.id} />
         </div>
         <nav className="flex-1 px-3 py-2 space-y-1">
           {nav.map((n) => {
@@ -91,7 +103,8 @@ export default function AppLayout() {
           </div>
           <span className="font-bold tracking-tight">PULSE</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <NotificationsBell meId={me?.id} />
           <button
             onClick={() => setShowGoLive(true)}
             className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"

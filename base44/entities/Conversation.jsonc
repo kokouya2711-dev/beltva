@@ -1,0 +1,57 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "a_id": {
+      "type": "string",
+      "title": "\u53c2\u52a0\u8005A"
+    },
+    "b_id": {
+      "type": "string",
+      "title": "\u53c2\u52a0\u8005B"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "requested",
+        "active"
+      ],
+      "default": "requested",
+      "title": "\u30b9\u30c6\u30fc\u30bf\u30b9"
+    },
+    "requester_id": {
+      "type": "string",
+      "title": "\u958b\u59cb\u8005"
+    },
+    "last_message": {
+      "type": "string",
+      "title": "\u6700\u5f8c\u306e\u30e1\u30c3\u30bb\u30fc\u30b8",
+      "default": ""
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u6700\u7d42\u66f4\u65b0"
+    },
+    "last_sender_id": {
+      "type": "string",
+      "title": "\u6700\u7d42\u9001\u4fe1\u8005"
+    },
+    "a_read_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "A\u65e2\u8aad"
+    },
+    "b_read_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "B\u65e2\u8aad"
+    }
+  },
+  "required": [
+    "a_id",
+    "b_id",
+    "status",
+    "requester_id"
+  ]
+}

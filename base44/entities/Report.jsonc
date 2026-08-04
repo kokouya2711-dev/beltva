@@ -1,0 +1,32 @@
+{
+  "name": "Report",
+  "type": "object",
+  "properties": {
+    "reporter_id": {
+      "type": "string",
+      "title": "\u901a\u5831\u8005"
+    },
+    "reported_id": {
+      "type": "string",
+      "title": "\u901a\u5831\u3055\u308c\u305f\u4eba"
+    },
+    "reason": {
+      "type": "string",
+      "title": "\u7406\u7531"
+    },
+    "target_type": {
+      "type": "string",
+      "title": "\u5bfe\u8c61\u7a2e\u5225",
+      "default": "user"
+    },
+    "target_id": {
+      "type": "string",
+      "title": "\u5bfe\u8c61ID"
+    }
+  },
+  "required": [
+    "reporter_id",
+    "reported_id",
+    "reason"
+  ]
+}
