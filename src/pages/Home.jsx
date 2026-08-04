@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Flame, Radio, Trophy, Plus, Eye, MapPin, TrendingUp, Zap } from "lucide-react";
+import { Flame, Radio, Trophy, Plus, TrendingUp, Zap, Globe, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import LiveSessionCard from "@/components/LiveSessionCard";
 import RecordWorkoutDialog from "@/components/RecordWorkoutDialog";
-import { formatNumber, timeAgo, computeVolume, metricValue } from "@/lib/workouts";
+import TrainingGlobe from "@/components/TrainingGlobe";
+import { useT } from "@/lib/i18n";
+import { formatNumber, timeAgo } from "@/lib/workouts";
 
 export default function Home() {
+  const t = useT();
   const [me, setMe] = useState(null);
   const [liveSessions, setLiveSessions] = useState([]);
   const [records, setRecords] = useState([]);
@@ -31,20 +34,21 @@ export default function Home() {
 
   useEffect(() => { load(); }, [load]);
 
-  // leaderboard aggregation
   const leaderboard = React.useMemo(() => {
     const map = {};
     records.forEach((r) => {
       const uid = r.created_by_id;
       if (!uid) return;
-      if (!map[uid]) map[uid] = { uid, name: r.created_by?.full_name || r.created_by?.email || `ユーザー${uid.slice(-4)}`, volume: 0, reps: 0, duration: 0, count: 0 };
+      if (!map[uid]) map[uid] = { uid, name: r.created_by?.full_name || r.created_by?.email || `ユーザー${uid.slice(-4)}`, volume: 0, count: 0 };
       map[uid].volume += Number(r.volume) || 0;
-      map[uid].reps += Number(r.reps) || 0;
-      map[uid].duration += Number(r.duration_sec) || 0;
       map[uid].count += 1;
     });
     return Object.values(map).sort((a, b) => b.volume - a.volume).slice(0, 5);
   }, [records]);
+
+  const points = liveSessions
+    .filter((s) => s.lat != null && s.lng != null)
+    .map((s) => ({ lat: s.lat, lng: s.lng, label: s.workout_type }));
 
   async function hype(session) {
     await base44.entities.LiveSession.update(session.id, { hype_count: (session.hype_count || 0) + 1 });
@@ -62,43 +66,54 @@ export default function Home() {
             <Zap className="w-3.5 h-3.5" /> PULSE — みんなで燃やそう
           </div>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
-            {me ? `おかえり、@${me.email?.split("@")[0]} 👋` : "トレーニングを始めよう"}
+            {me ? `おかえり、@${me.email?.split("@")[0]} 👋` : t("home.heroTitle")}
           </h1>
-          <p className="text-muted-foreground mt-2 max-w-lg">
-            ライブ配信で仲間と繋がり、位置情報を共有し、ランキング対決で本気を出す。
-          </p>
+          <p className="text-muted-foreground mt-2 max-w-lg">{t("home.heroSub")}</p>
           <div className="flex flex-wrap gap-3 mt-6">
             <button
               onClick={() => setShowRecord(true)}
               className="flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
             >
-              <Plus className="w-4 h-4" /> トレーニング記録
+              <Plus className="w-4 h-4" /> {t("home.record")}
             </button>
-            <a
-              href="/live"
+            <Link
+              to="/live"
               className="flex items-center gap-2 bg-secondary/60 border border-border px-5 py-3 rounded-xl hover:border-primary/40 transition"
             >
-              <Radio className="w-4 h-4" /> ライブを見る
-            </a>
+              <Radio className="w-4 h-4" /> {t("home.viewLive")}
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat icon={Radio} label="配信中" value={liveSessions.length} color="text-red-500" />
-        <Stat icon={TrendingUp} label="今週の記録" value={records.length} color="text-primary" />
-        <Stat icon={Flame} label="参加者" value={leaderboard.length} color="text-accent" />
-        <Stat icon={Trophy} label="総ボリューム" value={records.reduce((s, r) => s + (Number(r.volume) || 0), 0)} suffix="kg" color="text-chart-3" />
+        <Stat icon={Radio} label={t("home.liveCount")} value={liveSessions.length} color="text-red-500" />
+        <Stat icon={TrendingUp} label={t("home.weekRecords")} value={records.length} color="text-primary" />
+        <Stat icon={Flame} label={t("home.participants")} value={leaderboard.length} color="text-accent" />
+        <Stat icon={Trophy} label={t("home.totalVolume")} value={records.reduce((s, r) => s + (Number(r.volume) || 0), 0)} suffix="kg" color="text-chart-3" />
+      </section>
+
+      {/* Globe */}
+      <section>
+        <SectionHeader icon={Globe} title={t("home.globe")} sub="LIVE TRAINING" accent="text-primary" />
+        <p className="text-sm text-muted-foreground -mt-1 mb-3">{t("home.globeSub")}</p>
+        <div className="relative rounded-2xl overflow-hidden border border-border">
+          <TrainingGlobe points={points} />
+          <div className="absolute top-3 right-3 z-[400] glass rounded-lg px-3 py-2 text-xs flex items-center gap-2">
+            <Radio className="w-3.5 h-3.5 text-red-500" />
+            {liveSessions.length} {t("home.trainingCount")}
+          </div>
+        </div>
       </section>
 
       {/* Live now */}
       <section>
-        <SectionHeader icon={Radio} title="いまトレーニング中" sub="TRAINING NOW" accent="text-red-500" />
+        <SectionHeader icon={Radio} title={t("home.liveNow")} sub="TRAINING NOW" accent="text-red-500" link="/live" />
         {loading ? (
           <LoadingGrid />
         ) : liveSessions.length === 0 ? (
-          <EmptyState icon={Radio} text="いまトレーニング中の仲間はいません。最初にトレーニングを始めよう！" />
+          <EmptyState icon={Radio} text={t("home.noLive")} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {liveSessions.map((s) => (
@@ -111,10 +126,10 @@ export default function Home() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Leaderboard */}
         <section>
-          <SectionHeader icon={Trophy} title="トップランカー" sub="LEADERBOARD" accent="text-primary" link="/rankings" />
+          <SectionHeader icon={Trophy} title={t("home.leaderboard")} sub="LEADERBOARD" accent="text-primary" link="/rankings" />
           <div className="glass rounded-2xl border border-border divide-y divide-border">
             {leaderboard.length === 0 ? (
-              <EmptyState icon={Trophy} text="まだ記録がありません" />
+              <EmptyState icon={Trophy} text="—" />
             ) : (
               leaderboard.map((u, i) => (
                 <div key={u.uid} className="flex items-center gap-3 px-4 py-3">
@@ -134,7 +149,7 @@ export default function Home() {
 
         {/* Recent activity */}
         <section>
-          <SectionHeader icon={TrendingUp} title="みんなの記録" sub="RECENT" accent="text-accent" />
+          <SectionHeader icon={TrendingUp} title={t("home.recent")} sub="RECENT" accent="text-accent" />
           <div className="glass rounded-2xl border border-border divide-y divide-border">
             {records.slice(0, 6).map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3">
@@ -155,7 +170,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            {records.length === 0 && <EmptyState icon={TrendingUp} text="まだ記録がありません" />}
+            {records.length === 0 && <EmptyState icon={TrendingUp} text="—" />}
           </div>
         </section>
       </div>
@@ -179,21 +194,17 @@ function SectionHeader({ icon: Icon, title, sub, accent, link }) {
   return (
     <div className="flex items-center justify-between mb-3">
       <div className="flex items-center gap-2">
-        <Icon className={`w-4.5 h-4.5 ${accent}`} style={{ width: 18, height: 18 }} />
+        <Icon className={accent} style={{ width: 18, height: 18 }} />
         <h2 className="font-bold text-lg">{title}</h2>
         <span className="text-[10px] text-muted-foreground uppercase tracking-widest">{sub}</span>
       </div>
-      {link && <a href={link} className="text-xs text-primary hover:underline">もっと見る →</a>}
+      {link && <Link to={link} className="text-xs text-primary hover:underline">もっと見る →</Link>}
     </div>
   );
 }
 
 function RankBadge({ rank }) {
-  const styles = {
-    1: "bg-yellow-400 text-black",
-    2: "bg-slate-300 text-black",
-    3: "bg-orange-700 text-white"
-  };
+  const styles = { 1: "bg-yellow-400 text-black", 2: "bg-slate-300 text-black", 3: "bg-orange-700 text-white" };
   const cls = styles[rank] || "bg-secondary text-muted-foreground";
   return <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${cls}`}>{rank}</div>;
 }
@@ -201,9 +212,7 @@ function RankBadge({ rank }) {
 function LoadingGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="glass rounded-2xl h-56 animate-pulse" />
-      ))}
+      {[0, 1, 2].map((i) => <div key={i} className="glass rounded-2xl h-56 animate-pulse" />)}
     </div>
   );
 }

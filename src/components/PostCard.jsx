@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle, Send, Loader2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import UserLink from "@/components/UserLink";
 import { timeAgo, formatNumber } from "@/lib/workouts";
+import { notify } from "@/lib/dm";
 
 export default function PostCard({ post }) {
   const [liked, setLiked] = useState(false);
@@ -14,6 +15,9 @@ export default function PostCard({ post }) {
   const [loadedComments, setLoadedComments] = useState(false);
   const [draft, setDraft] = useState("");
   const [posting, setPosting] = useState(false);
+  const [meId, setMeId] = useState(null);
+
+  useEffect(() => { base44.auth.me().then((u) => setMeId(u?.id)).catch(() => {}); }, []);
 
   const style = CATEGORY_STYLE[post.category] || CATEGORY_STYLE["シェア"];
 
@@ -44,6 +48,7 @@ export default function PostCard({ post }) {
     setDraft("");
     setPosting(false);
     base44.entities.Post.update(post.id, { comments_count: commentsCount + 1 }).catch(() => {});
+    if (post.created_by_id && post.created_by_id !== meId) notify(post.created_by_id, meId, "comment", `コメント: ${draft.trim().slice(0, 30)}`, post.id);
   }
 
   return (

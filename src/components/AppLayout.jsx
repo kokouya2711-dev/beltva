@@ -1,38 +1,36 @@
 import React, { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
   Home as HomeIcon,
-  Radio,
-  Map as MapIcon,
+  Users,
+  Send,
+  MessageSquare,
   Trophy,
   Flame,
-  Menu,
-  X,
-  MessageSquare,
-  Headphones,
+  Settings,
   Dumbbell,
-  Globe,
-  Send
+  Bell
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
+import { getGeolocation, fuzzCoords } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
 
 const nav = [
-  { to: "/", label: "ホーム", icon: HomeIcon },
-  { to: "/live", label: "トレ中", icon: Dumbbell },
-  { to: "/map", label: "グローブ", icon: Globe },
-  { to: "/rankings", label: "ランキング", icon: Trophy },
-  { to: "/timeline", label: "タイムライン", icon: MessageSquare },
-  { to: "/voice", label: "ボイス", icon: Headphones },
-  { to: "/messages", label: "メッセージ", icon: Send }
+  { to: "/", labelKey: "nav.home", icon: HomeIcon },
+  { to: "/users", labelKey: "nav.users", icon: Users },
+  { to: "/messages", labelKey: "nav.messages", icon: Send },
+  { to: "/timeline", labelKey: "nav.timeline", icon: MessageSquare },
+  { to: "/rankings", labelKey: "nav.rankings", icon: Trophy }
 ];
 
 export default function AppLayout() {
+  const t = useT();
+  const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
   React.useEffect(() => {
@@ -44,6 +42,16 @@ export default function AppLayout() {
     updatePresence(me.id);
     const i = setInterval(() => updatePresence(me.id), 60000);
     return () => clearInterval(i);
+  }, [me]);
+
+  React.useEffect(() => {
+    if (!me || me.lat) return;
+    (async () => {
+      const geo = await getGeolocation();
+      if (!geo) return;
+      const f = fuzzCoords(geo.lat, geo.lng);
+      base44.auth.updateMe({ lat: f.lat, lng: f.lng }).catch(() => {});
+    })();
   }, [me]);
 
   return (
@@ -59,6 +67,9 @@ export default function AppLayout() {
             <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Train · Live · Rank</div>
           </div>
           <NotificationsBell meId={me?.id} />
+          <button onClick={() => navigate("/settings")} className="p-2 rounded-lg hover:bg-secondary" title={t("nav.settings")}>
+            <Settings className="w-5 h-5" />
+          </button>
         </div>
         <nav className="flex-1 px-3 py-2 space-y-1">
           {nav.map((n) => {
@@ -69,13 +80,11 @@ export default function AppLayout() {
                 key={n.to}
                 to={n.to}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                  active
-                    ? "bg-primary/15 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                  active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                 }`}
               >
-                <Icon className="w-4.5 h-4.5" style={{ width: 18, height: 18 }} />
-                {n.label}
+                <Icon style={{ width: 18, height: 18 }} />
+                {t(n.labelKey)}
               </Link>
             );
           })}
@@ -85,7 +94,7 @@ export default function AppLayout() {
             onClick={() => setShowGoLive(true)}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
           >
-            <Dumbbell className="w-4 h-4" /> トレ開始
+            <Dumbbell className="w-4 h-4" /> {t("nav.goLive")}
           </button>
           {me && (
             <Link to={`/profile/${me.id}`} className="mt-3 px-2 text-xs text-muted-foreground truncate hover:text-primary block">
@@ -103,45 +112,20 @@ export default function AppLayout() {
           </div>
           <span className="font-bold tracking-tight">PULSE</span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <NotificationsBell meId={me?.id} />
+          <button onClick={() => navigate("/settings")} className="p-2 rounded-lg hover:bg-secondary"><Settings className="w-5 h-5" /></button>
           <button
             onClick={() => setShowGoLive(true)}
             className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
           >
-            <Dumbbell className="w-3.5 h-3.5" /> トレ
-          </button>
-          <button onClick={() => setMobileOpen((v) => !v)} className="p-1.5">
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
           </button>
         </div>
       </header>
 
-      {/* Mobile nav drawer */}
-      {mobileOpen && (
-        <div className="md:hidden glass border-b border-border px-4 py-3 flex gap-2">
-          {nav.map((n) => {
-            const active = location.pathname === n.to;
-            const Icon = n.icon;
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                onClick={() => setMobileOpen(false)}
-                className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-lg text-xs ${
-                  active ? "text-primary bg-primary/10" : "text-muted-foreground"
-                }`}
-              >
-                <Icon style={{ width: 18, height: 18 }} />
-                {n.label}
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
       {/* Main content */}
-      <main className="flex-1 min-w-0 pb-24 md:pb-8">
+      <main className="flex-1 min-w-0 pb-20 md:pb-8">
         <Outlet />
       </main>
 
@@ -159,7 +143,7 @@ export default function AppLayout() {
               }`}
             >
               <Icon style={{ width: 20, height: 20 }} />
-              {n.label}
+              {t(n.labelKey)}
             </Link>
           );
         })}

@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Loader2, Camera, Check } from "lucide-react";
 import { COUNTRIES, flagEmoji } from "@/lib/profile";
+import { TRAINING_PURPOSES, parseHobbies } from "@/lib/hobbies";
+import { useT } from "@/lib/i18n";
+import HobbyEditor from "@/components/HobbyEditor";
 
 const inputCls = "w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary";
 
 export default function ProfileEdit() {
+  const t = useT();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [form, setForm] = useState({});
+  const [hobbies, setHobbies] = useState([]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -20,15 +25,10 @@ export default function ProfileEdit() {
         display_name: u.display_name || "",
         bio: u.bio || "",
         country: u.country || "",
-        fitness_goal: u.fitness_goal || "",
-        training_history: u.training_history || "",
-        height_cm: u.height_cm || "",
-        weight_kg: u.weight_kg || "",
-        height_public: !!u.height_public,
-        weight_public: !!u.weight_public,
-        specialty: u.specialty || "",
+        training_purpose: u.training_purpose || "",
         avatar_url: u.avatar_url || ""
       });
+      setHobbies(parseHobbies(u.hobbies));
     }).catch(() => navigate("/"));
   }, [navigate]);
 
@@ -49,14 +49,9 @@ export default function ProfileEdit() {
         display_name: form.display_name,
         bio: form.bio,
         country: form.country,
-        fitness_goal: form.fitness_goal,
-        training_history: form.training_history,
-        height_cm: Number(form.height_cm) || 0,
-        weight_kg: Number(form.weight_kg) || 0,
-        height_public: !!form.height_public,
-        weight_public: !!form.weight_public,
-        specialty: form.specialty,
-        avatar_url: form.avatar_url
+        training_purpose: form.training_purpose,
+        avatar_url: form.avatar_url,
+        hobbies: JSON.stringify(hobbies)
       });
       navigate(`/profile/${me.id}`);
     } finally { setSaving(false); }
@@ -66,44 +61,44 @@ export default function ProfileEdit() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="w-4 h-4" /> 戻る</button>
-      <h1 className="text-2xl font-bold">プロフィール編集</h1>
+      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="w-4 h-4" /> {t("common.back")}</button>
+      <h1 className="text-2xl font-bold">{t("profile.editTitle")}</h1>
 
       <div className="glass rounded-2xl border border-border p-4 flex items-center gap-4">
         {form.avatar_url ? (
-          <img src={form.avatar_url} alt="avatar" className="w-16 h-16 rounded-xl object-cover" />
+          <img src={form.avatar_url} alt="avatar" className="w-16 h-16 rounded-full object-cover" />
         ) : (
-          <div className="w-16 h-16 rounded-xl bg-secondary flex items-center justify-center text-xs text-muted-foreground">なし</div>
+          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xs text-muted-foreground">{t("profile.noAvatar")}</div>
         )}
         <label className="flex items-center gap-1.5 text-sm bg-secondary/60 border border-border px-3 py-2 rounded-lg cursor-pointer hover:border-primary">
-          <Camera className="w-4 h-4" /> 画像を変更
+          <Camera className="w-4 h-4" /> {t("profile.editAvatar")}
           <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadAvatar(e.target.files[0])} />
           {uploading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
         </label>
       </div>
 
-      <Field label="表示名（ユーザー名）"><input value={form.display_name} onChange={(e) => set("display_name", e.target.value)} className={inputCls} placeholder="PULSE太郎" /></Field>
-      <Field label="自己紹介"><textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} rows={3} className={inputCls} placeholder="筋トレ歴3年。ベンチ100kg目指中！" /></Field>
-      <Field label="国">
+      <Field label={t("common.displayName")}><input value={form.display_name} onChange={(e) => set("display_name", e.target.value)} className={inputCls} placeholder="PULSE太郎" /></Field>
+      <Field label={t("common.bio")}><textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} rows={3} className={inputCls} placeholder="筋トレ歴3年。ベンチ100kg目指中！" /></Field>
+      <Field label={t("common.country")}>
         <select value={form.country} onChange={(e) => set("country", e.target.value)} className={inputCls}>
-          <option value="">選択してください</option>
+          <option value="">{t("common.selectCountry")}</option>
           {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{flagEmoji(c.code)} {c.name}</option>)}
         </select>
       </Field>
-      <Field label="Fitness Goal"><input value={form.fitness_goal} onChange={(e) => set("fitness_goal", e.target.value)} className={inputCls} placeholder="ベンチプレス100kg" /></Field>
-      <Field label="トレーニング歴"><input value={form.training_history} onChange={(e) => set("training_history", e.target.value)} className={inputCls} placeholder="3年" /></Field>
-      <Field label="得意種目"><input value={form.specialty} onChange={(e) => set("specialty", e.target.value)} className={inputCls} placeholder="スクワット" /></Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="身長(cm)"><input type="number" value={form.height_cm} onChange={(e) => set("height_cm", e.target.value)} className={inputCls} /></Field>
-        <Field label="体重(kg)"><input type="number" value={form.weight_kg} onChange={(e) => set("weight_kg", e.target.value)} className={inputCls} /></Field>
-      </div>
-      <div className="flex gap-6">
-        <label className="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" checked={form.height_public} onChange={(e) => set("height_public", e.target.checked)} className="accent-primary" /> 身長を公開</label>
-        <label className="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" checked={form.weight_public} onChange={(e) => set("weight_public", e.target.checked)} className="accent-primary" /> 体重を公開</label>
+      <Field label={t("common.purpose")}>
+        <select value={form.training_purpose} onChange={(e) => set("training_purpose", e.target.value)} className={inputCls}>
+          <option value="">{t("profile.purposePlaceholder")}</option>
+          {TRAINING_PURPOSES.map((p) => <option key={p.key} value={p.key}>{t("purpose." + p.key)}</option>)}
+        </select>
+      </Field>
+
+      <div className="glass rounded-2xl border border-border p-4">
+        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{t("profile.hobbiesMax")}</div>
+        <HobbyEditor value={hobbies} onChange={setHobbies} max={5} />
       </div>
 
       <button onClick={save} disabled={saving} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50">
-        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} 保存
+        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} {t("common.save")}
       </button>
     </div>
   );

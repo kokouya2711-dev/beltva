@@ -24,6 +24,28 @@
       "type": "string",
       "title": "\u56fd(ISO\u30b3\u30fc\u30c9)"
     },
+    "hobbies": {
+      "type": "string",
+      "title": "\u8da3\u5473(JSON\u914d\u5217)",
+      "default": "[]"
+    },
+    "training_purpose": {
+      "type": "string",
+      "title": "\u30c8\u30ec\u30fc\u30cb\u30f3\u30b0\u76ee\u7684"
+    },
+    "lat": {
+      "type": "number",
+      "title": "\u7def\u5ea6(\u307c\u304b\u3057)"
+    },
+    "lng": {
+      "type": "number",
+      "title": "\u7d4c\u5ea6(\u307c\u304b\u3057)"
+    },
+    "notif_prefs": {
+      "type": "string",
+      "title": "\u901a\u77e5\u8a2d\u5b9a(JSON)",
+      "default": "{\"dm\":true,\"follow\":true,\"comment\":true}"
+    },
     "fitness_goal": {
       "type": "string",
       "title": "Fitness Goal"

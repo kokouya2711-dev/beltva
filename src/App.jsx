@@ -12,12 +12,14 @@ import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import AppLayout from '@/components/AppLayout';
+import { LanguageProvider } from '@/lib/i18n';
 import Home from '@/pages/Home';
 import LivePage from '@/pages/LivePage';
 import MapPage from '@/pages/MapPage';
 import RankingsPage from '@/pages/RankingsPage';
 import TimelinePage from '@/pages/TimelinePage';
-import VoiceRoomsPage from '@/pages/VoiceRoomsPage';
+import UsersPage from '@/pages/UsersPage';
+import SettingsPage from '@/pages/SettingsPage';
 import Profile from '@/pages/Profile';
 import ProfileEdit from '@/pages/ProfileEdit';
 import FollowList from '@/pages/FollowList';
@@ -62,7 +64,8 @@ const AuthenticatedApp = () => {
           <Route path="/map" element={<MapPage />} />
           <Route path="/rankings" element={<RankingsPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
-          <Route path="/voice" element={<VoiceRoomsPage />} />
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/profile/:id/followers" element={<FollowList type="followers" />} />
@@ -80,15 +83,17 @@ const AuthenticatedApp = () => {
 function App() {
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <ScrollToTop />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <ScrollToTop />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </AuthProvider>
+    </LanguageProvider>
   )
 }
 

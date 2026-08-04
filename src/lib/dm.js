@@ -36,7 +36,7 @@ export async function sendMessage(conv, meId, { content, image_url }) {
   updates[myField] = new Date().toISOString();
   await base44.entities.Conversation.update(conv.id, updates);
   const otherId = meId === conv.a_id ? conv.b_id : conv.a_id;
-  maybeNotify(otherId, meId, "dm", image_url ? "📷 画像を送信" : (content || ""), conv.id);
+  notify(otherId, meId, "dm", image_url ? "📷 画像を送信" : (content || ""), conv.id);
   return { msg, conv: { ...conv, ...updates } };
 }
 
@@ -90,12 +90,18 @@ export async function updatePresence(meId) {
   else await base44.entities.Presence.create({ last_seen: now });
 }
 
-async function maybeNotify(userId, actorId, type, text, targetId) {
-  const [bl, mt] = await Promise.all([
+export async function notify(userId, actorId, type, text, targetId) {
+  if (!userId || userId === actorId) return;
+  const [bl, mt, user] = await Promise.all([
     base44.entities.Block.filter({ blocker_id: userId, blocked_id: actorId }),
-    base44.entities.Mute.filter({ muter_id: userId, muted_id: actorId })
+    base44.entities.Mute.filter({ muter_id: userId, muted_id: actorId }),
+    base44.entities.User.get(userId).catch(() => null)
   ]);
   if (bl.length || mt.length) return;
+  let prefs = { dm: true, follow: true, comment: true };
+  if (user?.notif_prefs) { try { prefs = { ...prefs, ...JSON.parse(user.notif_prefs) }; } catch {} }
+  const key = type === "dm" ? "dm" : type === "follow" ? "follow" : "comment";
+  if (prefs[key] === false) return;
   base44.entities.Notification.create({ user_id: userId, type, actor_id: actorId, text, read: false, target_id: targetId, target_type: type }).catch(() => {});
 }
 
