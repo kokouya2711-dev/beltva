@@ -1,50 +1,33 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Flame, Radio, Trophy, Plus, TrendingUp, Zap, Globe, MapPin } from "lucide-react";
+import { Radio, Globe, Flame, Newspaper, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LiveSessionCard from "@/components/LiveSessionCard";
-import RecordWorkoutDialog from "@/components/RecordWorkoutDialog";
 import TrainingGlobe from "@/components/TrainingGlobe";
+import PostCard from "@/components/PostCard";
 import { useT } from "@/lib/i18n";
-import { formatNumber, timeAgo } from "@/lib/workouts";
 
 export default function Home() {
   const t = useT();
-  const [me, setMe] = useState(null);
   const [liveSessions, setLiveSessions] = useState([]);
-  const [records, setRecords] = useState([]);
-  const [showRecord, setShowRecord] = useState(false);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [live, recs, user] = await Promise.all([
+      const [live, topPosts] = await Promise.all([
         base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 50),
-        base44.entities.WorkoutRecord.list("-created_date", 100),
-        base44.auth.me().catch(() => null)
+        base44.entities.Post.list("-likes", 30)
       ]);
       setLiveSessions(live);
-      setRecords(recs);
-      setMe(user);
+      setPosts(topPosts);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => { load(); }, [load]);
-
-  const leaderboard = React.useMemo(() => {
-    const map = {};
-    records.forEach((r) => {
-      const uid = r.created_by_id;
-      if (!uid) return;
-      if (!map[uid]) map[uid] = { uid, name: r.created_by?.full_name || r.created_by?.email || `ユーザー${uid.slice(-4)}`, volume: 0, count: 0 };
-      map[uid].volume += Number(r.volume) || 0;
-      map[uid].count += 1;
-    });
-    return Object.values(map).sort((a, b) => b.volume - a.volume).slice(0, 5);
-  }, [records]);
 
   const points = liveSessions
     .filter((s) => s.lat != null && s.lng != null)
@@ -56,48 +39,11 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-8">
-      {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-border glass p-6 md:p-10">
-        <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -left-10 bottom-0 w-48 h-48 rounded-full bg-accent/20 blur-3xl" />
-        <div className="relative">
-          <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-3">
-            <Zap className="w-3.5 h-3.5" /> PULSE — みんなで燃やそう
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
-            {me ? `おかえり、@${me.email?.split("@")[0]} 👋` : t("home.heroTitle")}
-          </h1>
-          <p className="text-muted-foreground mt-2 max-w-lg">{t("home.heroSub")}</p>
-          <div className="flex flex-wrap gap-3 mt-6">
-            <button
-              onClick={() => setShowRecord(true)}
-              className="flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
-            >
-              <Plus className="w-4 h-4" /> {t("home.record")}
-            </button>
-            <Link
-              to="/live"
-              className="flex items-center gap-2 bg-secondary/60 border border-border px-5 py-3 rounded-xl hover:border-primary/40 transition"
-            >
-              <Radio className="w-4 h-4" /> {t("home.viewLive")}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat icon={Radio} label={t("home.liveCount")} value={liveSessions.length} color="text-red-500" />
-        <Stat icon={TrendingUp} label={t("home.weekRecords")} value={records.length} color="text-primary" />
-        <Stat icon={Flame} label={t("home.participants")} value={leaderboard.length} color="text-accent" />
-        <Stat icon={Trophy} label={t("home.totalVolume")} value={records.reduce((s, r) => s + (Number(r.volume) || 0), 0)} suffix="kg" color="text-chart-3" />
-      </section>
-
-      {/* Globe */}
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-10">
+      {/* 🌍 World Globe — main hero */}
       <section>
-        <SectionHeader icon={Globe} title={t("home.globe")} sub="LIVE TRAINING" accent="text-primary" />
-        <p className="text-sm text-muted-foreground -mt-1 mb-3">{t("home.globeSub")}</p>
+        <SectionTitle icon={Globe} title={t("home.globe")} accent="text-primary" />
+        <p className="text-sm text-muted-foreground mb-3">{t("home.globeSub")}</p>
         <div className="relative rounded-2xl overflow-hidden border border-border">
           <TrainingGlobe points={points} />
           <div className="absolute top-3 right-3 z-[400] glass rounded-lg px-3 py-2 text-xs flex items-center gap-2">
@@ -107,112 +53,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live now */}
+      {/* 🔥 Now training */}
       <section>
-        <SectionHeader icon={Radio} title={t("home.liveNow")} sub="TRAINING NOW" accent="text-red-500" link="/live" />
+        <SectionTitle icon={Flame} title={t("home.liveNow")} accent="text-red-500" />
         {loading ? (
-          <LoadingGrid />
+          <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
         ) : liveSessions.length === 0 ? (
-          <EmptyState icon={Radio} text={t("home.noLive")} />
+          <EmptyState icon={Flame} text={t("home.noLive")} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {liveSessions.map((s) => (
-              <LiveSessionCard key={s.id} session={s} onHype={hype} isOwner={me && s.created_by_id === me.id} />
+              <LiveSessionCard key={s.id} session={s} onHype={hype} />
             ))}
           </div>
         )}
       </section>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Leaderboard */}
-        <section>
-          <SectionHeader icon={Trophy} title={t("home.leaderboard")} sub="LEADERBOARD" accent="text-primary" link="/rankings" />
-          <div className="glass rounded-2xl border border-border divide-y divide-border">
-            {leaderboard.length === 0 ? (
-              <EmptyState icon={Trophy} text="—" />
-            ) : (
-              leaderboard.map((u, i) => (
-                <div key={u.uid} className="flex items-center gap-3 px-4 py-3">
-                  <RankBadge rank={i + 1} />
-                  <div className="flex-1 min-w-0">
-                    <Link to={`/profile/${u.uid}`} className="font-semibold truncate hover:text-primary block">{u.name}</Link>
-                    <div className="text-xs text-muted-foreground">{u.count}セッション</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-bold text-primary">{formatNumber(u.volume)} kg</div>
-                  </div>
-                </div>
-              ))
-            )}
+      {/* 📰 Popular posts */}
+      <section>
+        <SectionTitle icon={Newspaper} title={t("home.popularPosts")} accent="text-accent" link="/timeline" />
+        {loading ? (
+          <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+        ) : posts.length === 0 ? (
+          <EmptyState icon={Newspaper} text={t("home.noPosts")} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {posts.slice(0, 6).map((p) => <PostCard key={p.id} post={p} />)}
           </div>
-        </section>
-
-        {/* Recent activity */}
-        <section>
-          <SectionHeader icon={TrendingUp} title={t("home.recent")} sub="RECENT" accent="text-accent" />
-          <div className="glass rounded-2xl border border-border divide-y divide-border">
-            {records.slice(0, 6).map((r) => (
-              <div key={r.id} className="flex items-center gap-3 px-4 py-3">
-                <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center">
-                  <Flame className="w-4 h-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">
-                    {r.workout_type} · {r.sets}×{r.reps}{r.weight ? ` @${r.weight}kg` : ""}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    <Link to={`/profile/${r.created_by_id}`} className="hover:text-primary">{r.created_by?.full_name || r.created_by?.email || "匿名"}</Link> · {timeAgo(r.created_date)}
-                  </div>
-                </div>
-                <div className="text-right text-sm">
-                  <div className="font-bold text-primary">{formatNumber(r.volume)}</div>
-                  <div className="text-[10px] text-muted-foreground">kg</div>
-                </div>
-              </div>
-            ))}
-            {records.length === 0 && <EmptyState icon={TrendingUp} text="—" />}
-          </div>
-        </section>
-      </div>
-
-      {showRecord && <RecordWorkoutDialog onClose={() => setShowRecord(false)} onSaved={() => { setShowRecord(false); load(); }} />}
+        )}
+      </section>
     </div>
   );
 }
 
-function Stat({ icon: Icon, label, value, suffix, color }) {
+function SectionTitle({ icon: Icon, title, accent, link }) {
   return (
-    <div className="glass rounded-2xl border border-border p-4">
-      <Icon className={`w-5 h-5 ${color}`} />
-      <div className="mt-3 text-2xl font-bold">{formatNumber(value)}{suffix}</div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
-function SectionHeader({ icon: Icon, title, sub, accent, link }) {
-  return (
-    <div className="flex items-center justify-between mb-3">
+    <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
-        <Icon className={accent} style={{ width: 18, height: 18 }} />
-        <h2 className="font-bold text-lg">{title}</h2>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-widest">{sub}</span>
+        <Icon className={accent} style={{ width: 20, height: 20 }} />
+        <h2 className="font-bold text-xl">{title}</h2>
       </div>
       {link && <Link to={link} className="text-xs text-primary hover:underline">もっと見る →</Link>}
-    </div>
-  );
-}
-
-function RankBadge({ rank }) {
-  const styles = { 1: "bg-yellow-400 text-black", 2: "bg-slate-300 text-black", 3: "bg-orange-700 text-white" };
-  const cls = styles[rank] || "bg-secondary text-muted-foreground";
-  return <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${cls}`}>{rank}</div>;
-}
-
-function LoadingGrid() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {[0, 1, 2].map((i) => <div key={i} className="glass rounded-2xl h-56 animate-pulse" />)}
     </div>
   );
 }
