@@ -93,11 +93,11 @@ export default function Home() {
 
       {/* Live now */}
       <section>
-        <SectionHeader icon={Radio} title="いま配信中" sub="LIVE NOW" accent="text-red-500" />
+        <SectionHeader icon={Radio} title="いまトレーニング中" sub="TRAINING NOW" accent="text-red-500" />
         {loading ? (
           <LoadingGrid />
         ) : liveSessions.length === 0 ? (
-          <EmptyState icon={Radio} text="配信中のセッションはありません。最初にライブ配信を始めよう！" />
+          <EmptyState icon={Radio} text="いまトレーニング中の仲間はいません。最初にトレーニングを始めよう！" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {liveSessions.map((s) => (

@@ -54,6 +54,18 @@ export function getGeolocation() {
   });
 }
 
+// 位置を近隣（約5kmのグリッド）にぼかす。プライバシー保護のため正確な位置は保存しない。
+export function fuzzCoords(lat, lng) {
+  const grid = 0.05;
+  const baseLat = Math.round((Number(lat) || 0) / grid) * grid;
+  const baseLng = Math.round((Number(lng) || 0) / grid) * grid;
+  const jitter = () => (Math.random() - 0.5) * grid * 0.6;
+  return {
+    lat: Math.round((baseLat + jitter()) * 1000) / 1000,
+    lng: Math.round((baseLng + jitter()) * 1000) / 1000
+  };
+}
+
 // Tokyo fallback
 export const DEFAULT_CENTER = { lat: 35.6762, lng: 139.6503 };
 

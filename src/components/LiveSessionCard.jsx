@@ -23,7 +23,7 @@ export default function LiveSessionCard({ session, onView, onHype, isOwner, onEn
         <div className="absolute top-3 left-3 flex items-center gap-2">
           {live ? (
             <span className="flex items-center gap-1.5 bg-red-500 text-white text-[11px] font-bold px-2 py-1 rounded-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-white live-dot" /> LIVE
+              <span className="w-1.5 h-1.5 rounded-full bg-white live-dot" /> トレ中
             </span>
           ) : (
             <span className="bg-secondary text-muted-foreground text-[11px] font-bold px-2 py-1 rounded-md">終了</span>
@@ -78,14 +78,14 @@ export default function LiveSessionCard({ session, onView, onHype, isOwner, onEn
               onClick={() => onEnd && onEnd(session)}
               className="flex-1 bg-red-500/90 text-white text-sm font-semibold py-2 rounded-lg hover:bg-red-500"
             >
-              配信終了
+              終了
             </button>
           ) : (
             <button
               onClick={() => onView && onView(session)}
               className="flex-1 flex items-center justify-center gap-1.5 bg-secondary border border-border text-sm font-semibold py-2 rounded-lg hover:border-primary/40"
             >
-              <Radio className="w-4 h-4" /> 観戦
+              <Radio className="w-4 h-4" /> 見る
             </button>
           )}
         </div>

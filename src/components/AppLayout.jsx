@@ -10,14 +10,16 @@ import {
   Menu,
   X,
   MessageSquare,
-  Headphones
+  Headphones,
+  Dumbbell,
+  Globe
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 
 const nav = [
   { to: "/", label: "ホーム", icon: HomeIcon },
-  { to: "/live", label: "ライブ", icon: Radio },
-  { to: "/map", label: "マップ", icon: MapIcon },
+  { to: "/live", label: "トレ中", icon: Dumbbell },
+  { to: "/map", label: "グローブ", icon: Globe },
   { to: "/rankings", label: "ランキング", icon: Trophy },
   { to: "/timeline", label: "タイムライン", icon: MessageSquare },
   { to: "/voice", label: "ボイス", icon: Headphones }
@@ -71,7 +73,7 @@ export default function AppLayout() {
             onClick={() => setShowGoLive(true)}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
           >
-            <Radio className="w-4 h-4" /> ライブ開始
+            <Dumbbell className="w-4 h-4" /> トレ開始
           </button>
           {me && (
             <div className="mt-3 px-2 text-xs text-muted-foreground truncate">
@@ -94,7 +96,7 @@ export default function AppLayout() {
             onClick={() => setShowGoLive(true)}
             className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
           >
-            <Radio className="w-3.5 h-3.5" /> 配信
+            <Dumbbell className="w-3.5 h-3.5" /> トレ
           </button>
           <button onClick={() => setMobileOpen((v) => !v)} className="p-1.5">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

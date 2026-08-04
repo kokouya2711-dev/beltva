@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Radio, MapPin, Loader2, Check } from "lucide-react";
-import { WORKOUT_TYPES, getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
+import { WORKOUT_TYPES, getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
 
 export default function GoLiveDialog({ onClose }) {
   const [workoutType, setWorkoutType] = useState(WORKOUT_TYPES[0]);
@@ -16,14 +16,14 @@ export default function GoLiveDialog({ onClose }) {
     setLocating(true);
     const c = await getGeolocation();
     setLocating(false);
-    setCoords(c || DEFAULT_CENTER);
+    setCoords(c ? fuzzCoords(c.lat, c.lng) : fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
     if (!c) setLocationName((v) => v || "東京");
   }
 
   async function startLive() {
     setSubmitting(true);
     const now = new Date().toISOString();
-    const c = coords || DEFAULT_CENTER;
+    const c = coords || fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
     await base44.entities.LiveSession.create({
       status: "live",
       workout_type: workoutType,
@@ -47,8 +47,8 @@ export default function GoLiveDialog({ onClose }) {
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
             <Check className="w-7 h-7 text-primary" />
           </div>
-          <div className="font-semibold text-lg">ライブ配信を開始しました！</div>
-          <div className="text-sm text-muted-foreground">みんなが応募に来るのを待とう🔥</div>
+          <div className="font-semibold text-lg">トレーニングを開始しました！</div>
+          <div className="text-sm text-muted-foreground">みんなで励まし合おう🔥</div>
         </div>
       </Overlay>
     );
@@ -61,7 +61,7 @@ export default function GoLiveDialog({ onClose }) {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Radio className="w-4 h-4 text-primary-foreground" />
           </div>
-          <h2 className="font-bold text-lg">ライブ配信を開始</h2>
+          <h2 className="font-bold text-lg">トレーニングを開始</h2>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
           <X className="w-4 h-4" />
@@ -107,12 +107,12 @@ export default function GoLiveDialog({ onClose }) {
             </button>
           </div>
           {coords && (
-            <div className="text-[11px] text-accent mt-1">📍 位置を取得しました ({coords.lat.toFixed(3)}, {coords.lng.toFixed(3)})</div>
+            <div className="text-[11px] text-accent mt-1">📍 位置を取得（近隣にぼかして表示）· {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}</div>
           )}
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">実況メッセージ</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">ひとこと</label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -128,7 +128,7 @@ export default function GoLiveDialog({ onClose }) {
           className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />}
-          配信開始
+          トレーニング開始
         </button>
       </div>
     </Overlay>

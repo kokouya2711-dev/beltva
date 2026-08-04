@@ -53,8 +53,8 @@ export default function LivePage() {
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-6">
       <div className="flex items-center gap-2">
         <Radio className="w-5 h-5 text-red-500" />
-        <h1 className="text-2xl font-bold">ライブ配信</h1>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">LIVE</span>
+        <h1 className="text-2xl font-bold">いまトレーニング中</h1>
+        <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">TRAINING</span>
       </div>
 
       {/* Tabs */}
@@ -64,13 +64,13 @@ export default function LivePage() {
             onClick={() => setTab("live")}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium ${tab === "live" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            配信中
+            トレーニング中
           </button>
           <button
             onClick={() => setTab("ended")}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium ${tab === "ended" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            過去の配信
+            過去の記録
           </button>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default function LivePage() {
       ) : filtered.length === 0 ? (
         <div className="glass rounded-2xl border border-border py-16 flex flex-col items-center gap-2 text-muted-foreground">
           <Radio className="w-8 h-8 opacity-50" />
-          <div className="text-sm">{tab === "live" ? "現在配信中のセッションはありません" : "過去の配信がありません"}</div>
+          <div className="text-sm">{tab === "live" ? "いまトレーニング中の仲間はいません" : "過去の記録がありません"}</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
