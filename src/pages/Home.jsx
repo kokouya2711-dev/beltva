@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { Flame, Radio, Trophy, Plus, Eye, MapPin, TrendingUp, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 import LiveSessionCard from "@/components/LiveSessionCard";
 import RecordWorkoutDialog from "@/components/RecordWorkoutDialog";
 import { formatNumber, timeAgo, computeVolume, metricValue } from "@/lib/workouts";
@@ -119,7 +120,7 @@ export default function Home() {
                 <div key={u.uid} className="flex items-center gap-3 px-4 py-3">
                   <RankBadge rank={i + 1} />
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">{u.name}</div>
+                    <Link to={`/profile/${u.uid}`} className="font-semibold truncate hover:text-primary block">{u.name}</Link>
                     <div className="text-xs text-muted-foreground">{u.count}セッション</div>
                   </div>
                   <div className="text-right">
@@ -145,7 +146,7 @@ export default function Home() {
                     {r.workout_type} · {r.sets}×{r.reps}{r.weight ? ` @${r.weight}kg` : ""}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {r.created_by?.full_name || r.created_by?.email || "匿名"} · {timeAgo(r.created_date)}
+                    <Link to={`/profile/${r.created_by_id}`} className="hover:text-primary">{r.created_by?.full_name || r.created_by?.email || "匿名"}</Link> · {timeAgo(r.created_date)}
                   </div>
                 </div>
                 <div className="text-right text-sm">

@@ -76,9 +76,9 @@ export default function AppLayout() {
             <Dumbbell className="w-4 h-4" /> トレ開始
           </button>
           {me && (
-            <div className="mt-3 px-2 text-xs text-muted-foreground truncate">
+            <Link to={`/profile/${me.id}`} className="mt-3 px-2 text-xs text-muted-foreground truncate hover:text-primary block">
               @{me.email?.split("@")[0]}
-            </div>
+            </Link>
           )}
         </div>
       </aside>

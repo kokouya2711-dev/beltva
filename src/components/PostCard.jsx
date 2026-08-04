@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle, Send, Loader2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
+import UserLink from "@/components/UserLink";
 import { timeAgo, formatNumber } from "@/lib/workouts";
 
 export default function PostCard({ post }) {
@@ -15,7 +16,6 @@ export default function PostCard({ post }) {
   const [posting, setPosting] = useState(false);
 
   const style = CATEGORY_STYLE[post.category] || CATEGORY_STYLE["シェア"];
-  const author = post.created_by?.full_name || post.created_by?.email?.split("@")[0] || "匿名";
 
   async function like() {
     if (liked) return;
@@ -49,17 +49,10 @@ export default function PostCard({ post }) {
   return (
     <div className="glass rounded-2xl border border-border p-4">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-bold text-sm">
-          {author.slice(0, 2).toUpperCase()}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-sm truncate">{author}</span>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color}`}>{post.category}</span>
-          </div>
-          <div className="text-xs text-muted-foreground">{timeAgo(post.created_date)}{post.workout_type ? ` · ${post.workout_type}` : ""}</div>
-        </div>
+        <UserLink user={post.created_by} size="md" className="flex-1" />
+        <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{post.category}</span>
       </div>
+      <div className="text-xs text-muted-foreground mb-3">{timeAgo(post.created_date)}{post.workout_type ? ` · ${post.workout_type}` : ""}</div>
 
       <div className="text-sm whitespace-pre-wrap break-words mb-3">{post.content}</div>
 

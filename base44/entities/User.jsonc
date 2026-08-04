@@ -7,6 +7,52 @@
         "admin",
         "user"
       ]
+    },
+    "display_name": {
+      "type": "string",
+      "title": "\u8868\u793a\u540d"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u753b\u50cf"
+    },
+    "bio": {
+      "type": "string",
+      "title": "\u81ea\u5df1\u7d39\u4ecb"
+    },
+    "country": {
+      "type": "string",
+      "title": "\u56fd(ISO\u30b3\u30fc\u30c9)"
+    },
+    "fitness_goal": {
+      "type": "string",
+      "title": "Fitness Goal"
+    },
+    "training_history": {
+      "type": "string",
+      "title": "\u30c8\u30ec\u30fc\u30cb\u30f3\u30b0\u6b74"
+    },
+    "height_cm": {
+      "type": "number",
+      "title": "\u8eab\u9577(cm)"
+    },
+    "weight_kg": {
+      "type": "number",
+      "title": "\u4f53\u91cd(kg)"
+    },
+    "height_public": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u8eab\u9577\u516c\u958b"
+    },
+    "weight_public": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u4f53\u91cd\u516c\u958b"
+    },
+    "specialty": {
+      "type": "string",
+      "title": "\u5f97\u610f\u7a2e\u76ee"
     }
   },
   "required": [

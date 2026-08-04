@@ -18,6 +18,9 @@ import MapPage from '@/pages/MapPage';
 import RankingsPage from '@/pages/RankingsPage';
 import TimelinePage from '@/pages/TimelinePage';
 import VoiceRoomsPage from '@/pages/VoiceRoomsPage';
+import Profile from '@/pages/Profile';
+import ProfileEdit from '@/pages/ProfileEdit';
+import FollowList from '@/pages/FollowList';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -58,6 +61,10 @@ const AuthenticatedApp = () => {
           <Route path="/rankings" element={<RankingsPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/voice" element={<VoiceRoomsPage />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/profile/:id/followers" element={<FollowList type="followers" />} />
+          <Route path="/profile/:id/following" element={<FollowList type="following" />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
