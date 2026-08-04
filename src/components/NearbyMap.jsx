@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
 import { base44 } from "@/api/base44Client";
-import { getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
+import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame } from "lucide-react";
 import { useT } from "@/lib/i18n";
@@ -50,9 +50,7 @@ export default function NearbyMap() {
         const geo = await getGeolocation();
         if (geo) c = [geo.lat, geo.lng];
         if (!c) c = [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng];
-        // Privacy: blur own location to ~5km grid before displaying
-        const fuzzed = fuzzCoords(c[0], c[1]);
-        setCenter([fuzzed.lat, fuzzed.lng]);
+        setCenter(c);
       } finally {
         setLoading(false);
       }
@@ -173,7 +171,7 @@ export default function NearbyMap() {
       </MapContainer>
 
       {/* top-right controls */}
-      <div className="absolute top-3 right-3 z-[400] flex flex-col gap-2">
+      <div className="absolute top-14 right-3 z-[400] flex flex-col gap-2">
         <button
           onClick={flyToWorld}
           className="glass rounded-lg px-3 py-2 text-xs flex items-center gap-1.5 hover:bg-secondary transition"
@@ -197,7 +195,7 @@ export default function NearbyMap() {
       </div>
 
       {/* filter chips */}
-      <div className="absolute top-3 left-3 z-[400] flex gap-1.5 overflow-x-auto no-scrollbar max-w-[58%]">
+      <div className="absolute top-3 left-3 right-3 z-[400] flex gap-1.5 overflow-x-auto no-scrollbar">
         {FILTERS.map((k) => (
           <button
             key={k}
