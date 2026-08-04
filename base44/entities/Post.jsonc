@@ -30,6 +30,11 @@
       "type": "number",
       "default": 0,
       "title": "\u30b3\u30e1\u30f3\u30c8\u6570"
+    },
+    "is_anonymous": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u533f\u540d\u6295\u7a3f"
     }
   },
   "required": [

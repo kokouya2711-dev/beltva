@@ -8,6 +8,7 @@ export default function CreatePostDialog({ onClose, onSaved }) {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("シェア");
   const [workoutType, setWorkoutType] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   async function save() {
@@ -17,6 +18,7 @@ export default function CreatePostDialog({ onClose, onSaved }) {
       content: content.trim(),
       category,
       workout_type: workoutType || undefined,
+      is_anonymous: isAnonymous,
       likes: 0,
       comments_count: 0
     });
@@ -60,6 +62,13 @@ export default function CreatePostDialog({ onClose, onSaved }) {
             <option value="">なし</option>
             {WORKOUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">投稿形式</label>
+          <div className="grid grid-cols-2 gap-2 mt-1.5">
+            <button type="button" onClick={() => setIsAnonymous(false)} className={`text-xs px-2 py-2 rounded-lg border transition ${!isAnonymous ? "bg-primary/10 text-primary border-primary/30" : "border-border text-muted-foreground"}`}>実名で投稿</button>
+            <button type="button" onClick={() => setIsAnonymous(true)} className={`text-xs px-2 py-2 rounded-lg border transition ${isAnonymous ? "bg-primary/10 text-primary border-primary/30" : "border-border text-muted-foreground"}`}>匿名で投稿</button>
+          </div>
         </div>
         <button onClick={save} disabled={submitting || !content.trim()} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60">
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} 投稿する

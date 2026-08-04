@@ -66,7 +66,8 @@ export default function NearbyMap() {
   const isOnline = (uid) => !!(presence[uid] && Date.now() - new Date(presence[uid]).getTime() < ONLINE_WINDOW);
 
   const filtered = useMemo(() => {
-    let arr = users;
+    // always exclude offline users
+    let arr = users.filter((u) => isOnline(u.id) || liveByUser[u.id]);
     if (filter === "online") arr = arr.filter((u) => isOnline(u.id));
     else if (filter === "training") arr = arr.filter((u) => liveByUser[u.id]);
     else if (filter === "following") arr = arr.filter((u) => followIds.has(u.id));

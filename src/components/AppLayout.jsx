@@ -63,7 +63,7 @@ export default function AppLayout() {
             <Flame className="w-5 h-5 text-primary-foreground" />
           </div>
           <div className="leading-tight flex-1">
-            <div className="font-bold tracking-tight">PULSE</div>
+            <div className="font-bold tracking-tight">BELTVA</div>
             <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Train · Live · Rank</div>
           </div>
           <NotificationsBell meId={me?.id} />
@@ -110,7 +110,7 @@ export default function AppLayout() {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Flame className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="font-bold tracking-tight">PULSE</span>
+          <span className="font-bold tracking-tight">BELTVA</span>
         </div>
         <div className="flex items-center gap-1">
           <NotificationsBell meId={me?.id} />

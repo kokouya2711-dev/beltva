@@ -54,7 +54,14 @@ export default function PostCard({ post }) {
   return (
     <div className="glass rounded-2xl border border-border p-4">
       <div className="flex items-center gap-3 mb-3">
-        <UserLink user={post.created_by} size="md" className="flex-1" />
+        {post.is_anonymous ? (
+          <div className="flex items-center gap-2 flex-1">
+            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold shrink-0">匿</div>
+            <span className="text-sm font-medium">匿名</span>
+          </div>
+        ) : (
+          <UserLink user={post.created_by} size="md" className="flex-1" />
+        )}
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{post.category}</span>
       </div>
       <div className="text-xs text-muted-foreground mb-3">{timeAgo(post.created_date)}{post.workout_type ? ` · ${post.workout_type}` : ""}</div>
