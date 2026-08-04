@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { useT, useI18n } from "@/lib/i18n";
+import { useT, useI18n, LANGS } from "@/lib/i18n";
 import { ChevronRight, User, Heart, Target, Bell, Globe, Moon, LogOut } from "lucide-react";
-
-const LANGS = [{ code: "ja", label: "日本語" }, { code: "en", label: "English" }, { code: "zh", label: "中文" }, { code: "ko", label: "한국어" }];
 
 export default function SettingsPage() {
   const t = useT();

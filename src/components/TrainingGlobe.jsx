@@ -10,7 +10,50 @@ function latLngToVector3(lat, lng, radius) {
   return new THREE.Vector3(x, y, z);
 }
 
-const EARTH_TEXTURE = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
+// Subsolar point (where the sun is directly overhead) from current UTC time.
+function sunDirection(date = new Date()) {
+  const start = Date.UTC(date.getUTCFullYear(), 0, 0);
+  const dayOfYear = Math.floor((date.getTime() - start) / 86400000);
+  const decl = -23.44 * Math.cos((360 / 365) * (dayOfYear + 10) * Math.PI / 180);
+  const utcHours = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
+  const subsolarLng = -((utcHours - 12) * 15);
+  return latLngToVector3(decl, subsolarLng, 1).normalize();
+}
+
+const DAY_TEXTURE = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
+const NIGHT_TEXTURE = "https://unpkg.com/three-globe/example/img/earth-night.jpg";
+
+const EARTH_VERT = `
+varying vec2 vUv;
+varying vec3 vNormalW;
+void main() {
+  vUv = uv;
+  vNormalW = normalize(mat3(modelMatrix) * normal);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const EARTH_FRAG = `
+uniform sampler2D dayTexture;
+uniform sampler2D nightTexture;
+uniform vec3 sunDirection;
+uniform float dayReady;
+uniform float nightReady;
+varying vec2 vUv;
+varying vec3 vNormalW;
+void main() {
+  float intensity = dot(normalize(vNormalW), normalize(sunDirection));
+  float dayWeight = smoothstep(-0.18, 0.22, intensity);
+  vec3 day = mix(vec3(0.04, 0.08, 0.14), texture2D(dayTexture, vUv).rgb, dayReady);
+  vec3 night = mix(vec3(0.01, 0.01, 0.02), texture2D(nightTexture, vUv).rgb * 1.3, nightReady);
+  // day side: bright texture; night side: city lights
+  vec3 color = mix(night, day, dayWeight);
+  // soft twilight band
+  float twilight = (1.0 - abs(dayWeight - 0.5) * 2.0) * 0.12;
+  color += vec3(0.25, 0.12, 0.04) * twilight * (1.0 - dayWeight);
+  gl_FragColor = vec4(color, 1.0);
+}
+`;
 
 export default function TrainingGlobe({ points = [] }) {
   const mountRef = useRef(null);
@@ -28,52 +71,54 @@ export default function TrainingGlobe({ points = [] }) {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mount.appendChild(renderer.domElement);
-
-    const ambient = new THREE.AmbientLight(0xffffff, 0.35);
-    scene.add(ambient);
-    const dir = new THREE.DirectionalLight(0xffffff, 1.05);
-    dir.position.set(5, 3, 5);
-    scene.add(dir);
+    const el = renderer.domElement;
+    el.style.touchAction = "none";
+    mount.appendChild(el);
 
     const R = 1;
     const group = new THREE.Group();
     scene.add(group);
 
-    // earth sphere with texture (solid fallback color if texture fails)
-    const earthMat = new THREE.MeshPhongMaterial({
-      color: 0x16414a,
-      shininess: 8,
-      specular: 0x223344
+    // Day/night earth shader
+    const earthUniforms = {
+      dayTexture: { value: null },
+      nightTexture: { value: null },
+      sunDirection: { value: new THREE.Vector3(1, 0, 0) },
+      dayReady: { value: 0 },
+      nightReady: { value: 0 }
+    };
+    const earthMat = new THREE.ShaderMaterial({
+      uniforms: earthUniforms,
+      vertexShader: EARTH_VERT,
+      fragmentShader: EARTH_FRAG
     });
-    const earth = new THREE.Mesh(new THREE.SphereGeometry(R, 64, 64), earthMat);
+    const earth = new THREE.Mesh(new THREE.SphereGeometry(R, 96, 96), earthMat);
     group.add(earth);
 
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin("anonymous");
-    loader.load(
-      EARTH_TEXTURE,
-      (tex) => {
-        tex.colorSpace = THREE.SRGBColorSpace;
-        earthMat.map = tex;
-        earthMat.color.set(0xffffff);
-        earthMat.needsUpdate = true;
-      },
-      undefined,
-      () => { /* keep solid color fallback */ }
-    );
+    loader.load(DAY_TEXTURE, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      earthUniforms.dayTexture.value = tex;
+      earthUniforms.dayReady.value = 1;
+    });
+    loader.load(NIGHT_TEXTURE, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      earthUniforms.nightTexture.value = tex;
+      earthUniforms.nightReady.value = 1;
+    });
 
-    // subtle tech grid overlay
+    // subtle grid overlay
     const grid = new THREE.Mesh(
       new THREE.SphereGeometry(R * 1.002, 48, 32),
-      new THREE.MeshBasicMaterial({ color: 0x2a4a3a, wireframe: true, transparent: true, opacity: 0.1 })
+      new THREE.MeshBasicMaterial({ color: 0x2a4a3a, wireframe: true, transparent: true, opacity: 0.08 })
     );
     group.add(grid);
 
     // atmosphere rim glow
     const atm = new THREE.Mesh(
-      new THREE.SphereGeometry(R * 1.12, 48, 48),
-      new THREE.MeshBasicMaterial({ color: 0x6ee7b7, transparent: true, opacity: 0.09, side: THREE.BackSide })
+      new THREE.SphereGeometry(R * 1.14, 48, 48),
+      new THREE.MeshBasicMaterial({ color: 0x6ee7b7, transparent: true, opacity: 0.12, side: THREE.BackSide })
     );
     scene.add(atm);
 
@@ -113,15 +158,21 @@ export default function TrainingGlobe({ points = [] }) {
     buildRef.current = build;
     build();
 
-    // drag to rotate
+    // interaction state
     let dragging = false;
+    let pinching = false;
     let px = 0, py = 0;
+    let pinchDist = 0;
+    const MIN_Z = 1.8, MAX_Z = 6;
+
     const onDown = (e) => {
       dragging = true;
+      pinching = false;
       const t = e.touches ? e.touches[0] : e;
       px = t.clientX; py = t.clientY;
     };
     const onMove = (e) => {
+      if (pinching) return;
       if (!dragging) return;
       const t = e.touches ? e.touches[0] : e;
       group.rotation.y += (t.clientX - px) * 0.005;
@@ -129,21 +180,62 @@ export default function TrainingGlobe({ points = [] }) {
       group.rotation.x = Math.max(-1.2, Math.min(1.2, group.rotation.x));
       px = t.clientX; py = t.clientY;
     };
-    const onUp = () => { dragging = false; };
-    const el = renderer.domElement;
+    const onUp = () => { dragging = false; pinching = false; pinchDist = 0; };
+
+    // touch with pinch zoom + prevent page scroll
+    const onTouchStart = (e) => {
+      if (e.touches.length === 2) {
+        pinching = true;
+        dragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        pinchDist = Math.hypot(dx, dy);
+      } else if (e.touches.length === 1) {
+        onDown(e);
+      }
+    };
+    const onTouchMove = (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        if (pinchDist) {
+          camera.position.z = Math.max(MIN_Z, Math.min(MAX_Z, camera.position.z - (dist - pinchDist) * 0.006));
+        }
+        pinchDist = dist;
+      } else if (e.touches.length === 1 && dragging) {
+        e.preventDefault();
+        onMove(e);
+      }
+    };
+    const onTouchEnd = (e) => {
+      if (e.touches.length === 0) { onUp(); }
+      else if (e.touches.length === 1) { pinching = false; pinchDist = 0; px = e.touches[0].clientX; py = e.touches[0].clientY; dragging = true; }
+    };
+
+    // wheel zoom (prevent page scroll)
+    const onWheel = (e) => {
+      e.preventDefault();
+      camera.position.z = Math.max(MIN_Z, Math.min(MAX_Z, camera.position.z + e.deltaY * 0.0022));
+    };
+
     el.addEventListener("mousedown", onDown);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    el.addEventListener("touchstart", onDown, { passive: true });
-    el.addEventListener("touchmove", onMove, { passive: true });
-    el.addEventListener("touchend", onUp);
+    el.addEventListener("touchstart", onTouchStart, { passive: false });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: false });
+    el.addEventListener("wheel", onWheel, { passive: false });
 
     const clock = new THREE.Clock();
     let raf;
     const animate = () => {
       raf = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
-      if (!dragging) group.rotation.y += 0.0014;
+      if (!dragging && !pinching) group.rotation.y += 0.0012;
+      // live sun position from current time
+      earthUniforms.sunDirection.value.copy(sunDirection(new Date()));
       markers.children.forEach((c) => {
         const s = 1 + Math.sin(t * 2.2 + c.userData.phase) * 0.4;
         if (c.userData.isGlow) {
@@ -172,9 +264,10 @@ export default function TrainingGlobe({ points = [] }) {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       el.removeEventListener("mousedown", onDown);
-      el.removeEventListener("touchstart", onDown);
-      el.removeEventListener("touchmove", onMove);
-      el.removeEventListener("touchend", onUp);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("wheel", onWheel);
       mount.removeChild(el);
       renderer.dispose();
     };
