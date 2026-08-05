@@ -4,7 +4,7 @@ import { displayName, flagEmoji, COUNTRIES } from "@/lib/profile";
 import { parseHobbies } from "@/lib/hobbies";
 import { useT } from "@/lib/i18n";
 import { getOrCreateConversation, blockExists } from "@/lib/dm";
-import { Mail } from "lucide-react";
+import { Mail, Flame } from "lucide-react";
 import FollowButton from "@/components/FollowButton";
 
 function countryName(code) {
@@ -26,7 +26,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
     ? "ring-2 ring-[#ccff00] shadow-[0_0_12px_rgba(204,255,0,0.5)]"
     : isOnline
     ? "ring-2 ring-green-500"
-    : "ring-1 ring-border";
+    : "";
 
   async function startDm() {
     if (!me || !user) return;
@@ -71,7 +71,13 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
           {hobbies.length > 3 && <span className="text-[10px] text-muted-foreground">+{hobbies.length - 3}</span>}
         </div>
         <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-          {user.training_purpose && <span className="text-[10px] text-primary">{t("purpose." + user.training_purpose)}</span>}
+          {isTraining && (
+            <span className="text-[10px] text-[#ccff00] flex items-center gap-1"><Flame className="w-3 h-3" /> トレーニング中</span>
+          )}
+          {!isTraining && isOnline && (
+            <span className="text-[10px] text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400" /> オンライン中</span>
+          )}
+          {user.training_purpose && <span className="text-[10px] text-primary">· {t("purpose." + user.training_purpose)}</span>}
           {reason && reason.length > 0 && (
             <span className="text-[10px] text-muted-foreground">· {reason.join(" · ")}</span>
           )}

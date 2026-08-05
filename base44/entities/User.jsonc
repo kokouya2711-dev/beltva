@@ -47,6 +47,15 @@
       "default": false,
       "title": "\u6027\u5225\u516c\u958b"
     },
+    "languages": {
+      "type": "string",
+      "title": "\u8a71\u305b\u308b\u8a00\u8a9e(JSON\u914d\u5217)",
+      "default": "[]"
+    },
+    "age": {
+      "type": "number",
+      "title": "\u5e74\u9f62"
+    },
     "lat": {
       "type": "number",
       "title": "\u7def\u5ea6(\u307c\u304b\u3057)"

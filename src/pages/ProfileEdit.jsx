@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Loader2, Camera, Check } from "lucide-react";
 import { COUNTRIES, flagEmoji } from "@/lib/profile";
 import { TRAINING_PURPOSES, parseHobbies } from "@/lib/hobbies";
-import { useT } from "@/lib/i18n";
+import { useT, LANGS } from "@/lib/i18n";
 import HobbyEditor from "@/components/HobbyEditor";
 
 const inputCls = "w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary";
@@ -28,13 +28,22 @@ export default function ProfileEdit() {
         training_purpose: u.training_purpose || "",
         avatar_url: u.avatar_url || "",
         gender: u.gender || "",
-        gender_public: u.gender_public === true
+        gender_public: u.gender_public === true,
+        languages: parseLanguages(u.languages),
+        age: u.age != null ? String(u.age) : ""
       });
       setHobbies(parseHobbies(u.hobbies));
     }).catch(() => navigate("/"));
   }, [navigate]);
 
   function set(k, v) { setForm((f) => ({ ...f, [k]: v })); }
+  function parseLanguages(s) { try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; } }
+  function toggleLang(code) {
+    setForm((f) => {
+      const has = (f.languages || []).includes(code);
+      return { ...f, languages: has ? f.languages.filter((c) => c !== code) : [...(f.languages || []), code] };
+    });
+  }
 
   async function uploadAvatar(file) {
     setUploading(true);
@@ -55,7 +64,9 @@ export default function ProfileEdit() {
         avatar_url: form.avatar_url,
         hobbies: JSON.stringify(hobbies),
         gender: form.gender || undefined,
-        gender_public: form.gender_public
+        gender_public: form.gender_public,
+        languages: JSON.stringify(form.languages || []),
+        age: form.age ? Number(form.age) : undefined
       });
       navigate(`/profile/${me.id}`);
     } finally { setSaving(false); }
@@ -108,6 +119,27 @@ export default function ProfileEdit() {
             公開する
           </label>
         </div>
+      </Field>
+
+      <Field label="話せる言語">
+        <div className="flex flex-wrap gap-1.5">
+          {LANGS.map((l) => {
+            const active = (form.languages || []).includes(l.code);
+            return (
+              <button
+                key={l.code}
+                type="button"
+                onClick={() => toggleLang(l.code)}
+                className={`text-xs px-2.5 py-1 rounded-full border transition ${active ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
+              >
+                {l.label}
+              </button>
+            );
+          })}
+        </div>
+      </Field>
+      <Field label="年齢（任意）">
+        <input type="number" value={form.age} onChange={(e) => set("age", e.target.value)} className={inputCls} placeholder="例: 25" min="13" max="120" />
       </Field>
 
       <div className="glass rounded-2xl border border-border p-4">
