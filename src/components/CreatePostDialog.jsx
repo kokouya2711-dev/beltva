@@ -86,7 +86,7 @@ export default function CreatePostDialog({ onClose, onSaved }) {
 
 function Overlay({ children, onClose }) {
   return (
-    <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-4" onClick={onClose}>
+    <div className="fixed top-0 inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
       <div className="w-full md:max-w-md bg-card border border-border rounded-t-2xl md:rounded-2xl p-5 shadow-2xl max-h-[85vh] overflow-y-auto no-scrollbar" onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
