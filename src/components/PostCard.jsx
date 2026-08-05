@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Loader2 } from "lucide-react";
+import { Heart, MessageCircle, Loader2, Pencil, Trash2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
+import EditPostDialog from "@/components/EditPostDialog";
 import UserLink from "@/components/UserLink";
 import { timeAgo, formatNumber } from "@/lib/workouts";
 import { displayName, fetchUser } from "@/lib/profile";
@@ -16,6 +17,8 @@ export default function PostCard({ post }) {
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
   const [previewComments, setPreviewComments] = useState([]);
   const [meId, setMeId] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const [currentPost, setCurrentPost] = useState(post);
 
   useEffect(() => {
     (async () => {
@@ -30,8 +33,16 @@ export default function PostCard({ post }) {
     })();
   }, [post.id]);
 
-  const style = CATEGORY_STYLE[post.category] || CATEGORY_STYLE["シェア"];
+  const style = CATEGORY_STYLE[currentPost.category] || CATEGORY_STYLE["シェア"];
   const liked = !!myLikeId;
+  const isOwner = meId && currentPost.created_by_id === meId && !currentPost.is_anonymous;
+
+  async function deletePost() {
+    if (!isOwner) return;
+    if (!window.confirm("この投稿を削除しますか？")) return;
+    await base44.entities.Post.delete(currentPost.id).catch(() => {});
+    window.location.reload();
+  }
 
   async function toggleLike() {
     if (!meId) return;
@@ -56,19 +67,29 @@ export default function PostCard({ post }) {
   return (
     <div className="glass rounded-2xl border border-border p-4">
       <div className="flex items-center gap-3 mb-3">
-        {post.is_anonymous ? (
+        {currentPost.is_anonymous ? (
           <div className="flex items-center gap-2 flex-1">
             <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold shrink-0">匿</div>
             <span className="text-sm font-medium">匿名</span>
           </div>
         ) : (
-          <UserLink user={post.created_by} size="md" className="flex-1" />
+          <UserLink user={currentPost.created_by} size="md" className="flex-1" />
         )}
-        <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{post.category}</span>
+        <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{currentPost.category}</span>
+        {isOwner && (
+          <div className="flex items-center gap-1 shrink-0">
+            <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition" title="編集">
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={deletePost} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-destructive transition" title="削除">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
-      <div className="text-xs text-muted-foreground mb-3">{timeAgo(post.created_date)}{post.workout_type ? ` · ${post.workout_type}` : ""}</div>
+      <div className="text-xs text-muted-foreground mb-3">{timeAgo(currentPost.created_date)}{currentPost.workout_type ? ` · ${currentPost.workout_type}` : ""}</div>
 
-      <div className="text-sm whitespace-pre-wrap break-words mb-3">{post.content}</div>
+      <div className="text-sm whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
       <div className="flex items-center gap-4 text-sm">
         <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
@@ -123,6 +144,14 @@ export default function PostCard({ post }) {
           </div>
         )}
       </div>
+
+      {showEdit && (
+        <EditPostDialog
+          post={currentPost}
+          onClose={() => setShowEdit(false)}
+          onSaved={(updated) => setCurrentPost(updated)}
+        />
+      )}
     </div>
   );
 }
