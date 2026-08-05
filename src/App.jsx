@@ -25,6 +25,7 @@ import ProfileEdit from '@/pages/ProfileEdit';
 import FollowList from '@/pages/FollowList';
 import Messages from '@/pages/Messages';
 import Chat from '@/pages/Chat';
+import PostDetail from '@/pages/PostDetail';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
           <Route path="/profile/:id/following" element={<FollowList type="following" />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/messages/:conversationId" element={<Chat />} />
+          <Route path="/posts/:id" element={<PostDetail />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

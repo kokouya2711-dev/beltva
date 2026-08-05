@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Send, Loader2 } from "lucide-react";
+import { Heart, MessageCircle, Loader2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import UserLink from "@/components/UserLink";
 import { timeAgo, formatNumber } from "@/lib/workouts";
@@ -14,11 +14,7 @@ export default function PostCard({ post }) {
   const [myLikeId, setMyLikeId] = useState(null);
   const [showLikers, setShowLikers] = useState(false);
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
-  const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState([]);
-  const [loadedComments, setLoadedComments] = useState(false);
-  const [draft, setDraft] = useState("");
-  const [posting, setPosting] = useState(false);
+  const [previewComments, setPreviewComments] = useState([]);
   const [meId, setMeId] = useState(null);
 
   useEffect(() => {
@@ -29,6 +25,8 @@ export default function PostCard({ post }) {
       setLikers(ls);
       const mine = ls.find((l) => l.created_by_id === me?.id);
       setMyLikeId(mine?.id || null);
+      const cs = await base44.entities.Comment.filter({ post_id: post.id }, "-created_date", 2).catch(() => []);
+      setPreviewComments(cs);
     })();
   }, [post.id]);
 
@@ -55,29 +53,6 @@ export default function PostCard({ post }) {
     }
   }
 
-  async function loadComments() {
-    const cs = await base44.entities.Comment.filter({ post_id: post.id }, "-created_date", 100);
-    setComments(cs);
-    setLoadedComments(true);
-  }
-
-  function toggleComments() {
-    if (!showComments && !loadedComments) loadComments();
-    setShowComments((v) => !v);
-  }
-
-  async function addComment() {
-    if (!draft.trim()) return;
-    setPosting(true);
-    const c = await base44.entities.Comment.create({ post_id: post.id, content: draft.trim(), likes: 0 });
-    setComments((cs) => [c, ...cs]);
-    setCommentsCount((n) => n + 1);
-    setDraft("");
-    setPosting(false);
-    base44.entities.Post.update(post.id, { comments_count: commentsCount + 1 }).catch(() => {});
-    if (post.created_by_id && post.created_by_id !== meId) notify(post.created_by_id, meId, "comment", `コメント: ${draft.trim().slice(0, 30)}`, post.id);
-  }
-
   return (
     <div className="glass rounded-2xl border border-border p-4">
       <div className="flex items-center gap-3 mb-3">
@@ -99,9 +74,9 @@ export default function PostCard({ post }) {
         <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
           <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {formatNumber(likes)}
         </button>
-        <button onClick={toggleComments} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
+        <Link to={`/posts/${post.id}`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
           <MessageCircle className="w-4 h-4" /> {formatNumber(commentsCount)}
-        </button>
+        </Link>
       </div>
 
       {likes > 0 && (
@@ -121,36 +96,52 @@ export default function PostCard({ post }) {
         <LikersList likers={likers} />
       )}
 
-      {showComments && (
-        <div className="mt-3 pt-3 border-t border-border space-y-3">
-          <div className="flex gap-2">
-            <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="コメントを書く…" className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary" onKeyDown={(e) => e.key === "Enter" && addComment()} />
-            <button onClick={addComment} disabled={posting || !draft.trim()} className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary text-primary-foreground disabled:opacity-40">
-              {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-            </button>
-          </div>
-          {!loadedComments ? (
-            <div className="flex justify-center py-2"><Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /></div>
-          ) : comments.length === 0 ? (
-            <div className="text-xs text-muted-foreground text-center py-2">まだコメントがありません</div>
-          ) : (
-            comments.map((c) => {
-              const ca = c.created_by?.full_name || c.created_by?.email?.split("@")[0] || "匿名";
-              return (
-                <div key={c.id} className="flex gap-2">
-                  <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold shrink-0">{ca.slice(0, 2).toUpperCase()}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs"><span className="font-medium">{ca}</span> <span className="text-muted-foreground ml-1">{timeAgo(c.created_date)}</span></div>
-                    <div className="text-sm">{c.content}</div>
+      <div className="mt-3 pt-3 border-t border-border">
+        {previewComments.length === 0 ? (
+          <Link to={`/posts/${post.id}`} className="text-xs text-muted-foreground hover:text-primary transition">
+            最初にコメントする
+          </Link>
+        ) : (
+          <div className="space-y-2">
+            {previewComments.map((c) => (
+              <Link key={c.id} to={`/posts/${post.id}`} className="flex gap-2 group">
+                <CommentAvatar userId={c.created_by_id} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs">
+                    <CommentName userId={c.created_by_id} />
+                    <span className="text-muted-foreground ml-1">{timeAgo(c.created_date)}</span>
                   </div>
+                  <div className="text-sm text-muted-foreground group-hover:text-foreground transition line-clamp-2">{c.content}</div>
                 </div>
-              );
-            })
-          )}
-        </div>
-      )}
+              </Link>
+            ))}
+            {commentsCount > previewComments.length && (
+              <Link to={`/posts/${post.id}`} className="text-xs text-primary hover:underline">
+                他{commentsCount - previewComments.length}件のコメントを見る
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+function CommentAvatar({ userId }) {
+  const [user, setUser] = useState(null);
+  useEffect(() => { fetchUser(userId).then(setUser).catch(() => {}); }, [userId]);
+  const name = displayName(user);
+  return (
+    <div className="w-7 h-7 rounded-full bg-secondary overflow-hidden flex items-center justify-center text-[10px] font-bold shrink-0">
+      {user?.avatar_url ? <img src={user.avatar_url} className="w-full h-full object-cover" /> : name.slice(0, 2).toUpperCase()}
+    </div>
+  );
+}
+
+function CommentName({ userId }) {
+  const [user, setUser] = useState(null);
+  useEffect(() => { fetchUser(userId).then(setUser).catch(() => {}); }, [userId]);
+  return <span className="font-medium">{displayName(user)}</span>;
 }
 
 function LikerAvatar({ userId }) {
