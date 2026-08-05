@@ -9,22 +9,22 @@ import { Loader2, Search, SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp }
 const ONLINE_WINDOW = 120000;
 
 const CATEGORIES = [
-  { key: "recommended", label: "おすすめ" },
-  { key: "online", label: "オンライン中" },
-  { key: "training", label: "トレーニング中" },
-  { key: "nearby", label: "近く" },
-  { key: "common-hobbies", label: "共通の趣味" },
-  { key: "same-purpose", label: "同じ目的" },
-  { key: "same-language", label: "同じ言語" },
-  { key: "same-country", label: "同じ国" },
-  { key: "new", label: "新規ユーザー" },
-  { key: "following", label: "フォロー中" }
+  { key: "recommended", labelKey: "users.cat_recommended" },
+  { key: "online", labelKey: "users.cat_online" },
+  { key: "training", labelKey: "users.cat_training" },
+  { key: "nearby", labelKey: "users.cat_nearby" },
+  { key: "common-hobbies", labelKey: "users.cat_commonHobbies" },
+  { key: "same-purpose", labelKey: "users.cat_samePurpose" },
+  { key: "same-language", labelKey: "users.cat_sameLanguage" },
+  { key: "same-country", labelKey: "users.cat_sameCountry" },
+  { key: "new", labelKey: "users.cat_new" },
+  { key: "following", labelKey: "users.cat_following" }
 ];
 
 const GENDERS = [
-  { key: "male", label: "男性" },
-  { key: "female", label: "女性" },
-  { key: "undisclosed", label: "回答しない" }
+  { key: "male", labelKey: "users.gender_male" },
+  { key: "female", labelKey: "users.gender_female" },
+  { key: "undisclosed", labelKey: "users.gender_undisclosed" }
 ];
 
 const inputCls = "w-full bg-secondary/60 border border-border rounded-lg px-2.5 py-1.5 text-sm outline-none focus:border-primary";
@@ -98,16 +98,16 @@ export default function UsersPage() {
     const common = commonHobbiesOf(u);
     let score = common.length * 3;
     const reasons = [];
-    if (common.length > 0) reasons.push(`共通の趣味${common.length}件`);
-    if (myPurpose && u.training_purpose === myPurpose) { score += 2; if (reasons.length < 3) reasons.push("同じ目的"); }
+    if (common.length > 0) reasons.push(t("users.reason_commonHobbies").replace("{n}", common.length));
+    if (myPurpose && u.training_purpose === myPurpose) { score += 2; if (reasons.length < 3) reasons.push(t("users.reason_samePurpose")); }
     const refLangs = myLanguages.length > 0 ? myLanguages : [lang];
-    if (langsOf(u).some((c) => refLangs.includes(c))) { score += 1; if (reasons.length < 3) reasons.push("同じ言語"); }
-    if (isOnline(u)) { score += 1; if (reasons.length < 3) reasons.push("オンライン中"); }
-    if (dist(u) < 5) { score += 1; if (reasons.length < 3) reasons.push("近くにいます"); }
+    if (langsOf(u).some((c) => refLangs.includes(c))) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_sameLanguage")); }
+    if (isOnline(u)) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_online")); }
+    if (dist(u) < 5) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_nearby")); }
     const last = presence[u.id] ? new Date(presence[u.id]).getTime() : 0;
-    if (last && Date.now() - last < 3600000) { score += 1; if (reasons.length < 3) reasons.push("最近アクティブ"); }
+    if (last && Date.now() - last < 3600000) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_recentActive")); }
     if (!last && new Date(u.created_date) && Date.now() - new Date(u.created_date).getTime() < 604800000) {
-      score += 1; if (reasons.length < 3) reasons.push("新規ユーザー");
+      score += 1; if (reasons.length < 3) reasons.push(t("users.reason_newUser"));
     }
     return { score, reasons: reasons.slice(0, 2), common };
   }
@@ -192,7 +192,7 @@ export default function UsersPage() {
               category === c.key ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground hover:text-foreground"
             }`}
           >
-            {c.label}
+            {t(c.labelKey)}
           </button>
         ))}
       </div>
@@ -201,61 +201,61 @@ export default function UsersPage() {
         onClick={() => setShowFilter((v) => !v)}
         className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition"
       >
-        <SlidersHorizontal className="w-3.5 h-3.5" /> 詳細フィルター
-        {hasFilter && <span className="text-primary">· {filterCount}件適用中</span>}
+        <SlidersHorizontal className="w-3.5 h-3.5" /> {t("users.detailFilter")}
+        {hasFilter && <span className="text-primary">· {t("users.filterApplied").replace("{n}", filterCount)}</span>}
         {showFilter ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
       </button>
 
       {showFilter && (
         <div className="glass rounded-xl border border-border p-4 space-y-3">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <FilterField label="国">
+            <FilterField label={t("common.country")}>
               <select value={fCountry} onChange={(e) => setFCountry(e.target.value)} className={inputCls}>
-                <option value="">指定しない</option>
+                <option value="">{t("users.noSpecify")}</option>
                 {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{flagEmoji(c.code)} {c.name}</option>)}
               </select>
             </FilterField>
-            <FilterField label="言語">
+            <FilterField label={t("common.language")}>
               <select value={fLang} onChange={(e) => setFLang(e.target.value)} className={inputCls}>
-                <option value="">指定しない</option>
+                <option value="">{t("users.noSpecify")}</option>
                 {LANGS.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
               </select>
             </FilterField>
-            <FilterField label="年齢">
+            <FilterField label={t("users.age")}>
               <div className="flex items-center gap-1">
-                <input type="number" value={fAgeMin} onChange={(e) => setFAgeMin(e.target.value)} placeholder="下" className={inputCls} min="13" />
+                <input type="number" value={fAgeMin} onChange={(e) => setFAgeMin(e.target.value)} placeholder={t("users.ageMin")} className={inputCls} min="13" />
                 <span className="text-muted-foreground text-xs">〜</span>
-                <input type="number" value={fAgeMax} onChange={(e) => setFAgeMax(e.target.value)} placeholder="上" className={inputCls} min="13" />
+                <input type="number" value={fAgeMax} onChange={(e) => setFAgeMax(e.target.value)} placeholder={t("users.ageMax")} className={inputCls} min="13" />
               </div>
             </FilterField>
-            <FilterField label="性別">
+            <FilterField label={t("users.gender")}>
               <select value={fGender} onChange={(e) => setFGender(e.target.value)} className={inputCls}>
-                <option value="">指定しない</option>
-                {GENDERS.map((g) => <option key={g.key} value={g.key}>{g.label}</option>)}
+                <option value="">{t("users.noSpecify")}</option>
+                {GENDERS.map((g) => <option key={g.key} value={g.key}>{t(g.labelKey)}</option>)}
               </select>
             </FilterField>
-            <FilterField label="趣味">
+            <FilterField label={t("common.hobbies")}>
               <select value={fHobby} onChange={(e) => setFHobby(e.target.value)} className={inputCls}>
-                <option value="">指定しない</option>
+                <option value="">{t("users.noSpecify")}</option>
                 {ALL_HOBBIES.map((h) => <option key={h} value={h}>{h}</option>)}
               </select>
             </FilterField>
-            <FilterField label="トレーニング目的">
+            <FilterField label={t("common.purpose")}>
               <select value={fPurpose} onChange={(e) => setFPurpose(e.target.value)} className={inputCls}>
-                <option value="">指定しない</option>
+                <option value="">{t("users.noSpecify")}</option>
                 {TRAINING_PURPOSES.map((p) => <option key={p.key} value={p.key}>{t("purpose." + p.key)}</option>)}
               </select>
             </FilterField>
-            <FilterField label="オンライン状態">
+            <FilterField label={t("users.onlineStatus")}>
               <label className="flex items-center gap-2 text-sm py-1.5 cursor-pointer">
                 <input type="checkbox" checked={fOnlineOnly} onChange={(e) => setFOnlineOnly(e.target.checked)} className="accent-primary" />
-                オンライン中のみ
+                {t("users.onlineOnly")}
               </label>
             </FilterField>
           </div>
           {hasFilter && (
             <button onClick={resetFilter} className="flex items-center gap-1.5 text-xs text-primary hover:underline">
-              <RotateCcw className="w-3.5 h-3.5" /> リセット
+              <RotateCcw className="w-3.5 h-3.5" /> {t("users.reset")}
             </button>
           )}
         </div>
@@ -264,7 +264,7 @@ export default function UsersPage() {
       {loading ? (
         <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : users.length === 0 ? null : filtered.length === 0 ? (
-        <div className="text-center text-sm text-muted-foreground py-12">この条件に該当する仲間が見つかりません</div>
+        <div className="text-center text-sm text-muted-foreground py-12">{t("users.noMatch")}</div>
       ) : (
         <div className="space-y-3">
           {filtered.map(({ u, reason, common }) => (

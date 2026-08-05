@@ -4,15 +4,19 @@ import PostCard from "@/components/PostCard";
 import CreatePostDialog from "@/components/CreatePostDialog";
 import { Plus, Loader2, MessageSquare } from "lucide-react";
 import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
+import { useT } from "@/lib/i18n";
+import { useTCategory } from "@/lib/i18nHelpers";
 
 const TABS = [
-  { key: "recommended", label: "おすすめ" },
-  { key: "popular", label: "人気" },
-  { key: "latest", label: "最新" },
-  { key: "following", label: "フォロー中" }
+  { key: "recommended", labelKey: "post.tab_recommended" },
+  { key: "popular", labelKey: "post.tab_popular" },
+  { key: "latest", labelKey: "post.tab_latest" },
+  { key: "following", labelKey: "post.tab_following" }
 ];
 
 export default function HomeTimeline() {
+  const t = useT();
+  const tCat = useTCategory();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("recommended");
@@ -63,13 +67,13 @@ export default function HomeTimeline() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-primary" />
-          <h2 className="font-bold text-xl">タイムライン</h2>
+          <h2 className="font-bold text-xl">{t("post.title")}</h2>
         </div>
         <button
           onClick={() => setShowCreate(true)}
           className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition"
         >
-          <Plus className="w-4 h-4" /> 投稿
+          <Plus className="w-4 h-4" /> {t("post.create")}
         </button>
       </div>
 
@@ -82,7 +86,7 @@ export default function HomeTimeline() {
               tab === tb.key ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"
             }`}
           >
-            {tb.label}
+            {t(tb.labelKey)}
           </button>
         ))}
       </div>
@@ -99,7 +103,7 @@ export default function HomeTimeline() {
                 active ? (s ? `${s.bg} ${s.color} ${s.border}` : "bg-primary/10 text-primary border-primary/30") : "border-border text-muted-foreground"
               }`}
             >
-              {c}
+              {c === "すべて" ? t("common.all") : tCat(c)}
             </button>
           );
         })}
@@ -112,12 +116,12 @@ export default function HomeTimeline() {
       ) : filtered.length === 0 ? (
         <div className="glass rounded-2xl border border-border py-12 flex flex-col items-center gap-2 text-muted-foreground">
           <MessageSquare className="w-8 h-8 opacity-40" />
-          <div className="text-sm">投稿がありません</div>
+          <div className="text-sm">{t("post.noPosts")}</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.slice(0, 20).map((p) => (
-            <PostCard key={p.id} post={p} />
+            <PostCard key={p.id} post={p} meId={me?.id} />
           ))}
         </div>
       )}

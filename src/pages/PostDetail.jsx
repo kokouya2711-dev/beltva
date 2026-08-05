@@ -3,11 +3,14 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import PostCard from "@/components/PostCard";
-import { timeAgo } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTimeAgo } from "@/lib/i18nHelpers";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 
 export default function PostDetail() {
+  const t = useT();
+  const timeAgo = useTimeAgo();
   const { id } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
@@ -44,7 +47,7 @@ export default function PostDetail() {
     setDraft("");
     setPosting(false);
     base44.entities.Post.update(id, { comments_count: (post.comments_count || 0) + 1 }).catch(() => {});
-    if (post.created_by_id && post.created_by_id !== meId) notify(post.created_by_id, meId, "comment", `コメント: ${draft.trim().slice(0, 30)}`, id).catch(() => {});
+    if (post.created_by_id && post.created_by_id !== meId) notify(post.created_by_id, meId, "comment", `${t("post.commentPlaceholder")}: ${draft.trim().slice(0, 30)}`, id).catch(() => {});
   }
 
   if (loading) return (
@@ -52,26 +55,26 @@ export default function PostDetail() {
   );
   if (!post) return (
     <div className="max-w-2xl mx-auto px-4 py-10 text-center text-muted-foreground">
-      投稿が見つかりませんでした
-      <div className="mt-4"><button onClick={() => navigate(-1)} className="text-primary hover:underline">戻る</button></div>
+      {t("post.notFound")}
+      <div className="mt-4"><button onClick={() => navigate(-1)} className="text-primary hover:underline">{t("common.back")}</button></div>
     </div>
   );
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-6 space-y-4">
       <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition">
-        <ArrowLeft className="w-4 h-4" /> 戻る
+        <ArrowLeft className="w-4 h-4" /> {t("common.back")}
       </button>
 
-      <PostCard post={post} />
+      <PostCard post={post} meId={meId} />
 
       <div className="glass rounded-2xl border border-border p-4">
-        <h2 className="text-sm font-semibold mb-3">コメント {comments.length}件</h2>
+        <h2 className="text-sm font-semibold mb-3">{t("post.commentCount").replace("{n}", comments.length)}</h2>
         <div className="flex gap-2 mb-4">
           <input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="コメントを書く…"
+            placeholder={t("post.commentPlaceholder")}
             className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
             onKeyDown={(e) => e.key === "Enter" && addComment()}
           />
@@ -81,7 +84,7 @@ export default function PostDetail() {
         </div>
 
         {comments.length === 0 ? (
-          <div className="text-xs text-muted-foreground text-center py-6">まだコメントがありません</div>
+          <div className="text-xs text-muted-foreground text-center py-6">{t("post.noComments")}</div>
         ) : (
           <div className="space-y-3">
             {comments.map((c) => {

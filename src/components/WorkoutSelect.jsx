@@ -1,12 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronDown, Check, X } from "lucide-react";
 import { POST_BODY_PARTS } from "@/lib/postWorkouts";
+import { useT } from "@/lib/i18n";
+import { useTBodyPart } from "@/lib/i18nHelpers";
 
 export default function WorkoutSelect({ value, onChange }) {
+  const t = useT();
+  const tBody = useTBodyPart();
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const ref = React.useRef(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     function onClick(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     }
@@ -27,7 +31,7 @@ export default function WorkoutSelect({ value, onChange }) {
         className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm flex items-center justify-between gap-2 outline-none focus:border-primary"
       >
         <span className={value ? "text-foreground truncate" : "text-muted-foreground"}>
-          {value || "なし"}
+          {value ? tBody(value) : t("common.none")}
         </span>
         <span className="flex items-center gap-1 shrink-0">
           {value ? (
@@ -46,7 +50,7 @@ export default function WorkoutSelect({ value, onChange }) {
             onClick={() => { onChange(""); setOpen(false); }}
             className={`w-full text-left px-3 py-2 text-sm hover:bg-secondary/60 flex items-center justify-between ${!value ? "text-primary" : ""}`}
           >
-            なし
+            {t("common.none")}
             {!value && <Check className="w-3.5 h-3.5" />}
           </button>
           {POST_BODY_PARTS.map((it) => (
@@ -56,7 +60,7 @@ export default function WorkoutSelect({ value, onChange }) {
               onClick={() => { onChange(it); setOpen(false); }}
               className={`w-full text-left px-3 py-2 text-sm hover:bg-secondary/60 flex items-center justify-between ${value === it ? "text-primary" : ""}`}
             >
-              {it}
+              {tBody(it)}
               {value === it && <Check className="w-3.5 h-3.5" />}
             </button>
           ))}

@@ -5,9 +5,11 @@ import { displayName, fetchUser } from "@/lib/profile";
 import { sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteUser, unmuteUser, isMuted, reportUser } from "@/lib/dm";
 import MessageBubble from "@/components/MessageBubble";
 import ReportDialog from "@/components/ReportDialog";
+import { useT } from "@/lib/i18n";
 import { ArrowLeft, Send, Image as ImageIcon, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
 
 export default function Chat() {
+  const t = useT();
   const { conversationId: id } = useParams();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
@@ -69,7 +71,7 @@ export default function Chat() {
   }, [messages.length]);
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
-  if (!conv) return <div className="text-center py-20 text-muted-foreground">会話が見つかりません</div>;
+  if (!conv) return <div className="text-center py-20 text-muted-foreground">{t("chat.notFound")}</div>;
 
   const otherId = me.id === conv.a_id ? conv.b_id : conv.a_id;
   const otherReadAt = me.id === conv.a_id ? conv.b_read_at : conv.a_read_at;
@@ -92,7 +94,7 @@ export default function Chat() {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       const { msg } = await sendMessage(conv, me.id, { image_url: file_url });
       setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
-      setConv((c) => ({ ...c, status: "active", last_message: "📷 画像", last_message_at: new Date().toISOString(), last_sender_id: me.id }));
+      setConv((c) => ({ ...c, status: "active", last_message: t("chat.imageMsg"), last_message_at: new Date().toISOString(), last_sender_id: me.id }));
     } finally { setUploading(false); }
   }
 
@@ -115,22 +117,22 @@ export default function Chat() {
           {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
           <div className="min-w-0">
             <div className="font-semibold truncate flex items-center gap-1.5">{displayName(other)} {online && <span className="w-2 h-2 rounded-full bg-green-500" />}</div>
-            <div className="text-xs text-muted-foreground">{online ? "オンライン" : "オフライン"}</div>
+            <div className="text-xs text-muted-foreground">{online ? t("common.online") : t("common.offline")}</div>
           </div>
         </Link>
         <div className="relative">
           <button onClick={() => setMenuOpen((v) => !v)} className="p-1.5"><MoreVertical className="w-5 h-5" /></button>
           {menuOpen && (
             <div className="absolute right-0 top-9 z-30 glass border border-border rounded-xl py-1 w-40">
-              <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? "ミュート解除" : "ミュート"}</button>
-              <button onClick={toggleBlock} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Ban className="w-4 h-4" /> {blocked ? "ブロック解除" : "ブロック"}</button>
-              <button onClick={() => { setMenuOpen(false); setShowReport(true); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> 通報</button>
+              <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? t("common.unmute") : t("common.mute")}</button>
+              <button onClick={toggleBlock} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Ban className="w-4 h-4" /> {blocked ? t("common.unblock") : t("common.block")}</button>
+              <button onClick={() => { setMenuOpen(false); setShowReport(true); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> {t("common.report")}</button>
             </div>
           )}
         </div>
       </div>
 
-      {blocked && <div className="glass rounded-xl border border-border p-3 mb-3 text-sm text-muted-foreground">このユーザーをブロックしているため、メッセージを送れません。</div>}
+      {blocked && <div className="glass rounded-xl border border-border p-3 mb-3 text-sm text-muted-foreground">{t("messages.blocked")}</div>}
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-3">
         {messages.map((m) => {
@@ -157,13 +159,13 @@ export default function Chat() {
             <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && sendImage(e.target.files[0])} />
             {uploading && <Loader2 className="w-4 h-4 animate-spin absolute -top-0 -right-1" />}
           </label>
-          <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="メッセージを入力…" className="flex-1 bg-secondary/60 border border-border rounded-full px-4 py-2 text-sm outline-none focus:border-primary" />
+          <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder={t("messages.inputPlaceholder")} className="flex-1 bg-secondary/60 border border-border rounded-full px-4 py-2 text-sm outline-none focus:border-primary" />
           <button onClick={send} disabled={sending || !draft.trim()} className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-40">
             {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </button>
         </div>
       ) : (
-        <div className="pt-2 border-t border-border text-center text-xs text-muted-foreground py-3">メッセージを送れません</div>
+        <div className="pt-2 border-t border-border text-center text-xs text-muted-foreground py-3">{t("messages.cantSend")}</div>
       )}
 
       {showReport && <ReportDialog onClose={() => setShowReport(false)} onSubmit={async (reason) => { await reportUser(me.id, otherId, reason); setShowReport(false); }} />}

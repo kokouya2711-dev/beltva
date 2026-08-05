@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { extraTranslations } from "@/lib/i18nExtra";
 
 export const LANGS = [
   { code: "ja", label: "日本語" },
@@ -216,6 +217,11 @@ const translations = {
   }
 };
 
+// Merge extra translation keys into each language
+for (const _lang of Object.keys(translations)) {
+  Object.assign(translations[_lang], extraTranslations[_lang] || {});
+}
+
 const RTL_LANGS = ["ar"];
 
 const LanguageContext = createContext({ lang: "ja", setLang: () => {}, t: (k) => k });
@@ -228,7 +234,7 @@ export function LanguageProvider({ children }) {
     document.documentElement.dir = rtl ? "rtl" : "ltr";
     document.documentElement.lang = lang;
   }, [lang]);
-  const t = (key) => (translations[lang] && translations[lang][key]) || translations.ja[key] || key;
+  const t = (key) => translations[lang]?.[key] ?? translations.ja?.[key] ?? key;
   return <LanguageContext.Provider value={{ lang, setLang, t }}>{children}</LanguageContext.Provider>;
 }
 

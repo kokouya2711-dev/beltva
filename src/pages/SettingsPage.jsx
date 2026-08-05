@@ -4,10 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import { ChevronRight, User, Heart, Target, Bell, Globe, Moon, LogOut, Shield } from "lucide-react";
 
-const DM_SCOPES = [
-  { key: "everyone", label: "誰でも" },
-  { key: "followings", label: "フォロー中のみ" },
-  { key: "none", label: "受信しない" }
+const DM_SCOPE_KEYS = [
+  { key: "everyone", labelKey: "settings.dmEveryone" },
+  { key: "followings", labelKey: "settings.dmFollowings" },
+  { key: "none", labelKey: "settings.dmNone" }
 ];
 
 export default function SettingsPage() {
@@ -51,12 +51,12 @@ export default function SettingsPage() {
         <ToggleRow label={t("notifications.title")} checked={prefs.comment} onChange={() => togglePref("comment")} />
       </Section>
 
-      <Section title="DM受信範囲">
+      <Section title={t("settings.dmScope")}>
         <div className="px-4 py-3 space-y-2">
-          <div className="flex items-center gap-2 text-sm mb-1"><Shield className="w-4 h-4" /> だれからDMを受け取るか</div>
+          <div className="flex items-center gap-2 text-sm mb-1"><Shield className="w-4 h-4" /> {t("settings.dmScopeDesc")}</div>
           <div className="flex gap-2 flex-wrap">
-            {DM_SCOPES.map((s) => (
-              <button key={s.key} onClick={() => changeDmScope(s.key)} className={`text-sm px-3 py-1.5 rounded-full border ${dmScope === s.key ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{s.label}</button>
+            {DM_SCOPE_KEYS.map((s) => (
+              <button key={s.key} onClick={() => changeDmScope(s.key)} className={`text-sm px-3 py-1.5 rounded-full border ${dmScope === s.key ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{t(s.labelKey)}</button>
             ))}
           </div>
         </div>

@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Radio, MapPin, Loader2, Check } from "lucide-react";
 import { WORKOUT_TYPES, getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTWorkout } from "@/lib/i18nHelpers";
 
 export default function GoLiveDialog({ onClose }) {
+  const t = useT();
+  const tWorkout = useTWorkout();
   const [workoutType, setWorkoutType] = useState(WORKOUT_TYPES[0]);
   const [locationName, setLocationName] = useState("");
   const [message, setMessage] = useState("");
@@ -17,7 +21,7 @@ export default function GoLiveDialog({ onClose }) {
     const c = await getGeolocation();
     setLocating(false);
     setCoords(c ? fuzzCoords(c.lat, c.lng) : fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
-    if (!c) setLocationName((v) => v || "東京");
+    if (!c) setLocationName((v) => v || t("goLive.defaultLocation"));
   }
 
   async function startLive() {
@@ -27,7 +31,7 @@ export default function GoLiveDialog({ onClose }) {
     await base44.entities.LiveSession.create({
       status: "live",
       workout_type: workoutType,
-      location_name: locationName || "秘密のジム",
+      location_name: locationName || t("goLive.defaultGym"),
       lat: c.lat,
       lng: c.lng,
       viewers_count: 0,
@@ -47,8 +51,8 @@ export default function GoLiveDialog({ onClose }) {
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
             <Check className="w-7 h-7 text-primary" />
           </div>
-          <div className="font-semibold text-lg">トレーニングを開始しました！</div>
-          <div className="text-sm text-muted-foreground">みんなで励まし合おう🔥</div>
+          <div className="font-semibold text-lg">{t("goLive.started")}</div>
+          <div className="text-sm text-muted-foreground">{t("goLive.startedDesc")}</div>
         </div>
       </Overlay>
     );
@@ -61,7 +65,7 @@ export default function GoLiveDialog({ onClose }) {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Radio className="w-4 h-4 text-primary-foreground" />
           </div>
-          <h2 className="font-bold text-lg">トレーニングを開始</h2>
+          <h2 className="font-bold text-lg">{t("goLive.title")}</h2>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
           <X className="w-4 h-4" />
@@ -70,31 +74,31 @@ export default function GoLiveDialog({ onClose }) {
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">種目</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.workoutType")}</label>
           <div className="grid grid-cols-2 gap-2 mt-1.5">
-            {WORKOUT_TYPES.map((t) => (
+            {WORKOUT_TYPES.map((w) => (
               <button
-                key={t}
-                onClick={() => setWorkoutType(t)}
+                key={w}
+                onClick={() => setWorkoutType(w)}
                 className={`text-sm px-3 py-2 rounded-lg border transition ${
-                  workoutType === t
+                  workoutType === w
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t}
+                {tWorkout(w)}
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">場所</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.location")}</label>
           <div className="flex gap-2 mt-1.5">
             <input
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              placeholder="ジム名・エリア"
+              placeholder={t("goLive.locationPlaceholder")}
               className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
             />
             <button
@@ -103,21 +107,21 @@ export default function GoLiveDialog({ onClose }) {
               className="flex items-center gap-1.5 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm hover:border-primary"
             >
               {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
-              現在地
+              {t("goLive.currentLocation")}
             </button>
           </div>
           {coords && (
-            <div className="text-[11px] text-accent mt-1">📍 位置を取得（近隣にぼかして表示）· {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}</div>
+            <div className="text-[11px] text-accent mt-1">{t("goLive.locationDetected")} · {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}</div>
           )}
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">ひとこと</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.message")}</label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={2}
-            placeholder="今日はベンチPR狙う！🔥"
+            placeholder={t("goLive.messagePlaceholder")}
             className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary mt-1.5"
           />
         </div>
@@ -128,7 +132,7 @@ export default function GoLiveDialog({ onClose }) {
           className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />}
-          トレーニング開始
+          {t("goLive.start")}
         </button>
       </div>
     </Overlay>

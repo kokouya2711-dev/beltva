@@ -76,10 +76,10 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
         </div>
         <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
           {isTraining && (
-            <span className="text-[10px] text-[#ccff00] flex items-center gap-1"><Flame className="w-3 h-3" /> トレーニング中</span>
+            <span className="text-[10px] text-[#ccff00] flex items-center gap-1"><Flame className="w-3 h-3" /> {t("common.trainingNow")}</span>
           )}
           {!isTraining && isOnline && (
-            <span className="text-[10px] text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400" /> オンライン中</span>
+            <span className="text-[10px] text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400" /> {t("common.online")}</span>
           )}
           {user.training_purpose && <span className="text-[10px] text-primary">· {t("purpose." + user.training_purpose)}</span>}
           {reason && reason.length > 0 && (

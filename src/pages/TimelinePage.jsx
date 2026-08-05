@@ -5,8 +5,12 @@ import CreatePostDialog from "@/components/CreatePostDialog";
 import SuggestedUsers from "@/components/SuggestedUsers";
 import { Plus, Loader2, MessageSquare, Globe, Users } from "lucide-react";
 import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
+import { useT } from "@/lib/i18n";
+import { useTCategory } from "@/lib/i18nHelpers";
 
 export default function TimelinePage() {
+  const t = useT();
+  const tCat = useTCategory();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -60,10 +64,10 @@ export default function TimelinePage() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <MessageSquare className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">タイムライン</h1>
+          <h1 className="text-2xl font-bold">{t("post.title")}</h1>
         </div>
         <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">
-          <Plus className="w-4 h-4" /> 投稿
+          <Plus className="w-4 h-4" /> {t("post.create")}
         </button>
       </div>
 
@@ -71,10 +75,10 @@ export default function TimelinePage() {
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-4">
             <button onClick={() => setScope("all")} className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border ${scope === "all" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>
-              <Globe className="w-3.5 h-3.5" /> 全体
+              <Globe className="w-3.5 h-3.5" /> {t("post.scope_all")}
             </button>
             <button onClick={() => setScope("following")} className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border ${scope === "following" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>
-              <Users className="w-3.5 h-3.5" /> フォロー中
+              <Users className="w-3.5 h-3.5" /> {t("post.scope_following")}
             </button>
           </div>
 
@@ -83,7 +87,7 @@ export default function TimelinePage() {
               const active = filter === c;
               const s = CATEGORY_STYLE[c];
               return (
-                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-xs px-3 py-1.5 rounded-full border transition ${active ? (s ? `${s.bg} ${s.color} ${s.border}` : "bg-primary/10 text-primary border-primary/30") : "border-border text-muted-foreground"}`}>{c}</button>
+                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-xs px-3 py-1.5 rounded-full border transition ${active ? (s ? `${s.bg} ${s.color} ${s.border}` : "bg-primary/10 text-primary border-primary/30") : "border-border text-muted-foreground"}`}>{c === "すべて" ? t("common.all") : tCat(c)}</button>
               );
             })}
           </div>
@@ -93,7 +97,7 @@ export default function TimelinePage() {
           ) : filtered.length === 0 ? (
             <div className="glass rounded-2xl border border-border py-16 flex flex-col items-center gap-2 text-muted-foreground">
               <MessageSquare className="w-10 h-10 opacity-40" />
-              <div className="text-sm">{scope === "following" ? "フォロー中のユーザーの投稿がありません" : "投稿がありません。最初の相談・質問を投稿しよう！"}</div>
+              <div className="text-sm">{scope === "following" ? t("post.noFollowingPosts") : t("post.emptyPrompt")}</div>
             </div>
           ) : (
             <div className="space-y-4">

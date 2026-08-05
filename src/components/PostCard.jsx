@@ -5,11 +5,17 @@ import { Heart, MessageCircle, Loader2, Pencil, Trash2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
 import UserLink from "@/components/UserLink";
-import { timeAgo, formatNumber } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTCategory, useTWorkout, useTimeAgo, useFormatNumber } from "@/lib/i18nHelpers";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 
 export default function PostCard({ post, meId, initialLikers = [], initialComments = [] }) {
+  const t = useT();
+  const tCat = useTCategory();
+  const tWorkout = useTWorkout();
+  const timeAgo = useTimeAgo();
+  const fmtNum = useFormatNumber();
   const [likes, setLikes] = useState(post.likes || 0);
   const [likers, setLikers] = useState(initialLikers);
   const [showLikers, setShowLikers] = useState(false);
@@ -26,7 +32,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
 
   async function deletePost() {
     if (!isOwner) return;
-    if (!window.confirm("この投稿を削除しますか？")) return;
+    if (!window.confirm(t("post.deleteConfirm"))) return;
     await base44.entities.Post.delete(currentPost.id).catch(() => {});
     window.location.reload();
   }
@@ -55,33 +61,33 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
         {currentPost.is_anonymous ? (
           <div className="flex items-center gap-2 flex-1">
             <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold shrink-0">匿</div>
-            <span className="text-sm font-medium">匿名</span>
+            <span className="text-sm font-medium">{t("post.anonymousLabel")}</span>
           </div>
         ) : (
           <UserLink user={currentPost.created_by} size="md" className="flex-1" />
         )}
-        <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{currentPost.category}</span>
+        <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
         {isOwner && (
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition" title="編集">
+            <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition" title={t("common.edit")}>
               <Pencil className="w-3.5 h-3.5" />
             </button>
-            <button onClick={deletePost} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-destructive transition" title="削除">
+            <button onClick={deletePost} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-destructive transition" title={t("common.delete")}>
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
       </div>
-      <div className="text-xs text-muted-foreground mb-3">{timeAgo(currentPost.created_date)}{currentPost.workout_type ? ` · ${currentPost.workout_type}` : ""}</div>
+      <div className="text-xs text-muted-foreground mb-3">{timeAgo(currentPost.created_date)}{currentPost.workout_type ? ` · ${tWorkout(currentPost.workout_type)}` : ""}</div>
 
       <div className="text-sm whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
       <div className="flex items-center gap-4 text-sm">
         <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
-          <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {formatNumber(likes)}
+          <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
         </button>
         <Link to={`/posts/${post.id}`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
-          <MessageCircle className="w-4 h-4" /> {formatNumber(commentsCount)}
+          <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
         </Link>
       </div>
 
@@ -93,7 +99,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
             ))}
           </div>
           <button onClick={() => setShowLikers((v) => !v)} className="text-xs text-muted-foreground hover:text-foreground transition">
-            {showLikers ? "閉じる" : `${formatNumber(likes)}人がいいねしました`}
+            {showLikers ? t("common.close") : t("post.likersCount").replace("{n}", fmtNum(likes))}
           </button>
         </div>
       )}
@@ -105,7 +111,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
       <div className="mt-3 pt-3 border-t border-border">
         {previewComments.length === 0 ? (
           <Link to={`/posts/${post.id}`} className="text-xs text-muted-foreground hover:text-primary transition">
-            最初にコメントする
+            {t("post.firstComment")}
           </Link>
         ) : (
           <div className="space-y-2">
@@ -123,7 +129,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
             ))}
             {commentsCount > previewComments.length && (
               <Link to={`/posts/${post.id}`} className="text-xs text-primary hover:underline">
-                他{commentsCount - previewComments.length}件のコメントを見る
+                {t("post.moreComments").replace("{n}", commentsCount - previewComments.length)}
               </Link>
             )}
           </div>
@@ -174,6 +180,7 @@ function LikerAvatar({ userId }) {
 }
 
 function LikersList({ likers }) {
+  const timeAgo = useTimeAgo();
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
   useEffect(() => {
