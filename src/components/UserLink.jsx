@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { displayName } from "@/lib/profile";
+import { displayName, flagEmoji } from "@/lib/profile";
 
 export default function UserLink({ user, size = "sm", showName = true, className = "" }) {
   if (!user) return <span className="text-muted-foreground">匿名</span>;
   const name = displayName(user);
   const initials = name.slice(0, 2).toUpperCase();
+  const flag = flagEmoji(user.country);
   const sizeCls = size === "lg" ? "w-12 h-12" : size === "md" ? "w-10 h-10" : "w-8 h-8";
   const textCls = size === "lg" ? "text-base" : "text-sm";
   return (
@@ -15,7 +16,12 @@ export default function UserLink({ user, size = "sm", showName = true, className
       ) : (
         <div className={`${sizeCls} rounded-full bg-secondary flex items-center justify-center font-bold text-xs shrink-0`}>{initials}</div>
       )}
-      {showName && <span className={`font-medium ${textCls} truncate group-hover:text-primary transition`}>{name}</span>}
+      {showName && (
+        <span className={`font-medium ${textCls} truncate group-hover:text-primary transition flex items-center gap-1`}>
+          {name}
+          {flag && <span className="text-base leading-none shrink-0">{flag}</span>}
+        </span>
+      )}
     </Link>
   );
 }

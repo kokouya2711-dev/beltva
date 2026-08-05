@@ -7,7 +7,7 @@ import EditPostDialog from "@/components/EditPostDialog";
 import UserLink from "@/components/UserLink";
 import { useT } from "@/lib/i18n";
 import { useTCategory, useTWorkout, useTimeAgo, useFormatNumber } from "@/lib/i18nHelpers";
-import { displayName, fetchUser } from "@/lib/profile";
+import { displayName, fetchUser, flagEmoji } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 
 export default function PostCard({ post, meId, initialLikers = [], initialComments = [] }) {
@@ -23,6 +23,13 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
   const [previewComments, setPreviewComments] = useState(initialComments.slice(0, 2));
   const [showEdit, setShowEdit] = useState(false);
   const [currentPost, setCurrentPost] = useState(post);
+  const [author, setAuthor] = useState(post.created_by || null);
+
+  useEffect(() => {
+    if (currentPost.is_anonymous || currentPost.created_by) return;
+    if (!currentPost.created_by_id) return;
+    fetchUser(currentPost.created_by_id).then(setAuthor).catch(() => {});
+  }, [currentPost.created_by_id, currentPost.is_anonymous, currentPost.created_by]);
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 
@@ -64,7 +71,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
             <span className="text-sm font-medium">{t("post.anonymousLabel")}</span>
           </div>
         ) : (
-          <UserLink user={currentPost.created_by} size="md" className="flex-1" />
+          <UserLink user={author} size="md" className="flex-1" />
         )}
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
         {isOwner && (
