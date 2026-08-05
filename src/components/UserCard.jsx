@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { displayName, flagEmoji, COUNTRIES } from "@/lib/profile";
-import { parseHobbies } from "@/lib/hobbies";
-import { useT } from "@/lib/i18n";
+import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
+import { useT, useI18n } from "@/lib/i18n";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { Mail, Flame } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,7 @@ function countryName(code) {
 export default function UserCard({ user, me, isOnline, isTraining, reason, commonHobbies }) {
   const navigate = useNavigate();
   const t = useT();
+  const { lang } = useI18n();
   const { toast } = useToast();
   const name = displayName(user);
   const hobbies = parseHobbies(user.hobbies);
@@ -69,7 +70,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
                 commonSet.has(h) ? "bg-primary/15 text-primary border-primary/30" : "bg-secondary/60 border-border"
               }`}
             >
-              {h}
+              {hobbyLabel(h, lang)}
             </span>
           ))}
           {hobbies.length > 3 && <span className="text-[10px] text-muted-foreground">+{hobbies.length - 3}</span>}

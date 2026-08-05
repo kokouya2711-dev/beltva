@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, flagEmoji, fetchUser } from "@/lib/profile";
-import { parseHobbies } from "@/lib/hobbies";
-import { useT } from "@/lib/i18n";
+import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
+import { useT, useI18n } from "@/lib/i18n";
 import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 export default function Profile() {
   const t = useT();
+  const { lang } = useI18n();
   const { id } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -113,7 +114,7 @@ export default function Profile() {
         <div className="glass rounded-2xl border border-border p-4">
           <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2">{t("common.hobbies")}</div>
           <div className="flex flex-wrap gap-1.5">
-            {hobbies.map((h) => <span key={h} className="text-xs bg-secondary/60 border border-border rounded-full px-2.5 py-1">{h}</span>)}
+            {hobbies.map((h) => <span key={h} className="text-xs bg-secondary/60 border border-border rounded-full px-2.5 py-1">{hobbyLabel(h, lang)}</span>)}
           </div>
         </div>
       )}

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { extraTranslations } from "@/lib/i18nExtra";
+import { hobbyUITranslations } from "@/lib/i18nHobbyUI";
 
 export const LANGS = [
   { code: "ja", label: "日本語" },
@@ -220,6 +221,7 @@ const translations = {
 // Merge extra translation keys into each language
 for (const _lang of Object.keys(translations)) {
   Object.assign(translations[_lang], extraTranslations[_lang] || {});
+  Object.assign(translations[_lang], hobbyUITranslations[_lang] || {});
 }
 
 const RTL_LANGS = ["ar"];

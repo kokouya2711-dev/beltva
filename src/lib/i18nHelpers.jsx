@@ -1,4 +1,5 @@
 import { useT, useI18n } from "@/lib/i18n";
+import { HOBBY_LABELS, LANG_ORDER } from "@/lib/hobbies";
 
 const CATEGORY_KEYS = {
   "相談": "post.cat_consult",
@@ -90,4 +91,20 @@ export function useFormatNumber() {
   return (n) => (Number(n) || 0).toLocaleString(locale);
 }
 
-export { CATEGORY_KEYS, WORKOUT_KEYS, BODY_PART_KEYS, METRIC_KEYS };
+export function useHobbyLabel() {
+  const { lang } = useI18n();
+  return (stored) => {
+    if (!stored) return "";
+    if (stored.startsWith("p:")) {
+      const key = stored.slice(2);
+      const labels = HOBBY_LABELS[key];
+      if (!labels) return key;
+      const idx = LANG_ORDER.indexOf(lang);
+      return labels[idx >= 0 ? idx : 0] || labels[0];
+    }
+    if (stored.startsWith("c:")) return stored.slice(2);
+    return stored; // backward compat: legacy bare string
+  };
+}
+
+export { CATEGORY_KEYS, WORKOUT_KEYS, BODY_PART_KEYS, METRIC_KEYS, HOBBY_LABELS, LANG_ORDER };

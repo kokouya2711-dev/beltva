@@ -143,8 +143,8 @@ export default function ProfileEdit() {
       </Field>
 
       <div className="glass rounded-2xl border border-border p-4">
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{t("profile.hobbiesMax")}</div>
-        <HobbyEditor value={hobbies} onChange={setHobbies} max={5} />
+        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{t("profile.hobbiesMax10")}</div>
+        <HobbyEditor value={hobbies} onChange={setHobbies} max={10} />
       </div>
 
       <button onClick={save} disabled={saving} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50">

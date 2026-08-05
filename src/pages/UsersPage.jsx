@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import { displayName, COUNTRIES, flagEmoji } from "@/lib/profile";
-import { parseHobbies, ALL_HOBBIES, TRAINING_PURPOSES } from "@/lib/hobbies";
+import { parseHobbies, TRAINING_PURPOSES, HOBBY_CATEGORIES, hobbyLabel, hobbyCategoryLabel, makePresetHobby, ALL_HOBBY_KEYS } from "@/lib/hobbies";
 import UserCard from "@/components/UserCard";
 import { Loader2, Search, SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -237,7 +237,13 @@ export default function UsersPage() {
             <FilterField label={t("common.hobbies")}>
               <select value={fHobby} onChange={(e) => setFHobby(e.target.value)} className={inputCls}>
                 <option value="">{t("users.noSpecify")}</option>
-                {ALL_HOBBIES.map((h) => <option key={h} value={h}>{h}</option>)}
+                {HOBBY_CATEGORIES.map((cat) => (
+                  <optgroup key={cat.key} label={hobbyCategoryLabel(cat.key, lang)}>
+                    {cat.items.map((key) => (
+                      <option key={key} value={makePresetHobby(key)}>{hobbyLabel(makePresetHobby(key), lang)}</option>
+                    ))}
+                  </optgroup>
+                ))}
               </select>
             </FilterField>
             <FilterField label={t("common.purpose")}>
