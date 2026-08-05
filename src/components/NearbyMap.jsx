@@ -98,14 +98,14 @@ export default function NearbyMap() {
 
   if (loading || !center) {
     return (
-      <div className="h-[400px] md:h-[640px] rounded-2xl border border-border flex items-center justify-center">
+      <div className="h-[400px] max-h-[calc(100svh-180px)] md:h-[640px] md:max-h-[calc(100svh-200px)] rounded-2xl border border-border flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-border">
+    <div className="relative z-0 rounded-2xl overflow-hidden border border-border h-[400px] max-h-[calc(100svh-180px)] md:h-[640px] md:max-h-[calc(100svh-200px)]">
       <MapContainer
         ref={mapRef}
         center={center}
@@ -117,7 +117,7 @@ export default function NearbyMap() {
         zoomControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
-        className="w-full h-[400px] md:h-[640px]"
+        className="w-full h-full"
         attributionControl={false}
       >
         <TileLayer

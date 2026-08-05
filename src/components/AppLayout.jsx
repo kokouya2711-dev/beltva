@@ -130,7 +130,7 @@ export default function AppLayout() {
       </main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-border flex">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-border flex" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         {nav.map((n) => {
           const active = location.pathname === n.to;
           const Icon = n.icon;
