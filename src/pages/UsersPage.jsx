@@ -263,9 +263,7 @@ export default function UsersPage() {
 
       {loading ? (
         <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
-      ) : users.length === 0 ? (
-        <div className="text-center text-sm text-muted-foreground py-12">まだ他のユーザーがいません</div>
-      ) : filtered.length === 0 ? (
+      ) : users.length === 0 ? null : filtered.length === 0 ? (
         <div className="text-center text-sm text-muted-foreground py-12">この条件に該当する仲間が見つかりません</div>
       ) : (
         <div className="space-y-3">
