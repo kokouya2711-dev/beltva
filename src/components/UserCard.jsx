@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { displayName, flagEmoji, COUNTRIES } from "@/lib/profile";
 import { parseHobbies } from "@/lib/hobbies";
 import { useT } from "@/lib/i18n";
-import { getOrCreateConversation, blockExists } from "@/lib/dm";
+import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { Mail, Flame } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import FollowButton from "@/components/FollowButton";
 
 function countryName(code) {
@@ -15,6 +16,7 @@ function countryName(code) {
 export default function UserCard({ user, me, isOnline, isTraining, reason, commonHobbies }) {
   const navigate = useNavigate();
   const t = useT();
+  const { toast } = useToast();
   const name = displayName(user);
   const hobbies = parseHobbies(user.hobbies);
   const commonSet = new Set(commonHobbies || []);
@@ -32,6 +34,8 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
     if (!me || !user) return;
     const blocked = await blockExists(me.id, user.id);
     if (blocked) return;
+    const { ok, message } = await checkDmScope(me.id, user);
+    if (!ok) { toast({ description: message }); return; }
     const conv = await getOrCreateConversation(me.id, user.id);
     navigate(`/messages/${conv.id}`);
   }

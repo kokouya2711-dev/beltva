@@ -2,22 +2,37 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
-import { ChevronRight, User, Heart, Target, Bell, Globe, Moon, LogOut } from "lucide-react";
+import { ChevronRight, User, Heart, Target, Bell, Globe, Moon, LogOut, Shield } from "lucide-react";
+
+const DM_SCOPES = [
+  { key: "everyone", label: "誰でも" },
+  { key: "followings", label: "フォロー中のみ" },
+  { key: "none", label: "受信しない" }
+];
 
 export default function SettingsPage() {
   const t = useT();
   const { lang, setLang } = useI18n();
   const navigate = useNavigate();
   const [prefs, setPrefs] = useState({ dm: true, follow: true, comment: true });
+  const [dmScope, setDmScope] = useState("everyone");
 
   useEffect(() => {
-    base44.auth.me().then((u) => { if (u.notif_prefs) { try { setPrefs(JSON.parse(u.notif_prefs)); } catch {} } }).catch(() => {});
+    base44.auth.me().then((u) => {
+      if (u.notif_prefs) { try { setPrefs(JSON.parse(u.notif_prefs)); } catch {} }
+      if (u.dm_scope) setDmScope(u.dm_scope);
+    }).catch(() => {});
   }, []);
 
   async function togglePref(key) {
     const next = { ...prefs, [key]: !prefs[key] };
     setPrefs(next);
     try { await base44.auth.updateMe({ notif_prefs: JSON.stringify(next) }); } catch {}
+  }
+
+  async function changeDmScope(scope) {
+    setDmScope(scope);
+    try { await base44.auth.updateMe({ dm_scope: scope }); } catch {}
   }
 
   return (
@@ -34,6 +49,17 @@ export default function SettingsPage() {
         <ToggleRow label={t("messages.title")} checked={prefs.dm} onChange={() => togglePref("dm")} />
         <ToggleRow label={t("common.follow")} checked={prefs.follow} onChange={() => togglePref("follow")} />
         <ToggleRow label={t("notifications.title")} checked={prefs.comment} onChange={() => togglePref("comment")} />
+      </Section>
+
+      <Section title="DM受信範囲">
+        <div className="px-4 py-3 space-y-2">
+          <div className="flex items-center gap-2 text-sm mb-1"><Shield className="w-4 h-4" /> だれからDMを受け取るか</div>
+          <div className="flex gap-2 flex-wrap">
+            {DM_SCOPES.map((s) => (
+              <button key={s.key} onClick={() => changeDmScope(s.key)} className={`text-sm px-3 py-1.5 rounded-full border ${dmScope === s.key ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{s.label}</button>
+            ))}
+          </div>
+        </div>
       </Section>
 
       <Section title={t("settings.preferences")}>

@@ -15,10 +15,23 @@ export async function getOrCreateConversation(meId, otherId) {
   if (conv) return conv;
   const { a, b } = canonicalIds(meId, otherId);
   conv = await base44.entities.Conversation.create({
-    a_id: a, b_id: b, status: "requested", requester_id: meId,
+    a_id: a, b_id: b, status: "active", requester_id: meId,
     last_message: "", last_message_at: new Date().toISOString(), last_sender_id: meId
   });
   return conv;
+}
+
+// Check whether `me` is allowed to start a DM with `otherUser`, per the
+// recipient's dm_scope setting. Returns { ok, message }.
+export async function checkDmScope(meId, otherUser) {
+  if (!otherUser || otherUser.id === meId) return { ok: true };
+  const scope = otherUser.dm_scope || "everyone";
+  if (scope === "none") return { ok: false, message: "このユーザーはDMを受信していません" };
+  if (scope === "followings") {
+    const f = await base44.entities.Follow.filter({ follower_id: otherUser.id, followee_id: meId });
+    if (!f.length) return { ok: false, message: "このユーザーはフォロー中のユーザーのみDMを受信します" };
+  }
+  return { ok: true };
 }
 
 export async function sendMessage(conv, meId, { content, image_url }) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, fetchUser } from "@/lib/profile";
-import { acceptRequest, declineRequest, sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteUser, unmuteUser, isMuted, reportUser } from "@/lib/dm";
+import { sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteUser, unmuteUser, isMuted, reportUser } from "@/lib/dm";
 import MessageBubble from "@/components/MessageBubble";
 import ReportDialog from "@/components/ReportDialog";
 import { ArrowLeft, Send, Image as ImageIcon, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
@@ -72,10 +72,8 @@ export default function Chat() {
   if (!conv) return <div className="text-center py-20 text-muted-foreground">会話が見つかりません</div>;
 
   const otherId = me.id === conv.a_id ? conv.b_id : conv.a_id;
-  const isRequest = conv.status === "requested";
-  const amRecipient = conv.requester_id !== me.id;
   const otherReadAt = me.id === conv.a_id ? conv.b_read_at : conv.a_read_at;
-  const canSend = !isRequest && !blocked;
+  const canSend = !blocked;
 
   async function send() {
     if (!draft.trim() || sending) return;
@@ -106,9 +104,6 @@ export default function Chat() {
     setReactFor(null);
   }
 
-  async function accept() { await acceptRequest(conv, me.id); setConv((c) => ({ ...c, status: "active" })); }
-  async function decline() { await declineRequest(conv); navigate("/messages"); }
-
   async function toggleBlock() { if (blocked) { await unblockUser(me.id, otherId); setBlocked(false); } else { await blockUser(me.id, otherId); setBlocked(true); } setMenuOpen(false); }
   async function toggleMute() { if (muted) { await unmuteUser(me.id, otherId); setMuted(false); } else { await muteUser(me.id, otherId); setMuted(true); } setMenuOpen(false); }
 
@@ -135,23 +130,7 @@ export default function Chat() {
         </div>
       </div>
 
-      {isRequest && (
-        <div className="glass rounded-xl border border-border p-3 mb-3 text-sm">
-          {amRecipient ? (
-            <>
-              <div className="font-medium mb-1">メッセージリクエスト</div>
-              <div className="text-muted-foreground mb-3">{displayName(other)}さんからのメッセージです。承認するとチャットを始められます。</div>
-              <div className="flex gap-2">
-                <button onClick={accept} className="flex-1 bg-primary text-primary-foreground py-2 rounded-lg font-semibold">承認</button>
-                <button onClick={decline} className="flex-1 bg-secondary border border-border py-2 rounded-lg">削除</button>
-              </div>
-            </>
-          ) : (
-            <div className="text-muted-foreground">相手の承認待ちです。</div>
-          )}
-        </div>
-      )}
-      {blocked && !isRequest && <div className="glass rounded-xl border border-border p-3 mb-3 text-sm text-muted-foreground">このユーザーをブロックしているため、メッセージを送れません。</div>}
+      {blocked && <div className="glass rounded-xl border border-border p-3 mb-3 text-sm text-muted-foreground">このユーザーをブロックしているため、メッセージを送れません。</div>}
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-3">
         {messages.map((m) => {
@@ -184,7 +163,7 @@ export default function Chat() {
           </button>
         </div>
       ) : (
-        <div className="pt-2 border-t border-border text-center text-xs text-muted-foreground py-3">{isRequest ? (amRecipient ? "承認してチャットを始めよう" : "承認待ちです") : "メッセージを送れません"}</div>
+        <div className="pt-2 border-t border-border text-center text-xs text-muted-foreground py-3">メッセージを送れません</div>
       )}
 
       {showReport && <ReportDialog onClose={() => setShowReport(false)} onSubmit={async (reason) => { await reportUser(me.id, otherId, reason); setShowReport(false); }} />}

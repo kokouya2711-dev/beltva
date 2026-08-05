@@ -69,6 +69,16 @@
       "title": "\u901a\u77e5\u8a2d\u5b9a(JSON)",
       "default": "{\"dm\":true,\"follow\":true,\"comment\":true}"
     },
+    "dm_scope": {
+      "type": "string",
+      "title": "DM\u53d7\u4fe1\u7bc4\u56f2",
+      "enum": [
+        "everyone",
+        "followings",
+        "none"
+      ],
+      "default": "everyone"
+    },
     "fitness_goal": {
       "type": "string",
       "title": "Fitness Goal"

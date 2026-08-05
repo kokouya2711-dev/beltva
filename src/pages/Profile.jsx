@@ -7,8 +7,9 @@ import { useT } from "@/lib/i18n";
 import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
-import { getOrCreateConversation, blockExists } from "@/lib/dm";
+import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { Pencil, Mail, Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Profile() {
   const t = useT();
@@ -21,6 +22,7 @@ export default function Profile() {
   const [following, setFollowing] = useState(0);
   const [blocked, setBlocked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     (async () => {
@@ -54,6 +56,8 @@ export default function Profile() {
 
   async function startDm() {
     if (blocked) return;
+    const { ok, message } = await checkDmScope(me.id, user);
+    if (!ok) { toast({ description: message }); return; }
     const conv = await getOrCreateConversation(me.id, id);
     navigate(`/messages/${conv.id}`);
   }

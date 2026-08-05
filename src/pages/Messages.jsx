@@ -12,7 +12,6 @@ export default function Messages() {
   const [others, setOthers] = useState({});
   const [presence, setPresence] = useState({});
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("all");
 
   useEffect(() => {
     (async () => {
@@ -37,10 +36,6 @@ export default function Messages() {
     })();
   }, []);
 
-  const requests = convs.filter((c) => c.status === "requested" && c.requester_id !== me?.id);
-  const active = convs.filter((c) => c.status === "active" || (c.status === "requested" && c.requester_id === me?.id));
-  const list = tab === "requests" ? requests : active;
-
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-4">
       <div className="flex items-center gap-2">
@@ -48,21 +43,16 @@ export default function Messages() {
         <h1 className="text-2xl font-bold">メッセージ</h1>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button onClick={() => setTab("all")} className={`text-sm px-3 py-1.5 rounded-full border ${tab === "all" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>すべて</button>
-        <button onClick={() => setTab("requests")} className={`text-sm px-3 py-1.5 rounded-full border flex items-center gap-1.5 ${tab === "requests" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>リクエスト {requests.length > 0 && <span className="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{requests.length}</span>}</button>
-      </div>
-
       {loading ? (
         <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
-      ) : list.length === 0 ? (
+      ) : convs.length === 0 ? (
         <div className="glass rounded-2xl border border-border py-16 flex flex-col items-center gap-2 text-muted-foreground">
           <Inbox className="w-10 h-10 opacity-40" />
-          <div className="text-sm">{tab === "requests" ? "リクエストはありません" : "メッセージはありません。プロフィールからDMを始めよう！"}</div>
+          <div className="text-sm">メッセージはありません。プロフィールからDMを始めよう！</div>
         </div>
       ) : (
         <div className="glass rounded-2xl border border-border divide-y divide-border">
-          {list.map((c) => {
+          {convs.map((c) => {
             const otherId = c.a_id === me.id ? c.b_id : c.a_id;
             const o = others[otherId];
             const isOnline = presence[otherId] && Date.now() - new Date(presence[otherId]).getTime() < 120000;
@@ -79,7 +69,7 @@ export default function Messages() {
                     <span className="font-medium truncate">{displayName(o)}</span>
                     <span className="text-xs text-muted-foreground shrink-0 ml-2">{c.last_message_at ? timeAgo(c.last_message_at) : ""}</span>
                   </div>
-                  <div className={`text-sm truncate ${unread ? "text-foreground font-medium" : "text-muted-foreground"}`}>{c.status === "requested" && c.requester_id !== me.id ? "メッセージリクエスト" : (c.last_message || "チャットを始める")}</div>
+                  <div className={`text-sm truncate ${unread ? "text-foreground font-medium" : "text-muted-foreground"}`}>{c.last_message || "チャットを始める"}</div>
                 </div>
                 {unread && <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />}
               </button>
