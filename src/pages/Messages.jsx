@@ -48,7 +48,7 @@ export default function Messages() {
       ) : convs.length === 0 ? (
         <div className="glass rounded-2xl border border-border py-16 flex flex-col items-center gap-2 text-muted-foreground">
           <Inbox className="w-10 h-10 opacity-40" />
-          <div className="text-sm">メッセージはありません。プロフィールからDMを始めよう！</div>
+          <div className="text-sm">まだメッセージはありません。仲間のプロフィールからメッセージを送ってみましょう。</div>
         </div>
       ) : (
         <div className="glass rounded-2xl border border-border divide-y divide-border">
