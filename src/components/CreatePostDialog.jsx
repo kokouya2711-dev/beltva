@@ -2,14 +2,21 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Plus, Loader2 } from "lucide-react";
 import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
-import { WORKOUT_TYPES } from "@/lib/workouts";
+import WorkoutSelect from "@/components/WorkoutSelect";
+
+const POST_MODE_KEY = "beltva:post_mode";
 
 export default function CreatePostDialog({ onClose, onSaved }) {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("シェア");
   const [workoutType, setWorkoutType] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(() => localStorage.getItem(POST_MODE_KEY) === "anonymous");
   const [submitting, setSubmitting] = useState(false);
+
+  function selectMode(anon) {
+    setIsAnonymous(anon);
+    try { localStorage.setItem(POST_MODE_KEY, anon ? "anonymous" : "public"); } catch {}
+  }
 
   async function save() {
     if (!content.trim()) return;
@@ -58,16 +65,15 @@ export default function CreatePostDialog({ onClose, onSaved }) {
         </div>
         <div>
           <label className="text-xs text-muted-foreground uppercase tracking-wider">関連種目（任意）</label>
-          <select value={workoutType} onChange={(e) => setWorkoutType(e.target.value)} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary">
-            <option value="">なし</option>
-            {WORKOUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+          <div className="mt-1.5">
+            <WorkoutSelect value={workoutType} onChange={setWorkoutType} />
+          </div>
         </div>
         <div>
           <label className="text-xs text-muted-foreground uppercase tracking-wider">投稿形式</label>
           <div className="grid grid-cols-2 gap-2 mt-1.5">
-            <button type="button" onClick={() => setIsAnonymous(false)} className={`text-xs px-2 py-2 rounded-lg border transition ${!isAnonymous ? "bg-primary/10 text-primary border-primary/30" : "border-border text-muted-foreground"}`}>実名で投稿</button>
-            <button type="button" onClick={() => setIsAnonymous(true)} className={`text-xs px-2 py-2 rounded-lg border transition ${isAnonymous ? "bg-primary/10 text-primary border-primary/30" : "border-border text-muted-foreground"}`}>匿名で投稿</button>
+            <button type="button" onClick={() => selectMode(false)} className={`text-xs px-2 py-2 rounded-lg border transition ${!isAnonymous ? "bg-primary/10 text-primary border-primary/30" : "border-border text-muted-foreground"}`}>公開プロフィールで投稿</button>
+            <button type="button" onClick={() => selectMode(true)} className={`text-xs px-2 py-2 rounded-lg border transition ${isAnonymous ? "bg-primary/10 text-primary border-primary/30" : "border-border text-muted-foreground"}`}>匿名で投稿</button>
           </div>
         </div>
         <button onClick={save} disabled={submitting || !content.trim()} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60">
