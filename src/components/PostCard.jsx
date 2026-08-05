@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle, Loader2, Pencil, Trash2 } from "lucide-react";
@@ -9,29 +9,16 @@ import { timeAgo, formatNumber } from "@/lib/workouts";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, meId, initialLikers = [], initialComments = [] }) {
   const [likes, setLikes] = useState(post.likes || 0);
-  const [likers, setLikers] = useState([]);
-  const [myLikeId, setMyLikeId] = useState(null);
+  const [likers, setLikers] = useState(initialLikers);
   const [showLikers, setShowLikers] = useState(false);
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
-  const [previewComments, setPreviewComments] = useState([]);
-  const [meId, setMeId] = useState(null);
+  const [previewComments, setPreviewComments] = useState(initialComments.slice(0, 2));
   const [showEdit, setShowEdit] = useState(false);
   const [currentPost, setCurrentPost] = useState(post);
 
-  useEffect(() => {
-    (async () => {
-      const me = await base44.auth.me().catch(() => null);
-      setMeId(me?.id);
-      const ls = await base44.entities.Like.filter({ post_id: post.id }, "-created_date", 200).catch(() => []);
-      setLikers(ls);
-      const mine = ls.find((l) => l.created_by_id === me?.id);
-      setMyLikeId(mine?.id || null);
-      const cs = await base44.entities.Comment.filter({ post_id: post.id }, "-created_date", 2).catch(() => []);
-      setPreviewComments(cs);
-    })();
-  }, [post.id]);
+  const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 
   const style = CATEGORY_STYLE[currentPost.category] || CATEGORY_STYLE["シェア"];
   const liked = !!myLikeId;
@@ -47,14 +34,12 @@ export default function PostCard({ post }) {
   async function toggleLike() {
     if (!meId) return;
     if (myLikeId) {
-      setMyLikeId(null);
       setLikes((l) => Math.max(0, l - 1));
       setLikers((arr) => arr.filter((l) => l.id !== myLikeId));
       base44.entities.Like.delete(myLikeId).catch(() => {});
       base44.entities.Post.update(post.id, { likes: Math.max(0, likes - 1) }).catch(() => {});
     } else {
       const rec = await base44.entities.Like.create({ post_id: post.id });
-      setMyLikeId(rec.id);
       setLikes((l) => l + 1);
       setLikers((arr) => [rec, ...arr]);
       base44.entities.Post.update(post.id, { likes: likes + 1 }).catch(() => {});

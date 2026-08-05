@@ -14,16 +14,26 @@ export default function TimelinePage() {
   const [scope, setScope] = useState("all");
   const [me, setMe] = useState(null);
   const [followIds, setFollowIds] = useState(null);
+  const [likesByPost, setLikesByPost] = useState({});
+  const [commentsByPost, setCommentsByPost] = useState({});
 
   async function load() {
-    const [ps, meUser] = await Promise.all([
-      base44.entities.Post.list("-created_date", 100),
-      base44.auth.me().catch(() => null)
+    const [ps, meUser, allLikes, allComments] = await Promise.all([
+      base44.entities.Post.list("-created_date", 50),
+      base44.auth.me().catch(() => null),
+      base44.entities.Like.list("-created_date", 500).catch(() => []),
+      base44.entities.Comment.list("-created_date", 200).catch(() => [])
     ]);
     setPosts(ps);
     setMe(meUser);
+    const lMap = {};
+    allLikes.forEach((l) => { (lMap[l.post_id] = lMap[l.post_id] || []).push(l); });
+    setLikesByPost(lMap);
+    const cMap = {};
+    allComments.forEach((c) => { (cMap[c.post_id] = cMap[c.post_id] || []).push(c); });
+    setCommentsByPost(cMap);
     if (meUser) {
-      const f = await base44.entities.Follow.filter({ follower_id: meUser.id });
+      const f = await base44.entities.Follow.filter({ follower_id: meUser.id }).catch(() => []);
       setFollowIds(new Set(f.map((x) => x.followee_id)));
     }
     setLoading(false);
@@ -87,7 +97,7 @@ export default function TimelinePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filtered.map((p) => <PostCard key={p.id} post={p} />)}
+              {filtered.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} initialComments={commentsByPost[p.id] || []} />)}
             </div>
           )}
         </div>
