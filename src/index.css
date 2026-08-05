@@ -80,6 +80,7 @@
 .leaflet-container {
   background: hsl(240 6% 8%);
   font-family: inherit;
+  touch-action: none;
 }
 .leaflet-tile.dark-tiles {
   filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);

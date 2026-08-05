@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip } from "react-le
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame } from "lucide-react";
+import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame, Info } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const ONLINE_WINDOW = 120000; // 2 min — matches UsersPage online definition
@@ -27,6 +27,7 @@ export default function NearbyMap() {
   const [loading, setLoading] = useState(true);
   const [satellite, setSatellite] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [showLegend, setShowLegend] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -98,14 +99,14 @@ export default function NearbyMap() {
 
   if (loading || !center) {
     return (
-      <div className="h-[400px] max-h-[calc(100svh-180px)] md:h-[640px] md:max-h-[calc(100svh-200px)] rounded-2xl border border-border flex items-center justify-center">
+      <div className="h-[58svh] max-h-[calc(100svh-160px)] md:h-[640px] md:max-h-[calc(100svh-200px)] rounded-2xl border border-border flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="relative z-0 rounded-2xl overflow-hidden border border-border h-[400px] max-h-[calc(100svh-180px)] md:h-[640px] md:max-h-[calc(100svh-200px)]">
+    <div className="relative z-0 rounded-2xl overflow-hidden border border-border h-[58svh] max-h-[calc(100svh-160px)] md:h-[640px] md:max-h-[calc(100svh-200px)]">
       <MapContainer
         ref={mapRef}
         center={center}
@@ -181,36 +182,43 @@ export default function NearbyMap() {
       </MapContainer>
 
       {/* top-right controls */}
-      <div className="absolute top-14 right-3 z-[400] flex flex-col gap-2">
+      <div className="absolute top-11 right-2 z-[400] flex flex-col gap-1.5">
         <button
           onClick={flyToWorld}
-          className="glass rounded-lg px-3 py-2 text-xs flex items-center gap-1.5 hover:bg-secondary transition"
+          className="glass rounded-md px-2 py-1 text-[10px] flex items-center gap-1 hover:bg-secondary transition"
         >
-          <Globe className="w-4 h-4 text-primary" /> {t("home.worldView")}
+          <Globe className="w-3 h-3 text-primary" /> {t("home.worldView")}
         </button>
         <button
           onClick={flyToCurrent}
-          className="glass rounded-lg p-2 flex items-center justify-center hover:bg-secondary transition"
+          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.locateMe")}
         >
-          <LocateFixed className="w-4 h-4 text-primary" />
+          <LocateFixed className="w-3.5 h-3.5 text-primary" />
         </button>
         <button
           onClick={() => setSatellite((v) => !v)}
-          className="glass rounded-lg p-2 flex items-center justify-center hover:bg-secondary transition"
+          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
           title={satellite ? t("home.normalMap") : t("home.satellite")}
         >
-          {satellite ? <MapIcon className="w-4 h-4 text-primary" /> : <Satellite className="w-4 h-4 text-primary" />}
+          {satellite ? <MapIcon className="w-3.5 h-3.5 text-primary" /> : <Satellite className="w-3.5 h-3.5 text-primary" />}
+        </button>
+        <button
+          onClick={() => setShowLegend((v) => !v)}
+          className={`glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition ${showLegend ? "bg-primary/20" : ""}`}
+          title="凡例"
+        >
+          <Info className="w-3.5 h-3.5 text-primary" />
         </button>
       </div>
 
       {/* filter chips */}
-      <div className="absolute top-3 left-3 right-3 z-[400] flex gap-1.5 overflow-x-auto no-scrollbar">
+      <div className="absolute top-2.5 left-2.5 right-2.5 z-[400] flex gap-1 overflow-x-auto no-scrollbar">
         {FILTERS.map((k) => (
           <button
             key={k}
             onClick={() => setFilter(k)}
-            className={`shrink-0 text-[11px] px-2.5 py-1 rounded-full border transition ${
+            className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full border transition ${
               filter === k
                 ? "border-primary bg-primary/15 text-primary"
                 : "border-border glass text-foreground/80"
@@ -221,13 +229,15 @@ export default function NearbyMap() {
         ))}
       </div>
 
-      {/* legend */}
-      <div className="absolute bottom-3 left-3 z-[400] glass rounded-lg px-3 py-2 text-[11px] space-y-1">
-        <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-[#ccff00]" /> {t("home.you")}</div>
-        <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" /> {t("home.online")}</div>
-        <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> {t("home.trainingLive")}</div>
-        <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-[#64748b]" /> {t("home.offline")}</div>
-      </div>
+      {/* legend — toggle via info button */}
+      {showLegend && (
+        <div className="absolute bottom-2 left-2 z-[400] glass rounded-md px-2.5 py-1.5 text-[10px] space-y-0.5">
+          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#ccff00]" /> {t("home.you")}</div>
+          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#22c55e]" /> {t("home.online")}</div>
+          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#ef4444]" /> {t("home.trainingLive")}</div>
+          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#64748b]" /> {t("home.offline")}</div>
+        </div>
+      )}
     </div>
   );
 }
