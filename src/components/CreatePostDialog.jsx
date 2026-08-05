@@ -64,7 +64,7 @@ export default function CreatePostDialog({ onClose, onSaved }) {
           <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder="ベンチのフォームで悩んでます…アドバイスください！" className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">関連種目（任意）</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">関連部位（任意）</label>
           <div className="mt-1.5">
             <WorkoutSelect value={workoutType} onChange={setWorkoutType} />
           </div>
