@@ -23,6 +23,7 @@ export default function NearbyMap() {
   const [sessions, setSessions] = useState([]);
   const [followIds, setFollowIds] = useState(new Set());
   const [center, setCenter] = useState(null);
+  const [displayCenter, setDisplayCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [satellite, setSatellite] = useState(false);
   const [filter, setFilter] = useState("all");
@@ -51,6 +52,10 @@ export default function NearbyMap() {
         if (geo) c = [geo.lat, geo.lng];
         if (!c) c = [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng];
         setCenter(c);
+        // offset the displayed circle center from the real GPS so the exact
+        // position is not revealed (real point stays inside the 900m circle)
+        const off = () => (Math.random() - 0.5) * 0.008;
+        setDisplayCenter([c[0] + off(), c[1] + off()]);
       } finally {
         setLoading(false);
       }
@@ -121,19 +126,18 @@ export default function NearbyMap() {
           maxZoom={satellite ? 19 : 19}
         />
 
-        {/* current user — shown as an approximate area for privacy */}
-        <Circle
-          center={center}
-          radius={900}
-          pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.18, weight: 1.5, dashArray: "4 4" }}
-        />
-        <CircleMarker
-          center={center}
-          radius={6}
-          pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.7, weight: 2 }}
-        >
-          <Tooltip direction="top" offset={[0, -8]} opacity={1}>{t("home.you")}</Tooltip>
-        </CircleMarker>
+        {/* current user — shown as an approximate area for privacy.
+            The circle is centered on a fuzzed point (not the real GPS),
+            and no exact dot is drawn so the real position stays hidden. */}
+        {displayCenter && (
+          <Circle
+            center={displayCenter}
+            radius={900}
+            pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.18, weight: 1.5, dashArray: "4 4" }}
+          >
+            <Tooltip direction="top" offset={[0, -8]} opacity={1}>{t("home.you")}</Tooltip>
+          </Circle>
+        )}
 
         {/* users */}
         {filtered.map((u) => {
