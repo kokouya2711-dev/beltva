@@ -98,7 +98,7 @@ export default function NearbyMap() {
 
   if (loading || !center) {
     return (
-      <div className="h-[500px] md:h-[640px] rounded-2xl border border-border flex items-center justify-center">
+      <div className="h-[400px] md:h-[640px] rounded-2xl border border-border flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
@@ -117,7 +117,7 @@ export default function NearbyMap() {
         zoomControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
-        className="w-full h-[500px] md:h-[640px]"
+        className="w-full h-[400px] md:h-[640px]"
         attributionControl={false}
       >
         <TileLayer
