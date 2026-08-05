@@ -60,9 +60,9 @@ export default function UsersPage() {
     (async () => {
       const meUser = await base44.auth.me().catch(() => null);
       const [us, pres, live, follows] = await Promise.all([
-        base44.entities.User.list("-created_date", 200),
-        base44.entities.Presence.list("-last_seen", 200).catch(() => []),
-        base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 200),
+        base44.entities.User.list("-created_date", 100),
+        base44.entities.Presence.list("-last_seen", 100).catch(() => []),
+        base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 100),
         base44.entities.Follow.filter({ follower_id: meUser?.id || "___" }).catch(() => [])
       ]);
       setMe(meUser);

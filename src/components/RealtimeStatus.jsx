@@ -12,7 +12,7 @@ export default function RealtimeStatus() {
 
   async function load() {
     const [pres, live] = await Promise.all([
-      base44.entities.Presence.list("-last_seen", 500).catch(() => []),
+      base44.entities.Presence.list("-last_seen", 200).catch(() => []),
       base44.entities.LiveSession.filter({ status: "live" }).catch(() => [])
     ]);
     const now = Date.now();
@@ -22,7 +22,7 @@ export default function RealtimeStatus() {
 
   useEffect(() => {
     load();
-    const i = setInterval(load, 15000);
+    const i = setInterval(load, 45000);
     return () => clearInterval(i);
   }, []);
 

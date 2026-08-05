@@ -32,10 +32,6 @@ export default function HomeTimeline() {
     ]);
     setPosts(ps);
     setMe(meUser);
-    if (meUser) {
-      const f = await base44.entities.Follow.filter({ follower_id: meUser.id });
-      setFollowIds(new Set(f.map((x) => x.followee_id)));
-    }
     setLoading(false);
   }
 
@@ -49,6 +45,12 @@ export default function HomeTimeline() {
     });
     return unsub;
   }, []);
+
+  // Lazy-load follow IDs only when "following" tab is selected
+  useEffect(() => {
+    if (tab !== "following" || !me || followIds) return;
+    base44.entities.Follow.filter({ follower_id: me.id }).then((f) => setFollowIds(new Set(f.map((x) => x.followee_id))));
+  }, [tab, me, followIds]);
 
   let filtered = posts;
   if (tag !== "すべて") filtered = filtered.filter((p) => p.category === tag);

@@ -34,10 +34,10 @@ export default function NearbyMap() {
       try {
         const [meUser, us, pres, live, follows] = await Promise.all([
           base44.auth.me().catch(() => null),
-          base44.entities.User.list("-created_date", 300),
-          base44.entities.Presence.list("-last_seen", 300).catch(() => []),
-          base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 300),
-          base44.entities.Follow.list("-created_date", 500).catch(() => [])
+          base44.entities.User.list("-created_date", 100),
+          base44.entities.Presence.list("-last_seen", 100).catch(() => []),
+          base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 100),
+          base44.entities.Follow.list("-created_date", 200).catch(() => [])
         ]);
         setMe(meUser);
         setUsers(us.filter((u) => u.id !== meUser?.id && u.lat != null));

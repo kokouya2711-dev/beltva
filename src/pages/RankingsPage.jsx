@@ -23,7 +23,7 @@ export default function RankingsPage() {
     setLoading(true);
     try {
       const [recs, bts, user] = await Promise.all([
-        base44.entities.WorkoutRecord.list("-created_date", 500),
+        base44.entities.WorkoutRecord.list("-created_date", 200),
         base44.entities.Battle.filter({ status: "active" }, "-start_date", 50),
         base44.auth.me().catch(() => null)
       ]);

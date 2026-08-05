@@ -25,8 +25,8 @@ export default function TimelinePage() {
     const [ps, meUser, allLikes, allComments] = await Promise.all([
       base44.entities.Post.list("-created_date", 50),
       base44.auth.me().catch(() => null),
-      base44.entities.Like.list("-created_date", 500).catch(() => []),
-      base44.entities.Comment.list("-created_date", 200).catch(() => [])
+      base44.entities.Like.list("-created_date", 200).catch(() => []),
+      base44.entities.Comment.list("-created_date", 100).catch(() => [])
     ]);
     setPosts(ps);
     setMe(meUser);
@@ -36,14 +36,16 @@ export default function TimelinePage() {
     const cMap = {};
     allComments.forEach((c) => { (cMap[c.post_id] = cMap[c.post_id] || []).push(c); });
     setCommentsByPost(cMap);
-    if (meUser) {
-      const f = await base44.entities.Follow.filter({ follower_id: meUser.id }).catch(() => []);
-      setFollowIds(new Set(f.map((x) => x.followee_id)));
-    }
     setLoading(false);
   }
 
   useEffect(() => { load(); }, []);
+
+  // Lazy-load follow IDs only when "following" scope is selected
+  useEffect(() => {
+    if (scope !== "following" || !me || followIds) return;
+    base44.entities.Follow.filter({ follower_id: me.id }).then((f) => setFollowIds(new Set(f.map((x) => x.followee_id))));
+  }, [scope, me, followIds]);
 
   useEffect(() => {
     const unsub = base44.entities.Post.subscribe((event) => {
