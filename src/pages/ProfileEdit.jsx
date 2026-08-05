@@ -26,7 +26,9 @@ export default function ProfileEdit() {
         bio: u.bio || "",
         country: u.country || "",
         training_purpose: u.training_purpose || "",
-        avatar_url: u.avatar_url || ""
+        avatar_url: u.avatar_url || "",
+        gender: u.gender || "",
+        gender_public: u.gender_public === true
       });
       setHobbies(parseHobbies(u.hobbies));
     }).catch(() => navigate("/"));
@@ -51,7 +53,9 @@ export default function ProfileEdit() {
         country: form.country,
         training_purpose: form.training_purpose,
         avatar_url: form.avatar_url,
-        hobbies: JSON.stringify(hobbies)
+        hobbies: JSON.stringify(hobbies),
+        gender: form.gender || undefined,
+        gender_public: form.gender_public
       });
       navigate(`/profile/${me.id}`);
     } finally { setSaving(false); }
@@ -90,6 +94,20 @@ export default function ProfileEdit() {
           <option value="">{t("profile.purposePlaceholder")}</option>
           {TRAINING_PURPOSES.map((p) => <option key={p.key} value={p.key}>{t("purpose." + p.key)}</option>)}
         </select>
+      </Field>
+      <Field label="性別">
+        <div className="flex items-center gap-2 flex-wrap">
+          <select value={form.gender} onChange={(e) => set("gender", e.target.value)} className={inputCls + " flex-1 min-w-[140px]"}>
+            <option value="">回答しない</option>
+            <option value="male">男性</option>
+            <option value="female">女性</option>
+            <option value="undisclosed">回答しない</option>
+          </select>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
+            <input type="checkbox" checked={form.gender_public} onChange={(e) => set("gender_public", e.target.checked)} className="accent-primary" />
+            公開する
+          </label>
+        </div>
       </Field>
 
       <div className="glass rounded-2xl border border-border p-4">

@@ -33,6 +33,20 @@
       "type": "string",
       "title": "\u30c8\u30ec\u30fc\u30cb\u30f3\u30b0\u76ee\u7684"
     },
+    "gender": {
+      "type": "string",
+      "title": "\u6027\u5225",
+      "enum": [
+        "male",
+        "female",
+        "undisclosed"
+      ]
+    },
+    "gender_public": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u6027\u5225\u516c\u958b"
+    },
     "lat": {
       "type": "number",
       "title": "\u7def\u5ea6(\u307c\u304b\u3057)"
@@ -53,24 +67,6 @@
     "training_history": {
       "type": "string",
       "title": "\u30c8\u30ec\u30fc\u30cb\u30f3\u30b0\u6b74"
-    },
-    "height_cm": {
-      "type": "number",
-      "title": "\u8eab\u9577(cm)"
-    },
-    "weight_kg": {
-      "type": "number",
-      "title": "\u4f53\u91cd(kg)"
-    },
-    "height_public": {
-      "type": "boolean",
-      "default": false,
-      "title": "\u8eab\u9577\u516c\u958b"
-    },
-    "weight_public": {
-      "type": "boolean",
-      "default": false,
-      "title": "\u4f53\u91cd\u516c\u958b"
     },
     "specialty": {
       "type": "string",
