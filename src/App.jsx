@@ -26,6 +26,10 @@ import FollowList from '@/pages/FollowList';
 import Messages from '@/pages/Messages';
 import Chat from '@/pages/Chat';
 import PostDetail from '@/pages/PostDetail';
+import BlockedUsersPage from '@/pages/BlockedUsersPage';
+import TermsPage from '@/pages/TermsPage';
+import ContactPage from '@/pages/ContactPage';
+import PrivacyPage from '@/pages/PrivacyPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -74,6 +78,10 @@ const AuthenticatedApp = () => {
           <Route path="/messages" element={<Messages />} />
           <Route path="/messages/:conversationId" element={<Chat />} />
           <Route path="/posts/:id" element={<PostDetail />} />
+          <Route path="/blocked-users" element={<BlockedUsersPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

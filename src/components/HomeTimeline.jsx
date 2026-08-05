@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PostCard from "@/components/PostCard";
-import CreatePostDialog from "@/components/CreatePostDialog";
-import { Plus, Loader2, MessageSquare } from "lucide-react";
+import { Loader2, MessageSquare } from "lucide-react";
 import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
 import { useT } from "@/lib/i18n";
 import { useTCategory } from "@/lib/i18nHelpers";
@@ -23,7 +22,7 @@ export default function HomeTimeline() {
   const [tag, setTag] = useState("すべて");
   const [me, setMe] = useState(null);
   const [followIds, setFollowIds] = useState(null);
-  const [showCreate, setShowCreate] = useState(false);
+
 
   async function load() {
     const [ps, meUser] = await Promise.all([
@@ -66,17 +65,9 @@ export default function HomeTimeline() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-primary" />
-          <h2 className="font-bold text-xl">{t("post.title")}</h2>
-        </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition"
-        >
-          <Plus className="w-4 h-4" /> {t("post.create")}
-        </button>
+      <div className="flex items-center gap-2 mb-4">
+        <MessageSquare className="w-5 h-5 text-primary" />
+        <h2 className="font-bold text-xl">{t("post.title")}</h2>
       </div>
 
       <div className="flex gap-1.5 mb-3 overflow-x-auto no-scrollbar">
@@ -128,7 +119,6 @@ export default function HomeTimeline() {
         </div>
       )}
 
-      {showCreate && <CreatePostDialog onClose={() => setShowCreate(false)} onSaved={load} />}
     </div>
   );
 }

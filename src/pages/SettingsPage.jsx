@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
-import { ChevronRight, User, Heart, Target, Bell, Globe, Moon, LogOut, Shield } from "lucide-react";
+import {
+  ChevronRight, User, Bell, Globe, LogOut, Shield,
+  ShieldCheck, Ban, FileText, Mail, Pencil, Heart, Target
+} from "lucide-react";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -14,11 +17,13 @@ export default function SettingsPage() {
   const t = useT();
   const { lang, setLang } = useI18n();
   const navigate = useNavigate();
+  const [me, setMe] = useState(null);
   const [prefs, setPrefs] = useState({ dm: true, follow: true, comment: true });
   const [dmScope, setDmScope] = useState("everyone");
 
   useEffect(() => {
     base44.auth.me().then((u) => {
+      setMe(u);
       if (u.notif_prefs) { try { setPrefs(JSON.parse(u.notif_prefs)); } catch {} }
       if (u.dm_scope) setDmScope(u.dm_scope);
     }).catch(() => {});
@@ -39,19 +44,35 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
       <h1 className="text-2xl font-bold">{t("settings.title")}</h1>
 
-      <Section title={t("settings.account")}>
-        <Row icon={User} label={t("settings.editProfile")} onClick={() => navigate("/profile/edit")} />
+      {/* プロフィール */}
+      <Section title={t("settings.profile")}>
+        <Row icon={User} label={t("settings.profile")} onClick={() => me && navigate(`/profile/${me.id}`)} />
+        <Row icon={Pencil} label={t("settings.editProfile")} onClick={() => navigate("/profile/edit")} />
         <Row icon={Heart} label={t("settings.editHobbies")} onClick={() => navigate("/profile/edit")} />
         <Row icon={Target} label={t("settings.editPurpose")} onClick={() => navigate("/profile/edit")} />
       </Section>
 
+      {/* 言語設定 */}
+      <Section title={t("settings.languageSettings")}>
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-2 text-sm mb-2"><Globe className="w-4 h-4" /> {t("settings.language")}</div>
+          <div className="flex gap-2 flex-wrap">
+            {LANGS.map((l) => (
+              <button key={l.code} onClick={() => setLang(l.code)} className={`text-sm px-3 py-1.5 rounded-full border ${lang === l.code ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{l.label}</button>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* 通知設定 */}
       <Section title={t("settings.notifications")}>
         <ToggleRow label={t("messages.title")} checked={prefs.dm} onChange={() => togglePref("dm")} />
         <ToggleRow label={t("common.follow")} checked={prefs.follow} onChange={() => togglePref("follow")} />
         <ToggleRow label={t("notifications.title")} checked={prefs.comment} onChange={() => togglePref("comment")} />
       </Section>
 
-      <Section title={t("settings.dmScope")}>
+      {/* DM設定 */}
+      <Section title={t("settings.dmSettings")}>
         <div className="px-4 py-3 space-y-2">
           <div className="flex items-center gap-2 text-sm mb-1"><Shield className="w-4 h-4" /> {t("settings.dmScopeDesc")}</div>
           <div className="flex gap-2 flex-wrap">
@@ -62,14 +83,16 @@ export default function SettingsPage() {
         </div>
       </Section>
 
-      <Section title={t("settings.preferences")}>
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-2 text-sm mb-2"><Globe className="w-4 h-4" /> {t("settings.language")}</div>
-          <div className="flex gap-2 flex-wrap">
-            {LANGS.map((l) => <button key={l.code} onClick={() => setLang(l.code)} className={`text-sm px-3 py-1.5 rounded-full border ${lang === l.code ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{l.label}</button>)}
-          </div>
-        </div>
-        <Row icon={Moon} label={t("settings.darkMode")} disabled />
+      {/* プライバシー・ブロック */}
+      <Section title={t("settings.privacy")}>
+        <Row icon={ShieldCheck} label={t("settings.privacy")} onClick={() => navigate("/privacy")} />
+        <Row icon={Ban} label={t("settings.blockedUsers")} onClick={() => navigate("/blocked-users")} />
+      </Section>
+
+      {/* その他 */}
+      <Section title={t("settings.other")}>
+        <Row icon={FileText} label={t("settings.terms")} onClick={() => navigate("/terms")} />
+        <Row icon={Mail} label={t("settings.contact")} onClick={() => navigate("/contact")} />
       </Section>
 
       <button onClick={() => base44.auth.logout("/login")} className="w-full flex items-center justify-center gap-2 bg-secondary/60 border border-border py-3 rounded-xl text-sm font-semibold hover:border-red-500/40">
@@ -87,12 +110,12 @@ function Section({ title, children }) {
     </div>
   );
 }
-function Row({ icon: Icon, label, onClick, disabled }) {
+function Row({ icon: Icon, label, onClick }) {
   return (
-    <button onClick={onClick} disabled={disabled} className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/40 disabled:opacity-50 text-left">
+    <button onClick={onClick} className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/40 text-left">
       <Icon className="w-4 h-4 text-muted-foreground" />
       <span className="flex-1">{label}</span>
-      {!disabled && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+      <ChevronRight className="w-4 h-4 text-muted-foreground" />
     </button>
   );
 }

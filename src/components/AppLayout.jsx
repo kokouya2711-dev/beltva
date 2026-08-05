@@ -6,7 +6,6 @@ import {
   Users,
   Send,
   MessageSquare,
-  Trophy,
   Flame,
   Settings,
   Dumbbell,
@@ -23,7 +22,7 @@ const nav = [
   { to: "/users", labelKey: "nav.users", icon: Users },
   { to: "/messages", labelKey: "nav.messages", icon: Send },
   { to: "/timeline", labelKey: "nav.timeline", icon: MessageSquare },
-  { to: "/rankings", labelKey: "nav.rankings", icon: Trophy }
+  { to: "/settings", labelKey: "nav.settings", icon: Settings }
 ];
 
 export default function AppLayout() {
@@ -67,9 +66,6 @@ export default function AppLayout() {
             <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Train · Live · Rank</div>
           </div>
           <NotificationsBell meId={me?.id} />
-          <button onClick={() => navigate("/settings")} className="p-2 rounded-lg hover:bg-secondary" title={t("nav.settings")}>
-            <Settings className="w-5 h-5" />
-          </button>
         </div>
         <nav className="flex-1 px-3 py-2 space-y-1">
           {nav.map((n) => {
@@ -114,7 +110,6 @@ export default function AppLayout() {
         </div>
         <div className="flex items-center gap-1">
           <NotificationsBell meId={me?.id} />
-          <button onClick={() => navigate("/settings")} className="p-2 rounded-lg hover:bg-secondary"><Settings className="w-5 h-5" /></button>
           <button
             onClick={() => setShowGoLive(true)}
             className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
