@@ -6,10 +6,8 @@ import {
   Users,
   Send,
   MessageSquare,
-  Flame,
   User,
-  Dumbbell,
-  Bell
+  Dumbbell
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
@@ -18,6 +16,9 @@ import { updatePresence } from "@/lib/dm";
 import { getGeolocation, fuzzCoords } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
+import { Image } from "@/components/ui/image";
+
+const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
@@ -71,13 +72,11 @@ function AppLayoutInner() {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Sidebar (desktop) */}
       <aside className="hidden md:flex flex-col w-60 shrink-0 border-r border-border glass sticky top-0 h-screen">
-        <div className="p-5 flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
-            <Flame className="w-5 h-5 text-primary-foreground" />
-          </div>
+        <div className="px-4 py-3 flex items-center gap-2">
+          <Image src={LOGO_URL} alt="BELTVA" className="w-9 h-9 rounded-lg shrink-0" fittingType="fill" />
           <div className="leading-tight flex-1">
-            <div className="font-bold tracking-tight">BELTVA</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-widest">Train · Live · Rank</div>
+            <div className="font-semibold tracking-tight text-sm">BELTVA</div>
+            <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Train · Live · Rank</div>
           </div>
           <NotificationsBell meId={me?.id} />
         </div>
@@ -124,12 +123,10 @@ function AppLayoutInner() {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-3">
+      <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Flame className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="font-bold tracking-tight">BELTVA</span>
+          <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />
+          <span className="font-semibold tracking-tight text-sm">BELTVA</span>
         </div>
         <div className="flex items-center gap-1">
           <NotificationsBell meId={me?.id} />
