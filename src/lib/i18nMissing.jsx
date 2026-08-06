@@ -38,7 +38,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Nom", "ex.add": "Ajouter", "ex.prevRecord": "Précédent", "ex.apply": "Appliquer", "ex.addSet": "Ajouter set",
     "common.reps": "reps", "common.kg": "kg", "common.hour": "h",
     "rest.title": "Minuteur repos", "rest.pause": "Pause", "rest.resume": "Reprendre", "rest.reset": "Réinitialiser", "rest.addCustom": "Temps perso",
-    "tpl.select": "Choisir modèle", "tpl.empty": "Pas de modèles", "tpl.noExercises": "Pas d'exercices", "tpl.deleteConfirm": "Supprimer ?", "tpl.renamePrompt": "Nom du modèle"
+    "tpl.select": "Choisir modèle", "tpl.empty": "Pas de modèles", "tpl.noExercises": "Pas d'exercices", "tpl.deleteConfirm": "Supprimer ?", "tpl.renamePrompt": "Nom du modèle",
+    "goLive.recordChoiceTitle": "Choisir le mode d'enregistrement", "goLive.recordChoiceDesc": "Choisissez le niveau de détail",
+    "goLive.detailedRecord": "Enregistrement détaillé", "goLive.detailedRecordDesc": "Poids, reps, séries, distance, etc.",
+    "goLive.simpleRecord": "Enregistrement simple", "goLive.simpleRecordDesc": "Date, heure de début et fin seulement",
+    "goLive.sets": "Séries", "goLive.reps": "Reps", "goLive.weight": "Poids (kg)", "goLive.duration": "Durée (s) — course/plank",
+    "goLive.notes": "Notes", "goLive.notesPlaceholder": "Impressions / objectifs", "goLive.totalVolume": "Volume total",
+    "goLive.startTime": "Date et heure de début", "goLive.endTime": "Date et heure de fin",
+    "goLive.simpleNote": "L'enregistrement simple sauvegarde aussi dans le calendrier",
+    "settings.privacy": "Confidentialité", "settings.blockedUsers": "Utilisateurs bloqués",
+    "privacy.location": "Partage de position", "privacy.locationDesc": "Afficher ta position floutée sur la carte",
+    "privacy.online": "Statut en ligne", "privacy.onlineDesc": "Afficher ton statut en ligne",
+    "privacy.note": "Les changements sont immédiats. Désactiver la position te masque de la carte."
   },
   es: {
     "nav.me": "Yo", "me.profile": "Perfil", "me.activity": "Mi actividad", "me.settings": "Ajustes", "me.support": "Soporte",
@@ -75,7 +86,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Nombre", "ex.add": "Añadir", "ex.prevRecord": "Anterior", "ex.apply": "Aplicar", "ex.addSet": "Añadir set",
     "common.reps": "reps", "common.kg": "kg", "common.hour": "h",
     "rest.title": "Temporizador", "rest.pause": "Pausa", "rest.resume": "Reanudar", "rest.reset": "Reiniciar", "rest.addCustom": "Tiempo personalizado",
-    "tpl.select": "Elegir plantilla", "tpl.empty": "Sin plantillas", "tpl.noExercises": "Sin ejercicios", "tpl.deleteConfirm": "¿Eliminar?", "tpl.renamePrompt": "Nombre"
+    "tpl.select": "Elegir plantilla", "tpl.empty": "Sin plantillas", "tpl.noExercises": "Sin ejercicios", "tpl.deleteConfirm": "¿Eliminar?", "tpl.renamePrompt": "Nombre",
+    "goLive.recordChoiceTitle": "Elegir modo de registro", "goLive.recordChoiceDesc": "Elige cuánto registrar",
+    "goLive.detailedRecord": "Registro detallado", "goLive.detailedRecordDesc": "Peso, reps, series, distancia, etc.",
+    "goLive.simpleRecord": "Registro simple", "goLive.simpleRecordDesc": "Solo fecha, hora de inicio y fin",
+    "goLive.sets": "Series", "goLive.reps": "Reps", "goLive.weight": "Peso (kg)", "goLive.duration": "Duración (s) — carrera/plancha",
+    "goLive.notes": "Notas", "goLive.notesPlaceholder": "Impresiones / objetivos", "goLive.totalVolume": "Volumen total",
+    "goLive.startTime": "Fecha y hora de inicio", "goLive.endTime": "Fecha y hora de fin",
+    "goLive.simpleNote": "El registro simple también se guarda en el calendario",
+    "settings.privacy": "Privacidad", "settings.blockedUsers": "Usuarios bloqueados",
+    "privacy.location": "Compartir ubicación", "privacy.locationDesc": "Mostrar tu ubicación difuminada en el mapa",
+    "privacy.online": "Estado en línea", "privacy.onlineDesc": "Mostrar tu estado en línea",
+    "privacy.note": "Los cambios son inmediatos. Desactivar la ubicación te oculta del mapa."
   },
   de: {
     "nav.me": "Ich", "me.profile": "Profil", "me.activity": "Meine Aktivität", "me.settings": "Einstellungen", "me.support": "Support",
@@ -112,7 +134,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Name", "ex.add": "Hinzufügen", "ex.prevRecord": "Vorherig", "ex.apply": "Anwenden", "ex.addSet": "Satz hinzufügen",
     "common.reps": "Wdh", "common.kg": "kg", "common.hour": "Std",
     "rest.title": "Pause-Timer", "rest.pause": "Pause", "rest.resume": "Weiter", "rest.reset": "Reset", "rest.addCustom": "Eigene Zeit",
-    "tpl.select": "Vorlage wählen", "tpl.empty": "Keine Vorlagen", "tpl.noExercises": "Keine Übungen", "tpl.deleteConfirm": "Löschen?", "tpl.renamePrompt": "Name"
+    "tpl.select": "Vorlage wählen", "tpl.empty": "Keine Vorlagen", "tpl.noExercises": "Keine Übungen", "tpl.deleteConfirm": "Löschen?", "tpl.renamePrompt": "Name",
+    "goLive.recordChoiceTitle": "Aufnahmemodus wählen", "goLive.recordChoiceDesc": "Wähle wie viel du aufzeichnen willst",
+    "goLive.detailedRecord": "Detaillierte Aufzeichnung", "goLive.detailedRecordDesc": "Gewicht, Wdh, Sätze, Strecke etc.",
+    "goLive.simpleRecord": "Einfache Aufzeichnung", "goLive.simpleRecordDesc": "Nur Datum, Start- und Endzeit",
+    "goLive.sets": "Sätze", "goLive.reps": "Wdh", "goLive.weight": "Gewicht (kg)", "goLive.duration": "Dauer (Sek) — Laufen/Plank",
+    "goLive.notes": "Notizen", "goLive.notesPlaceholder": "Eindrücke / Ziele", "goLive.totalVolume": "Gesamtvolumen",
+    "goLive.startTime": "Startdatum & -zeit", "goLive.endTime": "Enddatum & -zeit",
+    "goLive.simpleNote": "Einfache Aufzeichnung wird auch im Kalender gespeichert",
+    "settings.privacy": "Datenschutz", "settings.blockedUsers": "Blockierte Nutzer",
+    "privacy.location": "Standort teilen", "privacy.locationDesc": "Verschwommenen Standort auf Karte zeigen",
+    "privacy.online": "Online-Status", "privacy.onlineDesc": "Deinen Online-Status anderen zeigen",
+    "privacy.note": "Änderungen sind sofort aktiv. Standort ausblenden versteckt dich auf der Karte."
   },
   pt: {
     "nav.me": "Eu", "me.profile": "Perfil", "me.activity": "Minha atividade", "me.settings": "Configurações", "me.support": "Suporte",
@@ -149,7 +182,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Nome", "ex.add": "Adicionar", "ex.prevRecord": "Anterior", "ex.apply": "Aplicar", "ex.addSet": "Adicionar série",
     "common.reps": "reps", "common.kg": "kg", "common.hour": "h",
     "rest.title": "Timer de descanso", "rest.pause": "Pausar", "rest.resume": "Continuar", "rest.reset": "Resetar", "rest.addCustom": "Tempo personalizado",
-    "tpl.select": "Escolher modelo", "tpl.empty": "Sem modelos", "tpl.noExercises": "Sem exercícios", "tpl.deleteConfirm": "Excluir?", "tpl.renamePrompt": "Nome"
+    "tpl.select": "Escolher modelo", "tpl.empty": "Sem modelos", "tpl.noExercises": "Sem exercícios", "tpl.deleteConfirm": "Excluir?", "tpl.renamePrompt": "Nome",
+    "goLive.recordChoiceTitle": "Escolher modo de registro", "goLive.recordChoiceDesc": "Escolha quanto registrar",
+    "goLive.detailedRecord": "Registro detalhado", "goLive.detailedRecordDesc": "Peso, reps, séries, distância, etc.",
+    "goLive.simpleRecord": "Registro simples", "goLive.simpleRecordDesc": "Apenas data, início e fim",
+    "goLive.sets": "Séries", "goLive.reps": "Reps", "goLive.weight": "Peso (kg)", "goLive.duration": "Duração (s) — corrida/prancha",
+    "goLive.notes": "Notas", "goLive.notesPlaceholder": "Impressões / metas", "goLive.totalVolume": "Volume total",
+    "goLive.startTime": "Data e hora de início", "goLive.endTime": "Data e hora de fim",
+    "goLive.simpleNote": "Registro simples também salva no calendário",
+    "settings.privacy": "Privacidade", "settings.blockedUsers": "Usuários bloqueados",
+    "privacy.location": "Compartilhar localização", "privacy.locationDesc": "Mostrar localização desfocada no mapa",
+    "privacy.online": "Status online", "privacy.onlineDesc": "Mostrar seu status online",
+    "privacy.note": "Mudanças são imediatas. Desativar localização te esconde do mapa."
   },
   it: {
     "nav.me": "Io", "me.profile": "Profilo", "me.activity": "Mia attività", "me.settings": "Impostazioni", "me.support": "Supporto",
@@ -186,7 +230,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Nome", "ex.add": "Aggiungi", "ex.prevRecord": "Precedente", "ex.apply": "Applica", "ex.addSet": "Aggiungi serie",
     "common.reps": "reps", "common.kg": "kg", "common.hour": "h",
     "rest.title": "Timer riposo", "rest.pause": "Pausa", "rest.resume": "Riprendi", "rest.reset": "Reset", "rest.addCustom": "Tempo personalizzato",
-    "tpl.select": "Scegli modello", "tpl.empty": "Nessun modello", "tpl.noExercises": "Nessun esercizio", "tpl.deleteConfirm": "Eliminare?", "tpl.renamePrompt": "Nome"
+    "tpl.select": "Scegli modello", "tpl.empty": "Nessun modello", "tpl.noExercises": "Nessun esercizio", "tpl.deleteConfirm": "Eliminare?", "tpl.renamePrompt": "Nome",
+    "goLive.recordChoiceTitle": "Scegli modalità di registrazione", "goLive.recordChoiceDesc": "Scegli quanto registrare",
+    "goLive.detailedRecord": "Registrazione dettagliata", "goLive.detailedRecordDesc": "Peso, reps, serie, distanza, ecc.",
+    "goLive.simpleRecord": "Registrazione semplice", "goLive.simpleRecordDesc": "Solo data, inizio e fine",
+    "goLive.sets": "Serie", "goLive.reps": "Reps", "goLive.weight": "Peso (kg)", "goLive.duration": "Durata (s) — corsa/plank",
+    "goLive.notes": "Note", "goLive.notesPlaceholder": "Impressioni / obiettivi", "goLive.totalVolume": "Volume totale",
+    "goLive.startTime": "Data e ora di inizio", "goLive.endTime": "Data e ora di fine",
+    "goLive.simpleNote": "La registrazione semplice salva anche nel calendario",
+    "settings.privacy": "Privacy", "settings.blockedUsers": "Utenti bloccati",
+    "privacy.location": "Condivisione posizione", "privacy.locationDesc": "Mostra posizione sfocata sulla mappa",
+    "privacy.online": "Stato online", "privacy.onlineDesc": "Mostra il tuo stato online",
+    "privacy.note": "Le modifiche sono immediate. Disattivare la posizione ti nasconde dalla mappa."
   },
   ru: {
     "nav.me": "Я", "me.profile": "Профиль", "me.activity": "Моя активность", "me.settings": "Настройки", "me.support": "Поддержка",
@@ -223,7 +278,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Название", "ex.add": "Добавить", "ex.prevRecord": "Предыдущий", "ex.apply": "Применить", "ex.addSet": "Добавить сет",
     "common.reps": "повт", "common.kg": "кг", "common.hour": "ч",
     "rest.title": "Таймер отдыха", "rest.pause": "Пауза", "rest.resume": "Продолжить", "rest.reset": "Сброс", "rest.addCustom": "Своё время",
-    "tpl.select": "Выбрать шаблон", "tpl.empty": "Нет шаблонов", "tpl.noExercises": "Нет упражнений", "tpl.deleteConfirm": "Удалить?", "tpl.renamePrompt": "Название"
+    "tpl.select": "Выбрать шаблон", "tpl.empty": "Нет шаблонов", "tpl.noExercises": "Нет упражнений", "tpl.deleteConfirm": "Удалить?", "tpl.renamePrompt": "Название",
+    "goLive.recordChoiceTitle": "Выберите режим записи", "goLive.recordChoiceDesc": "Выберите уровень детализации",
+    "goLive.detailedRecord": "Подробная запись", "goLive.detailedRecordDesc": "Вес, повт, подходы, дистанция и т.д.",
+    "goLive.simpleRecord": "Простая запись", "goLive.simpleRecordDesc": "Только дата, время начала и конца",
+    "goLive.sets": "Подходы", "goLive.reps": "Повт", "goLive.weight": "Вес (кг)", "goLive.duration": "Длительность (с) — бег/планка",
+    "goLive.notes": "Заметки", "goLive.notesPlaceholder": "Впечатления / цели", "goLive.totalVolume": "Общий объём",
+    "goLive.startTime": "Дата и время начала", "goLive.endTime": "Дата и время конца",
+    "goLive.simpleNote": "Простая запись тоже сохраняется в календаре",
+    "settings.privacy": "Конфиденциальность", "settings.blockedUsers": "Заблокированные пользователи",
+    "privacy.location": "Передача местоположения", "privacy.locationDesc": "Показывать размытое местоположение на карте",
+    "privacy.online": "Статус «онлайн»", "privacy.onlineDesc": "Показывать ваш онлайн-статус",
+    "privacy.note": "Изменения вступают сразу. Отключение местоположения скрывает вас на карте."
   },
   zh: {
     "nav.me": "你", "me.profile": "个人资料", "me.activity": "我的活动", "me.settings": "设置", "me.support": "支持",
@@ -260,7 +326,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "动作名称", "ex.add": "添加", "ex.prevRecord": "上次", "ex.apply": "套用", "ex.addSet": "添加组",
     "common.reps": "次", "common.kg": "kg", "common.hour": "时",
     "rest.title": "休息计时器", "rest.pause": "暂停", "rest.resume": "继续", "rest.reset": "重置", "rest.addCustom": "添加自定义时间",
-    "tpl.select": "选择模板", "tpl.empty": "无模板", "tpl.noExercises": "无动作", "tpl.deleteConfirm": "删除此模板？", "tpl.renamePrompt": "模板名称"
+    "tpl.select": "选择模板", "tpl.empty": "无模板", "tpl.noExercises": "无动作", "tpl.deleteConfirm": "删除此模板？", "tpl.renamePrompt": "模板名称",
+    "goLive.recordChoiceTitle": "选择记录方式", "goLive.recordChoiceDesc": "选择记录多少",
+    "goLive.detailedRecord": "详细记录", "goLive.detailedRecordDesc": "记录重量、次数、组数、距离等",
+    "goLive.simpleRecord": "简单记录", "goLive.simpleRecordDesc": "仅记录日期、开始和结束时间",
+    "goLive.sets": "组数", "goLive.reps": "次数", "goLive.weight": "重量 (kg)", "goLive.duration": "时间 (秒) — 跑步/平板",
+    "goLive.notes": "备注", "goLive.notesPlaceholder": "想法 / 目标", "goLive.totalVolume": "总训练量",
+    "goLive.startTime": "开始日期和时间", "goLive.endTime": "结束日期和时间",
+    "goLive.simpleNote": "简单记录也会保存到日历作为训练日",
+    "settings.privacy": "隐私设置", "settings.blockedUsers": "屏蔽的用户",
+    "privacy.location": "位置共享", "privacy.locationDesc": "在地图上显示模糊位置",
+    "privacy.online": "在线状态", "privacy.onlineDesc": "向他人显示在线状态",
+    "privacy.note": "变更立即生效。关闭位置共享会隐藏您在地图上的位置。"
   },
   ko: {
     "nav.me": "나", "me.profile": "프로필", "me.activity": "내 활동", "me.settings": "설정", "me.support": "지원",
@@ -297,7 +374,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "운동명", "ex.add": "추가", "ex.prevRecord": "이전", "ex.apply": "적용", "ex.addSet": "세트 추가",
     "common.reps": "회", "common.kg": "kg", "common.hour": "시",
     "rest.title": "휴식 타이머", "rest.pause": "일시정지", "rest.resume": "재개", "rest.reset": "리셋", "rest.addCustom": "사용자 정의 시간",
-    "tpl.select": "템플릿 선택", "tpl.empty": "템플릿 없음", "tpl.noExercises": "운동 없음", "tpl.deleteConfirm": "삭제?", "tpl.renamePrompt": "템플릿명"
+    "tpl.select": "템플릿 선택", "tpl.empty": "템플릿 없음", "tpl.noExercises": "운동 없음", "tpl.deleteConfirm": "삭제?", "tpl.renamePrompt": "템플릿명",
+    "goLive.recordChoiceTitle": "기록 방식 선택", "goLive.recordChoiceDesc": "얼마나 기록할지 선택하세요",
+    "goLive.detailedRecord": "상세 기록", "goLive.detailedRecordDesc": "무게, 횟수, 세트, 거리 등 기록",
+    "goLive.simpleRecord": "간단 기록", "goLive.simpleRecordDesc": "날짜, 시작/종료 시간만 기록",
+    "goLive.sets": "세트", "goLive.reps": "횟수", "goLive.weight": "무게 (kg)", "goLive.duration": "시간 (초) — 달리기/플랭크",
+    "goLive.notes": "메모", "goLive.notesPlaceholder": "소감 / 목표", "goLive.totalVolume": "총 볼륨",
+    "goLive.startTime": "시작 날짜 및 시간", "goLive.endTime": "종료 날짜 및 시간",
+    "goLive.simpleNote": "간단 기록도 캘린더에 운동일로 저장됩니다",
+    "settings.privacy": "개인정보 설정", "settings.blockedUsers": "차단한 사용자",
+    "privacy.location": "위치 공유", "privacy.locationDesc": "지도에 흐려진 위치 표시",
+    "privacy.online": "온라인 상태", "privacy.onlineDesc": "온라인 상태를 다른 사람에게 표시",
+    "privacy.note": "변경 사항은 즉시 적용됩니다. 위치 공유를 끄면 지도에서 숨겨집니다."
   },
   vi: {
     "nav.me": "Tôi", "me.profile": "Hồ sơ", "me.activity": "Hoạt động", "me.settings": "Cài đặt", "me.support": "Hỗ trợ",
@@ -334,7 +422,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Tên bài tập", "ex.add": "Thêm", "ex.prevRecord": "Trước", "ex.apply": "Áp dụng", "ex.addSet": "Thêm set",
     "common.reps": "lần", "common.kg": "kg", "common.hour": "giờ",
     "rest.title": "Hẹn giờ nghỉ", "rest.pause": "Tạm dừng", "rest.resume": "Tiếp tục", "rest.reset": "Đặt lại", "rest.addCustom": "Thời gian tùy chỉnh",
-    "tpl.select": "Chọn mẫu", "tpl.empty": "Không có mẫu", "tpl.noExercises": "Không có bài tập", "tpl.deleteConfirm": "Xoá?", "tpl.renamePrompt": "Tên mẫu"
+    "tpl.select": "Chọn mẫu", "tpl.empty": "Không có mẫu", "tpl.noExercises": "Không có bài tập", "tpl.deleteConfirm": "Xoá?", "tpl.renamePrompt": "Tên mẫu",
+    "goLive.recordChoiceTitle": "Chọn chế độ ghi nhận", "goLive.recordChoiceDesc": "Chọn mức độ chi tiết",
+    "goLive.detailedRecord": "Ghi nhận chi tiết", "goLive.detailedRecordDesc": "Trọng lượng, lần, set, khoảng cách, v.v.",
+    "goLive.simpleRecord": "Ghi nhận đơn giản", "goLive.simpleRecordDesc": "Chỉ ngày, giờ bắt đầu và kết thúc",
+    "goLive.sets": "Set", "goLive.reps": "Lần", "goLive.weight": "Tạ (kg)", "goLive.duration": "Thời gian (giây) — chạy/plank",
+    "goLive.notes": "Ghi chú", "goLive.notesPlaceholder": "Cảm nghĩ / mục tiêu", "goLive.totalVolume": "Tổng khối lượng",
+    "goLive.startTime": "Ngày và giờ bắt đầu", "goLive.endTime": "Ngày và giờ kết thúc",
+    "goLive.simpleNote": "Ghi nhận đơn giản cũng lưu vào lịch",
+    "settings.privacy": "Quyền riêng tư", "settings.blockedUsers": "Người dùng đã chặn",
+    "privacy.location": "Chia sẻ vị trí", "privacy.locationDesc": "Hiển thị vị trí làm mờ trên bản đồ",
+    "privacy.online": "Trạng thái trực tuyến", "privacy.onlineDesc": "Hiển thị trạng thái trực tuyến của bạn",
+    "privacy.note": "Thay đổi có hiệu lực ngay. Tắt vị trí sẽ ẩn bạn khỏi bản đồ."
   },
   id: {
     "nav.me": "Saya", "me.profile": "Profil", "me.activity": "Aktivitas saya", "me.settings": "Pengaturan", "me.support": "Dukungan",
@@ -371,7 +470,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "Nama", "ex.add": "Tambah", "ex.prevRecord": "Sebelumnya", "ex.apply": "Terapkan", "ex.addSet": "Tambah set",
     "common.reps": "reps", "common.kg": "kg", "common.hour": "j",
     "rest.title": "Timer istirahat", "rest.pause": "Jeda", "rest.resume": "Lanjut", "rest.reset": "Reset", "rest.addCustom": "Waktu kustom",
-    "tpl.select": "Pilih template", "tpl.empty": "Tidak ada template", "tpl.noExercises": "Tidak ada latihan", "tpl.deleteConfirm": "Hapus?", "tpl.renamePrompt": "Nama"
+    "tpl.select": "Pilih template", "tpl.empty": "Tidak ada template", "tpl.noExercises": "Tidak ada latihan", "tpl.deleteConfirm": "Hapus?", "tpl.renamePrompt": "Nama",
+    "goLive.recordChoiceTitle": "Pilih mode catatan", "goLive.recordChoiceDesc": "Pilih seberapa detail",
+    "goLive.detailedRecord": "Catatan detail", "goLive.detailedRecordDesc": "Berat, repetisi, set, jarak, dll.",
+    "goLive.simpleRecord": "Catatan sederhana", "goLive.simpleRecordDesc": "Hanya tanggal, mulai dan selesai",
+    "goLive.sets": "Set", "goLive.reps": "Reps", "goLive.weight": "Berat (kg)", "goLive.duration": "Durasi (dtk) — lari/plank",
+    "goLive.notes": "Catatan", "goLive.notesPlaceholder": "Kesan / target", "goLive.totalVolume": "Total volume",
+    "goLive.startTime": "Tanggal & waktu mulai", "goLive.endTime": "Tanggal & waktu selesai",
+    "goLive.simpleNote": "Catatan sederhana juga tersimpan di kalender",
+    "settings.privacy": "Privasi", "settings.blockedUsers": "Pengguna diblokir",
+    "privacy.location": "Berbagi lokasi", "privacy.locationDesc": "Tampilkan lokasi buram di peta",
+    "privacy.online": "Status online", "privacy.onlineDesc": "Tampilkan status online Anda",
+    "privacy.note": "Perubahan langsung berlaku. Mematikan lokasi menyembunyikan Anda dari peta."
   },
   th: {
     "nav.me": "ฉัน", "me.profile": "โปรไฟล์", "me.activity": "กิจกรรมของฉัน", "me.settings": "ตั้งค่า", "me.support": "สนับสนุน",
@@ -408,7 +518,18 @@ export const missingTranslations = {
     "ex.namePlaceholder": "ชื่อท่า", "ex.add": "เพิ่ม", "ex.prevRecord": "ก่อนหน้า", "ex.apply": "ใช้", "ex.addSet": "เพิ่มเซ็ต",
     "common.reps": "ครั้ง", "common.kg": "กก.", "common.hour": "ชม.",
     "rest.title": "ตัวจับเวลาพัก", "rest.pause": "หยุด", "rest.resume": "ทำต่อ", "rest.reset": "รีเซ็ต", "rest.addCustom": "เวลากำหนดเอง",
-    "tpl.select": "เลือกเทมเพลต", "tpl.empty": "ไม่มีเทมเพลต", "tpl.noExercises": "ไม่มีท่า", "tpl.deleteConfirm": "ลบ?", "tpl.renamePrompt": "ชื่อ"
+    "tpl.select": "เลือกเทมเพลต", "tpl.empty": "ไม่มีเทมเพลต", "tpl.noExercises": "ไม่มีท่า", "tpl.deleteConfirm": "ลบ?", "tpl.renamePrompt": "ชื่อ",
+    "goLive.recordChoiceTitle": "เลือกโหมดบันทึก", "goLive.recordChoiceDesc": "เลือกระดับการบันทึก",
+    "goLive.detailedRecord": "บันทึกละเอียด", "goLive.detailedRecordDesc": "น้ำหนัก ครั้ง เซ็ต ระยะทาง ฯลฯ",
+    "goLive.simpleRecord": "บันทึกแบบง่าย", "goLive.simpleRecordDesc": "เฉพาะวัน เวลาเริ่มและจบ",
+    "goLive.sets": "เซ็ต", "goLive.reps": "ครั้ง", "goLive.weight": "น้ำหนัก (กก.)", "goLive.duration": "ระยะเวลา (วิ) — วิ่ง/แพลงก์",
+    "goLive.notes": "บันทึก", "goLive.notesPlaceholder": "ความรู้สึก / เป้าหมาย", "goLive.totalVolume": "ปริมาณรวม",
+    "goLive.startTime": "วันและเวลาเริ่ม", "goLive.endTime": "วันและเวลาจบ",
+    "goLive.simpleNote": "บันทึกแบบง่ายก็บันทึกลงปฏิทินเช่นกัน",
+    "settings.privacy": "ความเป็นส่วนตัว", "settings.blockedUsers": "ผู้ใช้ที่บล็อก",
+    "privacy.location": "แชร์ตำแหน่ง", "privacy.locationDesc": "แสดงตำแหน่งเบลอบนแผนที่",
+    "privacy.online": "สถานะออนไลน์", "privacy.onlineDesc": "แสดงสถานะออนไลน์ของคุณ",
+    "privacy.note": "การเปลี่ยนแปลงมีผลทันที ปิดตำแหน่งจะซ่อนคุณจากแผนที่"
   },
   ar: {
     "nav.me": "أنا", "me.profile": "الملف الشخصي", "me.activity": "نشاطي", "me.settings": "الإعدادات", "me.support": "الدعم",
@@ -445,6 +566,17 @@ export const missingTranslations = {
     "ex.namePlaceholder": "الاسم", "ex.add": "إضافة", "ex.prevRecord": "السابق", "ex.apply": "تطبيق", "ex.addSet": "إضافة مجموعة",
     "common.reps": "تكرار", "common.kg": "كجم", "common.hour": "س",
     "rest.title": "مؤقت الراحة", "rest.pause": "إيقاف", "rest.resume": "استئناف", "rest.reset": "إعادة", "rest.addCustom": "وقت مخصص",
-    "tpl.select": "اختر قالباً", "tpl.empty": "لا قوالب", "tpl.noExercises": "لا تمارين", "tpl.deleteConfirm": "حذف؟", "tpl.renamePrompt": "الاسم"
+    "tpl.select": "اختر قالباً", "tpl.empty": "لا قوالب", "tpl.noExercises": "لا تمارين", "tpl.deleteConfirm": "حذف؟", "tpl.renamePrompt": "الاسم",
+    "goLive.recordChoiceTitle": "اختر وضع التسجيل", "goLive.recordChoiceDesc": "اختر مستوى التفصيل",
+    "goLive.detailedRecord": "تسجيل مفصل", "goLive.detailedRecordDesc": "وزن، تكرار، مجموعات، مسافة، إلخ.",
+    "goLive.simpleRecord": "تسجيل بسيط", "goLive.simpleRecordDesc": "فقط التاريخ ووقت البداية والنهاية",
+    "goLive.sets": "مجموعات", "goLive.reps": "تكرار", "goLive.weight": "الوزن (كجم)", "goLive.duration": "المدة (ث) — جري/بلانك",
+    "goLive.notes": "ملاحظات", "goLive.notesPlaceholder": "انطباعات / أهداف", "goLive.totalVolume": "الحجم الإجمالي",
+    "goLive.startTime": "تاريخ ووقت البداية", "goLive.endTime": "تاريخ ووقت النهاية",
+    "goLive.simpleNote": "التسجيل البسيط يُحفظ أيضاً في التقويم",
+    "settings.privacy": "الخصوصية", "settings.blockedUsers": "المستخدمون المحظورون",
+    "privacy.location": "مشاركة الموقع", "privacy.locationDesc": "إظهار موقعك المضبب على الخريطة",
+    "privacy.online": "الحالة المتصلة", "privacy.onlineDesc": "إظهار حالتك المتصلة للآخرين",
+    "privacy.note": "التغييرات فورية. إيقاف الموقع يخفيك من الخريطة."
   }
 };
