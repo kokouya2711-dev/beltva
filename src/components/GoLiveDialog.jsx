@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Radio, MapPin, Loader2, Check, Zap, ArrowLeft, ClipboardList } from "lucide-react";
+import { X, Radio, Loader2, Check, Zap, ArrowLeft, ClipboardList } from "lucide-react";
 import { WORKOUT_TYPES, getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
@@ -15,22 +15,18 @@ export default function GoLiveDialog({ onClose, onDetailedSelect }) {
   const tWorkout = useTWorkout();
   const [step, setStep] = useState("choice");
   const [workoutType, setWorkoutType] = useState(WORKOUT_TYPES[0]);
-  const [locationName, setLocationName] = useState("");
-  const [message, setMessage] = useState("");
-  const [locating, setLocating] = useState(false);
   const [coords, setCoords] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [startTime, setStartTime] = useState(toLocalDateTimeString(new Date()));
   const [endTime, setEndTime] = useState(toLocalDateTimeString(new Date(Date.now() + 3600000)));
 
-  async function detectLocation() {
-    setLocating(true);
-    const c = await getGeolocation();
-    setLocating(false);
-    setCoords(c ? fuzzCoords(c.lat, c.lng) : fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
-    if (!c) setLocationName((v) => v || t("goLive.defaultLocation"));
-  }
+  useEffect(() => {
+    (async () => {
+      const c = await getGeolocation();
+      setCoords(c ? fuzzCoords(c.lat, c.lng) : fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
+    })();
+  }, []);
 
   async function startLive() {
     setSubmitting(true);
@@ -38,9 +34,9 @@ export default function GoLiveDialog({ onClose, onDetailedSelect }) {
     const c = coords || fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
     await base44.entities.LiveSession.create({
       status: "live", workout_type: workoutType,
-      location_name: locationName || t("goLive.defaultGym"),
+      location_name: t("goLive.defaultGym"),
       lat: c.lat, lng: c.lng, viewers_count: 0, hype_count: 0,
-      started_at: nowIso, message
+      started_at: nowIso, message: ""
     });
     const start = new Date(startTime);
     const end = new Date(endTime);
@@ -122,17 +118,6 @@ export default function GoLiveDialog({ onClose, onDetailedSelect }) {
           <div className="flex items-center gap-2 text-xs text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
             <Zap className="w-3.5 h-3.5 text-accent" /> {t("goLive.simpleNote")}
           </div>
-        </div>
-        <div className="pt-2 border-t border-border">
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.location")}</label>
-          <div className="flex gap-2 mt-1.5">
-            <input value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t("goLive.locationPlaceholder")} className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary" />
-            <button onClick={detectLocation} disabled={locating} className="flex items-center gap-1.5 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm hover:border-primary">
-              {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />} {t("goLive.currentLocation")}
-            </button>
-          </div>
-          {coords && <div className="text-[11px] text-accent mt-1">{t("goLive.locationDetected")} · {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}</div>}
-          <textarea value={message} onChange={e => setMessage(e.target.value)} rows={2} placeholder={t("goLive.messagePlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary mt-3" />
         </div>
         <button onClick={startLive} disabled={submitting} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60">
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />} {t("goLive.start")}

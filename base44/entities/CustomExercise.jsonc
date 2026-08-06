@@ -1,0 +1,17 @@
+{
+  "name": "CustomExercise",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "\u7a2e\u76ee\u540d"
+    },
+    "body_part": {
+      "type": "string",
+      "title": "\u90e8\u4f4d"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

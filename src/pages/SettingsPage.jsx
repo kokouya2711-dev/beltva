@@ -4,8 +4,9 @@ import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, User, Bell, Globe, LogOut, Shield,
-  ShieldCheck, Ban, FileText, Mail, Pencil, Heart, Target
+  ShieldCheck, Ban, FileText, Mail, Pencil, Heart, Target, Timer
 } from "lucide-react";
+import { useTraining } from "@/lib/trainingContext";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const [me, setMe] = useState(null);
   const [prefs, setPrefs] = useState({ dm: true, follow: true, comment: true });
   const [dmScope, setDmScope] = useState("everyone");
+  const { defaultRest, setDefaultRest } = useTraining();
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -78,6 +80,20 @@ export default function SettingsPage() {
           <div className="flex gap-2 flex-wrap">
             {DM_SCOPE_KEYS.map((s) => (
               <button key={s.key} onClick={() => changeDmScope(s.key)} className={`text-sm px-3 py-1.5 rounded-full border ${dmScope === s.key ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{t(s.labelKey)}</button>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* トレーニング設定 */}
+      <Section title="トレーニング設定">
+        <div className="px-4 py-3 space-y-2">
+          <div className="flex items-center gap-2 text-sm mb-1"><Timer className="w-4 h-4" /> デフォルトレスト時間</div>
+          <div className="flex gap-2 flex-wrap">
+            {[30, 45, 60, 90, 120, 180, 300].map(s => (
+              <button key={s} onClick={() => setDefaultRest(s)} className={`text-sm px-3 py-1.5 rounded-full border ${defaultRest === s ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>
+                {s >= 60 ? `${s / 60}分` : `${s}秒`}
+              </button>
             ))}
           </div>
         </div>

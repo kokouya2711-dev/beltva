@@ -17,6 +17,8 @@ import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
 import { getGeolocation, fuzzCoords } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
+import { TrainingProvider, useTraining } from "@/lib/trainingContext";
+import TrainingFloatingBar from "@/components/TrainingFloatingBar";
 
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
@@ -27,8 +29,17 @@ const nav = [
 ];
 
 export default function AppLayout() {
+  return (
+    <TrainingProvider>
+      <AppLayoutInner />
+    </TrainingProvider>
+  );
+}
+
+function AppLayoutInner() {
   const t = useT();
   const navigate = useNavigate();
+  const { isActive } = useTraining();
   const [me, setMe] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
   const [showWorkoutSession, setShowWorkoutSession] = useState(false);
@@ -145,6 +156,11 @@ export default function AppLayout() {
           );
         })}
       </nav>
+
+      {/* Training floating bar - visible on all pages when training is active */}
+      {isActive && !showWorkoutSession && (
+        <TrainingFloatingBar onClick={() => setShowWorkoutSession(true)} />
+      )}
 
       {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
