@@ -126,7 +126,9 @@ export const extraTranslations = {
     "voice.guest": "ゲスト", "voice.muted": "ミュート", "voice.speaking": "発言中",
     "voice.unmute": "ミュート解除", "voice.leave": "退室", "voice.empty": "まだルームがありません。最初の部屋を作ろう！",
     "rankings.subtitle": "ランキング", "rankings.battles": "バトル", "rankings.allTime": "全期間", "rankings.you": "あなた",
-    "live.subtitle": "トレーニング", "map.subtitle": "ライブトレーニング", "home.legend": "凡例"
+    "live.subtitle": "トレーニング", "map.subtitle": "ライブトレーニング", "home.legend": "凡例",
+    "error.accessRestricted": "アクセス制限", "error.notRegistered": "このアプリは利用登録されていません。アクセスについてはアプリ管理者にお問い合わせください。", "error.ifError": "エラーだと思われる場合は以下をお試しください：", "error.verifyAccount": "正しいアカウントでログインしているか確認", "error.contactAdmin": "アクセスについてアプリ管理者に連絡", "error.tryRelogin": "ログアウトして再度ログイン",
+    "error.404": "ページが見つかりません", "error.pageNotFound": "ページ「{page}」はこのアプリに見つかりませんでした。", "error.adminNote": "管理者メモ", "error.adminNoteDesc": "AIがまだこのページを実装していない可能性があります。チャットで実装を依頼してください。", "error.goHome": "ホームへ"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -250,6 +252,8 @@ export const extraTranslations = {
     "voice.unmute": "Unmute", "voice.leave": "Leave", "voice.empty": "No rooms yet. Create the first one!",
     "rankings.subtitle": "RANKING", "rankings.battles": "BATTLES", "rankings.allTime": "ALL TIME", "rankings.you": "YOU",
     "live.subtitle": "TRAINING", "map.subtitle": "LIVE TRAINING", "home.legend": "Legend",
+    "error.accessRestricted": "Access Restricted", "error.notRegistered": "You are not registered to use this application. Please contact the app administrator to request access.", "error.ifError": "If you believe this is an error, you can:", "error.verifyAccount": "Verify you are logged in with the correct account", "error.contactAdmin": "Contact the app administrator for access", "error.tryRelogin": "Try logging out and back in again",
+    "error.404": "Page Not Found", "error.pageNotFound": "The page \"{page}\" could not be found in this application.", "error.adminNote": "Admin Note", "error.adminNoteDesc": "This could mean that the AI hasn't implemented this page yet. Ask it to implement it in the chat.", "error.goHome": "Go Home",
     "ベンチプレス": "Bench Press", "インクラインベンチプレス": "Incline Bench Press",
     "ダンベルベンチプレス": "Dumbbell Bench Press", "ダンベルインクラインベンチ": "Dumbbell Incline Bench",
     "ディップス": "Dips", "腕立て伏せ": "Push-ups", "ケーブルクロスオーバー": "Cable Crossover",

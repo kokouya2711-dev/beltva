@@ -54,7 +54,12 @@ export const missingTranslations = {
     "privacy.online": "Statut en ligne", "privacy.onlineDesc": "Afficher ton statut en ligne",
     "privacy.note": "Les changements sont immédiats. Désactiver la position te masque de la carte.",
     "rankings.subtitle": "CLASSEMENT", "rankings.battles": "DUELS", "rankings.allTime": "TOUJOURS", "rankings.you": "TOI",
-    "live.subtitle": "ENTRAÎNEMENT", "map.subtitle": "ENTRAÎNEMENT EN DIRECT", "home.legend": "Légende"
+    "live.subtitle": "ENTRAÎNEMENT", "map.subtitle": "ENTRAÎNEMENT EN DIRECT", "home.legend": "Légende",
+    "realtime.onlineUnit": "", "realtime.trainingUnit": "",
+    "contact.title": "Nous contacter", "contact.supportTitle": "Support", "contact.supportBody": "Si vous avez des questions ou des demandes, n'hésitez pas à nous contacter.", "contact.emailLabel": "E-mail", "contact.responseTime": "Délai de réponse", "contact.responseTimeDesc": "Nous répondons généralement sous 2 à 3 jours ouvrés.",
+    "terms.title": "Conditions et politique de confidentialité", "terms.serviceTitle": "Article 1 (Conditions)", "terms.serviceBody": "Cette application est un service social de fitness pour diffuser des entraînements en direct et se connecter avec des amis. En utilisant ce service, vous acceptez ces conditions.", "terms.privacyTitle": "Article 2 (Confidentialité)", "terms.privacyBody": "Vos informations personnelles sont gérées et ne seront pas divulguées à des tiers sans votre consentement. Les données de localisation sont floutées.", "terms.locationTitle": "Article 3 (Localisation)", "terms.locationBody": "Votre position est floutée à environ 900m et votre position exacte n'est jamais partagée.", "terms.prohibitedTitle": "Article 4 (Interdictions)", "terms.prohibitedBody": "Diffamation, spam, fraude et activités illégales sont interdits. Les violations peuvent entraîner des restrictions.", "terms.contactTitle": "Article 5 (Contact)", "terms.contactBody": "Pour toute question, utilisez la page Contact dans les Paramètres.",
+    "error.accessRestricted": "Accès restreint", "error.notRegistered": "Vous n'êtes pas inscrit pour utiliser cette application. Contactez l'administrateur pour demander l'accès.", "error.ifError": "Si vous pensez que c'est une erreur, vous pouvez :", "error.verifyAccount": "Vérifier que vous êtes connecté avec le bon compte", "error.contactAdmin": "Contacter l'administrateur de l'application", "error.tryRelogin": "Se déconnecter et se reconnecter",
+    "error.404": "Page introuvable", "error.pageNotFound": "La page « {page} » est introuvable dans cette application.", "error.adminNote": "Note admin", "error.adminNoteDesc": "L'IA n'a peut-être pas encore implémenté cette page. Demandez-le dans le chat.", "error.goHome": "Accueil"
   },
   es: {
     "nav.me": "Yo", "me.profile": "Perfil", "me.activity": "Mi actividad", "me.settings": "Ajustes", "me.support": "Soporte",
@@ -107,7 +112,12 @@ export const missingTranslations = {
     "privacy.online": "Estado en línea", "privacy.onlineDesc": "Mostrar tu estado en línea",
     "privacy.note": "Los cambios son inmediatos. Desactivar la ubicación te oculta del mapa.",
     "rankings.subtitle": "RANKING", "rankings.battles": "DUELOS", "rankings.allTime": "HISTÓRICO", "rankings.you": "TÚ",
-    "live.subtitle": "ENTRENAMIENTO", "map.subtitle": "ENTRENAMIENTO EN VIVO", "home.legend": "Leyenda"
+    "live.subtitle": "ENTRENAMIENTO", "map.subtitle": "ENTRENAMIENTO EN VIVO", "home.legend": "Leyenda",
+    "realtime.onlineUnit": "", "realtime.trainingUnit": "",
+    "contact.title": "Contáctanos", "contact.supportTitle": "Soporte", "contact.supportBody": "Si tienes preguntas o solicitudes, no dudes en contactarnos.", "contact.emailLabel": "Correo", "contact.responseTime": "Tiempo de respuesta", "contact.responseTimeDesc": "Normalmente respondemos en 2-3 días laborables.",
+    "terms.title": "Términos y política de privacidad", "terms.serviceTitle": "Artículo 1 (Términos)", "terms.serviceBody": "Esta aplicación es un servicio social de fitness para transmitir entrenamientos en vivo y conectarse con amigos. Al usar este servicio, aceptas estos términos.", "terms.privacyTitle": "Artículo 2 (Privacidad)", "terms.privacyBody": "Tu información personal se gestiona adecuadamente y no se divulgará a terceros sin tu consentimiento. Los datos de ubicación están difuminados.", "terms.locationTitle": "Artículo 3 (Ubicación)", "terms.locationBody": "Tu ubicación se difumina a un radio de aproximadamente 900m y tu posición exacta nunca se comparte.", "terms.prohibitedTitle": "Artículo 4 (Prohibiciones)", "terms.prohibitedBody": "La difamación, el spam, el fraude y las actividades ilegales están prohibidos. Las violaciones pueden resultar en restricciones de cuenta.", "terms.contactTitle": "Artículo 5 (Contacto)", "terms.contactBody": "Para consultas sobre este servicio, utiliza la página de Contacto en Configuración.",
+    "error.accessRestricted": "Acceso restringido", "error.notRegistered": "No estás registrado para usar esta aplicación. Contacta al administrador para solicitar acceso.", "error.ifError": "Si crees que es un error, puedes:", "error.verifyAccount": "Verifica que has iniciado sesión con la cuenta correcta", "error.contactAdmin": "Contacta al administrador de la aplicación", "error.tryRelogin": "Cierra sesión y vuelve a entrar",
+    "error.404": "Página no encontrada", "error.pageNotFound": "La página \"{page}\" no se encontró en esta aplicación.", "error.adminNote": "Nota del admin", "error.adminNoteDesc": "Puede que la IA aún no haya implementado esta página. Pídelo en el chat.", "error.goHome": "Inicio"
   },
   de: {
     "nav.me": "Ich", "me.profile": "Profil", "me.activity": "Meine Aktivität", "me.settings": "Einstellungen", "me.support": "Support",
@@ -160,7 +170,12 @@ export const missingTranslations = {
     "privacy.online": "Online-Status", "privacy.onlineDesc": "Deinen Online-Status anderen zeigen",
     "privacy.note": "Änderungen sind sofort aktiv. Standort ausblenden versteckt dich auf der Karte.",
     "rankings.subtitle": "RANGLISTE", "rankings.battles": "DUELLE", "rankings.allTime": "ALLZEIT", "rankings.you": "DU",
-    "live.subtitle": "TRAINING", "map.subtitle": "LIVE TRAINING", "home.legend": "Legende"
+    "live.subtitle": "TRAINING", "map.subtitle": "LIVE TRAINING", "home.legend": "Legende",
+    "realtime.onlineUnit": "", "realtime.trainingUnit": "",
+    "contact.title": "Kontakt", "contact.supportTitle": "Support", "contact.supportBody": "Bei Fragen oder Wünschen kontaktiere uns gerne.", "contact.emailLabel": "E-Mail", "contact.responseTime": "Antwortzeit", "contact.responseTimeDesc": "Wir antworten normalerweise innerhalb von 2-3 Werktagen.",
+    "terms.title": "AGB und Datenschutzerklärung", "terms.serviceTitle": "Artikel 1 (Nutzungsbedingungen)", "terms.serviceBody": "Diese App ist ein Fitness-Sozialdienst für Live-Streaming von Workouts und zum Verbinden mit Freunden. Mit der Nutzung akzeptierst du diese Bedingungen.", "terms.privacyTitle": "Artikel 2 (Datenschutz)", "terms.privacyBody": "Deine persönlichen Daten werden ordnungsgemäß verwaltet und ohne Zustimmung nicht an Dritte weitergegeben. Standortdaten sind verschwommen.", "terms.locationTitle": "Artikel 3 (Standortdaten)", "terms.locationBody": "Dein Standort wird auf ca. 900m Radius verschwommen und deine genaue Position wird nie geteilt.", "terms.prohibitedTitle": "Artikel 4 (Verbotene Handlungen)", "terms.prohibitedBody": "Verleumdung, Spam, Betrug und illegale Aktivitäten sind verboten. Verstöße können zu Kontoeinschränkungen führen.", "terms.contactTitle": "Artikel 5 (Kontakt)", "terms.contactBody": "Für Anfragen zu diesem Service nutze die Kontaktseite in den Einstellungen.",
+    "error.accessRestricted": "Zugriff eingeschränkt", "error.notRegistered": "Du bist nicht für diese App registriert. Kontaktiere den Administrator für Zugang.", "error.ifError": "Wenn du denkst, dass dies ein Fehler ist:", "error.verifyAccount": "Prüfe, ob du mit dem richtigen Konto angemeldet bist", "error.contactAdmin": "Kontaktiere den App-Administrator", "error.tryRelogin": "Abmelden und wieder anmelden",
+    "error.404": "Seite nicht gefunden", "error.pageNotFound": "Die Seite \"{page}\" wurde in dieser App nicht gefunden.", "error.adminNote": "Admin-Hinweis", "error.adminNoteDesc": "Möglicherweise hat die KI diese Seite noch nicht implementiert. Bitte im Chat anfordern.", "error.goHome": "Startseite"
   },
   pt: {
     "nav.me": "Eu", "me.profile": "Perfil", "me.activity": "Minha atividade", "me.settings": "Configurações", "me.support": "Suporte",
@@ -213,7 +228,12 @@ export const missingTranslations = {
     "privacy.online": "Status online", "privacy.onlineDesc": "Mostrar seu status online",
     "privacy.note": "Mudanças são imediatas. Desativar localização te esconde do mapa.",
     "rankings.subtitle": "RANKING", "rankings.battles": "DUELOS", "rankings.allTime": "TODO PERÍODO", "rankings.you": "VOCÊ",
-    "live.subtitle": "TREINO", "map.subtitle": "TREINO AO VIVO", "home.legend": "Legenda"
+    "live.subtitle": "TREINO", "map.subtitle": "TREINO AO VIVO", "home.legend": "Legenda",
+    "realtime.onlineUnit": "", "realtime.trainingUnit": "",
+    "contact.title": "Contato", "contact.supportTitle": "Suporte", "contact.supportBody": "Se tiver dúvidas ou solicitações, entre em contato conosco.", "contact.emailLabel": "E-mail", "contact.responseTime": "Tempo de resposta", "contact.responseTimeDesc": "Normalmente respondemos em 2-3 dias úteis.",
+    "terms.title": "Termos e política de privacidade", "terms.serviceTitle": "Artigo 1 (Termos de serviço)", "terms.serviceBody": "Este aplicativo é um serviço social de fitness para transmitir treinos ao vivo e se conectar com amigos. Ao usar este serviço, você concorda com estes termos.", "terms.privacyTitle": "Artigo 2 (Privacidade)", "terms.privacyBody": "Suas informações pessoais são gerenciadas e não serão divulgadas a terceiros sem seu consentimento. Os dados de localização são desfocados.", "terms.locationTitle": "Artigo 3 (Localização)", "terms.locationBody": "Sua localização é desfocada para um raio de aproximadamente 900m e sua posição exata nunca é compartilhada.", "terms.prohibitedTitle": "Artigo 4 (Proibições)", "terms.prohibitedBody": "Difamação, spam, fraude e atividades ilegais são proibidos. Violações podem resultar em restrições de conta.", "terms.contactTitle": "Artigo 5 (Contato)", "terms.contactBody": "Para consultas sobre este serviço, use a página de Contato nas Configurações.",
+    "error.accessRestricted": "Acesso restrito", "error.notRegistered": "Você não está registrado para usar este aplicativo. Contate o administrador para solicitar acesso.", "error.ifError": "Se você acredita que é um erro, você pode:", "error.verifyAccount": "Verifique se está logado com a conta correta", "error.contactAdmin": "Contate o administrador do aplicativo", "error.tryRelogin": "Saia e entre novamente",
+    "error.404": "Página não encontrada", "error.pageNotFound": "A página \"{page}\" não foi encontrada neste aplicativo.", "error.adminNote": "Nota do admin", "error.adminNoteDesc": "Pode ser que a IA ainda não implementou esta página. Peça no chat.", "error.goHome": "Início"
   },
   it: {
     "nav.me": "Io", "me.profile": "Profilo", "me.activity": "Mia attività", "me.settings": "Impostazioni", "me.support": "Supporto",
@@ -266,7 +286,12 @@ export const missingTranslations = {
     "privacy.online": "Stato online", "privacy.onlineDesc": "Mostra il tuo stato online",
     "privacy.note": "Le modifiche sono immediate. Disattivare la posizione ti nasconde dalla mappa.",
     "rankings.subtitle": "CLASSIFICA", "rankings.battles": "DUELLI", "rankings.allTime": "SEMPRE", "rankings.you": "TU",
-    "live.subtitle": "ALLENAMENTO", "map.subtitle": "ALLENAMENTO LIVE", "home.legend": "Legenda"
+    "live.subtitle": "ALLENAMENTO", "map.subtitle": "ALLENAMENTO LIVE", "home.legend": "Legenda",
+    "realtime.onlineUnit": "", "realtime.trainingUnit": "",
+    "contact.title": "Contattaci", "contact.supportTitle": "Supporto", "contact.supportBody": "Per domande o richieste, contattaci liberamente.", "contact.emailLabel": "Email", "contact.responseTime": "Tempo di risposta", "contact.responseTimeDesc": "Rispondiamo solitamente entro 2-3 giorni lavorativi.",
+    "terms.title": "Termini e politica sulla privacy", "terms.serviceTitle": "Articolo 1 (Termini di servizio)", "terms.serviceBody": "Questa app è un servizio social fitness per lo streaming live degli allenamenti e per connettersi con amici. Usando questo servizio, accetti questi termini.", "terms.privacyTitle": "Articolo 2 (Privacy)", "terms.privacyBody": "I tuoi dati personali sono gestiti in modo appropriato e non saranno divulgati a terzi senza il tuo consenso. I dati di posizione sono sfocati.", "terms.locationTitle": "Articolo 3 (Dati di posizione)", "terms.locationBody": "La tua posizione è sfocata a un raggio di circa 900m e la tua posizione esatta non viene mai condivisa.", "terms.prohibitedTitle": "Articolo 4 (Atti vietati)", "terms.prohibitedBody": "Diffamazione, spam, frode e attività illegali sono vietati. Le violazioni possono comportare restrizioni dell'account.", "terms.contactTitle": "Articolo 5 (Contatto)", "terms.contactBody": "Per domande su questo servizio, usa la pagina Contatto nelle Impostazioni.",
+    "error.accessRestricted": "Accesso limitato", "error.notRegistered": "Non sei registrato per usare questa applicazione. Contatta l'amministratore per richiedere l'accesso.", "error.ifError": "Se ritieni sia un errore, puoi:", "error.verifyAccount": "Verifica di aver effettuato l'accesso con l'account corretto", "error.contactAdmin": "Contatta l'amministratore dell'app", "error.tryRelogin": "Esci e rientra",
+    "error.404": "Pagina non trovata", "error.pageNotFound": "La pagina \"{page}\" non è stata trovata in questa applicazione.", "error.adminNote": "Nota admin", "error.adminNoteDesc": "L'IA potrebbe non aver ancora implementato questa pagina. Chiedila nella chat.", "error.goHome": "Home"
   },
   ru: {
     "nav.me": "Я", "me.profile": "Профиль", "me.activity": "Моя активность", "me.settings": "Настройки", "me.support": "Поддержка",
@@ -319,7 +344,12 @@ export const missingTranslations = {
     "privacy.online": "Статус «онлайн»", "privacy.onlineDesc": "Показывать ваш онлайн-статус",
     "privacy.note": "Изменения вступают сразу. Отключение местоположения скрывает вас на карте.",
     "rankings.subtitle": "РЕЙТИНГ", "rankings.battles": "ДУЭЛИ", "rankings.allTime": "ЗА ВСЁ ВРЕМЯ", "rankings.you": "ВЫ",
-    "live.subtitle": "ТРЕНИРОВКА", "map.subtitle": "LIVE ТРЕНИРОВКА", "home.legend": "Легенда"
+    "live.subtitle": "ТРЕНИРОВКА", "map.subtitle": "LIVE ТРЕНИРОВКА", "home.legend": "Легенда",
+    "realtime.onlineUnit": "", "realtime.trainingUnit": "",
+    "contact.title": "Связаться с нами", "contact.supportTitle": "Поддержка", "contact.supportBody": "Если у вас есть вопросы или пожелания, свяжитесь с нами.", "contact.emailLabel": "Эл. почта", "contact.responseTime": "Время ответа", "contact.responseTimeDesc": "Обычно отвечаем в течение 2-3 рабочих дней.",
+    "terms.title": "Условия и политика конфиденциальности", "terms.serviceTitle": "Статья 1 (Условия использования)", "terms.serviceBody": "Это приложение — фитнес-социальный сервис для прямых трансляций тренировок и общения с друзьями. Используя сервис, вы принимаете эти условия.", "terms.privacyTitle": "Статья 2 (Конфиденциальность)", "terms.privacyBody": "Ваши личные данные управляются надлежащим образом и не раскрываются третьим лицам без согласия. Данные местоположения размыты.", "terms.locationTitle": "Статья 3 (Данные местоположения)", "terms.locationBody": "Ваше местоположение размыто до радиуса около 900м, точная позиция никогда не передаётся.", "terms.prohibitedTitle": "Статья 4 (Запрещённые действия)", "terms.prohibitedBody": "Клевета, спам, мошенничество и незаконная деятельность запрещены. Нарушения могут привести к ограничению аккаунта.", "terms.contactTitle": "Статья 5 (Контакты)", "terms.contactBody": "По вопросам сервиса используйте страницу Контакты в Настройках.",
+    "error.accessRestricted": "Доступ ограничен", "error.notRegistered": "Вы не зарегистрированы для использования этого приложения. Обратитесь к администратору для получения доступа.", "error.ifError": "Если вы считаете, что это ошибка, вы можете:", "error.verifyAccount": "Проверьте, что вошли в правильный аккаунт", "error.contactAdmin": "Свяжитесь с администратором приложения", "error.tryRelogin": "Выйдите и войдите снова",
+    "error.404": "Страница не найдена", "error.pageNotFound": "Страница «{page}» не найдена в этом приложении.", "error.adminNote": "Заметка админа", "error.adminNoteDesc": "Возможно, ИИ ещё не реализовал эту страницу. Попросите в чате.", "error.goHome": "На главную"
   },
   zh: {
     "nav.me": "你", "me.profile": "个人资料", "me.activity": "我的活动", "me.settings": "设置", "me.support": "支持",
@@ -372,7 +402,9 @@ export const missingTranslations = {
     "privacy.online": "在线状态", "privacy.onlineDesc": "向他人显示在线状态",
     "privacy.note": "变更立即生效。关闭位置共享会隐藏您在地图上的位置。",
     "rankings.subtitle": "排行榜", "rankings.battles": "对决", "rankings.allTime": "全部时间", "rankings.you": "你",
-    "live.subtitle": "训练中", "map.subtitle": "直播训练", "home.legend": "图例"
+    "live.subtitle": "训练中", "map.subtitle": "直播训练", "home.legend": "图例",
+    "contact.title": "联系我们", "contact.supportTitle": "支持", "contact.supportBody": "如有问题或需求，请随时联系我们。", "contact.emailLabel": "电子邮箱", "contact.responseTime": "回复时间", "contact.responseTimeDesc": "通常在2-3个工作日内回复。",
+    "terms.title": "使用条款与隐私政策", "terms.serviceTitle": "第1条（使用条款）", "terms.serviceBody": "本应用是健身社交服务，用于直播训练和与朋友联系。使用本服务即表示同意条款。", "terms.privacyTitle": "第2条（隐私）", "terms.privacyBody": "您的个人信息将妥善管理，未经同意不向第三方披露。位置数据已模糊。", "terms.locationTitle": "第3条（位置数据）", "terms.locationBody": "您的位置模糊至约900m范围，确切位置不会共享。", "terms.prohibitedTitle": "第4条（禁止事项）", "terms.prohibitedBody": "禁止诽谤、垃圾信息、欺诈和违法活动。违规可能导致账号限制。", "terms.contactTitle": "第5条（联系）", "terms.contactBody": "有关本服务的查询，请使用设置中的联系页面。"
   },
   ko: {
     "nav.me": "나", "me.profile": "프로필", "me.activity": "내 활동", "me.settings": "설정", "me.support": "지원",
@@ -423,7 +455,11 @@ export const missingTranslations = {
     "blocked.title": "차단한 사용자", "blocked.empty": "차단한 사용자가 없습니다", "blocked.unblockConfirm": "이 사용자의 차단을 해제하시겠습니까?", "common.unblock": "차단 해제",
     "privacy.location": "위치 공유", "privacy.locationDesc": "지도에 흐려진 위치 표시",
     "privacy.online": "온라인 상태", "privacy.onlineDesc": "온라인 상태를 다른 사람에게 표시",
-    "privacy.note": "변경 사항은 즉시 적용됩니다. 위치 공유를 끄면 지도에서 숨겨집니다."
+    "privacy.note": "변경 사항은 즉시 적용됩니다. 위치 공유를 끄면 지도에서 숨겨집니다.",
+    "rankings.subtitle": "랭킹", "rankings.battles": "대결", "rankings.allTime": "전체 기간", "rankings.you": "나",
+    "live.subtitle": "운동", "map.subtitle": "라이브 운동", "home.legend": "범례",
+    "contact.title": "문의하기", "contact.supportTitle": "지원", "contact.supportBody": "질문이나 요청이 있으시면 연락 주세요.", "contact.emailLabel": "이메일", "contact.responseTime": "응답 시간", "contact.responseTimeDesc": "보통 2-3 영업일 내에 답변드립니다.",
+    "terms.title": "이용약관 및 개인정보처리방침", "terms.serviceTitle": "제1조 (이용약관)", "terms.serviceBody": "이 앱은 운동을 라이브 스트리밍하고 친구와 연결하는 피트니스 소셜 서비스입니다. 이 서비스를 사용하면 이 약관에 동의하는 것으로 간주합니다.", "terms.privacyTitle": "제2조 (개인정보)", "terms.privacyBody": "개인정보는 적절히 관리되며 동의 없이 제3자에게 공개되지 않습니다. 위치 데이터는 흐려져 있습니다.", "terms.locationTitle": "제3조 (위치 정보)", "terms.locationBody": "위치는 약 900m 반경으로 흐려지며 정확한 위치는 공유되지 않습니다.", "terms.prohibitedTitle": "제4조 (금지 행위)", "terms.prohibitedBody": "명예훼손, 스팸, 사기, 불법 활동을 금지합니다. 위반 시 계정이 제한될 수 있습니다.", "terms.contactTitle": "제5조 (문의)", "terms.contactBody": "본 서비스 관련 문의는 설정의 문의 페이지를 이용해 주세요."
   },
   vi: {
     "nav.me": "Tôi", "me.profile": "Hồ sơ", "me.activity": "Hoạt động", "me.settings": "Cài đặt", "me.support": "Hỗ trợ",
@@ -474,7 +510,11 @@ export const missingTranslations = {
     "blocked.title": "Người dùng đã chặn", "blocked.empty": "Không có người dùng bị chặn", "blocked.unblockConfirm": "Bỏ chặn người dùng này?", "common.unblock": "Bỏ chặn",
     "privacy.location": "Chia sẻ vị trí", "privacy.locationDesc": "Hiển thị vị trí làm mờ trên bản đồ",
     "privacy.online": "Trạng thái trực tuyến", "privacy.onlineDesc": "Hiển thị trạng thái trực tuyến của bạn",
-    "privacy.note": "Thay đổi có hiệu lực ngay. Tắt vị trí sẽ ẩn bạn khỏi bản đồ."
+    "privacy.note": "Thay đổi có hiệu lực ngay. Tắt vị trí sẽ ẩn bạn khỏi bản đồ.",
+    "rankings.subtitle": "XẾP HẠNG", "rankings.battles": "ĐẤU", "rankings.allTime": "MỌI LÚC", "rankings.you": "BẠN",
+    "live.subtitle": "TẬP LUYỆN", "map.subtitle": "TẬP TRỰC TIẾP", "home.legend": "Chú giải",
+    "contact.title": "Liên hệ", "contact.supportTitle": "Hỗ trợ", "contact.supportBody": "Nếu bạn có câu hỏi hoặc yêu cầu, hãy liên hệ với chúng tôi.", "contact.emailLabel": "Email", "contact.responseTime": "Thời gian phản hồi", "contact.responseTimeDesc": "Thường trả lời trong 2-3 ngày làm việc.",
+    "terms.title": "Điều khoản và chính sách quyền riêng tư", "terms.serviceTitle": "Điều 1 (Điều khoản sử dụng)", "terms.serviceBody": "Ứng dụng này là dịch vụ xã hội thể dục để phát trực tiếp buổi tập và kết nối với bạn bè. Sử dụng dịch vụ này nghĩa là bạn đồng ý với các điều khoản.", "terms.privacyTitle": "Điều 2 (Quyền riêng tư)", "terms.privacyBody": "Thông tin cá nhân của bạn được quản lý phù hợp và không tiết lộ cho bên thứ ba mà không có sự đồng ý. Dữ liệu vị trí được làm mờ.", "terms.locationTitle": "Điều 3 (Dữ liệu vị trí)", "terms.locationBody": "Vị trí của bạn được làm mờ trong bán kính khoảng 900m và vị trí chính xác không bao giờ chia sẻ.", "terms.prohibitedTitle": "Điều 4 (Hành vi bị cấm)", "terms.prohibitedBody": "Cấm bôi nhọ, spam, lừa đảo và hoạt động bất hợp pháp. Vi phạm có thể dẫn đến hạn chế tài khoản.", "terms.contactTitle": "Điều 5 (Liên hệ)", "terms.contactBody": "Về thắc mắc dịch vụ, hãy dùng trang Liên hệ trong Cài đặt."
   },
   id: {
     "nav.me": "Saya", "me.profile": "Profil", "me.activity": "Aktivitas saya", "me.settings": "Pengaturan", "me.support": "Dukungan",
@@ -525,7 +565,11 @@ export const missingTranslations = {
     "blocked.title": "Pengguna diblokir", "blocked.empty": "Tidak ada pengguna diblokir", "blocked.unblockConfirm": "Buka blokir pengguna ini?", "common.unblock": "Buka blokir",
     "privacy.location": "Berbagi lokasi", "privacy.locationDesc": "Tampilkan lokasi buram di peta",
     "privacy.online": "Status online", "privacy.onlineDesc": "Tampilkan status online Anda",
-    "privacy.note": "Perubahan langsung berlaku. Mematikan lokasi menyembunyikan Anda dari peta."
+    "privacy.note": "Perubahan langsung berlaku. Mematikan lokasi menyembunyikan Anda dari peta.",
+    "rankings.subtitle": "PERINGKAT", "rankings.battles": "DUEL", "rankings.allTime": "SEMUA WAKTU", "rankings.you": "ANDA",
+    "live.subtitle": "LATIHAN", "map.subtitle": "LATIHAN LIVE", "home.legend": "Keterangan",
+    "contact.title": "Hubungi kami", "contact.supportTitle": "Dukungan", "contact.supportBody": "Jika ada pertanyaan atau permintaan, hubungi kami.", "contact.emailLabel": "Email", "contact.responseTime": "Waktu respons", "contact.responseTimeDesc": "Biasanya membalas dalam 2-3 hari kerja.",
+    "terms.title": "Syarat dan kebijakan privasi", "terms.serviceTitle": "Pasal 1 (Syarat layanan)", "terms.serviceBody": "Aplikasi ini adalah layanan sosial kebugaran untuk live-streaming latihan dan terhubung dengan teman. Menggunakan layanan ini berarti Anda menyetujui syarat tersebut.", "terms.privacyTitle": "Pasal 2 (Privasi)", "terms.privacyBody": "Informasi pribadi Anda dikelola dengan baik dan tidak akan dibagikan ke pihak ketiga tanpa persetujuan. Data lokasi diburamkan.", "terms.locationTitle": "Pasal 3 (Data lokasi)", "terms.locationBody": "Lokasi Anda diburamkan ke radius sekitar 900m dan posisi tepat tidak pernah dibagikan.", "terms.prohibitedTitle": "Pasal 4 (Tindakan terlarang)", "terms.prohibitedBody": "Fitnah, spam, penipuan, dan aktivitas ilegal dilarang. Pelanggaran dapat menyebabkan pembatasan akun.", "terms.contactTitle": "Pasal 5 (Kontak)", "terms.contactBody": "Untuk pertanyaan tentang layanan ini, gunakan halaman Kontak di Pengaturan."
   },
   th: {
     "nav.me": "ฉัน", "me.profile": "โปรไฟล์", "me.activity": "กิจกรรมของฉัน", "me.settings": "ตั้งค่า", "me.support": "สนับสนุน",
@@ -576,7 +620,11 @@ export const missingTranslations = {
     "blocked.title": "ผู้ใช้ที่บล็อก", "blocked.empty": "ไม่มีผู้ใช้ที่บล็อก", "blocked.unblockConfirm": "ปลดบล็อกผู้ใช้นี้?", "common.unblock": "ปลดบล็อก",
     "privacy.location": "แชร์ตำแหน่ง", "privacy.locationDesc": "แสดงตำแหน่งเบลอบนแผนที่",
     "privacy.online": "สถานะออนไลน์", "privacy.onlineDesc": "แสดงสถานะออนไลน์ของคุณ",
-    "privacy.note": "การเปลี่ยนแปลงมีผลทันที ปิดตำแหน่งจะซ่อนคุณจากแผนที่"
+    "privacy.note": "การเปลี่ยนแปลงมีผลทันที ปิดตำแหน่งจะซ่อนคุณจากแผนที่",
+    "rankings.subtitle": "อันดับ", "rankings.battles": "การแข่ง", "rankings.allTime": "ตลอดกาล", "rankings.you": "คุณ",
+    "live.subtitle": "การฝึก", "map.subtitle": "การฝึกสด", "home.legend": "คำอธิบายสัญลักษณ์",
+    "contact.title": "ติดต่อเรา", "contact.supportTitle": "การสนับสนุน", "contact.supportBody": "หากมีคำถามหรือคำขอ โปรดติดต่อเรา", "contact.emailLabel": "อีเมล", "contact.responseTime": "เวลาตอบกลับ", "contact.responseTimeDesc": "มักตอบกลับภายใน 2-3 วันทำการ",
+    "terms.title": "ข้อกำหนดและนโยบายความเป็นส่วนตัว", "terms.serviceTitle": "ข้อที่ 1 (ข้อกำหนดการใช้งาน)", "terms.serviceBody": "แอปนี้คือบริการสังคมสำหรับฟิตเนส ถ่ายทอดสดการออกกำลังกายและเชื่อมต่อกับเพื่อน การใช้บริการนี้ถือว่าคุณยอมรับข้อกำหนด", "terms.privacyTitle": "ข้อที่ 2 (ความเป็นส่วนตัว)", "terms.privacyBody": "ข้อมูลส่วนบุคคลของคุณได้รับการจัดการอย่างเหมาะสมและจะไม่เปิดเผยแก่บุคคลที่สามโดยไม่ได้รับความยินยอม ข้อมูลตำแหน่งถูกเบลอ", "terms.locationTitle": "ข้อที่ 3 (ข้อมูลตำแหน่ง)", "terms.locationBody": "ตำแหน่งของคุณถูกเบลอไปที่รัศมีประมาณ 900m และตำแหน่งที่แน่นอนไม่ถูกแชร์", "terms.prohibitedTitle": "ข้อที่ 4 (การกระทำต้องห้าม)", "terms.prohibitedBody": "ห้ามหมิ่นประมาท สแปม ฉ้อโกง และกิจกรรมผิดกฎหมาย การละเมิดอาจส่งผลให้บัญชีถูกจำกัด", "terms.contactTitle": "ข้อที่ 5 (ติดต่อ)", "terms.contactBody": "สอบถามเกี่ยวกับบริการนี้ได้ที่หน้าติดต่อในการตั้งค่า"
   },
   ar: {
     "nav.me": "أنا", "me.profile": "الملف الشخصي", "me.activity": "نشاطي", "me.settings": "الإعدادات", "me.support": "الدعم",
@@ -627,6 +675,10 @@ export const missingTranslations = {
     "blocked.title": "المستخدمون المحظورون", "blocked.empty": "لا مستخدمون محظورون", "blocked.unblockConfirm": "إلغاء حظر هذا المستخدم؟", "common.unblock": "إلغاء الحظر",
     "privacy.location": "مشاركة الموقع", "privacy.locationDesc": "إظهار موقعك المضبب على الخريطة",
     "privacy.online": "الحالة المتصلة", "privacy.onlineDesc": "إظهار حالتك المتصلة للآخرين",
-    "privacy.note": "التغييرات فورية. إيقاف الموقع يخفيك من الخريطة."
+    "privacy.note": "التغييرات فورية. إيقاف الموقع يخفيك من الخريطة.",
+    "rankings.subtitle": "الترتيب", "rankings.battles": "المبارزات", "rankings.allTime": "طوال الوقت", "rankings.you": "أنت",
+    "live.subtitle": "التمرين", "map.subtitle": "تمرين مباشر", "home.legend": "مفتاح الخريطة",
+    "contact.title": "اتصل بنا", "contact.supportTitle": "الدعم", "contact.supportBody": "إذا كان لديك أسئلة أو طلبات، لا تتردد في التواصل معنا.", "contact.emailLabel": "البريد الإلكتروني", "contact.responseTime": "وقت الاستجابة", "contact.responseTimeDesc": "نرد عادة خلال 2-3 أيام عمل.",
+    "terms.title": "الشروط وسياسة الخصوصية", "terms.serviceTitle": "المادة 1 (شروط الخدمة)", "terms.serviceBody": "هذا التطبيق خدمة اجتماعية للياقة البث المباشر للتمارين والتواصل مع الأصدقاء. باستخدامك للخدمة فإنك توافق على هذه الشروط.", "terms.privacyTitle": "المادة 2 (الخصوصية)", "terms.privacyBody": "تُدار معلوماتك الشخصية بشكل صحيح ولا تُفصح لأطراف ثالثة دون موافقتك. بيانات الموقع ضبابية.", "terms.locationTitle": "المادة 3 (بيانات الموقع)", "terms.locationBody": "يُضبب موقعك إلى نطاق حوالي 900م ولا يُشارك موقعك الدقيق أبداً.", "terms.prohibitedTitle": "المادة 4 (الأعمال المحظورة)", "terms.prohibitedBody": "يُحظر التشهير والرسائل المزعجة والاحتيال والأنشطة غير القانونية. قد تؤدي المخالفات إلى تقييد الحساب.", "terms.contactTitle": "المادة 5 (الاتصال)", "terms.contactBody": "لاستفسارات حول هذه الخدمة، استخدم صفحة الاتصال في الإعدادات."
   }
 };
