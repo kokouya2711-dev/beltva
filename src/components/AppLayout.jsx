@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
+import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
 import { getGeolocation, fuzzCoords } from "@/lib/workouts";
@@ -40,12 +41,13 @@ export default function AppLayout() {
 function AppLayoutInner() {
   const t = useT();
   const navigate = useNavigate();
-  const { isActive, elapsedSec, startTraining } = useTraining();
+  const { isActive, isSimple, elapsedSec, startTraining } = useTraining();
   const mm = String(Math.floor(elapsedSec / 60)).padStart(2, "0");
   const ss = String(elapsedSec % 60).padStart(2, "0");
   const [me, setMe] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
   const [showWorkoutSession, setShowWorkoutSession] = useState(false);
+  const [showSimpleSession, setShowSimpleSession] = useState(false);
   const location = useLocation();
 
   React.useEffect(() => {
@@ -102,7 +104,7 @@ function AppLayoutInner() {
         <div className="p-3">
           {isActive ? (
             <button
-              onClick={() => setShowWorkoutSession(true)}
+              onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
               className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-accent/20"
             >
               <Dumbbell className="w-4 h-4" /> 💪 {t("nav.training")} {mm}:{ss}
@@ -133,7 +135,7 @@ function AppLayoutInner() {
           <NotificationsBell meId={me?.id} />
           {isActive ? (
             <button
-              onClick={() => setShowWorkoutSession(true)}
+              onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
               className="flex items-center gap-1.5 bg-accent text-accent-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
             >
               <Dumbbell className="w-3.5 h-3.5" /> {mm}:{ss}
@@ -187,8 +189,13 @@ function AppLayoutInner() {
         startTraining(allExercises);
         setShowGoLive(false);
         setShowWorkoutSession(true);
+      }} onSimpleSelect={() => {
+        startTraining([], true);
+        setShowGoLive(false);
+        setShowSimpleSession(true);
       }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
+      {showSimpleSession && <SimpleSessionDialog onClose={() => setShowSimpleSession(false)} />}
       <TranslationDebugOverlay />
     </div>
   );

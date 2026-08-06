@@ -30,6 +30,9 @@ export function TrainingProvider({ children }) {
   const [restRunning, setRestRunning] = useState(false);
   const [defaultRest, setDefaultRest] = useState(() => Number(localStorage.getItem("beltva_defaultRest")) || 90);
   const [customPresets, setCustomPresets] = useState(() => JSON.parse(localStorage.getItem("beltva_restPresets") || "[]"));
+  const [isSimple, setIsSimple] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("beltva_trainingSimple") || "false"); } catch { return false; }
+  });
   const startRef = useRef(null);
 
   // Persist state to localStorage
@@ -37,6 +40,7 @@ export function TrainingProvider({ children }) {
   useEffect(() => { localStorage.setItem("beltva_trainingExercises", JSON.stringify(exercises)); }, [exercises]);
   useEffect(() => { localStorage.setItem("beltva_defaultRest", String(defaultRest)); }, [defaultRest]);
   useEffect(() => { localStorage.setItem("beltva_restPresets", JSON.stringify(customPresets)); }, [customPresets]);
+  useEffect(() => { localStorage.setItem("beltva_trainingSimple", JSON.stringify(isSimple)); }, [isSimple]);
 
   // Elapsed timer — restores start time from localStorage on reload
   useEffect(() => {
@@ -69,8 +73,9 @@ export function TrainingProvider({ children }) {
     return () => clearInterval(i);
   }, [restRunning]);
 
-  const startTraining = useCallback((initial = []) => {
+  const startTraining = useCallback((initial = [], simple = false) => {
     setExercises(initial);
+    setIsSimple(simple);
     setElapsedSec(0);
     setRestRemaining(0);
     setRestRunning(false);
@@ -81,6 +86,7 @@ export function TrainingProvider({ children }) {
 
   const stopTraining = useCallback(() => {
     setIsActive(false);
+    setIsSimple(false);
     setExercises([]);
     setElapsedSec(0);
     setRestRemaining(0);
@@ -129,7 +135,7 @@ export function TrainingProvider({ children }) {
 
   return (
     <TrainingContext.Provider value={{
-      isActive, exercises, elapsedSec, restRemaining, restRunning,
+      isActive, isSimple, exercises, elapsedSec, restRemaining, restRunning,
       defaultRest, setDefaultRest, customPresets, presets,
       startTraining, stopTraining, addExercise, updateSet, copyPrevToExercise,
       addSet, removeSet, removeExercise, startRest, stopRest, pauseRest, completeSet,
