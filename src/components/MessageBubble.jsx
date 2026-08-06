@@ -1,8 +1,10 @@
 import React from "react";
 import { Check, CheckCheck } from "lucide-react";
 import { parseReactions, groupReactions } from "@/lib/dm";
+import { useT } from "@/lib/i18n";
 
 export default function MessageBubble({ message, meId, read }) {
+  const t = useT();
   const mine = message.sender_id === meId;
   const grouped = groupReactions(parseReactions(message.reactions));
   return (
@@ -21,7 +23,7 @@ export default function MessageBubble({ message, meId, read }) {
         )}
         {mine && (
           <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-0.5">
-            {read ? <><CheckCheck className="w-3 h-3" /> 既読</> : <Check className="w-3 h-3" />}
+            {read ? <><CheckCheck className="w-3 h-3" /> {t("common.read")}</> : <Check className="w-3 h-3" />}
           </div>
         )}
       </div>

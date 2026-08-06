@@ -94,7 +94,7 @@ export default function Chat() {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       const { msg } = await sendMessage(conv, me.id, { image_url: file_url });
       setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
-      setConv((c) => ({ ...c, status: "active", last_message: t("chat.imageMsg"), last_message_at: new Date().toISOString(), last_sender_id: me.id }));
+      setConv((c) => ({ ...c, status: "active", last_message: "dm.imageMessage", last_message_at: new Date().toISOString(), last_sender_id: me.id }));
     } finally { setUploading(false); }
   }
 

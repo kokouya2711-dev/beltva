@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { MoreVertical, Ban, BellOff, Flag } from "lucide-react";
 import { blockUser, unblockUser, muteUser, unmuteUser, blockExists, isMuted, reportUser } from "@/lib/dm";
 import ReportDialog from "@/components/ReportDialog";
+import { useT } from "@/lib/i18n";
 
 export default function UserMenu({ meId, targetId }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -30,9 +32,9 @@ export default function UserMenu({ meId, targetId }) {
       <button onClick={() => setOpen((v) => !v)} className="p-2 rounded-lg hover:bg-secondary"><MoreVertical className="w-4 h-4" /></button>
       {open && (
         <div className="absolute right-0 top-10 z-50 glass border border-border rounded-xl py-1 w-40">
-          <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? "ミュート解除" : "ミュート"}</button>
-          <button onClick={toggleBlock} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Ban className="w-4 h-4" /> {blocked ? "ブロック解除" : "ブロック"}</button>
-          <button onClick={() => { setOpen(false); setShowReport(true); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> 通報</button>
+          <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? t("common.unmute") : t("common.mute")}</button>
+          <button onClick={toggleBlock} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Ban className="w-4 h-4" /> {blocked ? t("common.unblock") : t("common.block")}</button>
+          <button onClick={() => { setOpen(false); setShowReport(true); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> {t("common.report")}</button>
         </div>
       )}
       {showReport && <ReportDialog onClose={() => setShowReport(false)} onSubmit={async (reason) => { await reportUser(meId, targetId, reason); setShowReport(false); }} />}

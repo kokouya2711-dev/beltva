@@ -93,9 +93,14 @@ export function computeStats(records) {
   };
 }
 
-export function formatDuration(sec) {
+export function formatDuration(sec, t) {
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
+  if (t) {
+    if (h > 0) return t("dur.hms").replace("{h}", h).replace("{m}", m).replace("{s}", 0);
+    if (m > 0) return t("dur.ms").replace("{m}", m);
+    return t("dur.s").replace("{s}", sec);
+  }
   if (h > 0) return `${h}時間${m}分`;
   if (m > 0) return `${m}分`;
   return `${sec}秒`;

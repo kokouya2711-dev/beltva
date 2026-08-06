@@ -2,6 +2,8 @@
 // Covers: post/timeline, body parts, workout types, time, users, messages,
 // chat, rankings, live, goLive, report, settings (dm scope), realtime.
 
+import { exerciseTranslations, uiTranslations, uiTranslations2, uiTranslations3 } from "@/lib/i18nExercises";
+
 export const extraTranslations = {
   ja: {
     "common.none": "なし", "common.close": "閉じる", "common.more": "もっと見る", "common.post": "投稿", "common.language": "言語",
@@ -888,3 +890,17 @@ export const extraTranslations = {
     "realtime.online": "متصل", "realtime.training": "يتدرّب", "realtime.onlineUnit": "", "realtime.trainingUnit": "", "live.end": "إنهاء", "live.unknownLocation": "موقع غير معروف", "live.cheer": "شجّع", "live.watch": "شاهد"
   }
 };
+
+// Merge exercise and UI translations into extraTranslations
+Object.keys(exerciseTranslations).forEach(lang => {
+  if (extraTranslations[lang]) Object.assign(extraTranslations[lang], exerciseTranslations[lang]);
+});
+Object.keys(uiTranslations).forEach(lang => {
+  if (extraTranslations[lang]) Object.assign(extraTranslations[lang], uiTranslations[lang]);
+});
+Object.keys(uiTranslations2).forEach(lang => {
+  if (extraTranslations[lang]) Object.assign(extraTranslations[lang], uiTranslations2[lang]);
+});
+Object.keys(uiTranslations3).forEach(lang => {
+  if (extraTranslations[lang]) Object.assign(extraTranslations[lang], uiTranslations3[lang]);
+});

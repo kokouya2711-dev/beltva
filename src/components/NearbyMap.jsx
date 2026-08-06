@@ -5,6 +5,7 @@ import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame, Info } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { useTWorkout } from "@/lib/i18nHelpers";
 
 const ONLINE_WINDOW = 120000; // 2 min — matches UsersPage online definition
 const NORMAL_TILE = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
@@ -15,6 +16,7 @@ const FILTERS = ["all", "online", "training", "following", "nearby"];
 
 export default function NearbyMap() {
   const t = useT();
+  const tWorkout = useTWorkout();
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const [me, setMe] = useState(null);
@@ -165,7 +167,7 @@ export default function NearbyMap() {
                   <div className="font-medium">{name}</div>
                   {isTraining ? (
                     <div className="text-red-400 flex items-center gap-1">
-                      <Flame className="w-3 h-3" /> {live.workout_type}
+                      <Flame className="w-3 h-3" /> {tWorkout(live.workout_type)}
                     </div>
                   ) : online ? (
                     <div className="text-green-400 flex items-center gap-1">
@@ -206,7 +208,7 @@ export default function NearbyMap() {
         <button
           onClick={() => setShowLegend((v) => !v)}
           className={`glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition ${showLegend ? "bg-primary/20" : ""}`}
-          title="凡例"
+          title={t("home.legend")}
         >
           <Info className="w-3.5 h-3.5 text-primary" />
         </button>

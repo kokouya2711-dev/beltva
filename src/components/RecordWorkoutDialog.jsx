@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Loader2, Check, Plus } from "lucide-react";
 import { WORKOUT_TYPES, computeVolume } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTWorkout } from "@/lib/i18nHelpers";
 
 export default function RecordWorkoutDialog({ onClose, onSaved }) {
+  const t = useT();
+  const tWorkout = useTWorkout();
   const [workoutType, setWorkoutType] = useState(WORKOUT_TYPES[0]);
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState(10);
@@ -38,8 +42,8 @@ export default function RecordWorkoutDialog({ onClose, onSaved }) {
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
             <Check className="w-7 h-7 text-primary" />
           </div>
-          <div className="font-semibold text-lg">記録しました！</div>
-          <div className="text-sm text-muted-foreground">+{volume.toLocaleString()} kg のボリューム 💪</div>
+          <div className="font-semibold text-lg">{t("workout.recorded")}</div>
+          <div className="text-sm text-muted-foreground">{t("workout.volumeRecorded").replace("{n}", volume.toLocaleString())}</div>
         </div>
       </Overlay>
     );
@@ -52,7 +56,7 @@ export default function RecordWorkoutDialog({ onClose, onSaved }) {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Plus className="w-4 h-4 text-primary-foreground" />
           </div>
-          <h2 className="font-bold text-lg">トレーニング記録</h2>
+          <h2 className="font-bold text-lg">{t("workout.recordTitle")}</h2>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
           <X className="w-4 h-4" />
@@ -61,26 +65,26 @@ export default function RecordWorkoutDialog({ onClose, onSaved }) {
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">種目</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.workoutType")}</label>
           <select
             value={workoutType}
             onChange={(e) => setWorkoutType(e.target.value)}
             className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
           >
-            {WORKOUT_TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
+            {WORKOUT_TYPES.map((w) => (
+              <option key={w} value={w}>{tWorkout(w)}</option>
             ))}
           </select>
         </div>
 
         <div className="grid grid-cols-3 gap-3">
-          <Field label="セット" value={sets} onChange={setSets} />
-          <Field label="レップ" value={reps} onChange={setReps} />
-          <Field label="重量(kg)" value={weight} onChange={setWeight} />
+          <Field label={t("goLive.sets")} value={sets} onChange={setSets} />
+          <Field label={t("goLive.reps")} value={reps} onChange={setReps} />
+          <Field label={t("goLive.weight")} value={weight} onChange={setWeight} />
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">時間(秒) — ランニング/プランク用</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.duration")}</label>
           <input
             type="number"
             value={duration}
@@ -90,18 +94,18 @@ export default function RecordWorkoutDialog({ onClose, onSaved }) {
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">メモ</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.notes")}</label>
           <input
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="感想・目標"
+            placeholder={t("goLive.notesPlaceholder")}
             className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
           />
         </div>
 
         <div className="flex items-center justify-between bg-primary/10 border border-primary/20 rounded-xl px-4 py-3">
-          <span className="text-sm text-muted-foreground">合計ボリューム</span>
-          <span className="font-bold text-xl text-primary">{volume.toLocaleString()} kg</span>
+          <span className="text-sm text-muted-foreground">{t("goLive.totalVolume")}</span>
+          <span className="font-bold text-xl text-primary">{volume.toLocaleString()} {t("common.kg")}</span>
         </div>
 
         <button
@@ -110,7 +114,7 @@ export default function RecordWorkoutDialog({ onClose, onSaved }) {
           className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-          記録する
+          {t("workout.recordBtn")}
         </button>
       </div>
     </Overlay>

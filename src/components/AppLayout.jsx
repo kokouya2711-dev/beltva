@@ -105,7 +105,7 @@ function AppLayoutInner() {
               onClick={() => setShowWorkoutSession(true)}
               className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-accent/20"
             >
-              <Dumbbell className="w-4 h-4" /> 💪 トレ中 {mm}:{ss}
+              <Dumbbell className="w-4 h-4" /> 💪 {t("nav.training")} {mm}:{ss}
             </button>
           ) : (
             <button

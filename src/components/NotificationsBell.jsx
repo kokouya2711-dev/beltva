@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Bell } from "lucide-react";
 import { displayName, fetchUser } from "@/lib/profile";
-import { timeAgo } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTimeAgo } from "@/lib/i18nHelpers";
 
 export default function NotificationsBell({ meId }) {
+  const t = useT();
+  const timeAgo = useTimeAgo();
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
   const [actors, setActors] = useState({});
@@ -56,9 +59,9 @@ export default function NotificationsBell({ meId }) {
       </button>
       {open && (
         <div className="absolute right-0 top-11 z-50 w-72 glass border border-border rounded-2xl shadow-2xl overflow-hidden">
-          <div className="px-3 py-2 text-xs text-muted-foreground border-b border-border">通知</div>
+          <div className="px-3 py-2 text-xs text-muted-foreground border-b border-border">{t("notif.title")}</div>
           <div className="max-h-80 overflow-y-auto">
-            {items.length === 0 ? <div className="py-6 text-center text-sm text-muted-foreground">通知はありません</div> :
+            {items.length === 0 ? <div className="py-6 text-center text-sm text-muted-foreground">{t("notif.empty")}</div> :
               items.map((n) => {
                 const a = actors[n.actor_id];
                 return (

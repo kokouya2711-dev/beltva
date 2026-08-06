@@ -14,7 +14,7 @@ export default function TimelinePage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [filter, setFilter] = useState("すべて");
+  const [filter, setFilter] = useState("all");
   const [scope, setScope] = useState("all");
   const [me, setMe] = useState(null);
   const [followIds, setFollowIds] = useState(null);
@@ -56,7 +56,7 @@ export default function TimelinePage() {
     return unsub;
   }, []);
 
-  let filtered = filter === "すべて" ? posts : posts.filter((p) => p.category === filter);
+  let filtered = filter === "all" ? posts : posts.filter((p) => p.category === filter);
   if (scope === "following" && me && followIds) {
     filtered = filtered.filter((p) => followIds.has(p.created_by_id) || p.created_by_id === me.id);
   }
@@ -85,11 +85,11 @@ export default function TimelinePage() {
           </div>
 
           <div className="flex gap-2 mb-5 overflow-x-auto no-scrollbar">
-            {["すべて", ...POST_CATEGORIES].map((c) => {
+            {["all", ...POST_CATEGORIES].map((c) => {
               const active = filter === c;
               const s = CATEGORY_STYLE[c];
               return (
-                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-xs px-3 py-1.5 rounded-full border transition ${active ? (s ? `${s.bg} ${s.color} ${s.border}` : "bg-primary/10 text-primary border-primary/30") : "border-border text-muted-foreground"}`}>{c === "すべて" ? t("common.all") : tCat(c)}</button>
+                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-xs px-3 py-1.5 rounded-full border transition ${active ? (s ? `${s.bg} ${s.color} ${s.border}` : "bg-primary/10 text-primary border-primary/30") : "border-border text-muted-foreground"}`}>{c === "all" ? t("common.all") : tCat(c)}</button>
               );
             })}
           </div>

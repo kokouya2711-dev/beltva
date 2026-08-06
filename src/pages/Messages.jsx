@@ -72,7 +72,7 @@ export default function Messages() {
                     <span className="font-medium truncate">{displayName(o)}</span>
                     <span className="text-xs text-muted-foreground shrink-0 ml-2">{c.last_message_at ? timeAgo(c.last_message_at) : ""}</span>
                   </div>
-                  <div className={`text-sm truncate ${unread ? "text-foreground font-medium" : "text-muted-foreground"}`}>{c.last_message || t("messages.startChat")}</div>
+                  <div className={`text-sm truncate ${unread ? "text-foreground font-medium" : "text-muted-foreground"}`}>{c.last_message ? t(c.last_message) : t("messages.startChat")}</div>
                 </div>
                 {unread && <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />}
               </button>

@@ -4,13 +4,14 @@ import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Loader2, Camera, Check } from "lucide-react";
 import { COUNTRIES, flagEmoji } from "@/lib/profile";
 import { TRAINING_PURPOSES, parseHobbies } from "@/lib/hobbies";
-import { useT, LANGS } from "@/lib/i18n";
+import { useT, useI18n, LANGS } from "@/lib/i18n";
 import HobbyEditor from "@/components/HobbyEditor";
 
 const inputCls = "w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary";
 
 export default function ProfileEdit() {
   const t = useT();
+  const { lang } = useI18n();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [form, setForm] = useState({});
@@ -92,12 +93,16 @@ export default function ProfileEdit() {
         </label>
       </div>
 
-      <Field label={t("common.displayName")}><input value={form.display_name} onChange={(e) => set("display_name", e.target.value)} className={inputCls} placeholder="PULSE太郎" /></Field>
-      <Field label={t("common.bio")}><textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} rows={3} className={inputCls} placeholder="筋トレ歴3年。ベンチ100kg目指中！" /></Field>
+      <Field label={t("common.displayName")}><input value={form.display_name} onChange={(e) => set("display_name", e.target.value)} className={inputCls} placeholder={t("profile.namePlaceholder")} /></Field>
+      <Field label={t("common.bio")}><textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} rows={3} className={inputCls} placeholder={t("profile.bioPlaceholder")} /></Field>
       <Field label={t("common.country")}>
         <select value={form.country} onChange={(e) => set("country", e.target.value)} className={inputCls}>
           <option value="">{t("common.selectCountry")}</option>
-          {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{flagEmoji(c.code)} {c.name}</option>)}
+          {COUNTRIES.map((c) => {
+            let name = c.name;
+            try { name = new Intl.DisplayNames([lang], { type: "region" }).of(c.code) || c.name; } catch {}
+            return <option key={c.code} value={c.code}>{flagEmoji(c.code)} {name}</option>;
+          })}
         </select>
       </Field>
       <Field label={t("common.purpose")}>
@@ -139,7 +144,7 @@ export default function ProfileEdit() {
         </div>
       </Field>
       <Field label={t("common.ageOptional")}>
-        <input type="number" value={form.age} onChange={(e) => set("age", e.target.value)} className={inputCls} placeholder="例: 25" min="13" max="120" />
+        <input type="number" value={form.age} onChange={(e) => set("age", e.target.value)} className={inputCls} placeholder={t("profile.agePlaceholder")} min="13" max="120" />
       </Field>
 
       <div className="glass rounded-2xl border border-border p-4">

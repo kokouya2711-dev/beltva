@@ -52,7 +52,7 @@ export default function WorkoutDayDetailPage() {
             {hasCardio && <Heart className="w-4 h-4 text-accent" />}
             <span className="font-medium">{hasCardio && hasStrength ? `${t("activity.strength")}+${t("activity.cardio")}` : hasCardio ? t("activity.cardio") : t("activity.strength")}</span>
           </div>
-          <div className="text-muted-foreground">{t("activity.trainingTime")}: <span className="text-foreground font-medium">{formatDuration(totalDuration)}</span></div>
+          <div className="text-muted-foreground">{t("activity.trainingTime")}: <span className="text-foreground font-medium">{formatDuration(totalDuration, t)}</span></div>
           {hasStrength && totalVolume > 0 && (
             <div className="text-muted-foreground">{t("activity.totalVolume")}: <span className="text-primary font-medium">{totalVolume.toLocaleString()} kg</span></div>
           )}
@@ -76,7 +76,7 @@ export default function WorkoutDayDetailPage() {
               {cardio ? (
                 <div className="grid grid-cols-3 gap-2 text-sm">
                   <Metric label={t("activity.distance")} value={r.distance > 0 ? `${r.distance} km` : "—"} />
-                  <Metric label={t("activity.duration")} value={formatDuration(r.duration_sec)} />
+                  <Metric label={t("activity.duration")} value={formatDuration(r.duration_sec, t)} />
                   <Metric label={t("activity.pace")} value={formatPace(r.distance, r.duration_sec)} />
                 </div>
               ) : (

@@ -15,15 +15,19 @@ export function getBodyPart(workoutType) {
   return EXERCISE_TO_BODY_PART[workoutType] || "その他";
 }
 
-export function formatDuration(seconds) {
+export function formatDuration(seconds, t) {
   const s = Math.round(Number(seconds) || 0);
-  if (s <= 0) return "0秒";
-  if (s < 60) return `${s}秒`;
+  if (s <= 0) return t ? t("dur.s").replace("{s}", 0) : "0秒";
+  if (s < 60) return t ? t("dur.s").replace("{s}", s) : `${s}秒`;
   const m = Math.floor(s / 60);
   const rem = s % 60;
-  if (m < 60) return rem > 0 ? `${m}分${rem}秒` : `${m}分`;
+  if (m < 60) {
+    if (t) return rem > 0 ? t("dur.hms").replace("{h}", 0).replace("{m}", m).replace("{s}", rem) : t("dur.ms").replace("{m}", m);
+    return rem > 0 ? `${m}分${rem}秒` : `${m}分`;
+  }
   const h = Math.floor(m / 60);
   const mm = m % 60;
+  if (t) return mm > 0 ? t("dur.hms").replace("{h}", h).replace("{m}", mm).replace("{s}", 0) : t("dur.hms").replace("{h}", h).replace("{m}", 0).replace("{s}", 0);
   return mm > 0 ? `${h}時間${mm}分` : `${h}時間`;
 }
 
@@ -46,7 +50,8 @@ export function formatTime(d) {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export function formatDateJP(d) {
+export function formatDateJP(d, t) {
+  if (t) return t("date.format").replace("{y}", d.getFullYear()).replace("{m}", d.getMonth() + 1).replace("{d}", d.getDate());
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
 }
 

@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { displayName, flagEmoji } from "@/lib/profile";
+import { useT } from "@/lib/i18n";
 
 export default function UserLink({ user, size = "sm", showName = true, className = "" }) {
-  if (!user) return <span className="text-muted-foreground">匿名</span>;
+  const t = useT();
+  if (!user) return <span className="text-muted-foreground">{t("common.anonymous")}</span>;
   const name = displayName(user);
   const initials = name.slice(0, 2).toUpperCase();
   const flag = flagEmoji(user.country);

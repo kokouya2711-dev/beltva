@@ -20,10 +20,10 @@ export const WORKOUT_META = {
   ダンベルカール: { icon: "Dumbbell", unit: "kg" }
 };
 
-export const METRIC_LABEL = {
-  volume: "合計ボリューム (kg)",
-  reps: "合計レップ数",
-  duration: "合計時間 (秒)"
+export const METRIC_LABEL_KEYS = {
+  volume: "workout.metric_volume",
+  reps: "workout.metric_reps",
+  duration: "workout.metric_duration"
 };
 
 export function computeVolume({ sets, reps, weight }) {

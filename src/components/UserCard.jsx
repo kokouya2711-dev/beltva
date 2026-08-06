@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { displayName, flagEmoji, COUNTRIES } from "@/lib/profile";
+import { displayName, flagEmoji } from "@/lib/profile";
 import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
 import { useT, useI18n } from "@/lib/i18n";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
@@ -8,9 +8,11 @@ import { Mail, Flame } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import FollowButton from "@/components/FollowButton";
 
-function countryName(code) {
-  const c = COUNTRIES.find((x) => x.code === code);
-  return c ? c.name : code;
+function countryName(code, lang) {
+  try {
+    const dn = new Intl.DisplayNames([lang || "ja"], { type: "region" });
+    return dn.of(code) || code;
+  } catch { return code; }
 }
 
 export default function UserCard({ user, me, isOnline, isTraining, reason, commonHobbies }) {
@@ -36,7 +38,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
     const blocked = await blockExists(me.id, user.id);
     if (blocked) return;
     const { ok, message } = await checkDmScope(me.id, user);
-    if (!ok) { toast({ description: message }); return; }
+    if (!ok) { toast({ description: t(message) }); return; }
     const conv = await getOrCreateConversation(me.id, user.id);
     navigate(`/messages/${conv.id}`);
   }
@@ -59,7 +61,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
         <div className="flex items-center gap-1.5">
           <Link to={`/profile/${user.id}`} className="font-semibold truncate hover:text-primary">{name}</Link>
           {user.country && <span className="text-base leading-none">{flagEmoji(user.country)}</span>}
-          {user.country && <span className="text-[10px] text-muted-foreground truncate">{countryName(user.country)}</span>}
+          {user.country && <span className="text-[10px] text-muted-foreground truncate">{countryName(user.country, lang)}</span>}
         </div>
         {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{user.bio}</p>}
         <div className="flex flex-wrap gap-1 mt-1.5">

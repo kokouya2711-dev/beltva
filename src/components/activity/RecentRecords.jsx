@@ -28,7 +28,7 @@ export default function RecentRecords({ records }) {
                 </div>
                 <div className="text-xs text-muted-foreground text-right shrink-0 ml-2">
                   {cardio
-                    ? `${r.distance > 0 ? `${r.distance}km ` : ""}${formatDuration(r.duration_sec)}`
+                    ? `${r.distance > 0 ? `${r.distance}km ` : ""}${formatDuration(r.duration_sec, t)}`
                     : `${r.sets}×${r.reps}${r.weight > 0 ? ` @${r.weight}kg` : ""}`}
                 </div>
               </div>

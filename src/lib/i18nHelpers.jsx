@@ -54,6 +54,7 @@ export function useTWorkout() {
   const t = useT();
   return (w) => {
     if (!w) return w;
+    if (BODY_PART_KEYS[w]) return t(BODY_PART_KEYS[w]);
     return t(w);
   };
 }

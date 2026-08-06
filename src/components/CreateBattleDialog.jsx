@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Trophy, Plus, Loader2 } from "lucide-react";
-import { WORKOUT_TYPES, METRIC_LABEL } from "@/lib/workouts";
+import { WORKOUT_TYPES } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTWorkout, useTMetric } from "@/lib/i18nHelpers";
+
+const METRIC_KEYS = ["volume", "reps", "duration"];
 
 export default function CreateBattleDialog({ onClose, onCreated }) {
+  const t = useT();
+  const tWorkout = useTWorkout();
+  const tMetric = useTMetric();
   const [title, setTitle] = useState("");
   const [workoutType, setWorkoutType] = useState(WORKOUT_TYPES[0]);
   const [metric, setMetric] = useState("volume");
@@ -21,7 +28,7 @@ export default function CreateBattleDialog({ onClose, onCreated }) {
     const end = new Date();
     end.setDate(end.getDate() + Number(days) || 7);
     await base44.entities.Battle.create({
-      title: title || `${workoutType} 対決`,
+      title: title || t("battle.defaultName").replace("{w}", tWorkout(workoutType)),
       workout_type: workoutType,
       metric,
       status: "active",
@@ -41,7 +48,7 @@ export default function CreateBattleDialog({ onClose, onCreated }) {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Trophy className="w-4 h-4 text-primary-foreground" />
           </div>
-          <h2 className="font-bold text-lg">ランキング対決を作成</h2>
+          <h2 className="font-bold text-lg">{t("battle.create")}</h2>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
           <X className="w-4 h-4" />
@@ -50,30 +57,30 @@ export default function CreateBattleDialog({ onClose, onCreated }) {
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">対決名</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("battle.title")}</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="今週のベンチプレス対決"
+            placeholder={t("battle.titlePlaceholder")}
             className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider">種目</label>
+            <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("battle.workoutType")}</label>
             <select
               value={workoutType}
               onChange={(e) => setWorkoutType(e.target.value)}
               className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
             >
-              {WORKOUT_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
+              {WORKOUT_TYPES.map((w) => (
+                <option key={w} value={w}>{tWorkout(w)}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider">期間(日)</label>
+            <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("battle.duration")}</label>
             <input
               type="number"
               value={days}
@@ -84,9 +91,9 @@ export default function CreateBattleDialog({ onClose, onCreated }) {
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">集計指標</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("battle.metric")}</label>
           <div className="grid grid-cols-3 gap-2 mt-1.5">
-            {Object.entries(METRIC_LABEL).map(([k, v]) => (
+            {METRIC_KEYS.map((k) => (
               <button
                 key={k}
                 onClick={() => setMetric(k)}
@@ -96,18 +103,18 @@ export default function CreateBattleDialog({ onClose, onCreated }) {
                     : "border-border text-muted-foreground"
                 }`}
               >
-                {v.split(" ")[0]}
+                {tMetric(k)}
               </button>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">説明</label>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("battle.description")}</label>
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="参加条件や賞品"
+            placeholder={t("battle.descPlaceholder")}
             className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
           />
         </div>
@@ -118,7 +125,7 @@ export default function CreateBattleDialog({ onClose, onCreated }) {
           className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-          対決開始
+          {t("battle.start")}
         </button>
       </div>
     </Overlay>

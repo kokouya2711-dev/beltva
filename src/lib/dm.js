@@ -26,10 +26,10 @@ export async function getOrCreateConversation(meId, otherId) {
 export async function checkDmScope(meId, otherUser) {
   if (!otherUser || otherUser.id === meId) return { ok: true };
   const scope = otherUser.dm_scope || "everyone";
-  if (scope === "none") return { ok: false, message: "このユーザーはDMを受信していません" };
+  if (scope === "none") return { ok: false, message: "dm.blocked" };
   if (scope === "followings") {
     const f = await base44.entities.Follow.filter({ follower_id: otherUser.id, followee_id: meId });
-    if (!f.length) return { ok: false, message: "このユーザーはフォロー中のユーザーのみDMを受信します" };
+    if (!f.length) return { ok: false, message: "dm.followingsOnly" };
   }
   return { ok: true };
 }
@@ -40,7 +40,7 @@ export async function sendMessage(conv, meId, { content, image_url }) {
     content: content || "", image_url: image_url || "", reactions: "[]"
   });
   const updates = {
-    last_message: image_url ? "📷 画像" : (content || ""),
+    last_message: image_url ? "dm.imageMessage" : (content || ""),
     last_message_at: new Date().toISOString(),
     last_sender_id: meId
   };
@@ -49,7 +49,7 @@ export async function sendMessage(conv, meId, { content, image_url }) {
   updates[myField] = new Date().toISOString();
   await base44.entities.Conversation.update(conv.id, updates);
   const otherId = meId === conv.a_id ? conv.b_id : conv.a_id;
-  notify(otherId, meId, "dm", image_url ? "📷 画像を送信" : (content || ""), conv.id);
+  notify(otherId, meId, "dm", image_url ? "dm.imageSent" : (content || ""), conv.id);
   return { msg, conv: { ...conv, ...updates } };
 }
 

@@ -3,8 +3,10 @@ import { base44 } from "@/api/base44Client";
 import UserLink from "@/components/UserLink";
 import FollowButton from "@/components/FollowButton";
 import { UserPlus } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export default function SuggestedUsers({ meId }) {
+  const t = useT();
   const [users, setUsers] = useState([]);
   const [tick, setTick] = useState(0);
 
@@ -32,13 +34,13 @@ export default function SuggestedUsers({ meId }) {
     <div className="glass rounded-2xl border border-border p-4">
       <div className="flex items-center gap-2 mb-3">
         <UserPlus className="w-4 h-4 text-primary" />
-        <h3 className="font-bold text-sm">おすすめユーザー</h3>
+        <h3 className="font-bold text-sm">{t("suggested.title")}</h3>
       </div>
       <div className="space-y-3">
         {users.map((u) => (
           <div key={u.id} className="flex items-center gap-3">
             <UserLink user={u} size="md" className="flex-1" />
-            <FollowButton targetId={u.id} meId={meId} size="sm" onChange={() => setTick((t) => t + 1)} />
+            <FollowButton targetId={u.id} meId={meId} size="sm" onChange={() => setTick((tk) => tk + 1)} />
           </div>
         ))}
       </div>

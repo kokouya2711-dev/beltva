@@ -44,7 +44,7 @@ export default function WorkoutHistoryPage() {
             <Link key={day.key} to={`/workout-history/${day.key}`} className="block">
               <div className="glass rounded-2xl border border-border p-4 hover:border-primary transition">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="font-semibold text-sm">{formatDateJP(day.date)}</div>
+                  <div className="font-semibold text-sm">{formatDateJP(day.date, t)}</div>
                   <div className="flex items-center gap-1">
                     {day.hasStrength && <Dumbbell className="w-3.5 h-3.5 text-primary" />}
                     {day.hasCardio && <Heart className="w-3.5 h-3.5 text-accent" />}
@@ -54,14 +54,14 @@ export default function WorkoutHistoryPage() {
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
                   <div className="text-muted-foreground">{t("activity.startTime")}: <span className="text-foreground">{formatTime(day.start)}</span></div>
                   <div className="text-muted-foreground">{t("activity.endTime")}: <span className="text-foreground">{formatTime(day.end)}</span></div>
-                  <div className="text-muted-foreground">{t("activity.trainingTime")}: <span className="text-foreground">{formatDuration(day.totalDuration)}</span></div>
+                  <div className="text-muted-foreground">{t("activity.trainingTime")}: <span className="text-foreground">{formatDuration(day.totalDuration, t)}</span></div>
                   <div className="text-muted-foreground">{t("activity.setType")}: <span className="text-foreground">{day.hasCardio && day.hasStrength ? `${t("activity.strength")}+${t("activity.cardio")}` : day.hasCardio ? t("activity.cardio") : t("activity.strength")}</span></div>
                 </div>
                 {day.hasStrength && day.totalVolume > 0 && (
                   <div className="mt-2 text-xs"><span className="text-muted-foreground">{t("activity.totalVolume")}: </span><span className="text-primary font-medium">{day.totalVolume.toLocaleString()} kg</span></div>
                 )}
                 {day.hasCardio && day.totalDistance > 0 && (
-                  <div className="mt-1 text-xs"><span className="text-muted-foreground">{t("activity.distance")} / {t("activity.duration")} / {t("activity.pace")}: </span><span className="text-accent font-medium">{day.totalDistance.toFixed(1)}km / {formatDuration(day.totalDuration)} / {formatPace(day.totalDistance, day.totalDuration)}</span></div>
+                  <div className="mt-1 text-xs"><span className="text-muted-foreground">{t("activity.distance")} / {t("activity.duration")} / {t("activity.pace")}: </span><span className="text-accent font-medium">{day.totalDistance.toFixed(1)}km / {formatDuration(day.totalDuration, t)} / {formatPace(day.totalDistance, day.totalDuration)}</span></div>
                 )}
               </div>
             </Link>

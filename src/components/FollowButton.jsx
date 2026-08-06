@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { UserPlus, UserCheck, Loader2 } from "lucide-react";
 import { notify } from "@/lib/dm";
+import { useT } from "@/lib/i18n";
 
 export default function FollowButton({ targetId, meId, onChange, size = "md" }) {
+  const t = useT();
   const [following, setFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
@@ -29,7 +31,7 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
       } else {
         await base44.entities.Follow.create({ follower_id: meId, followee_id: targetId });
         setFollowing(true);
-        notify(targetId, meId, "follow", "あなたをフォローしました", meId).catch(() => {});
+        notify(targetId, meId, "follow", t("notif.followed"), meId).catch(() => {});
       }
       onChange && onChange();
     } finally {
@@ -50,7 +52,7 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
       }`}
     >
       {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : following ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-      {following ? "フォロー中" : "フォロー"}
+      {following ? t("common.following") : t("common.follow")}
     </button>
   );
 }
