@@ -181,6 +181,14 @@ function AppLayoutInner() {
         startTraining(data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) })));
         setShowGoLive(false);
         setShowWorkoutSession(true);
+      }} onQuickStartCategory={(tpls) => {
+        const allExercises = tpls.flatMap(tpl => {
+          const data = JSON.parse(tpl.exercises || "[]");
+          return data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) }));
+        });
+        startTraining(allExercises);
+        setShowGoLive(false);
+        setShowWorkoutSession(true);
       }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
     </div>

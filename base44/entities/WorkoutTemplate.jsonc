@@ -6,6 +6,11 @@
       "type": "string",
       "title": "\u30c6\u30f3\u30d7\u30ec\u30fc\u30c8\u540d"
     },
+    "category": {
+      "type": "string",
+      "title": "\u30ab\u30c6\u30b4\u30ea",
+      "default": ""
+    },
     "exercises": {
       "type": "string",
       "title": "\u7a2e\u76ee\u30c7\u30fc\u30bf",

@@ -16,6 +16,7 @@ export default function WorkoutSessionDialog({ onClose }) {
   const [showRest, setShowRest] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [templateName, setTemplateName] = useState("");
+  const [templateCategory, setTemplateCategory] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [prevRecords, setPrevRecords] = useState({});
@@ -31,6 +32,16 @@ export default function WorkoutSessionDialog({ onClose }) {
   function loadTemplate(tpl) {
     const data = JSON.parse(tpl.exercises || "[]");
     training.startTraining(data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) })));
+    setShowTemplates(false);
+    setStep("session");
+  }
+
+  function loadAllTemplates(tpls) {
+    const allExercises = tpls.flatMap(tpl => {
+      const data = JSON.parse(tpl.exercises || "[]");
+      return data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) }));
+    });
+    training.startTraining(allExercises);
     setShowTemplates(false);
     setStep("session");
   }
@@ -70,6 +81,7 @@ export default function WorkoutSessionDialog({ onClose }) {
     if (saveTemplate && templateName.trim()) {
       await base44.entities.WorkoutTemplate.create({
         name: templateName.trim(),
+        category: templateCategory.trim(),
         exercises: JSON.stringify(training.exercises.map(e => ({ workout_type: e.workout_type, sets: e.sets })))
       }).catch(() => {});
     }
@@ -104,7 +116,7 @@ export default function WorkoutSessionDialog({ onClose }) {
           <ChoiceCard icon={ClipboardList} title={t("workout.templateStart")} desc={t("workout.templateStartDesc")} onClick={() => setShowTemplates(true)} />
           <ChoiceCard icon={Zap} title={t("workout.newWorkout")} desc={t("workout.newWorkoutDesc")} onClick={startNew} />
         </div>
-        {showTemplates && <TemplateSelector onSelect={loadTemplate} onClose={() => setShowTemplates(false)} />}
+        {showTemplates && <TemplateSelector onSelect={loadTemplate} onSelectAll={loadAllTemplates} onClose={() => setShowTemplates(false)} />}
       </Overlay>
     );
   }
@@ -122,6 +134,7 @@ export default function WorkoutSessionDialog({ onClose }) {
         <div className="space-y-4">
           <div className="text-sm">{t("workout.saveTemplatePrompt")}</div>
           <input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder={t("workout.templateNamePlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary" />
+          <input value={templateCategory} onChange={e => setTemplateCategory(e.target.value)} placeholder={t("tpl.categoryPlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary" />
           <div className="space-y-2">
             <button onClick={() => finish(true)} disabled={submitting} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl disabled:opacity-60">
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} {t("workout.saveAndFinish")}
