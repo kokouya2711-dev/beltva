@@ -41,8 +41,8 @@ export default function TemplateSelector({ onSelect, onSelectAll, onClose }) {
   const groupedArray = Object.entries(grouped).map(([category, tpls]) => ({ category, templates: tpls }));
 
   return (
-    <div className="fixed inset-0 z-[70] bg-black/70 flex items-end md:items-center justify-center" onClick={onClose}>
-      <div className="w-full md:max-w-md bg-card border border-border rounded-t-2xl md:rounded-2xl p-4 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[80] bg-black/85 backdrop-blur-sm flex items-end md:items-center justify-center" onClick={onClose}>
+      <div className="w-full md:max-w-md bg-card border border-border rounded-t-2xl md:rounded-2xl p-4 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold">{t("tpl.select")}</h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
