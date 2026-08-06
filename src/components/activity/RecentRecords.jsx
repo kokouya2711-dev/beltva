@@ -9,7 +9,7 @@ export default function RecentRecords({ records }) {
   const t = useT();
   const tWorkout = useTWorkout();
   const timeAgo = useTimeAgo();
-  const recent = records.slice(0, 5);
+  const recent = records.slice(0, 3);
 
   return (
     <div className="glass rounded-2xl border border-border p-4">
@@ -36,7 +36,7 @@ export default function RecentRecords({ records }) {
           })}
         </div>
       )}
-      <Link to="/rankings" className="mt-3 flex items-center justify-center gap-1 text-xs text-primary hover:underline">
+      <Link to="/workout-history" className="mt-3 flex items-center justify-center gap-1 text-xs text-primary hover:underline">
         {t("activity.viewAll")} <ChevronRight className="w-3 h-3" />
       </Link>
     </div>

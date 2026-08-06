@@ -30,6 +30,8 @@ import BlockedUsersPage from '@/pages/BlockedUsersPage';
 import TermsPage from '@/pages/TermsPage';
 import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
+import WorkoutHistoryPage from '@/pages/WorkoutHistoryPage';
+import WorkoutDayDetailPage from '@/pages/WorkoutDayDetailPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -82,6 +84,8 @@ const AuthenticatedApp = () => {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/workout-history" element={<WorkoutHistoryPage />} />
+          <Route path="/workout-history/:date" element={<WorkoutDayDetailPage />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
