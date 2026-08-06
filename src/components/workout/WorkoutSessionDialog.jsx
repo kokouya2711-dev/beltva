@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, ArrowLeft, Plus, Clock, Timer, Loader2, Check, ClipboardList, Zap, Save } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
+import { useT } from "@/lib/i18n";
 import ExerciseCard from "./ExerciseCard";
 import ExerciseSearch from "./ExerciseSearch";
 import RestTimer from "./RestTimer";
 import TemplateSelector from "./TemplateSelector";
 
 export default function WorkoutSessionDialog({ onClose }) {
+  const t = useT();
   const training = useTraining();
   const [step, setStep] = useState(training.isActive ? "session" : "templateChoice");
   const [showSearch, setShowSearch] = useState(false);
@@ -85,7 +87,7 @@ export default function WorkoutSessionDialog({ onClose }) {
       <Overlay onClose={onClose}>
         <div className="flex flex-col items-center gap-3 py-12">
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center"><Check className="w-7 h-7 text-primary" /></div>
-          <div className="font-semibold text-lg">トレーニングを記録しました！💪</div>
+          <div className="font-semibold text-lg">{t("workout.recorded")}</div>
         </div>
       </Overlay>
     );
@@ -95,12 +97,12 @@ export default function WorkoutSessionDialog({ onClose }) {
     return (
       <Overlay onClose={onClose}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-lg">トレーニング記録</h2>
+          <h2 className="font-bold text-lg">{t("workout.recordTitle")}</h2>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
         </div>
         <div className="space-y-3">
-          <ChoiceCard icon={ClipboardList} title="テンプレートから開始" desc="保存したテンプレートを選択" onClick={() => setShowTemplates(true)} />
-          <ChoiceCard icon={Zap} title="新しく作成" desc="種目を自由に組み合わせ" onClick={startNew} />
+          <ChoiceCard icon={ClipboardList} title={t("workout.templateStart")} desc={t("workout.templateStartDesc")} onClick={() => setShowTemplates(true)} />
+          <ChoiceCard icon={Zap} title={t("workout.newWorkout")} desc={t("workout.newWorkoutDesc")} onClick={startNew} />
         </div>
         {showTemplates && <TemplateSelector onSelect={loadTemplate} onClose={() => setShowTemplates(false)} />}
       </Overlay>
@@ -113,18 +115,18 @@ export default function WorkoutSessionDialog({ onClose }) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <button onClick={() => setStep("session")} className="p-1.5 rounded-lg hover:bg-secondary"><ArrowLeft className="w-4 h-4" /></button>
-            <h2 className="font-bold text-lg">完了</h2>
+            <h2 className="font-bold text-lg">{t("workout.complete")}</h2>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
         </div>
         <div className="space-y-4">
-          <div className="text-sm">このメニューをテンプレートとして保存しますか？</div>
-          <input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="例: Push Day" className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary" />
+          <div className="text-sm">{t("workout.saveTemplatePrompt")}</div>
+          <input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder={t("workout.templateNamePlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary" />
           <div className="space-y-2">
             <button onClick={() => finish(true)} disabled={submitting} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl disabled:opacity-60">
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} 保存して終了
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} {t("workout.saveAndFinish")}
             </button>
-            <button onClick={() => finish(false)} disabled={submitting} className="w-full py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground">保存せずに終了</button>
+            <button onClick={() => finish(false)} disabled={submitting} className="w-full py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground">{t("workout.finishWithoutSave")}</button>
           </div>
         </div>
       </Overlay>
@@ -144,7 +146,7 @@ export default function WorkoutSessionDialog({ onClose }) {
         </div>
         <div className="flex-1 overflow-y-auto pr-1">
           {training.exercises.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground py-8">種目を追加してください</div>
+            <div className="text-center text-sm text-muted-foreground py-8">{t("workout.addExercisePrompt")}</div>
           ) : (
             <div className="space-y-3">
               {training.exercises.map((ex, i) => (
@@ -155,16 +157,16 @@ export default function WorkoutSessionDialog({ onClose }) {
             </div>
           )}
           <button onClick={() => setShowSearch(true)} className="w-full flex items-center justify-center gap-2 border border-dashed border-border rounded-xl py-3 text-sm text-muted-foreground hover:border-primary hover:text-primary mt-3">
-            <Plus className="w-4 h-4" /> 種目追加
+            <Plus className="w-4 h-4" /> {t("workout.addExercise")}
           </button>
           <button onClick={() => setShowRest(v => !v)} className="w-full flex items-center justify-center gap-1.5 text-sm px-3 py-2.5 rounded-xl bg-secondary/60 border border-border mt-2">
-            <Timer className="w-4 h-4 text-primary" /> レストタイマー
+            <Timer className="w-4 h-4 text-primary" /> {t("workout.restTimer")}
           </button>
         </div>
         <div className="shrink-0 pt-3 border-t border-border">
           <button onClick={() => training.exercises.length > 0 && setStep("savePrompt")} disabled={training.exercises.length === 0}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl disabled:opacity-50">
-            <Check className="w-4 h-4" /> 完了
+            <Check className="w-4 h-4" /> {t("workout.complete")}
           </button>
         </div>
       </div>

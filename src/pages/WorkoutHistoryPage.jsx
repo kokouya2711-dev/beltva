@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import { groupByDay, formatDuration, formatPace, formatDateJP, formatTime } from "@/lib/activityHelpers";
-import { Loader2, ChevronRight, Dumbbell, Heart, Calendar } from "lucide-react";
+import { Loader2, ChevronRight, Dumbbell, Heart, Calendar, ArrowLeft } from "lucide-react";
 
 export default function WorkoutHistoryPage() {
   const t = useT();
@@ -29,6 +29,9 @@ export default function WorkoutHistoryPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-8">
+      <Link to="/activity" className="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-secondary/40 mb-3">
+        <ArrowLeft className="w-5 h-5" />
+      </Link>
       <h1 className="font-bold text-xl mb-4">{t("activity.history")}</h1>
       {days.length === 0 ? (
         <div className="glass rounded-2xl border border-border py-12 flex flex-col items-center gap-2 text-muted-foreground">

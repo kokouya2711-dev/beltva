@@ -15,7 +15,7 @@ export default function MePage() {
 
   const sections = [
     { icon: User, label: t("me.profile"), to: me ? `/profile/${me.id}` : "/" },
-    { icon: Activity, label: t("me.activity"), to: "/" },
+    { icon: Activity, label: t("me.activity"), to: "/activity" },
     { icon: SettingsIcon, label: t("me.settings"), to: "/settings" },
     { icon: HelpCircle, label: t("me.support"), to: "/support" },
   ];

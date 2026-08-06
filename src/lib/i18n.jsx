@@ -3,21 +3,21 @@ import { extraTranslations } from "@/lib/i18nExtra";
 import { hobbyUITranslations } from "@/lib/i18nHobbyUI";
 
 export const LANGS = [
-  { code: "ja", label: "日本語" },
-  { code: "en", label: "English" },
-  { code: "zh", label: "中文" },
-  { code: "ko", label: "한국어" },
-  { code: "es", label: "Español" },
-  { code: "fr", label: "Français" },
-  { code: "de", label: "Deutsch" },
-  { code: "pt", label: "Português" },
-  { code: "it", label: "Italiano" },
-  { code: "ru", label: "Русский" },
-  { code: "vi", label: "Tiếng Việt" },
-  { code: "id", label: "Bahasa Indonesia" },
-  { code: "th", label: "ไทย" },
-  { code: "hi", label: "हिन्दी" },
-  { code: "ar", label: "العربية" }
+  { code: "ja", label: "日本語", flag: "🇯🇵" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "zh", label: "中文", flag: "🇨🇳" },
+  { code: "ko", label: "한국어", flag: "🇰🇷" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "de", label: "Deutsch", flag: "🇩🇪" },
+  { code: "pt", label: "Português", flag: "🇵🇹" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "ru", label: "Русский", flag: "🇷🇺" },
+  { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
+  { code: "id", label: "Bahasa Indonesia", flag: "🇮🇩" },
+  { code: "th", label: "ไทย", flag: "🇹🇭" },
+  { code: "hi", label: "हिन्दी", flag: "🇮🇳" },
+  { code: "ar", label: "العربية", flag: "🇸🇦" }
 ];
 
 const translations = {

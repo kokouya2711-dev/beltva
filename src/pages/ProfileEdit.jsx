@@ -76,7 +76,7 @@ export default function ProfileEdit() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="w-4 h-4" /> {t("common.back")}</button>
+      <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40"><ArrowLeft className="w-5 h-5" /></button>
       <h1 className="text-2xl font-bold">{t("profile.editTitle")}</h1>
 
       <div className="glass rounded-2xl border border-border p-4 flex items-center gap-4">
@@ -106,22 +106,22 @@ export default function ProfileEdit() {
           {TRAINING_PURPOSES.map((p) => <option key={p.key} value={p.key}>{t("purpose." + p.key)}</option>)}
         </select>
       </Field>
-      <Field label="性別">
+      <Field label={t("common.gender")}>
         <div className="flex items-center gap-2 flex-wrap">
           <select value={form.gender} onChange={(e) => set("gender", e.target.value)} className={inputCls + " flex-1 min-w-[140px]"}>
-            <option value="">回答しない</option>
-            <option value="male">男性</option>
-            <option value="female">女性</option>
-            <option value="undisclosed">回答しない</option>
+            <option value="">{t("common.genderUndisclosed")}</option>
+            <option value="male">{t("common.genderMale")}</option>
+            <option value="female">{t("common.genderFemale")}</option>
+            <option value="undisclosed">{t("common.genderUndisclosed")}</option>
           </select>
           <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
             <input type="checkbox" checked={form.gender_public} onChange={(e) => set("gender_public", e.target.checked)} className="accent-primary" />
-            公開する
+            {t("common.genderPublic")}
           </label>
         </div>
       </Field>
 
-      <Field label="話せる言語">
+      <Field label={t("common.languages")}>
         <div className="flex flex-wrap gap-1.5">
           {LANGS.map((l) => {
             const active = (form.languages || []).includes(l.code);
@@ -138,7 +138,7 @@ export default function ProfileEdit() {
           })}
         </div>
       </Field>
-      <Field label="年齢（任意）">
+      <Field label={t("common.ageOptional")}>
         <input type="number" value={form.age} onChange={(e) => set("age", e.target.value)} className={inputCls} placeholder="例: 25" min="13" max="120" />
       </Field>
 

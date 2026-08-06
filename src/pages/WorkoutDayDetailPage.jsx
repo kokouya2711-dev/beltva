@@ -39,11 +39,11 @@ export default function WorkoutDayDetailPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-8">
-      <Link to="/workout-history" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-3">
-        <ArrowLeft className="w-4 h-4" /> {t("common.back")}
+      <Link to="/workout-history" className="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-secondary/40 mb-3">
+        <ArrowLeft className="w-5 h-5" />
       </Link>
       <h1 className="font-bold text-xl mb-1">{t("activity.dayDetail")}</h1>
-      <div className="text-sm text-muted-foreground mb-4">{y}年{Number(m)}月{Number(d)}日</div>
+      <div className="text-sm text-muted-foreground mb-4">{t("date.format").replace("{y}", y).replace("{m}", Number(m)).replace("{d}", Number(d))}</div>
 
       <div className="glass rounded-2xl border border-border p-4 mb-4">
         <div className="grid grid-cols-2 gap-3 text-sm">
