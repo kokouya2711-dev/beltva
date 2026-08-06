@@ -7,7 +7,7 @@ import {
   Send,
   MessageSquare,
   Flame,
-  Settings,
+  User,
   Dumbbell,
   Bell
 } from "lucide-react";
@@ -24,7 +24,7 @@ const nav = [
   { to: "/users", labelKey: "nav.users", icon: Users },
   { to: "/messages", labelKey: "nav.messages", icon: Send },
   { to: "/timeline", labelKey: "nav.timeline", icon: MessageSquare },
-  { to: "/settings", labelKey: "nav.settings", icon: Settings }
+  { to: "/me", labelKey: "nav.me", icon: User }
 ];
 
 export default function AppLayout() {

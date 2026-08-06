@@ -80,7 +80,13 @@ export const extraTranslations = {
     "activity.dayDetail": "トレーニング詳細", "activity.startTime": "開始", "activity.endTime": "終了",
     "activity.trainingTime": "トレーニング時間", "activity.setType": "種別",
     "activity.exercise": "種目", "activity.weight": "重量", "activity.reps": "回数", "activity.setCount": "セット",
-    "activity.byBodyPart": "部位別", "activity.volumeGrowth": "ボリューム成長率"
+    "activity.byBodyPart": "部位別", "activity.volumeGrowth": "ボリューム成長率",
+    "nav.me": "あなた", "me.profile": "プロフィール", "me.activity": "マイアクティビティ", "me.settings": "設定", "me.support": "サポート",
+    "me.editProfile": "プロフィールを編集",
+    "settings.display": "表示", "settings.themeDark": "ダーク", "settings.themeLight": "ライト", "settings.themeSystem": "システム設定に合わせる",
+    "settings.defaultRest": "デフォルトレスト時間",
+    "support.title": "サポート", "support.help": "ヘルプ", "support.contact": "お問い合わせ", "support.rate": "BELTVAを評価する", "support.terms": "利用規約", "support.privacy": "プライバシーポリシー",
+    "common.min": "分", "common.sec": "秒"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -159,7 +165,13 @@ export const extraTranslations = {
     "activity.dayDetail": "Workout Details", "activity.startTime": "Start", "activity.endTime": "End",
     "activity.trainingTime": "Training time", "activity.setType": "Type",
     "activity.exercise": "Exercise", "activity.weight": "Weight", "activity.reps": "Reps", "activity.setCount": "Sets",
-    "activity.byBodyPart": "By body part", "activity.volumeGrowth": "Volume growth"
+    "activity.byBodyPart": "By body part", "activity.volumeGrowth": "Volume growth",
+    "nav.me": "Me", "me.profile": "Profile", "me.activity": "My Activity", "me.settings": "Settings", "me.support": "Support",
+    "me.editProfile": "Edit profile",
+    "settings.display": "Display", "settings.themeDark": "Dark", "settings.themeLight": "Light", "settings.themeSystem": "System",
+    "settings.defaultRest": "Default rest time",
+    "support.title": "Support", "support.help": "Help", "support.contact": "Contact us", "support.rate": "Rate BELTVA", "support.terms": "Terms of service", "support.privacy": "Privacy policy",
+    "common.min": "min", "common.sec": "sec"
   },
   zh: {
     "common.none": "无", "common.close": "关闭", "common.more": "更多", "common.post": "发帖", "common.language": "语言",

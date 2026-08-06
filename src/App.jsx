@@ -13,6 +13,7 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import AppLayout from '@/components/AppLayout';
 import { LanguageProvider } from '@/lib/i18n';
+import { ThemeProvider } from 'next-themes';
 import Home from '@/pages/Home';
 import LivePage from '@/pages/LivePage';
 import MapPage from '@/pages/MapPage';
@@ -32,6 +33,8 @@ import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import WorkoutHistoryPage from '@/pages/WorkoutHistoryPage';
 import WorkoutDayDetailPage from '@/pages/WorkoutDayDetailPage';
+import MePage from '@/pages/MePage';
+import SupportPage from '@/pages/SupportPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -86,6 +89,8 @@ const AuthenticatedApp = () => {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/workout-history" element={<WorkoutHistoryPage />} />
           <Route path="/workout-history/:date" element={<WorkoutDayDetailPage />} />
+          <Route path="/me" element={<MePage />} />
+          <Route path="/support" element={<SupportPage />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
@@ -97,6 +102,7 @@ const AuthenticatedApp = () => {
 function App() {
 
   return (
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <LanguageProvider>
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
@@ -108,6 +114,7 @@ function App() {
         </QueryClientProvider>
       </AuthProvider>
     </LanguageProvider>
+    </ThemeProvider>
   )
 }
 
