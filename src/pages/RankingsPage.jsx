@@ -61,7 +61,7 @@ export default function RankingsPage() {
         <div className="flex items-center gap-2">
           <Trophy className="w-5 h-5 text-primary" />
           <h1 className="text-2xl font-bold">{t("rankings.title")}</h1>
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">RANKING</span>
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">{t("rankings.subtitle")}</span>
         </div>
         <button
           onClick={() => setShowCreate(true)}
@@ -73,7 +73,7 @@ export default function RankingsPage() {
 
       {/* Active battles */}
       <section>
-        <SectionHeader icon={Swords} title={t("rankings.activeBattles")} sub="BATTLES" accent="text-red-500" />
+        <SectionHeader icon={Swords} title={t("rankings.activeBattles")} sub={t("rankings.battles")} accent="text-red-500" />
         {battles.length === 0 ? (
           <div className="glass rounded-2xl border border-border py-10 flex flex-col items-center gap-2 text-muted-foreground">
             <Swords className="w-8 h-8 opacity-50" />
@@ -122,7 +122,7 @@ export default function RankingsPage() {
 
       {/* Global leaderboard */}
       <section>
-        <SectionHeader icon={Crown} title={t("rankings.global")} sub="ALL TIME" accent="text-primary" />
+        <SectionHeader icon={Crown} title={t("rankings.global")} sub={t("rankings.allTime")} accent="text-primary" />
 
         {/* filters */}
         <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -174,7 +174,7 @@ export default function RankingsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate flex items-center gap-2">
                     {u.name}
-                    {me && u.uid === me.id && <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">YOU</span>}
+                    {me && u.uid === me.id && <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">{t("rankings.you")}</span>}
                   </div>
                   <div className="h-1.5 rounded-full bg-secondary overflow-hidden mt-1.5">
                     <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full" style={{ width: `${(u.value / max) * 100}%` }} />

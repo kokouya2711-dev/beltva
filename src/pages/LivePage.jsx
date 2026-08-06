@@ -58,7 +58,7 @@ export default function LivePage() {
       <div className="flex items-center gap-2">
         <Radio className="w-5 h-5 text-red-500" />
         <h1 className="text-2xl font-bold">{t("live.title")}</h1>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">TRAINING</span>
+        <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">{t("live.subtitle")}</span>
       </div>
 
       {/* Tabs */}

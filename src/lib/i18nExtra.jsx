@@ -124,7 +124,9 @@ export const extraTranslations = {
     "voice.createButton": "ルームを作成", "voice.defaultName": "もくもくボイス",
     "voice.full": "満室", "voice.join": "参加", "voice.connecting": "ルームに接続中…",
     "voice.guest": "ゲスト", "voice.muted": "ミュート", "voice.speaking": "発言中",
-    "voice.unmute": "ミュート解除", "voice.leave": "退室", "voice.empty": "まだルームがありません。最初の部屋を作ろう！"
+    "voice.unmute": "ミュート解除", "voice.leave": "退室", "voice.empty": "まだルームがありません。最初の部屋を作ろう！",
+    "rankings.subtitle": "ランキング", "rankings.battles": "バトル", "rankings.allTime": "全期間", "rankings.you": "あなた",
+    "live.subtitle": "トレーニング", "map.subtitle": "ライブトレーニング", "home.legend": "凡例"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -246,6 +248,8 @@ export const extraTranslations = {
     "voice.full": "Full", "voice.join": "Join", "voice.connecting": "Connecting to room…",
     "voice.guest": "Guest", "voice.muted": "Muted", "voice.speaking": "Speaking",
     "voice.unmute": "Unmute", "voice.leave": "Leave", "voice.empty": "No rooms yet. Create the first one!",
+    "rankings.subtitle": "RANKING", "rankings.battles": "BATTLES", "rankings.allTime": "ALL TIME", "rankings.you": "YOU",
+    "live.subtitle": "TRAINING", "map.subtitle": "LIVE TRAINING", "home.legend": "Legend",
     "ベンチプレス": "Bench Press", "インクラインベンチプレス": "Incline Bench Press",
     "ダンベルベンチプレス": "Dumbbell Bench Press", "ダンベルインクラインベンチ": "Dumbbell Incline Bench",
     "ディップス": "Dips", "腕立て伏せ": "Push-ups", "ケーブルクロスオーバー": "Cable Crossover",

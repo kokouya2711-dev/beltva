@@ -29,7 +29,7 @@ export default function MapPage() {
       <div className="flex items-center gap-2">
         <Globe className="w-5 h-5 text-primary" />
         <h1 className="text-2xl font-bold">{t("home.globe")}</h1>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">LIVE TRAINING</span>
+        <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">{t("map.subtitle")}</span>
       </div>
 
       <p className="text-sm text-muted-foreground -mt-2">{t("home.globeSub")}</p>

@@ -52,7 +52,9 @@ export const missingTranslations = {
     "blocked.title": "Utilisateurs bloqués", "blocked.empty": "Aucun utilisateur bloqué", "blocked.unblockConfirm": "Débloquer cet utilisateur ?", "common.unblock": "Débloquer",
     "privacy.location": "Partage de position", "privacy.locationDesc": "Afficher ta position floutée sur la carte",
     "privacy.online": "Statut en ligne", "privacy.onlineDesc": "Afficher ton statut en ligne",
-    "privacy.note": "Les changements sont immédiats. Désactiver la position te masque de la carte."
+    "privacy.note": "Les changements sont immédiats. Désactiver la position te masque de la carte.",
+    "rankings.subtitle": "CLASSEMENT", "rankings.battles": "DUELS", "rankings.allTime": "TOUJOURS", "rankings.you": "TOI",
+    "live.subtitle": "ENTRAÎNEMENT", "map.subtitle": "ENTRAÎNEMENT EN DIRECT", "home.legend": "Légende"
   },
   es: {
     "nav.me": "Yo", "me.profile": "Perfil", "me.activity": "Mi actividad", "me.settings": "Ajustes", "me.support": "Soporte",
@@ -103,7 +105,9 @@ export const missingTranslations = {
     "blocked.title": "Usuarios bloqueados", "blocked.empty": "No hay usuarios bloqueados", "blocked.unblockConfirm": "¿Desbloquear a este usuario?", "common.unblock": "Desbloquear",
     "privacy.location": "Compartir ubicación", "privacy.locationDesc": "Mostrar tu ubicación difuminada en el mapa",
     "privacy.online": "Estado en línea", "privacy.onlineDesc": "Mostrar tu estado en línea",
-    "privacy.note": "Los cambios son inmediatos. Desactivar la ubicación te oculta del mapa."
+    "privacy.note": "Los cambios son inmediatos. Desactivar la ubicación te oculta del mapa.",
+    "rankings.subtitle": "RANKING", "rankings.battles": "DUELOS", "rankings.allTime": "HISTÓRICO", "rankings.you": "TÚ",
+    "live.subtitle": "ENTRENAMIENTO", "map.subtitle": "ENTRENAMIENTO EN VIVO", "home.legend": "Leyenda"
   },
   de: {
     "nav.me": "Ich", "me.profile": "Profil", "me.activity": "Meine Aktivität", "me.settings": "Einstellungen", "me.support": "Support",
@@ -154,7 +158,9 @@ export const missingTranslations = {
     "blocked.title": "Blockierte Nutzer", "blocked.empty": "Keine blockierte Nutzer", "blocked.unblockConfirm": "Diesen Nutzer entblocken?", "common.unblock": "Entblocken",
     "privacy.location": "Standort teilen", "privacy.locationDesc": "Verschwommenen Standort auf Karte zeigen",
     "privacy.online": "Online-Status", "privacy.onlineDesc": "Deinen Online-Status anderen zeigen",
-    "privacy.note": "Änderungen sind sofort aktiv. Standort ausblenden versteckt dich auf der Karte."
+    "privacy.note": "Änderungen sind sofort aktiv. Standort ausblenden versteckt dich auf der Karte.",
+    "rankings.subtitle": "RANGLISTE", "rankings.battles": "DUELLE", "rankings.allTime": "ALLZEIT", "rankings.you": "DU",
+    "live.subtitle": "TRAINING", "map.subtitle": "LIVE TRAINING", "home.legend": "Legende"
   },
   pt: {
     "nav.me": "Eu", "me.profile": "Perfil", "me.activity": "Minha atividade", "me.settings": "Configurações", "me.support": "Suporte",
@@ -205,7 +211,9 @@ export const missingTranslations = {
     "blocked.title": "Usuários bloqueados", "blocked.empty": "Nenhum usuário bloqueado", "blocked.unblockConfirm": "Desbloquear este usuário?", "common.unblock": "Desbloquear",
     "privacy.location": "Compartilhar localização", "privacy.locationDesc": "Mostrar localização desfocada no mapa",
     "privacy.online": "Status online", "privacy.onlineDesc": "Mostrar seu status online",
-    "privacy.note": "Mudanças são imediatas. Desativar localização te esconde do mapa."
+    "privacy.note": "Mudanças são imediatas. Desativar localização te esconde do mapa.",
+    "rankings.subtitle": "RANKING", "rankings.battles": "DUELOS", "rankings.allTime": "TODO PERÍODO", "rankings.you": "VOCÊ",
+    "live.subtitle": "TREINO", "map.subtitle": "TREINO AO VIVO", "home.legend": "Legenda"
   },
   it: {
     "nav.me": "Io", "me.profile": "Profilo", "me.activity": "Mia attività", "me.settings": "Impostazioni", "me.support": "Supporto",
@@ -256,7 +264,9 @@ export const missingTranslations = {
     "blocked.title": "Utenti bloccati", "blocked.empty": "Nessun utente bloccato", "blocked.unblockConfirm": "Sbloccare questo utente?", "common.unblock": "Sblocca",
     "privacy.location": "Condivisione posizione", "privacy.locationDesc": "Mostra posizione sfocata sulla mappa",
     "privacy.online": "Stato online", "privacy.onlineDesc": "Mostra il tuo stato online",
-    "privacy.note": "Le modifiche sono immediate. Disattivare la posizione ti nasconde dalla mappa."
+    "privacy.note": "Le modifiche sono immediate. Disattivare la posizione ti nasconde dalla mappa.",
+    "rankings.subtitle": "CLASSIFICA", "rankings.battles": "DUELLI", "rankings.allTime": "SEMPRE", "rankings.you": "TU",
+    "live.subtitle": "ALLENAMENTO", "map.subtitle": "ALLENAMENTO LIVE", "home.legend": "Legenda"
   },
   ru: {
     "nav.me": "Я", "me.profile": "Профиль", "me.activity": "Моя активность", "me.settings": "Настройки", "me.support": "Поддержка",
@@ -307,7 +317,9 @@ export const missingTranslations = {
     "blocked.title": "Заблокированные пользователи", "blocked.empty": "Нет заблокированных", "blocked.unblockConfirm": "Разблокировать пользователя?", "common.unblock": "Разблокировать",
     "privacy.location": "Передача местоположения", "privacy.locationDesc": "Показывать размытое местоположение на карте",
     "privacy.online": "Статус «онлайн»", "privacy.onlineDesc": "Показывать ваш онлайн-статус",
-    "privacy.note": "Изменения вступают сразу. Отключение местоположения скрывает вас на карте."
+    "privacy.note": "Изменения вступают сразу. Отключение местоположения скрывает вас на карте.",
+    "rankings.subtitle": "РЕЙТИНГ", "rankings.battles": "ДУЭЛИ", "rankings.allTime": "ЗА ВСЁ ВРЕМЯ", "rankings.you": "ВЫ",
+    "live.subtitle": "ТРЕНИРОВКА", "map.subtitle": "LIVE ТРЕНИРОВКА", "home.legend": "Легенда"
   },
   zh: {
     "nav.me": "你", "me.profile": "个人资料", "me.activity": "我的活动", "me.settings": "设置", "me.support": "支持",
@@ -358,7 +370,9 @@ export const missingTranslations = {
     "blocked.title": "屏蔽的用户", "blocked.empty": "没有屏蔽的用户", "blocked.unblockConfirm": "取消屏蔽此用户？", "common.unblock": "取消屏蔽",
     "privacy.location": "位置共享", "privacy.locationDesc": "在地图上显示模糊位置",
     "privacy.online": "在线状态", "privacy.onlineDesc": "向他人显示在线状态",
-    "privacy.note": "变更立即生效。关闭位置共享会隐藏您在地图上的位置。"
+    "privacy.note": "变更立即生效。关闭位置共享会隐藏您在地图上的位置。",
+    "rankings.subtitle": "排行榜", "rankings.battles": "对决", "rankings.allTime": "全部时间", "rankings.you": "你",
+    "live.subtitle": "训练中", "map.subtitle": "直播训练", "home.legend": "图例"
   },
   ko: {
     "nav.me": "나", "me.profile": "프로필", "me.activity": "내 활동", "me.settings": "설정", "me.support": "지원",
