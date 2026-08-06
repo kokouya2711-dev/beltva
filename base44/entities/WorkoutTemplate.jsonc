@@ -1,0 +1,18 @@
+{
+  "name": "WorkoutTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "\u30c6\u30f3\u30d7\u30ec\u30fc\u30c8\u540d"
+    },
+    "exercises": {
+      "type": "string",
+      "title": "\u7a2e\u76ee\u30c7\u30fc\u30bf",
+      "default": "[]"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

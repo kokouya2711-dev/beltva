@@ -42,6 +42,11 @@
     "notes": {
       "type": "string",
       "title": "\u30e1\u30e2"
+    },
+    "set_details": {
+      "type": "string",
+      "title": "\u30bb\u30c3\u30c8\u8a73\u7d30",
+      "default": "[]"
     }
   },
   "required": [

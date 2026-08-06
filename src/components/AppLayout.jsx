@@ -12,6 +12,7 @@ import {
   Bell
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
+import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
 import { getGeolocation, fuzzCoords } from "@/lib/workouts";
@@ -30,6 +31,7 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
+  const [showWorkoutSession, setShowWorkoutSession] = useState(false);
   const location = useLocation();
 
   React.useEffect(() => {
@@ -144,7 +146,8 @@ export default function AppLayout() {
         })}
       </nav>
 
-      {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} />}
+      {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} />}
+      {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
     </div>
   );
 }
