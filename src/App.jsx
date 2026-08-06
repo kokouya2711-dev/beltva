@@ -13,7 +13,6 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import AppLayout from '@/components/AppLayout';
 import { LanguageProvider } from '@/lib/i18n';
-import { ThemeProvider } from 'next-themes';
 import Home from '@/pages/Home';
 import LivePage from '@/pages/LivePage';
 import MapPage from '@/pages/MapPage';
@@ -102,7 +101,6 @@ const AuthenticatedApp = () => {
 function App() {
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <LanguageProvider>
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
@@ -114,7 +112,6 @@ function App() {
         </QueryClientProvider>
       </AuthProvider>
     </LanguageProvider>
-    </ThemeProvider>
   )
 }
 

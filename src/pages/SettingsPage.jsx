@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
-import { useTheme } from "next-themes";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
-  ShieldCheck, Ban, Palette, Settings as SettingsIcon, Timer, Monitor, Sun, Moon
+  ShieldCheck, Ban, Settings as SettingsIcon, Timer
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
 
@@ -29,7 +28,6 @@ export default function SettingsPage() {
           {section === "account" && <AccountSection />}
           {section === "notifications" && <NotificationsSection />}
           {section === "language" && <LanguageSection />}
-          {section === "display" && <DisplaySection />}
           {section === "privacy" && <PrivacySection />}
           {section === "other" && <OtherSection />}
         </div>
@@ -49,7 +47,6 @@ function CategoryList({ onSelect }) {
     { key: "account", icon: User, label: t("settings.account") },
     { key: "notifications", icon: Bell, label: t("settings.notifications") },
     { key: "language", icon: Globe, label: t("settings.language") },
-    { key: "display", icon: Palette, label: t("settings.display") },
     { key: "privacy", icon: Shield, label: t("settings.privacy") },
     { key: "other", icon: SettingsIcon, label: t("settings.other") },
   ];
@@ -135,30 +132,6 @@ function LanguageSection() {
             <button key={l.code} onClick={() => setLang(l.code)} className={`text-sm px-3 py-1.5 rounded-full border ${lang === l.code ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{l.label}</button>
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function DisplaySection() {
-  const t = useT();
-  const { theme, setTheme } = useTheme();
-  const options = [
-    { key: "dark", label: t("settings.themeDark"), icon: Moon },
-    { key: "light", label: t("settings.themeLight"), icon: Sun },
-    { key: "system", label: t("settings.themeSystem"), icon: Monitor },
-  ];
-  return (
-    <div className="space-y-5">
-      <h2 className="font-bold text-lg">{t("settings.display")}</h2>
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        {options.map((opt) => (
-          <button key={opt.key} onClick={() => setTheme(opt.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
-            <opt.icon className="w-4 h-4 text-muted-foreground" />
-            <span className="flex-1">{opt.label}</span>
-            {theme === opt.key && <span className="w-2 h-2 rounded-full bg-primary" />}
-          </button>
-        ))}
       </div>
     </div>
   );
