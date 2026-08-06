@@ -4,6 +4,8 @@ import { extraTranslations } from "@/lib/i18nExtra";
 import { hobbyUITranslations } from "@/lib/i18nHobbyUI";
 import { missingTranslations } from "@/lib/i18nMissing";
 import { voiceTranslations } from "@/lib/i18nVoice";
+import { workoutTypeTranslations } from "@/lib/i18nWorkoutTypes";
+import { jaExerciseIdentity } from "@/lib/i18nJaIdentity";
 
 export const LANGS = [
   { code: "ja", label: "日本語", flag: "🇯🇵" },
@@ -268,7 +270,10 @@ for (const _lang of Object.keys(translations)) {
   Object.assign(translations[_lang], hobbyUITranslations[_lang] || {});
   Object.assign(translations[_lang], missingTranslations[_lang] || {});
   Object.assign(translations[_lang], voiceTranslations[_lang] || {});
+  Object.assign(translations[_lang], workoutTypeTranslations[_lang] || {});
 }
+// Add ja identity entries for exercise names so t() doesn't fall through to en
+Object.assign(translations.ja, jaExerciseIdentity.ja || {});
 
 const RTL_LANGS = ["ar"];
 
