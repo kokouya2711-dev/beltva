@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, ArrowLeft, Plus, Clock, Timer, Loader2, Check, ClipboardList, Zap, Save } from "lucide-react";
+import { X, ArrowLeft, Plus, Clock, Timer, Loader2, Check, ClipboardList, Zap, Save, Pause, Play } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
 import { useT } from "@/lib/i18n";
 import ExerciseCard from "./ExerciseCard";
@@ -153,9 +153,20 @@ export default function WorkoutSessionDialog({ onClose }) {
         <div className="flex items-center justify-between mb-3 shrink-0">
           <div className="flex items-center gap-2">
             <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><ArrowLeft className="w-4 h-4" /></button>
-            <div className="flex items-center gap-1.5 text-sm font-bold"><Clock className="w-4 h-4 text-primary" /> {mm}:{ss}</div>
+            <div className={`flex items-center gap-1.5 text-sm font-bold ${training.isPaused ? "text-amber-400" : ""}`}><Clock className={`w-4 h-4 ${training.isPaused ? "text-amber-400" : "text-primary"}`} /> {mm}:{ss}{training.isPaused && <span className="text-xs ml-1">⏸</span>}</div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
+          <div className="flex items-center gap-1.5">
+            {training.isPaused ? (
+              <button onClick={training.resumeTraining} className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 transition">
+                <Play className="w-3.5 h-3.5" /> {t("training.resume")}
+              </button>
+            ) : (
+              <button onClick={training.pauseTraining} className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 transition">
+                <Pause className="w-3.5 h-3.5" /> {t("training.pause")}
+              </button>
+            )}
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto pr-1">
           {training.exercises.length === 0 ? (

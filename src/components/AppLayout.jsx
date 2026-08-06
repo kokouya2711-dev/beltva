@@ -18,7 +18,6 @@ import { getGeolocation, fuzzCoords } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
-import TranslationDebugOverlay from "@/components/TranslationDebugOverlay";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 
@@ -197,7 +196,6 @@ function AppLayoutInner() {
       }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
       {showSimpleSession && <SimpleSessionDialog onClose={() => setShowSimpleSession(false)} />}
-      <TranslationDebugOverlay />
     </div>
   );
 }
