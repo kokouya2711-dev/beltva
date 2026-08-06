@@ -49,6 +49,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Démarrage rapide",
     "tpl.category": "Catégorie", "tpl.categoryPlaceholder": "ex: Jour Pecs", "tpl.loadAll": "Tout charger", "tpl.uncategorized": "Sans catégorie",
     "settings.privacy": "Confidentialité", "settings.blockedUsers": "Utilisateurs bloqués",
+    "blocked.title": "Utilisateurs bloqués", "blocked.empty": "Aucun utilisateur bloqué", "blocked.unblockConfirm": "Débloquer cet utilisateur ?", "common.unblock": "Débloquer",
     "privacy.location": "Partage de position", "privacy.locationDesc": "Afficher ta position floutée sur la carte",
     "privacy.online": "Statut en ligne", "privacy.onlineDesc": "Afficher ton statut en ligne",
     "privacy.note": "Les changements sont immédiats. Désactiver la position te masque de la carte."
@@ -99,6 +100,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Inicio rápido",
     "tpl.category": "Categoría", "tpl.categoryPlaceholder": "ej: Día Pecho", "tpl.loadAll": "Cargar todo", "tpl.uncategorized": "Sin categoría",
     "settings.privacy": "Privacidad", "settings.blockedUsers": "Usuarios bloqueados",
+    "blocked.title": "Usuarios bloqueados", "blocked.empty": "No hay usuarios bloqueados", "blocked.unblockConfirm": "¿Desbloquear a este usuario?", "common.unblock": "Desbloquear",
     "privacy.location": "Compartir ubicación", "privacy.locationDesc": "Mostrar tu ubicación difuminada en el mapa",
     "privacy.online": "Estado en línea", "privacy.onlineDesc": "Mostrar tu estado en línea",
     "privacy.note": "Los cambios son inmediatos. Desactivar la ubicación te oculta del mapa."
@@ -149,6 +151,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Schnellstart",
     "tpl.category": "Kategorie", "tpl.categoryPlaceholder": "z.B. Brusttag", "tpl.loadAll": "Alle laden", "tpl.uncategorized": "Ohne Kategorie",
     "settings.privacy": "Datenschutz", "settings.blockedUsers": "Blockierte Nutzer",
+    "blocked.title": "Blockierte Nutzer", "blocked.empty": "Keine blockierte Nutzer", "blocked.unblockConfirm": "Diesen Nutzer entblocken?", "common.unblock": "Entblocken",
     "privacy.location": "Standort teilen", "privacy.locationDesc": "Verschwommenen Standort auf Karte zeigen",
     "privacy.online": "Online-Status", "privacy.onlineDesc": "Deinen Online-Status anderen zeigen",
     "privacy.note": "Änderungen sind sofort aktiv. Standort ausblenden versteckt dich auf der Karte."
@@ -199,6 +202,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Início rápido",
     "tpl.category": "Categoria", "tpl.categoryPlaceholder": "ex: Dia Peito", "tpl.loadAll": "Carregar tudo", "tpl.uncategorized": "Sem categoria",
     "settings.privacy": "Privacidade", "settings.blockedUsers": "Usuários bloqueados",
+    "blocked.title": "Usuários bloqueados", "blocked.empty": "Nenhum usuário bloqueado", "blocked.unblockConfirm": "Desbloquear este usuário?", "common.unblock": "Desbloquear",
     "privacy.location": "Compartilhar localização", "privacy.locationDesc": "Mostrar localização desfocada no mapa",
     "privacy.online": "Status online", "privacy.onlineDesc": "Mostrar seu status online",
     "privacy.note": "Mudanças são imediatas. Desativar localização te esconde do mapa."
@@ -249,6 +253,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Avvio rapido",
     "tpl.category": "Categoria", "tpl.categoryPlaceholder": "es: Giorno Petto", "tpl.loadAll": "Carica tutto", "tpl.uncategorized": "Senza categoria",
     "settings.privacy": "Privacy", "settings.blockedUsers": "Utenti bloccati",
+    "blocked.title": "Utenti bloccati", "blocked.empty": "Nessun utente bloccato", "blocked.unblockConfirm": "Sbloccare questo utente?", "common.unblock": "Sblocca",
     "privacy.location": "Condivisione posizione", "privacy.locationDesc": "Mostra posizione sfocata sulla mappa",
     "privacy.online": "Stato online", "privacy.onlineDesc": "Mostra il tuo stato online",
     "privacy.note": "Le modifiche sono immediate. Disattivare la posizione ti nasconde dalla mappa."
@@ -299,6 +304,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Быстрый старт",
     "tpl.category": "Категория", "tpl.categoryPlaceholder": "напр: День груди", "tpl.loadAll": "Загрузить все", "tpl.uncategorized": "Без категории",
     "settings.privacy": "Конфиденциальность", "settings.blockedUsers": "Заблокированные пользователи",
+    "blocked.title": "Заблокированные пользователи", "blocked.empty": "Нет заблокированных", "blocked.unblockConfirm": "Разблокировать пользователя?", "common.unblock": "Разблокировать",
     "privacy.location": "Передача местоположения", "privacy.locationDesc": "Показывать размытое местоположение на карте",
     "privacy.online": "Статус «онлайн»", "privacy.onlineDesc": "Показывать ваш онлайн-статус",
     "privacy.note": "Изменения вступают сразу. Отключение местоположения скрывает вас на карте."
@@ -349,6 +355,7 @@ export const missingTranslations = {
     "goLive.quickStart": "快速开始",
     "tpl.category": "分类", "tpl.categoryPlaceholder": "例: 胸部日", "tpl.loadAll": "全部加载", "tpl.uncategorized": "未分类",
     "settings.privacy": "隐私设置", "settings.blockedUsers": "屏蔽的用户",
+    "blocked.title": "屏蔽的用户", "blocked.empty": "没有屏蔽的用户", "blocked.unblockConfirm": "取消屏蔽此用户？", "common.unblock": "取消屏蔽",
     "privacy.location": "位置共享", "privacy.locationDesc": "在地图上显示模糊位置",
     "privacy.online": "在线状态", "privacy.onlineDesc": "向他人显示在线状态",
     "privacy.note": "变更立即生效。关闭位置共享会隐藏您在地图上的位置。"
@@ -399,6 +406,7 @@ export const missingTranslations = {
     "goLive.quickStart": "빠른 시작",
     "tpl.category": "카테고리", "tpl.categoryPlaceholder": "예: 가슴 데이", "tpl.loadAll": "전체 불러오기", "tpl.uncategorized": "미분류",
     "settings.privacy": "개인정보 설정", "settings.blockedUsers": "차단한 사용자",
+    "blocked.title": "차단한 사용자", "blocked.empty": "차단한 사용자가 없습니다", "blocked.unblockConfirm": "이 사용자의 차단을 해제하시겠습니까?", "common.unblock": "차단 해제",
     "privacy.location": "위치 공유", "privacy.locationDesc": "지도에 흐려진 위치 표시",
     "privacy.online": "온라인 상태", "privacy.onlineDesc": "온라인 상태를 다른 사람에게 표시",
     "privacy.note": "변경 사항은 즉시 적용됩니다. 위치 공유를 끄면 지도에서 숨겨집니다."
@@ -449,6 +457,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Bắt đầu nhanh",
     "tpl.category": "Danh mục", "tpl.categoryPlaceholder": "vd: Ngày Ngực", "tpl.loadAll": "Tải tất cả", "tpl.uncategorized": "Chưa phân loại",
     "settings.privacy": "Quyền riêng tư", "settings.blockedUsers": "Người dùng đã chặn",
+    "blocked.title": "Người dùng đã chặn", "blocked.empty": "Không có người dùng bị chặn", "blocked.unblockConfirm": "Bỏ chặn người dùng này?", "common.unblock": "Bỏ chặn",
     "privacy.location": "Chia sẻ vị trí", "privacy.locationDesc": "Hiển thị vị trí làm mờ trên bản đồ",
     "privacy.online": "Trạng thái trực tuyến", "privacy.onlineDesc": "Hiển thị trạng thái trực tuyến của bạn",
     "privacy.note": "Thay đổi có hiệu lực ngay. Tắt vị trí sẽ ẩn bạn khỏi bản đồ."
@@ -499,6 +508,7 @@ export const missingTranslations = {
     "goLive.quickStart": "Mulai cepat",
     "tpl.category": "Kategori", "tpl.categoryPlaceholder": "cth: Hari Dada", "tpl.loadAll": "Muat semua", "tpl.uncategorized": "Tanpa kategori",
     "settings.privacy": "Privasi", "settings.blockedUsers": "Pengguna diblokir",
+    "blocked.title": "Pengguna diblokir", "blocked.empty": "Tidak ada pengguna diblokir", "blocked.unblockConfirm": "Buka blokir pengguna ini?", "common.unblock": "Buka blokir",
     "privacy.location": "Berbagi lokasi", "privacy.locationDesc": "Tampilkan lokasi buram di peta",
     "privacy.online": "Status online", "privacy.onlineDesc": "Tampilkan status online Anda",
     "privacy.note": "Perubahan langsung berlaku. Mematikan lokasi menyembunyikan Anda dari peta."
@@ -549,6 +559,7 @@ export const missingTranslations = {
     "goLive.quickStart": "เริ่มด่วน",
     "tpl.category": "หมวดหมู่", "tpl.categoryPlaceholder": "เช่น: วันหน้าอก", "tpl.loadAll": "โหลดทั้งหมด", "tpl.uncategorized": "ไม่มีหมวด",
     "settings.privacy": "ความเป็นส่วนตัว", "settings.blockedUsers": "ผู้ใช้ที่บล็อก",
+    "blocked.title": "ผู้ใช้ที่บล็อก", "blocked.empty": "ไม่มีผู้ใช้ที่บล็อก", "blocked.unblockConfirm": "ปลดบล็อกผู้ใช้นี้?", "common.unblock": "ปลดบล็อก",
     "privacy.location": "แชร์ตำแหน่ง", "privacy.locationDesc": "แสดงตำแหน่งเบลอบนแผนที่",
     "privacy.online": "สถานะออนไลน์", "privacy.onlineDesc": "แสดงสถานะออนไลน์ของคุณ",
     "privacy.note": "การเปลี่ยนแปลงมีผลทันที ปิดตำแหน่งจะซ่อนคุณจากแผนที่"
@@ -599,6 +610,7 @@ export const missingTranslations = {
     "goLive.quickStart": "بدء سريع",
     "tpl.category": "الفئة", "tpl.categoryPlaceholder": "مثال: يوم الصدر", "tpl.loadAll": "تحميل الكل", "tpl.uncategorized": "بدون فئة",
     "settings.privacy": "الخصوصية", "settings.blockedUsers": "المستخدمون المحظورون",
+    "blocked.title": "المستخدمون المحظورون", "blocked.empty": "لا مستخدمون محظورون", "blocked.unblockConfirm": "إلغاء حظر هذا المستخدم؟", "common.unblock": "إلغاء الحظر",
     "privacy.location": "مشاركة الموقع", "privacy.locationDesc": "إظهار موقعك المضبب على الخريطة",
     "privacy.online": "الحالة المتصلة", "privacy.onlineDesc": "إظهار حالتك المتصلة للآخرين",
     "privacy.note": "التغييرات فورية. إيقاف الموقع يخفيك من الخريطة."
