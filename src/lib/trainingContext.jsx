@@ -19,8 +19,12 @@ function playBeep() {
 }
 
 export function TrainingProvider({ children }) {
-  const [isActive, setIsActive] = useState(false);
-  const [exercises, setExercises] = useState([]);
+  const [isActive, setIsActive] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("beltva_trainingActive") || "false"); } catch { return false; }
+  });
+  const [exercises, setExercises] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("beltva_trainingExercises") || "[]"); } catch { return []; }
+  });
   const [elapsedSec, setElapsedSec] = useState(0);
   const [restRemaining, setRestRemaining] = useState(0);
   const [restRunning, setRestRunning] = useState(false);
@@ -28,13 +32,27 @@ export function TrainingProvider({ children }) {
   const [customPresets, setCustomPresets] = useState(() => JSON.parse(localStorage.getItem("beltva_restPresets") || "[]"));
   const startRef = useRef(null);
 
+  // Persist state to localStorage
+  useEffect(() => { localStorage.setItem("beltva_trainingActive", JSON.stringify(isActive)); }, [isActive]);
+  useEffect(() => { localStorage.setItem("beltva_trainingExercises", JSON.stringify(exercises)); }, [exercises]);
+  useEffect(() => { localStorage.setItem("beltva_defaultRest", String(defaultRest)); }, [defaultRest]);
+  useEffect(() => { localStorage.setItem("beltva_restPresets", JSON.stringify(customPresets)); }, [customPresets]);
+
+  // Elapsed timer — restores start time from localStorage on reload
   useEffect(() => {
     if (!isActive) return;
-    if (!startRef.current) startRef.current = Date.now();
-    const i = setInterval(() => setElapsedSec(Math.floor((Date.now() - startRef.current) / 1000)), 1000);
+    if (!startRef.current) {
+      const stored = localStorage.getItem("beltva_trainingStart");
+      startRef.current = stored ? Number(stored) : Date.now();
+    }
+    localStorage.setItem("beltva_trainingStart", String(startRef.current));
+    const update = () => setElapsedSec(Math.max(0, Math.floor((Date.now() - startRef.current) / 1000)));
+    update();
+    const i = setInterval(update, 1000);
     return () => clearInterval(i);
   }, [isActive]);
 
+  // Rest timer
   useEffect(() => {
     if (!restRunning) return;
     const i = setInterval(() => {
@@ -51,15 +69,13 @@ export function TrainingProvider({ children }) {
     return () => clearInterval(i);
   }, [restRunning]);
 
-  useEffect(() => { localStorage.setItem("beltva_defaultRest", String(defaultRest)); }, [defaultRest]);
-  useEffect(() => { localStorage.setItem("beltva_restPresets", JSON.stringify(customPresets)); }, [customPresets]);
-
   const startTraining = useCallback((initial = []) => {
     setExercises(initial);
     setElapsedSec(0);
     setRestRemaining(0);
     setRestRunning(false);
     startRef.current = Date.now();
+    localStorage.setItem("beltva_trainingStart", String(startRef.current));
     setIsActive(true);
   }, []);
 
@@ -70,6 +86,7 @@ export function TrainingProvider({ children }) {
     setRestRemaining(0);
     setRestRunning(false);
     startRef.current = null;
+    localStorage.removeItem("beltva_trainingStart");
   }, []);
 
   const addExercise = useCallback((type, prevRecord = null) => {

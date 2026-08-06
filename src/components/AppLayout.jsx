@@ -18,7 +18,6 @@ import { updatePresence } from "@/lib/dm";
 import { getGeolocation, fuzzCoords } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
-import TrainingFloatingBar from "@/components/TrainingFloatingBar";
 
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
@@ -39,7 +38,9 @@ export default function AppLayout() {
 function AppLayoutInner() {
   const t = useT();
   const navigate = useNavigate();
-  const { isActive } = useTraining();
+  const { isActive, elapsedSec } = useTraining();
+  const mm = String(Math.floor(elapsedSec / 60)).padStart(2, "0");
+  const ss = String(elapsedSec % 60).padStart(2, "0");
   const [me, setMe] = useState(null);
   const [showGoLive, setShowGoLive] = useState(false);
   const [showWorkoutSession, setShowWorkoutSession] = useState(false);
@@ -99,12 +100,21 @@ function AppLayoutInner() {
           })}
         </nav>
         <div className="p-3">
-          <button
-            onClick={() => setShowGoLive(true)}
-            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
-          >
-            <Dumbbell className="w-4 h-4" /> {t("nav.goLive")}
-          </button>
+          {isActive ? (
+            <button
+              onClick={() => setShowWorkoutSession(true)}
+              className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-accent/20"
+            >
+              <Dumbbell className="w-4 h-4" /> 💪 トレ中 {mm}:{ss}
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowGoLive(true)}
+              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
+            >
+              <Dumbbell className="w-4 h-4" /> {t("nav.goLive")}
+            </button>
+          )}
           {me && (
             <Link to={`/profile/${me.id}`} className="mt-3 px-2 text-xs text-muted-foreground truncate hover:text-primary block">
               @{me.email?.split("@")[0]}
@@ -123,12 +133,21 @@ function AppLayoutInner() {
         </div>
         <div className="flex items-center gap-1">
           <NotificationsBell meId={me?.id} />
-          <button
-            onClick={() => setShowGoLive(true)}
-            className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
-          >
-            <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
-          </button>
+          {isActive ? (
+            <button
+              onClick={() => setShowWorkoutSession(true)}
+              className="flex items-center gap-1.5 bg-accent text-accent-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
+            >
+              <Dumbbell className="w-3.5 h-3.5" /> {mm}:{ss}
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowGoLive(true)}
+              className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
+            >
+              <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
+            </button>
+          )}
         </div>
       </header>
 
@@ -156,11 +175,6 @@ function AppLayoutInner() {
           );
         })}
       </nav>
-
-      {/* Training floating bar - visible on all pages when training is active */}
-      {isActive && !showWorkoutSession && (
-        <TrainingFloatingBar onClick={() => setShowWorkoutSession(true)} />
-      )}
 
       {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}

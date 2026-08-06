@@ -15,13 +15,13 @@ export default function ExerciseSearch({ onSelect, onClose, exclude = [] }) {
     base44.entities.CustomExercise.list("-created_date", 200).then(setCustomExercises).catch(() => {});
   }, []);
 
-  const allInPart = [
+  const allInPart = [...new Set([
     ...(EXERCISES_BY_BODY_PART[bodyPart] || []),
     ...customExercises.filter(e => e.body_part === bodyPart).map(e => e.name),
-  ];
+  ])];
+  const allExercises = [...new Set([...Object.values(EXERCISES_BY_BODY_PART).flat(), ...customExercises.map(e => e.name)])];
   const filtered = q
-    ? [...Object.values(EXERCISES_BY_BODY_PART).flat(), ...customExercises.map(e => e.name)]
-        .filter(w => !exclude.includes(w) && w.toLowerCase().includes(q.toLowerCase()))
+    ? allExercises.filter(w => !exclude.includes(w) && w.toLowerCase().includes(q.toLowerCase()))
     : allInPart.filter(w => !exclude.includes(w));
 
   async function addCustom() {
