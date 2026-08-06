@@ -14,9 +14,6 @@ import ResetPassword from '@/pages/ResetPassword';
 import AppLayout from '@/components/AppLayout';
 import { LanguageProvider } from '@/lib/i18n';
 import Home from '@/pages/Home';
-import LivePage from '@/pages/LivePage';
-import MapPage from '@/pages/MapPage';
-import RankingsPage from '@/pages/RankingsPage';
 import TimelinePage from '@/pages/TimelinePage';
 import UsersPage from '@/pages/UsersPage';
 import SettingsPage from '@/pages/SettingsPage';
@@ -70,9 +67,6 @@ const AuthenticatedApp = () => {
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/live" element={<LivePage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/rankings" element={<RankingsPage />} />
           <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/settings" element={<SettingsPage />} />
