@@ -75,5 +75,15 @@ export const hobbyUITranslations = {
     "hobby.noneSelected": "غير محدد", "hobby.searchPlaceholder": "ابحث عن هوايات…", "hobby.addCustom": "إضافة \"{text}\"",
     "hobby.maxReached": "حد أقصى {n} هوايات", "hobby.noResults": "لا نتائج",
     "profile.hobbiesMax10": "الهوايات (حد أقصى 10)"
+  },
+  tr: {
+    "hobby.noneSelected": "Seçilmedi", "hobby.searchPlaceholder": "Hobi ara…", "hobby.addCustom": "\"{text}\" ekle",
+    "hobby.maxReached": "En fazla {n} hobi", "hobby.noResults": "Sonuç yok",
+    "profile.hobbiesMax10": "Hobiler (en fazla 10)"
+  },
+  "zh-TW": {
+    "hobby.noneSelected": "未選擇", "hobby.searchPlaceholder": "搜尋興趣…", "hobby.addCustom": "新增「{text}」",
+    "hobby.maxReached": "最多選擇{n}個", "hobby.noResults": "未找到",
+    "profile.hobbiesMax10": "興趣（最多10個）"
   }
 };

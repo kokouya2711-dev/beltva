@@ -1,14 +1,22 @@
 import React, { useState, useMemo } from "react";
-import { useT } from "@/lib/i18n";
+import { useT, useI18n } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import { getDateKey, isCardio, formatDuration } from "@/lib/activityHelpers";
 
-const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
-
 export default function WorkoutCalendar({ records, year, month }) {
   const t = useT();
+  const { lang } = useI18n();
   const tWorkout = useTWorkout();
   const [selectedDay, setSelectedDay] = useState(null);
+
+  const locale = lang === "zh" ? "zh-CN" : lang === "zh-TW" ? "zh-TW" : lang;
+  const weekdays = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(locale, { weekday: "short" });
+    return Array.from({ length: 7 }, (_, i) => fmt.format(new Date(2024, 0, 7 + i)));
+  }, [locale]);
+  const monthYear = useMemo(() => {
+    return new Intl.DateTimeFormat(locale, { year: "numeric", month: "long" }).format(new Date(year, month, 1));
+  }, [locale, year, month]);
 
   const recordsByDate = useMemo(() => {
     const map = {};
@@ -36,10 +44,10 @@ export default function WorkoutCalendar({ records, year, month }) {
     <div className="glass rounded-2xl border border-border p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-sm">{t("activity.calendar")}</h3>
-        <span className="text-xs text-muted-foreground">{year}年 {month + 1}月</span>
+        <span className="text-xs text-muted-foreground">{monthYear}</span>
       </div>
       <div className="grid grid-cols-7 gap-1 mb-1">
-        {WEEKDAYS.map((w) => (
+        {weekdays.map((w) => (
           <div key={w} className="text-center text-[10px] text-muted-foreground py-1">{w}</div>
         ))}
       </div>
@@ -62,15 +70,17 @@ export default function WorkoutCalendar({ records, year, month }) {
       </div>
       {selectedDay && (
         <div className="mt-3 pt-3 border-t border-border">
-          <div className="text-xs text-muted-foreground mb-2">{month + 1}月{selectedDay.day}日</div>
+          <div className="text-xs text-muted-foreground mb-2">
+            {new Intl.DateTimeFormat(locale, { month: "long", day: "numeric" }).format(new Date(year, month, selectedDay.day))}
+          </div>
           <div className="space-y-1.5">
             {selectedDay.records.map((r) => (
               <div key={r.id} className="flex items-center justify-between text-xs">
                 <span className="font-medium">{tWorkout(r.workout_type) || r.workout_type}</span>
                 <span className="text-muted-foreground">
                   {isCardio(r.workout_type)
-                    ? `${r.distance > 0 ? `${r.distance}km ` : ""}${formatDuration(r.duration_sec)}`
-                    : `${r.sets}セット × ${r.reps}レップ${r.weight > 0 ? ` @${r.weight}kg` : ""}`}
+                    ? `${r.distance > 0 ? `${r.distance}${t("common.kg") === "kg" ? "km" : "km"} ` : ""}${formatDuration(r.duration_sec, t)}`
+                    : `${r.sets} ${t("goLive.sets")} × ${r.reps} ${t("goLive.reps")}${r.weight > 0 ? ` @${r.weight}${t("common.kg")}` : ""}`}
                 </span>
               </div>
             ))}

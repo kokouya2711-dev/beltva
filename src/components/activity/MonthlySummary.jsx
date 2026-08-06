@@ -25,7 +25,7 @@ export default function MonthlySummary({ records }) {
             <Clock className="w-5 h-5 text-accent" />
           </div>
           <div className="min-w-0">
-            <div className="text-lg font-bold leading-tight truncate">{formatDuration(totalSec)}</div>
+            <div className="text-lg font-bold leading-tight truncate">{formatDuration(totalSec, t)}</div>
             <div className="text-[10px] text-muted-foreground">{t("activity.totalTime")}</div>
           </div>
         </div>

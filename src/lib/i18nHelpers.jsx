@@ -40,10 +40,13 @@ const METRIC_KEYS = {
 };
 
 const LOCALE_MAP = {
-  ja: "ja-JP", en: "en-US", zh: "zh-CN", ko: "ko-KR", es: "es-ES",
+  ja: "ja-JP", en: "en-US", zh: "zh-CN", "zh-TW": "zh-TW", ko: "ko-KR", es: "es-ES",
   fr: "fr-FR", de: "de-DE", pt: "pt-BR", it: "it-IT", ru: "ru-RU",
-  vi: "vi-VN", id: "id-ID", th: "th-TH", hi: "hi-IN", ar: "ar-SA"
+  vi: "vi-VN", id: "id-ID", th: "th-TH", hi: "hi-IN", ar: "ar-SA", tr: "tr-TR"
 };
+
+// Fallback for hobby labels when a language has no direct translation
+const HOBBY_FALLBACK = { tr: "en", "zh-TW": "zh" };
 
 export function useTCategory() {
   const t = useT();
@@ -100,7 +103,8 @@ export function useHobbyLabel() {
       const key = stored.slice(2);
       const labels = HOBBY_LABELS[key];
       if (!labels) return key;
-      const idx = LANG_ORDER.indexOf(lang);
+      let idx = LANG_ORDER.indexOf(lang);
+      if (idx < 0 && HOBBY_FALLBACK[lang]) idx = LANG_ORDER.indexOf(HOBBY_FALLBACK[lang]);
       return labels[idx >= 0 ? idx : 0] || labels[0];
     }
     if (stored.startsWith("c:")) return stored.slice(2);

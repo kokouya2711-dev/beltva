@@ -90,6 +90,10 @@
     "specialty": {
       "type": "string",
       "title": "\u5f97\u610f\u7a2e\u76ee"
+    },
+    "language": {
+      "type": "string",
+      "title": "\u8868\u793a\u8a00\u8a9e"
     }
   },
   "required": [
