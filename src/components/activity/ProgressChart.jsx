@@ -94,7 +94,7 @@ export default function ProgressChart({ records }) {
               <YAxis tick={AXIS_TICK} width={36} />
               <Tooltip contentStyle={CHART_STYLE} />
               {byDateBodyPart.parts.map((part, i) => (
-                <Line key={part} type="monotone" dataKey={part} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
+                <Line key={part} type="monotone" dataKey={part} name={tBodyPart(part)} stroke={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
               ))}
             </LineChart>
           </ResponsiveContainer>
@@ -103,7 +103,7 @@ export default function ProgressChart({ records }) {
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-2">
             <StatCard label={t("activity.distance")} value={`${totalDistance.toFixed(1)} km`} />
-            <StatCard label={t("activity.duration")} value={formatDuration(totalDuration)} />
+            <StatCard label={t("activity.duration")} value={formatDuration(totalDuration, t)} />
             <StatCard label={t("activity.pace")} value={formatPace(totalDistance, totalDuration)} />
           </div>
           <ChartBlock label={t("activity.distance")} data={byDate} dataKey="distance" color="hsl(142 71% 45%)" type="bar" />

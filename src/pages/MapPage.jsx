@@ -3,9 +3,11 @@ import { base44 } from "@/api/base44Client";
 import { Globe, Radio, MapPin, Flame } from "lucide-react";
 import TrainingGlobe from "@/components/TrainingGlobe";
 import { useT } from "@/lib/i18n";
+import { useTWorkout } from "@/lib/i18nHelpers";
 
 export default function MapPage() {
   const t = useT();
+  const tWorkout = useTWorkout();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +24,7 @@ export default function MapPage() {
 
   const points = sessions
     .filter((s) => s.lat != null && s.lng != null)
-    .map((s) => ({ lat: s.lat, lng: s.lng, label: s.workout_type }));
+    .map((s) => ({ lat: s.lat, lng: s.lng, label: tWorkout(s.workout_type) }));
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-4">
@@ -55,7 +57,7 @@ export default function MapPage() {
               <Flame className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium truncate">{s.workout_type} · {s.location_name || t("common.nearby")}</div>
+              <div className="text-sm font-medium truncate">{tWorkout(s.workout_type)} · {s.location_name || t("common.nearby")}</div>
               <div className="text-xs text-muted-foreground">🔥 {s.hype_count || 0}</div>
             </div>
             <span className="w-2 h-2 rounded-full bg-red-500 live-dot" />
