@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Radio, MapPin, Loader2, Check } from "lucide-react";
-import { WORKOUT_TYPES, getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
+import { X, Radio, MapPin, Loader2, Check, ClipboardList, Zap, Clock, ArrowLeft } from "lucide-react";
+import { WORKOUT_TYPES, getGeolocation, DEFAULT_CENTER, fuzzCoords, computeVolume } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
+
+function toLocalDateTimeString(date) {
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
 
 export default function GoLiveDialog({ onClose }) {
   const t = useT();
   const tWorkout = useTWorkout();
+  const [step, setStep] = useState("choice");
+  const [recordMode, setRecordMode] = useState(null);
   const [workoutType, setWorkoutType] = useState(WORKOUT_TYPES[0]);
   const [locationName, setLocationName] = useState("");
   const [message, setMessage] = useState("");
@@ -15,6 +22,19 @@ export default function GoLiveDialog({ onClose }) {
   const [coords, setCoords] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+
+  // Detailed recording
+  const [sets, setSets] = useState(3);
+  const [reps, setReps] = useState(10);
+  const [weight, setWeight] = useState(60);
+  const [duration, setDuration] = useState(0);
+  const [notes, setNotes] = useState("");
+
+  // Simple recording
+  const [startTime, setStartTime] = useState(toLocalDateTimeString(new Date()));
+  const [endTime, setEndTime] = useState(toLocalDateTimeString(new Date(Date.now() + 3600000)));
+
+  const volume = computeVolume({ sets, reps, weight });
 
   async function detectLocation() {
     setLocating(true);
@@ -26,8 +46,9 @@ export default function GoLiveDialog({ onClose }) {
 
   async function startLive() {
     setSubmitting(true);
-    const now = new Date().toISOString();
+    const nowIso = new Date().toISOString();
     const c = coords || fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
+
     await base44.entities.LiveSession.create({
       status: "live",
       workout_type: workoutType,
@@ -36,14 +57,90 @@ export default function GoLiveDialog({ onClose }) {
       lng: c.lng,
       viewers_count: 0,
       hype_count: 0,
-      started_at: now,
+      started_at: nowIso,
       message
     });
+
+    if (recordMode === "detailed") {
+      await base44.entities.WorkoutRecord.create({
+        workout_type: workoutType,
+        sets: Number(sets),
+        reps: Number(reps),
+        weight: Number(weight),
+        duration_sec: Number(duration),
+        volume,
+        notes
+      });
+    } else {
+      const start = new Date(startTime);
+      const end = new Date(endTime);
+      const durSec = Math.max(0, Math.floor((end - start) / 1000));
+      await base44.entities.WorkoutRecord.create({
+        workout_type: workoutType,
+        sets: 1,
+        reps: 0,
+        weight: 0,
+        duration_sec: durSec,
+        volume: 0,
+        notes: ""
+      });
+    }
+
     setSubmitting(false);
     setDone(true);
     setTimeout(() => onClose(), 900);
   }
 
+  // ---- Choice step ----
+  if (step === "choice") {
+    return (
+      <Overlay onClose={onClose}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <Radio className="w-4 h-4 text-primary-foreground" />
+            </div>
+            <h2 className="font-bold text-lg">{t("goLive.recordChoiceTitle")}</h2>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <p className="text-sm text-muted-foreground mb-4">{t("goLive.recordChoiceDesc")}</p>
+
+        <div className="space-y-3">
+          <button
+            onClick={() => { setRecordMode("detailed"); setStep("form"); }}
+            className="w-full flex items-start gap-3 p-4 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition text-left"
+          >
+            <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+              <ClipboardList className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold text-sm">📝 {t("goLive.detailedRecord")}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{t("goLive.detailedRecordDesc")}</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => { setRecordMode("simple"); setStep("form"); }}
+            className="w-full flex items-start gap-3 p-4 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition text-left"
+          >
+            <div className="w-10 h-10 rounded-lg bg-accent/15 flex items-center justify-center shrink-0">
+              <Zap className="w-5 h-5 text-accent" />
+            </div>
+            <div className="flex-1">
+              <div className="font-semibold text-sm">⚡ {t("goLive.simpleRecord")}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{t("goLive.simpleRecordDesc")}</div>
+            </div>
+          </button>
+        </div>
+      </Overlay>
+    );
+  }
+
+  // ---- Done step ----
   if (done) {
     return (
       <Overlay onClose={onClose}>
@@ -58,14 +155,17 @@ export default function GoLiveDialog({ onClose }) {
     );
   }
 
+  // ---- Form step ----
   return (
     <Overlay onClose={onClose}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Radio className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <h2 className="font-bold text-lg">{t("goLive.title")}</h2>
+          <button onClick={() => setStep("choice")} className="p-1.5 rounded-lg hover:bg-secondary">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <h2 className="font-bold text-lg">
+            {recordMode === "detailed" ? `📝 ${t("goLive.detailedRecord")}` : `⚡ ${t("goLive.simpleRecord")}`}
+          </h2>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
           <X className="w-4 h-4" />
@@ -92,38 +192,109 @@ export default function GoLiveDialog({ onClose }) {
           </div>
         </div>
 
-        <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.location")}</label>
-          <div className="flex gap-2 mt-1.5">
-            <input
-              value={locationName}
-              onChange={(e) => setLocationName(e.target.value)}
-              placeholder={t("goLive.locationPlaceholder")}
-              className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
-            />
-            <button
-              onClick={detectLocation}
-              disabled={locating}
-              className="flex items-center gap-1.5 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm hover:border-primary"
-            >
-              {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
-              {t("goLive.currentLocation")}
-            </button>
-          </div>
-          {coords && (
-            <div className="text-[11px] text-accent mt-1">{t("goLive.locationDetected")} · {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}</div>
-          )}
-        </div>
+        {/* Detailed recording fields */}
+        {recordMode === "detailed" && (
+          <>
+            <div className="grid grid-cols-3 gap-3">
+              <Field label={t("goLive.sets")} value={sets} onChange={setSets} />
+              <Field label={t("goLive.reps")} value={reps} onChange={setReps} />
+              <Field label={t("goLive.weight")} value={weight} onChange={setWeight} />
+            </div>
 
-        <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.message")}</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={2}
-            placeholder={t("goLive.messagePlaceholder")}
-            className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary mt-1.5"
-          />
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.duration")}</label>
+              <input
+                type="number"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.notes")}</label>
+              <input
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder={t("goLive.notesPlaceholder")}
+                className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="flex items-center justify-between bg-primary/10 border border-primary/20 rounded-xl px-4 py-3">
+              <span className="text-sm text-muted-foreground">{t("goLive.totalVolume")}</span>
+              <span className="font-bold text-xl text-primary">{volume.toLocaleString()} kg</span>
+            </div>
+          </>
+        )}
+
+        {/* Simple recording fields */}
+        {recordMode === "simple" && (
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                <Clock className="w-3 h-3" /> {t("goLive.startTime")}
+              </label>
+              <input
+                type="datetime-local"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                <Clock className="w-3 h-3" /> {t("goLive.endTime")}
+              </label>
+              <input
+                type="datetime-local"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
+              />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
+              <Zap className="w-3.5 h-3.5 text-accent" />
+              {t("goLive.simpleNote")}
+            </div>
+          </div>
+        )}
+
+        {/* Live session fields (common) */}
+        <div className="pt-2 border-t border-border">
+          <div>
+            <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.location")}</label>
+            <div className="flex gap-2 mt-1.5">
+              <input
+                value={locationName}
+                onChange={(e) => setLocationName(e.target.value)}
+                placeholder={t("goLive.locationPlaceholder")}
+                className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+              <button
+                onClick={detectLocation}
+                disabled={locating}
+                className="flex items-center gap-1.5 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm hover:border-primary"
+              >
+                {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
+                {t("goLive.currentLocation")}
+              </button>
+            </div>
+            {coords && (
+              <div className="text-[11px] text-accent mt-1">{t("goLive.locationDetected")} · {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}</div>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("goLive.message")}</label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={2}
+              placeholder={t("goLive.messagePlaceholder")}
+              className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary mt-1.5"
+            />
+          </div>
         </div>
 
         <button
@@ -139,6 +310,20 @@ export default function GoLiveDialog({ onClose }) {
   );
 }
 
+function Field({ label, value, onChange }) {
+  return (
+    <div>
+      <label className="text-xs text-muted-foreground uppercase tracking-wider">{label}</label>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary"
+      />
+    </div>
+  );
+}
+
 function Overlay({ children, onClose }) {
   return (
     <div
@@ -146,7 +331,7 @@ function Overlay({ children, onClose }) {
       onClick={onClose}
     >
       <div
-        className="w-full md:max-w-md bg-card border border-border rounded-t-2xl md:rounded-2xl p-5 shadow-2xl"
+        className="w-full md:max-w-md bg-card border border-border rounded-t-2xl md:rounded-2xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {children}
