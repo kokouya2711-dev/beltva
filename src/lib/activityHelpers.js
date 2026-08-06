@@ -6,6 +6,15 @@ export function isCardio(workoutType) {
   return CARDIO_EXERCISES.has(workoutType);
 }
 
+const EXERCISE_TO_BODY_PART = {};
+Object.entries(EXERCISES_BY_BODY_PART).forEach(([part, exercises]) => {
+  exercises.forEach((ex) => { EXERCISE_TO_BODY_PART[ex] = part; });
+});
+
+export function getBodyPart(workoutType) {
+  return EXERCISE_TO_BODY_PART[workoutType] || "その他";
+}
+
 export function formatDuration(seconds) {
   const s = Math.round(Number(seconds) || 0);
   if (s <= 0) return "0秒";

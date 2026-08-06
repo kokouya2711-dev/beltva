@@ -79,7 +79,8 @@ export const extraTranslations = {
     "activity.history": "トレーニング履歴", "activity.historyEmpty": "トレーニング履歴がありません",
     "activity.dayDetail": "トレーニング詳細", "activity.startTime": "開始", "activity.endTime": "終了",
     "activity.trainingTime": "トレーニング時間", "activity.setType": "種別",
-    "activity.exercise": "種目", "activity.weight": "重量", "activity.reps": "回数", "activity.setCount": "セット"
+    "activity.exercise": "種目", "activity.weight": "重量", "activity.reps": "回数", "activity.setCount": "セット",
+    "activity.byBodyPart": "部位別", "activity.volumeGrowth": "ボリューム成長率"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -157,7 +158,8 @@ export const extraTranslations = {
     "activity.history": "Workout History", "activity.historyEmpty": "No workout history yet",
     "activity.dayDetail": "Workout Details", "activity.startTime": "Start", "activity.endTime": "End",
     "activity.trainingTime": "Training time", "activity.setType": "Type",
-    "activity.exercise": "Exercise", "activity.weight": "Weight", "activity.reps": "Reps", "activity.setCount": "Sets"
+    "activity.exercise": "Exercise", "activity.weight": "Weight", "activity.reps": "Reps", "activity.setCount": "Sets",
+    "activity.byBodyPart": "By body part", "activity.volumeGrowth": "Volume growth"
   },
   zh: {
     "common.none": "无", "common.close": "关闭", "common.more": "更多", "common.post": "发帖", "common.language": "语言",
