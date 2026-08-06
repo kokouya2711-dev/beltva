@@ -30,6 +30,8 @@ const nav = [
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
 
+const MemoizedOutlet = React.memo(() => <Outlet />);
+
 export default function AppLayout() {
   return (
     <TrainingProvider>
@@ -153,7 +155,7 @@ function AppLayoutInner() {
 
       {/* Main content */}
       <main className="flex-1 min-w-0 pb-28 md:pb-8">
-        <Outlet />
+        <MemoizedOutlet />
       </main>
 
       {/* Mobile bottom tab bar */}

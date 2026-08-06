@@ -81,7 +81,7 @@ export default function SimpleSessionDialog({ onClose }) {
 
 function Panel({ children, onClose }) {
   return (
-    <div className="fixed z-[60] bottom-20 md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-80 bg-card border border-border rounded-2xl p-4 shadow-2xl animate-[slideIn_0.2s_ease-out]">
+    <div className="fixed z-[80] bottom-20 md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-80 bg-card border border-border rounded-2xl p-4 shadow-2xl">
       {children}
     </div>
   );

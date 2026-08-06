@@ -225,17 +225,7 @@ export default function TranslationDebugOverlay() {
   // Dev-only guard: render nothing in production (after all hooks)
   if (!IS_DEV) return null;
 
-  if (!open) {
-    return (
-      <button
-        onClick={() => { setOpen(true); setPanelOpen(true); runScan(); }}
-        className="fixed bottom-20 right-3 z-[9999] w-10 h-10 rounded-full bg-destructive text-white flex items-center justify-center shadow-lg md:bottom-4 hover:scale-110 transition"
-        title="翻訳デバッグ (Ctrl+Shift+D) — 開発環境のみ"
-      >
-        <Bug className="w-5 h-5" />
-      </button>
-    );
-  }
+  if (!open) return null;
 
   const byType = {};
   issues.forEach(i => { byType[i.type] = (byType[i.type] || 0) + 1; });
