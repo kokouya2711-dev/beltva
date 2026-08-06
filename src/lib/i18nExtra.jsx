@@ -69,7 +69,13 @@ export const extraTranslations = {
     "contact.emailLabel": "メールアドレス", "contact.responseTime": "対応時間", "contact.responseTimeDesc": "通常2〜3営業日以内にご返信いたします。",
     "privacy.location": "位置情報の共有", "privacy.locationDesc": "マップに現在地をぼかして表示します", "privacy.online": "オンライン状態の表示", "privacy.onlineDesc": "他のユーザーにオンライン状態を表示します",
     "privacy.note": "設定を変更すると即座に反映されます。位置情報をオフにすると、マップに表示されなくなります。",
-    "realtime.online": "オンライン", "realtime.training": "トレーニング中", "realtime.onlineUnit": "人", "realtime.trainingUnit": "人", "live.end": "終了", "live.unknownLocation": "不明な場所", "live.cheer": "応援する", "live.watch": "見る"
+    "realtime.online": "オンライン", "realtime.training": "トレーニング中", "realtime.onlineUnit": "人", "realtime.trainingUnit": "人", "live.end": "終了", "live.unknownLocation": "不明な場所", "live.cheer": "応援する", "live.watch": "見る",
+    "activity.title": "マイアクティビティ", "activity.calendar": "今月のカレンダー", "activity.summary": "今月の概要",
+    "activity.sessions": "実施回数", "activity.totalTime": "合計時間", "activity.progress": "進捗グラフ",
+    "activity.strength": "筋トレ", "activity.cardio": "有酸素", "activity.totalVolume": "総ボリューム", "activity.weightProgress": "重量推移",
+    "activity.distance": "距離", "activity.duration": "時間", "activity.pace": "ペース",
+    "activity.recentRecords": "直近のトレーニング記録", "activity.viewAll": "すべての記録を見る", "activity.noRecords": "記録がありません",
+    "activity.noRecordsDay": "この日の記録はありません"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -137,7 +143,13 @@ export const extraTranslations = {
     "contact.emailLabel": "Email", "contact.responseTime": "Response time", "contact.responseTimeDesc": "We typically reply within 2-3 business days.",
     "privacy.location": "Location sharing", "privacy.locationDesc": "Show your blurred location on the map", "privacy.online": "Online status", "privacy.onlineDesc": "Show your online status to others",
     "privacy.note": "Changes take effect immediately. Turning off location sharing hides you from the map.",
-    "realtime.online": "Online", "realtime.training": "Training", "realtime.onlineUnit": "", "realtime.trainingUnit": "", "live.end": "End", "live.unknownLocation": "Unknown location", "live.cheer": "Cheer", "live.watch": "Watch"
+    "realtime.online": "Online", "realtime.training": "Training", "realtime.onlineUnit": "", "realtime.trainingUnit": "", "live.end": "End", "live.unknownLocation": "Unknown location", "live.cheer": "Cheer", "live.watch": "Watch",
+    "activity.title": "My Activity", "activity.calendar": "This month's calendar", "activity.summary": "This month's summary",
+    "activity.sessions": "Sessions", "activity.totalTime": "Total time", "activity.progress": "Progress",
+    "activity.strength": "Strength", "activity.cardio": "Cardio", "activity.totalVolume": "Total volume", "activity.weightProgress": "Weight progression",
+    "activity.distance": "Distance", "activity.duration": "Duration", "activity.pace": "Pace",
+    "activity.recentRecords": "Recent workouts", "activity.viewAll": "View all records", "activity.noRecords": "No records yet",
+    "activity.noRecordsDay": "No records for this day"
   },
   zh: {
     "common.none": "无", "common.close": "关闭", "common.more": "更多", "common.post": "发帖", "common.language": "语言",

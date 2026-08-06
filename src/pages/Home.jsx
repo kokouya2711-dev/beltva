@@ -1,7 +1,7 @@
 import React from "react";
 import NearbyMap from "@/components/NearbyMap";
 import RealtimeStatus from "@/components/RealtimeStatus";
-import HomeTimeline from "@/components/HomeTimeline";
+import MyActivity from "@/components/activity/MyActivity";
 
 export default function Home() {
   return (
@@ -12,9 +12,9 @@ export default function Home() {
         <NearbyMap />
       </section>
 
-      {/* 📰 Timeline */}
+      {/* 📊 My Activity */}
       <section>
-        <HomeTimeline />
+        <MyActivity />
       </section>
     </div>
   );
