@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Bug, X, RefreshCw, ChevronDown, ChevronRight } from "lucide-react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { Bug, X, RefreshCw, ChevronDown, ChevronRight, Eye, EyeOff, Languages, Key, AlertTriangle, CheckCircle } from "lucide-react";
 import { useI18n, LANGS } from "@/lib/i18n";
+
+// Dev-only: entire component renders nothing in production
+const IS_DEV = import.meta.env && (import.meta.env.DEV || import.meta.env.MODE === "development");
 
 // Words that are intentionally English/brand in all languages
 const ALLOWED_EN = new Set([
@@ -20,11 +23,10 @@ function hasLatin(s) { return /[A-Za-z]/.test(s); }
 function looksLikeKey(s) {
   const trimmed = s.trim();
   if (trimmed.length < 3 || trimmed.length > 60) return false;
-  // contains a dot and only lowercase/underscore words
   return /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_.]*$/i.test(trimmed);
 }
 
-// Detect script of a string, returns 'ja'|'ko'|'th'|'ar'|'ru'|'zh'|'latin'|'mixed'
+// Detect script of a string
 function detectScript(s) {
   const ja = hasJapanese(s);
   const ko = hasKorean(s);
@@ -65,10 +67,10 @@ function collectTextNodes(root) {
     acceptNode(node) {
       const parent = node.parentElement;
       if (!parent) return NodeFilter.FILTER_REJECT;
-      // Skip script/style/code
       const tag = parent.tagName;
       if (["SCRIPT", "STYLE", "NOSCRIPT", "CODE", "PRE"].includes(tag)) return NodeFilter.FILTER_REJECT;
-      // Skip elements not visible
+      // Skip our own debug overlay
+      if (parent.closest("[data-debug-overlay]")) return NodeFilter.FILTER_REJECT;
       const style = window.getComputedStyle(parent);
       if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") return NodeFilter.FILTER_REJECT;
       const text = node.nodeValue;
@@ -80,7 +82,6 @@ function collectTextNodes(root) {
     const node = walker.currentNode;
     const text = node.nodeValue.trim();
     if (!text) continue;
-    // Get a short xpath-like locator
     let el = node.parentElement;
     let path = "";
     let cur = el;
@@ -105,37 +106,31 @@ function scanForIssues(lang) {
   const issues = [];
   const expected = expectedScript(lang);
 
-  for (const { text, path } of nodes) {
-    // 1. Raw key leak
+  for (const { text, path, el } of nodes) {
     if (looksLikeKey(text)) {
-      issues.push({ type: "raw_key", text, path, severity: "high" });
+      issues.push({ type: "raw_key", text, path, severity: "high", el });
       continue;
     }
-    // 2. Script mismatch
     const script = detectScript(text);
     if (script === "mixed") {
-      issues.push({ type: "mixed_script", text, path, severity: "high" });
+      issues.push({ type: "mixed_script", text, path, severity: "high", el });
       continue;
     }
     if (expected === "ja") {
-      // In Japanese, Latin words (except allowed) are suspicious
       if (script === "latin") {
         const words = extractWords(text);
         if (words.length > 0) {
-          issues.push({ type: "latin_in_ja", text, path, severity: "medium", words });
+          issues.push({ type: "latin_in_ja", text, path, severity: "medium", words, el });
         }
       }
     } else if (expected === "latin") {
-      // In Latin languages, Japanese/Korean/Thai/Arabic/Cyrillic chars are suspicious
       if (script === "ja" || script === "ko" || script === "th" || script === "ar" || script === "ru") {
-        issues.push({ type: `cjk_in_${lang}`, text, path, severity: "high" });
+        issues.push({ type: `cjk_in_${lang}`, text, path, severity: "high", el });
       }
     } else {
-      // For zh, ko, th, ar, ru — check for unexpected scripts
       if (script !== "other" && script !== expected && script !== "latin") {
-        // Latin is OK as loan words in most, but pure CJK in non-CJK lang is bad
         if (script !== "latin") {
-          issues.push({ type: `wrong_script_${script}_in_${lang}`, text, path, severity: "high" });
+          issues.push({ type: `wrong_script_${script}_in_${lang}`, text, path, severity: "high", el });
         }
       }
     }
@@ -144,12 +139,15 @@ function scanForIssues(lang) {
 }
 
 export default function TranslationDebugOverlay() {
-  const { lang } = useI18n();
+  const { lang, setLang } = useI18n();
   const [open, setOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
   const [issues, setIssues] = useState([]);
   const [scanning, setScanning] = useState(false);
   const [expandedPaths, setExpandedPaths] = useState({});
+  const [highlightMode, setHighlightMode] = useState(false);
+  const [showLangSwitcher, setShowLangSwitcher] = useState(false);
+  const prevHighlights = useRef([]);
 
   // Toggle via keyboard shortcut: Ctrl+Shift+D
   useEffect(() => {
@@ -163,28 +161,76 @@ export default function TranslationDebugOverlay() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  const clearHighlights = useCallback(() => {
+    prevHighlights.current.forEach(({ el, outline, bg, label }) => {
+      if (!el || !el.isConnected) return;
+      el.style.outline = outline;
+      el.style.background = bg;
+      if (label && label.isConnected) label.remove();
+    });
+    prevHighlights.current = [];
+  }, []);
+
+  const applyHighlights = useCallback((issueList) => {
+    clearHighlights();
+    issueList.forEach((issue) => {
+      if (!issue.el || !issue.el.isConnected) return;
+      const prevOutline = issue.el.style.outline;
+      const prevBg = issue.el.style.background;
+      const color = issue.severity === "high" ? "2px solid hsl(0 84% 60%)" : "2px solid hsl(45 93% 47%)";
+      issue.el.style.outline = color;
+      issue.el.style.outlineOffset = "1px";
+      issue.el.style.background = issue.severity === "high" ? "hsl(0 84% 60% / 0.12)" : "hsl(45 93% 47% / 0.12)";
+      // Add a small label badge
+      const label = document.createElement("div");
+      label.setAttribute("data-debug-overlay", "true");
+      label.style.cssText = `position:absolute;z-index:99999;font-size:9px;font-family:monospace;padding:1px 4px;border-radius:3px;pointer-events:none;color:white;background:${issue.severity === "high" ? "hsl(0 84% 60%)" : "hsl(45 93% 47%)"};white-space:nowrap;`;
+      label.textContent = issue.type;
+      const rect = issue.el.getBoundingClientRect();
+      label.style.left = `${rect.left + window.scrollX}px`;
+      label.style.top = `${rect.top + window.scrollY - 14}px`;
+      document.body.appendChild(label);
+      prevHighlights.current.push({ el: issue.el, outline: prevOutline, bg: prevBg, label });
+    });
+  }, [clearHighlights]);
+
   const runScan = useCallback(() => {
     setScanning(true);
-    // Defer to allow UI update
     setTimeout(() => {
       const found = scanForIssues(lang);
       setIssues(found);
       setScanning(false);
       setPanelOpen(true);
+      if (highlightMode) applyHighlights(found);
     }, 50);
-  }, [lang]);
+  }, [lang, highlightMode, applyHighlights]);
 
   // Auto-scan when language changes and overlay is open
   useEffect(() => {
     if (open && panelOpen) runScan();
   }, [lang, open, panelOpen, runScan]);
 
+  // Cleanup highlights on unmount or when highlight mode turns off
+  useEffect(() => {
+    if (!highlightMode) clearHighlights();
+    return () => clearHighlights();
+  }, [highlightMode, clearHighlights]);
+
+  // Re-apply highlights when highlight mode toggles
+  useEffect(() => {
+    if (highlightMode && issues.length > 0) applyHighlights(issues);
+    else if (!highlightMode) clearHighlights();
+  }, [highlightMode, issues, applyHighlights, clearHighlights]);
+
+  // Dev-only guard: render nothing in production (after all hooks)
+  if (!IS_DEV) return null;
+
   if (!open) {
     return (
       <button
         onClick={() => { setOpen(true); setPanelOpen(true); runScan(); }}
-        className="fixed bottom-20 right-3 z-[200] w-10 h-10 rounded-full bg-destructive text-white flex items-center justify-center shadow-lg md:bottom-4"
-        title="翻訳デバッグ (Ctrl+Shift+D)"
+        className="fixed bottom-20 right-3 z-[9999] w-10 h-10 rounded-full bg-destructive text-white flex items-center justify-center shadow-lg md:bottom-4 hover:scale-110 transition"
+        title="翻訳デバッグ (Ctrl+Shift+D) — 開発環境のみ"
       >
         <Bug className="w-5 h-5" />
       </button>
@@ -193,28 +239,34 @@ export default function TranslationDebugOverlay() {
 
   const byType = {};
   issues.forEach(i => { byType[i.type] = (byType[i.type] || 0) + 1; });
+  const highCount = issues.filter(i => i.severity === "high").length;
+  const currentLangObj = LANGS.find(l => l.code === lang);
 
   return (
     <>
       {/* Floating toggle */}
       <button
         onClick={() => setPanelOpen(v => !v)}
-        className="fixed bottom-20 right-3 z-[200] w-10 h-10 rounded-full bg-destructive text-white flex items-center justify-center shadow-lg md:bottom-4"
+        className="fixed bottom-20 right-3 z-[9999] w-10 h-10 rounded-full bg-destructive text-white flex items-center justify-center shadow-lg md:bottom-4 hover:scale-110 transition"
         title="翻訳デバッグ"
       >
         <Bug className="w-5 h-5" />
       </button>
 
       {panelOpen && (
-        <div className="fixed bottom-32 right-3 z-[200] w-[92vw] max-w-md max-h-[70vh] flex flex-col bg-card border border-border rounded-2xl shadow-2xl md:bottom-14 md:right-4 overflow-hidden">
+        <div
+          data-debug-overlay="true"
+          className="fixed bottom-32 right-3 z-[9999] w-[92vw] max-w-md max-h-[75vh] flex flex-col bg-card border border-border rounded-2xl shadow-2xl md:bottom-14 md:right-4 overflow-hidden"
+        >
+          {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
             <div className="flex items-center gap-2">
               <Bug className="w-4 h-4 text-destructive" />
               <span className="font-bold text-sm">翻訳デバッグ</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{lang}</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive/20 text-destructive font-mono">DEV</span>
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={runScan} disabled={scanning} className="p-1.5 rounded-lg hover:bg-secondary">
+              <button onClick={runScan} disabled={scanning} className="p-1.5 rounded-lg hover:bg-secondary" title="再スキャン">
                 <RefreshCw className={`w-4 h-4 ${scanning ? "animate-spin" : ""}`} />
               </button>
               <button onClick={() => setPanelOpen(false)} className="p-1.5 rounded-lg hover:bg-secondary">
@@ -223,20 +275,70 @@ export default function TranslationDebugOverlay() {
             </div>
           </div>
 
-          <div className="px-4 py-2 border-b border-border shrink-0 text-xs text-muted-foreground">
-            検出: {issues.length}件
-            {Object.keys(byType).length > 0 && (
-              <span className="ml-2">
-                {Object.entries(byType).map(([t, c]) => (
-                  <span key={t} className="ml-1.5 px-1.5 py-0.5 rounded bg-secondary/60">{t}: {c}</span>
-                ))}
+          {/* Current language + switcher */}
+          <div className="px-4 py-2.5 border-b border-border shrink-0">
+            <button
+              onClick={() => setShowLangSwitcher(v => !v)}
+              className="flex items-center gap-2 w-full text-left"
+            >
+              <Languages className="w-4 h-4 text-primary" />
+              <span className="text-xs font-semibold">現在の言語:</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/15 text-primary font-mono flex items-center gap-1">
+                {currentLangObj?.flag} {lang}
               </span>
+              {showLangSwitcher ? <ChevronDown className="w-3 h-3 ml-auto" /> : <ChevronRight className="w-3 h-3 ml-auto" />}
+            </button>
+            {showLangSwitcher && (
+              <div className="mt-2 grid grid-cols-2 gap-1 max-h-32 overflow-y-auto">
+                {LANGS.map(l => (
+                  <button
+                    key={l.code}
+                    onClick={() => { setLang(l.code); }}
+                    className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg transition ${lang === l.code ? "bg-primary text-primary-foreground" : "bg-secondary/60 hover:bg-secondary"}`}
+                  >
+                    <span>{l.flag}</span>
+                    <span className="truncate">{l.code}</span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
+          {/* Summary + highlight toggle */}
+          <div className="px-4 py-2 border-b border-border shrink-0">
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                {issues.length === 0 && !scanning ? (
+                  <><CheckCircle className="w-3.5 h-3.5 text-accent" /> 問題なし</>
+                ) : (
+                  <><AlertTriangle className="w-3.5 h-3.5 text-yellow-500" /> 検出: {issues.length}件 (高{highCount})</>
+                )}
+              </div>
+              <button
+                onClick={() => setHighlightMode(v => !v)}
+                className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition ${highlightMode ? "bg-primary text-primary-foreground" : "bg-secondary/60 hover:bg-secondary"}`}
+                title="画面上の問題箇所をハイライト"
+              >
+                {highlightMode ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                {highlightMode ? "ハイライト中" : "ハイライト"}
+              </button>
+            </div>
+            {Object.keys(byType).length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {Object.entries(byType).map(([t, c]) => (
+                  <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-secondary/60 font-mono">{t}: {c}</span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Issue list */}
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {issues.length === 0 && !scanning && (
-              <div className="text-center text-sm text-muted-foreground py-8">問題なし ✅</div>
+              <div className="text-center text-sm text-muted-foreground py-8 flex flex-col items-center gap-2">
+                <CheckCircle className="w-8 h-8 text-accent" />
+                問題なし ✅
+              </div>
             )}
             {scanning && (
               <div className="text-center text-sm text-muted-foreground py-8">スキャン中…</div>
@@ -262,7 +364,10 @@ export default function TranslationDebugOverlay() {
                   </button>
                   {expanded && (
                     <div className="mt-1.5 pl-4 text-muted-foreground break-all">
-                      <div className="text-[10px] font-mono">{issue.path}</div>
+                      <div className="text-[10px] font-mono flex items-start gap-1">
+                        <Key className="w-2.5 h-2.5 mt-0.5 shrink-0" />
+                        <span>{issue.path}</span>
+                      </div>
                       {issue.words && <div className="mt-1">英単語: {issue.words.join(", ")}</div>}
                     </div>
                   )}
@@ -271,8 +376,9 @@ export default function TranslationDebugOverlay() {
             })}
           </div>
 
+          {/* Footer */}
           <div className="px-4 py-2 border-t border-border shrink-0 text-[10px] text-muted-foreground">
-            言語切替で自動スキャン。Ctrl+Shift+D で開閉。
+            言語切替で自動スキャン · Ctrl+Shift+D で開閉 · 開発環境のみ表示
           </div>
         </div>
       )}
