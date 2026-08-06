@@ -17,7 +17,8 @@ export default function RealtimeStatus() {
     ]);
     const now = Date.now();
     setOnline(pres.filter((p) => p.last_seen && now - new Date(p.last_seen).getTime() < ONLINE_WINDOW).length);
-    setTraining(live.length);
+    const trainingUserIds = new Set(live.map((s) => s.created_by_id).filter(Boolean));
+    setTraining(trainingUserIds.size);
   }
 
   useEffect(() => {
