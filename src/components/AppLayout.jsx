@@ -192,7 +192,6 @@ function AppLayoutInner() {
       }} onSimpleSelect={() => {
         startTraining([], true);
         setShowGoLive(false);
-        setShowSimpleSession(true);
       }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
       {showSimpleSession && <SimpleSessionDialog onClose={() => setShowSimpleSession(false)} />}

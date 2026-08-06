@@ -29,28 +29,28 @@ export default function SimpleSessionDialog({ onClose }) {
 
   if (done) {
     return (
-      <Overlay onClose={onClose}>
-        <div className="flex flex-col items-center gap-3 py-12">
+      <Panel onClose={onClose}>
+        <div className="flex flex-col items-center gap-3 py-10">
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
             <Check className="w-7 h-7 text-primary" />
           </div>
           <div className="font-semibold text-lg">{t("workout.recorded")}</div>
         </div>
-      </Overlay>
+      </Panel>
     );
   }
 
   return (
-    <Overlay onClose={onClose}>
+    <Panel onClose={onClose}>
       <div className="flex items-center justify-between mb-2">
-        <h2 className="font-bold text-lg">⚡ {t("goLive.simpleRecord")}</h2>
+        <h2 className="font-bold text-base">⚡ {t("goLive.simpleRecord")}</h2>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
       </div>
-      <div className="flex flex-col items-center gap-4 py-8">
+      <div className="flex flex-col items-center gap-3 py-6">
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <Clock className={`w-4 h-4 ${paused ? "text-amber-400" : "text-primary"}`} /> {t("activity.trainingTime")}
         </div>
-        <div className={`text-6xl font-bold tabular-nums tracking-tight ${paused ? "text-amber-400" : ""}`}>{mm}:{ss}</div>
+        <div className={`text-5xl font-bold tabular-nums tracking-tight ${paused ? "text-amber-400" : ""}`}>{mm}:{ss}</div>
         {paused && (
           <div className="text-sm font-semibold text-amber-400 flex items-center gap-1.5">
             <Pause className="w-3.5 h-3.5" /> {t("training.paused")}
@@ -61,30 +61,28 @@ export default function SimpleSessionDialog({ onClose }) {
       <div className="flex gap-2 mb-3">
         {paused ? (
           <button onClick={training.resumeTraining}
-            className="flex-1 flex items-center justify-center gap-2 bg-primary/15 text-primary font-semibold py-3 rounded-xl hover:bg-primary/25 transition border border-primary/30">
+            className="flex-1 flex items-center justify-center gap-2 bg-primary/15 text-primary font-semibold py-2.5 rounded-xl hover:bg-primary/25 transition border border-primary/30">
             <Play className="w-4 h-4" /> {t("training.resume")}
           </button>
         ) : (
           <button onClick={training.pauseTraining}
-            className="flex-1 flex items-center justify-center gap-2 bg-amber-500/15 text-amber-400 font-semibold py-3 rounded-xl hover:bg-amber-500/25 transition border border-amber-500/30">
+            className="flex-1 flex items-center justify-center gap-2 bg-amber-500/15 text-amber-400 font-semibold py-2.5 rounded-xl hover:bg-amber-500/25 transition border border-amber-500/30">
             <Pause className="w-4 h-4" /> {t("training.pause")}
           </button>
         )}
       </div>
       <button onClick={finish} disabled={submitting}
-        className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl disabled:opacity-60 shadow-lg shadow-primary/20">
+        className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl disabled:opacity-60 shadow-lg shadow-primary/20">
         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} {t("workout.complete")}
       </button>
-    </Overlay>
+    </Panel>
   );
 }
 
-function Overlay({ children, onClose }) {
+function Panel({ children, onClose }) {
   return (
-    <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
-      <div className="w-full md:max-w-md bg-card border border-border rounded-t-2xl md:rounded-2xl p-5 shadow-2xl" onClick={e => e.stopPropagation()}>
-        {children}
-      </div>
+    <div className="fixed z-[60] bottom-20 md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-80 bg-card border border-border rounded-2xl p-4 shadow-2xl animate-[slideIn_0.2s_ease-out]">
+      {children}
     </div>
   );
 }
