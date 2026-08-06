@@ -10,7 +10,7 @@ function toLocalDateTimeString(date) {
   return new Date(date.getTime() - offset).toISOString().slice(0, 16);
 }
 
-export default function GoLiveDialog({ onClose, onDetailedSelect }) {
+export default function GoLiveDialog({ onClose, onDetailedSelect, onQuickStart }) {
   const t = useT();
   const tWorkout = useTWorkout();
   const [step, setStep] = useState("choice");
@@ -20,12 +20,14 @@ export default function GoLiveDialog({ onClose, onDetailedSelect }) {
   const [done, setDone] = useState(false);
   const [startTime, setStartTime] = useState(toLocalDateTimeString(new Date()));
   const [endTime, setEndTime] = useState(toLocalDateTimeString(new Date(Date.now() + 3600000)));
+  const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
     (async () => {
       const c = await getGeolocation();
       setCoords(c ? fuzzCoords(c.lat, c.lng) : fuzzCoords(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
     })();
+    base44.entities.WorkoutTemplate.list("-created_date", 10).then(setTemplates).catch(() => {});
   }, []);
 
   async function startLive() {
@@ -73,6 +75,22 @@ export default function GoLiveDialog({ onClose, onDetailedSelect }) {
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
         </div>
         <p className="text-sm text-muted-foreground mb-4">{t("goLive.recordChoiceDesc")}</p>
+        {templates.length > 0 && onQuickStart && (
+          <div className="mb-4">
+            <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+              <Zap className="w-3 h-3" /> {t("goLive.quickStart")}
+            </div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              {templates.map(tpl => (
+                <button key={tpl.id} onClick={() => onQuickStart(tpl)}
+                  className="shrink-0 flex items-center gap-2 px-3 py-2.5 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 transition">
+                  <Zap className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span className="text-sm font-semibold whitespace-nowrap">{tpl.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="space-y-3">
           <button onClick={() => onDetailedSelect ? onDetailedSelect() : setStep("form")} className="w-full flex items-start gap-3 p-4 rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition text-left">
             <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0"><ClipboardList className="w-5 h-5 text-primary" /></div>

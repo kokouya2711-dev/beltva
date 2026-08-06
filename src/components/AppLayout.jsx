@@ -38,7 +38,7 @@ export default function AppLayout() {
 function AppLayoutInner() {
   const t = useT();
   const navigate = useNavigate();
-  const { isActive, elapsedSec } = useTraining();
+  const { isActive, elapsedSec, startTraining } = useTraining();
   const mm = String(Math.floor(elapsedSec / 60)).padStart(2, "0");
   const ss = String(elapsedSec % 60).padStart(2, "0");
   const [me, setMe] = useState(null);
@@ -176,7 +176,12 @@ function AppLayoutInner() {
         })}
       </nav>
 
-      {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} />}
+      {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} onQuickStart={(tpl) => {
+        const data = JSON.parse(tpl.exercises || "[]");
+        startTraining(data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) })));
+        setShowGoLive(false);
+        setShowWorkoutSession(true);
+      }} />}
       {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
     </div>
   );
