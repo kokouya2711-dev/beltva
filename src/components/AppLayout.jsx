@@ -41,7 +41,7 @@ export default function AppLayout() {
 function AppLayoutInner() {
   const t = useT();
   const navigate = useNavigate();
-  const { isActive, isSimple, elapsedSec, startTraining } = useTraining();
+  const { isActive, isSimple, isPaused, elapsedSec, startTraining } = useTraining();
   const mm = String(Math.floor(elapsedSec / 60)).padStart(2, "0");
   const ss = String(elapsedSec % 60).padStart(2, "0");
   const [me, setMe] = useState(null);
@@ -107,7 +107,7 @@ function AppLayoutInner() {
               onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
               className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-accent/20"
             >
-              <Dumbbell className="w-4 h-4" /> 💪 {t("nav.training")} {mm}:{ss}
+              <Dumbbell className="w-4 h-4" /> {isPaused ? `⏸ ${t("training.paused")} ${mm}:${ss}` : `💪 ${t("nav.training")} ${mm}:${ss}`}
             </button>
           ) : (
             <button
@@ -138,7 +138,7 @@ function AppLayoutInner() {
               onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
               className="flex items-center gap-1.5 bg-accent text-accent-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
             >
-              <Dumbbell className="w-3.5 h-3.5" /> {mm}:{ss}
+              <Dumbbell className="w-3.5 h-3.5" /> {isPaused ? `⏸ ${mm}:${ss}` : `${mm}:${ss}`}
             </button>
           ) : (
             <button

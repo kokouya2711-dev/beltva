@@ -33,6 +33,12 @@ export function TrainingProvider({ children }) {
   const [isSimple, setIsSimple] = useState(() => {
     try { return JSON.parse(localStorage.getItem("beltva_trainingSimple") || "false"); } catch { return false; }
   });
+  const [isPaused, setIsPaused] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("beltva_trainingPaused") || "false"); } catch { return false; }
+  });
+  const [pausedDuration, setPausedDuration] = useState(() => {
+    try { return Number(localStorage.getItem("beltva_trainingPausedDuration") || 0); } catch { return 0; }
+  });
   const startRef = useRef(null);
 
   // Persist state to localStorage
@@ -41,8 +47,11 @@ export function TrainingProvider({ children }) {
   useEffect(() => { localStorage.setItem("beltva_defaultRest", String(defaultRest)); }, [defaultRest]);
   useEffect(() => { localStorage.setItem("beltva_restPresets", JSON.stringify(customPresets)); }, [customPresets]);
   useEffect(() => { localStorage.setItem("beltva_trainingSimple", JSON.stringify(isSimple)); }, [isSimple]);
+  useEffect(() => { localStorage.setItem("beltva_trainingPaused", JSON.stringify(isPaused)); }, [isPaused]);
+  useEffect(() => { localStorage.setItem("beltva_trainingPausedDuration", String(pausedDuration)); }, [pausedDuration]);
 
-  // Elapsed timer — restores start time from localStorage on reload
+  // Elapsed timer — restores start time from localStorage on reload.
+  // Excludes paused duration. When paused, elapsed freezes at the pause moment.
   useEffect(() => {
     if (!isActive) return;
     if (!startRef.current) {
@@ -50,11 +59,19 @@ export function TrainingProvider({ children }) {
       startRef.current = stored ? Number(stored) : Date.now();
     }
     localStorage.setItem("beltva_trainingStart", String(startRef.current));
-    const update = () => setElapsedSec(Math.max(0, Math.floor((Date.now() - startRef.current) / 1000)));
+
+    if (isPaused) {
+      // Frozen: compute elapsed at the moment pause started
+      const pauseStartVal = Number(localStorage.getItem("beltva_trainingPauseStart") || Date.now());
+      setElapsedSec(Math.max(0, Math.floor((pauseStartVal - startRef.current - pausedDuration) / 1000)));
+      return;
+    }
+
+    const update = () => setElapsedSec(Math.max(0, Math.floor((Date.now() - startRef.current - pausedDuration) / 1000)));
     update();
     const i = setInterval(update, 1000);
     return () => clearInterval(i);
-  }, [isActive]);
+  }, [isActive, isPaused, pausedDuration]);
 
   // Rest timer
   useEffect(() => {
@@ -79,21 +96,46 @@ export function TrainingProvider({ children }) {
     setElapsedSec(0);
     setRestRemaining(0);
     setRestRunning(false);
+    setIsPaused(false);
+    setPausedDuration(0);
     startRef.current = Date.now();
     localStorage.setItem("beltva_trainingStart", String(startRef.current));
+    localStorage.removeItem("beltva_trainingPausedDuration");
+    localStorage.removeItem("beltva_trainingPauseStart");
     setIsActive(true);
   }, []);
 
   const stopTraining = useCallback(() => {
     setIsActive(false);
     setIsSimple(false);
+    setIsPaused(false);
+    setPausedDuration(0);
     setExercises([]);
     setElapsedSec(0);
     setRestRemaining(0);
     setRestRunning(false);
     startRef.current = null;
     localStorage.removeItem("beltva_trainingStart");
+    localStorage.removeItem("beltva_trainingPausedDuration");
+    localStorage.removeItem("beltva_trainingPauseStart");
   }, []);
+
+  const pauseTraining = useCallback(() => {
+    if (!isActive || isPaused) return;
+    const now = Date.now();
+    localStorage.setItem("beltva_trainingPauseStart", String(now));
+    setIsPaused(true);
+  }, [isActive, isPaused]);
+
+  const resumeTraining = useCallback(() => {
+    if (!isActive || !isPaused) return;
+    const pauseStartVal = Number(localStorage.getItem("beltva_trainingPauseStart") || Date.now());
+    const newPaused = pausedDuration + (Date.now() - pauseStartVal);
+    setPausedDuration(newPaused);
+    localStorage.setItem("beltva_trainingPausedDuration", String(newPaused));
+    localStorage.removeItem("beltva_trainingPauseStart");
+    setIsPaused(false);
+  }, [isActive, isPaused, pausedDuration]);
 
   const addExercise = useCallback((type, prevRecord = null) => {
     setExercises(prev => [...prev, { workout_type: type, sets: [{ weight: prevRecord?.weight || 0, reps: prevRecord?.reps || 0 }] }]);
@@ -135,9 +177,10 @@ export function TrainingProvider({ children }) {
 
   return (
     <TrainingContext.Provider value={{
-      isActive, isSimple, exercises, elapsedSec, restRemaining, restRunning,
+      isActive, isSimple, isPaused, exercises, elapsedSec, restRemaining, restRunning,
       defaultRest, setDefaultRest, customPresets, presets,
-      startTraining, stopTraining, addExercise, updateSet, copyPrevToExercise,
+      startTraining, stopTraining, pauseTraining, resumeTraining,
+      addExercise, updateSet, copyPrevToExercise,
       addSet, removeSet, removeExercise, startRest, stopRest, pauseRest, completeSet,
       addPreset, removePreset,
     }}>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Clock, Check, Loader2 } from "lucide-react";
+import { X, Clock, Check, Loader2, Pause, Play } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
 import { useT } from "@/lib/i18n";
 
@@ -25,6 +25,7 @@ export default function SimpleSessionDialog({ onClose }) {
 
   const mm = String(Math.floor(training.elapsedSec / 60)).padStart(2, "0");
   const ss = String(training.elapsedSec % 60).padStart(2, "0");
+  const paused = training.isPaused;
 
   if (done) {
     return (
@@ -45,12 +46,30 @@ export default function SimpleSessionDialog({ onClose }) {
         <h2 className="font-bold text-lg">⚡ {t("goLive.simpleRecord")}</h2>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary"><X className="w-4 h-4" /></button>
       </div>
-      <div className="flex flex-col items-center gap-4 py-10">
+      <div className="flex flex-col items-center gap-4 py-8">
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Clock className="w-4 h-4 text-primary" /> {t("activity.trainingTime")}
+          <Clock className={`w-4 h-4 ${paused ? "text-amber-400" : "text-primary"}`} /> {t("activity.trainingTime")}
         </div>
-        <div className="text-6xl font-bold tabular-nums tracking-tight">{mm}:{ss}</div>
+        <div className={`text-6xl font-bold tabular-nums tracking-tight ${paused ? "text-amber-400" : ""}`}>{mm}:{ss}</div>
+        {paused && (
+          <div className="text-sm font-semibold text-amber-400 flex items-center gap-1.5">
+            <Pause className="w-3.5 h-3.5" /> {t("training.paused")}
+          </div>
+        )}
         <div className="text-xs text-muted-foreground text-center max-w-xs">{t("goLive.simpleNote")}</div>
+      </div>
+      <div className="flex gap-2 mb-3">
+        {paused ? (
+          <button onClick={training.resumeTraining}
+            className="flex-1 flex items-center justify-center gap-2 bg-primary/15 text-primary font-semibold py-3 rounded-xl hover:bg-primary/25 transition border border-primary/30">
+            <Play className="w-4 h-4" /> {t("training.resume")}
+          </button>
+        ) : (
+          <button onClick={training.pauseTraining}
+            className="flex-1 flex items-center justify-center gap-2 bg-amber-500/15 text-amber-400 font-semibold py-3 rounded-xl hover:bg-amber-500/25 transition border border-amber-500/30">
+            <Pause className="w-4 h-4" /> {t("training.pause")}
+          </button>
+        )}
       </div>
       <button onClick={finish} disabled={submitting}
         className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl disabled:opacity-60 shadow-lg shadow-primary/20">
