@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Headphones, Plus, Loader2 } from "lucide-react";
 import { WORKOUT_TYPES } from "@/lib/workouts";
+import { useT } from "@/lib/i18n";
+import { useTWorkout } from "@/lib/i18nHelpers";
 
 export default function CreateVoiceRoomDialog({ onClose, onCreated }) {
+  const t = useT();
+  const tWorkout = useTWorkout();
   const [name, setName] = useState("");
   const [topic, setTopic] = useState("");
   const [capacity, setCapacity] = useState(8);
@@ -13,7 +17,7 @@ export default function CreateVoiceRoomDialog({ onClose, onCreated }) {
   async function create() {
     setSubmitting(true);
     await base44.entities.VoiceRoom.create({
-      name: name.trim() || "もくもくボイス",
+      name: name.trim() || t("voice.defaultName"),
       topic: topic.trim() || undefined,
       capacity: Number(capacity) || 8,
       status: "open",
@@ -33,7 +37,7 @@ export default function CreateVoiceRoomDialog({ onClose, onCreated }) {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Headphones className="w-4 h-4 text-primary-foreground" />
           </div>
-          <h2 className="font-bold text-lg">ボイスルームを作成</h2>
+          <h2 className="font-bold text-lg">{t("voice.createTitle")}</h2>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary">
           <X className="w-4 h-4" />
@@ -41,28 +45,28 @@ export default function CreateVoiceRoomDialog({ onClose, onCreated }) {
       </div>
       <div className="space-y-4">
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">ルーム名</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="ベンチ仲間の雑談部屋" className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("voice.roomName")}</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("voice.roomNamePlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider">トピック</label>
+            <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("voice.topic")}</label>
             <select value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary">
-              <option value="">フリー</option>
-              {WORKOUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              <option value="">{t("voice.free")}</option>
+              {WORKOUT_TYPES.map((w) => <option key={w} value={w}>{tWorkout(w)}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider">定員</label>
+            <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("voice.capacity")}</label>
             <input type="number" min={2} max={20} value={capacity} onChange={(e) => setCapacity(e.target.value)} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
           </div>
         </div>
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">説明</label>
-          <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="初心者歓迎・質問OKなど" className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("voice.description")}</label>
+          <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("voice.descriptionPlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
         </div>
         <button onClick={create} disabled={submitting} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20 disabled:opacity-60">
-          {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} ルームを作成
+          {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} {t("voice.createButton")}
         </button>
       </div>
     </Overlay>

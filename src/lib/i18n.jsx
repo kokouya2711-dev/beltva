@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { extraTranslations } from "@/lib/i18nExtra";
 import { hobbyUITranslations } from "@/lib/i18nHobbyUI";
 import { missingTranslations } from "@/lib/i18nMissing";
+import { voiceTranslations } from "@/lib/i18nVoice";
 
 export const LANGS = [
   { code: "ja", label: "日本語", flag: "🇯🇵" },
@@ -266,6 +267,7 @@ for (const _lang of Object.keys(translations)) {
   Object.assign(translations[_lang], extraTranslations[_lang] || {});
   Object.assign(translations[_lang], hobbyUITranslations[_lang] || {});
   Object.assign(translations[_lang], missingTranslations[_lang] || {});
+  Object.assign(translations[_lang], voiceTranslations[_lang] || {});
 }
 
 const RTL_LANGS = ["ar"];

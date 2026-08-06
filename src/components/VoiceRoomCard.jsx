@@ -1,7 +1,9 @@
 import React from "react";
 import { Users, Lock, Headphones } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export default function VoiceRoomCard({ room, onJoin }) {
+  const t = useT();
   const full = (room.members_count || 0) >= room.capacity;
   const live = (room.members_count || 0) > 0;
   return (
@@ -25,7 +27,7 @@ export default function VoiceRoomCard({ room, onJoin }) {
           disabled={full}
           className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition"
         >
-          <Headphones className="w-4 h-4" /> {full ? "満室" : "参加"}
+          <Headphones className="w-4 h-4" /> {full ? t("voice.full") : t("voice.join")}
         </button>
       </div>
     </div>

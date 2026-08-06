@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Globe, Radio, MapPin, Flame } from "lucide-react";
 import TrainingGlobe from "@/components/TrainingGlobe";
+import { useT } from "@/lib/i18n";
 
 export default function MapPage() {
+  const t = useT();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,17 +28,17 @@ export default function MapPage() {
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-4">
       <div className="flex items-center gap-2">
         <Globe className="w-5 h-5 text-primary" />
-        <h1 className="text-2xl font-bold">ワールドグローブ</h1>
+        <h1 className="text-2xl font-bold">{t("home.globe")}</h1>
         <span className="text-[10px] text-muted-foreground uppercase tracking-widest ml-1">LIVE TRAINING</span>
       </div>
 
-      <p className="text-sm text-muted-foreground -mt-2">世界中でいま筋トレしている仲間が光る。位置は近隣にぼかして表示しています。</p>
+      <p className="text-sm text-muted-foreground -mt-2">{t("home.globeSub")}</p>
 
       <div className="relative rounded-2xl overflow-hidden border border-border">
         <TrainingGlobe points={points} />
         <div className="absolute top-3 right-3 z-[400] glass rounded-lg px-3 py-2 text-xs flex items-center gap-2">
           <Radio className="w-3.5 h-3.5 text-red-500" />
-          {sessions.length} 人 トレーニング中
+          {sessions.length} {t("home.trainingCount")}
         </div>
       </div>
 
@@ -44,7 +46,7 @@ export default function MapPage() {
         {sessions.length === 0 && !loading && (
           <div className="col-span-full glass rounded-2xl border border-border py-12 flex flex-col items-center gap-2 text-muted-foreground">
             <MapPin className="w-8 h-8 opacity-50" />
-            <div className="text-sm">いまトレーニング中の仲間はいません。最初にトレーニングを始めよう！</div>
+            <div className="text-sm">{t("home.noLive")}</div>
           </div>
         )}
         {sessions.map((s) => (
@@ -53,7 +55,7 @@ export default function MapPage() {
               <Flame className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium truncate">{s.workout_type} · {s.location_name || "近隣"}</div>
+              <div className="text-sm font-medium truncate">{s.workout_type} · {s.location_name || t("common.nearby")}</div>
               <div className="text-xs text-muted-foreground">🔥 {s.hype_count || 0}</div>
             </div>
             <span className="w-2 h-2 rounded-full bg-red-500 live-dot" />

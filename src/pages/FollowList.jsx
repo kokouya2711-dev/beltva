@@ -5,9 +5,11 @@ import UserLink from "@/components/UserLink";
 import FollowButton from "@/components/FollowButton";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { fetchUser } from "@/lib/profile";
+import { useT } from "@/lib/i18n";
 
 export default function FollowList({ type }) {
   const { id } = useParams();
+  const t = useT();
   const [meId, setMeId] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,12 +33,12 @@ export default function FollowList({ type }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-4">
-      <Link to={`/profile/${id}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="w-4 h-4" /> プロフィールに戻る</Link>
-      <h1 className="text-2xl font-bold">{type === "followers" ? "フォロワー" : "フォロー中"}</h1>
+      <Link to={`/profile/${id}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="w-4 h-4" /> {t("followList.backToProfile")}</Link>
+      <h1 className="text-2xl font-bold">{type === "followers" ? t("profile.followers") : t("profile.following")}</h1>
       {loading ? (
         <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : users.length === 0 ? (
-        <div className="glass rounded-2xl border border-border py-10 text-center text-sm text-muted-foreground">まだいません</div>
+        <div className="glass rounded-2xl border border-border py-10 text-center text-sm text-muted-foreground">{t("followList.empty")}</div>
       ) : (
         <div className="glass rounded-2xl border border-border divide-y divide-border">
           {users.map((u) => (
