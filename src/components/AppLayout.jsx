@@ -57,10 +57,10 @@ function AppLayoutInner() {
 
   React.useEffect(() => {
     if (!me) return;
-    updatePresence(me.id);
-    const i = setInterval(() => updatePresence(me.id), 60000);
+    updatePresence(me.id, isActive);
+    const i = setInterval(() => updatePresence(me.id, isActive), 60000);
     return () => clearInterval(i);
-  }, [me]);
+  }, [me, isActive]);
 
   React.useEffect(() => {
     if (!me || me.lat) return;

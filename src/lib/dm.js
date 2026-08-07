@@ -95,12 +95,12 @@ export async function reportUser(meId, otherId, reason) {
   await base44.entities.Report.create({ reporter_id: meId, reported_id: otherId, reason, target_type: "user", target_id: otherId });
 }
 
-export async function updatePresence(meId) {
+export async function updatePresence(meId, isTraining = false) {
   if (!meId) return;
   const ex = await base44.entities.Presence.filter({ created_by_id: meId });
   const now = new Date().toISOString();
-  if (ex[0]) await base44.entities.Presence.update(ex[0].id, { last_seen: now });
-  else await base44.entities.Presence.create({ last_seen: now });
+  if (ex[0]) await base44.entities.Presence.update(ex[0].id, { last_seen: now, is_training: isTraining });
+  else await base44.entities.Presence.create({ last_seen: now, is_training: isTraining });
 }
 
 export async function notify(userId, actorId, type, text, targetId) {

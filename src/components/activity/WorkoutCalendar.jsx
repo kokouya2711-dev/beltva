@@ -57,11 +57,11 @@ export default function WorkoutCalendar({ records, year, month }) {
             <button
               key={i}
               onClick={() => cell.hasRecords ? setSelectedDay(selectedDay?.day === cell.day ? null : cell) : null}
-              className={`aspect-square rounded-lg text-xs flex items-center justify-center transition ${
+              className={`aspect-square rounded-lg text-xs flex items-center justify-center transition relative ${
                 cell.hasRecords
-                  ? "bg-primary/20 text-primary font-bold hover:bg-primary/30"
-                  : "text-muted-foreground"
-              } ${isToday(cell.day) ? "ring-1 ring-primary" : ""}`}
+                  ? "bg-primary text-primary-foreground font-bold hover:opacity-90"
+                  : "text-muted-foreground hover:bg-secondary/60"
+              } ${isToday(cell.day) && !cell.hasRecords ? "ring-1 ring-primary text-primary" : ""} ${isToday(cell.day) && cell.hasRecords ? "ring-2 ring-accent" : ""}`}
             >
               {cell.day}
             </button>
