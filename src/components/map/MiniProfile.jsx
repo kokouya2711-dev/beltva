@@ -14,27 +14,28 @@ export default function MiniProfile({ user, isMe, live, training, onView, scale 
   const ageGender = [user.age, showGender].filter(v => v != null && v !== "").join("/");
   const flag = flagEmoji(user.country);
 
-  // Base sizes at scale=1 — horizontal layout
+  // Base sizes at scale=1 — horizontal: avatar left (2-row tall), right 2 rows
   const width = Math.round(180 * scale);
-  const avatar = Math.round(40 * scale);
-  const badge = Math.round(14 * scale);
+  const avatar = Math.round(52 * scale);
+  const badge = Math.round(16 * scale);
   const nameSize = Math.max(9, Math.round(12 * scale));
   const subSize = Math.max(8, Math.round(10 * scale));
   const btnSize = Math.max(8, Math.round(10 * scale));
   const btnPadX = Math.max(6, Math.round(8 * scale));
   const btnPadY = Math.max(3, Math.round(4 * scale));
   const gap = Math.round(8 * scale);
+  const rowGap = Math.round(4 * scale);
   const badgeOffset = -Math.round(badge * 0.15);
 
   return (
-    <div className="flex items-center" style={{ width, gap }}>
-      {/* Avatar with flag/training badge */}
-      <div className="relative shrink-0">
+    <div className="flex items-stretch" style={{ width, gap }}>
+      {/* Avatar — spans full height (2 rows), flag overlaps bottom-right */}
+      <div className="relative shrink-0 self-center">
         <div className="rounded-full overflow-hidden border-2 border-border bg-secondary flex items-center justify-center" style={{ width: avatar, height: avatar }}>
           {user.avatar_url ? (
             <Image src={user.avatar_url} alt={name} className="w-full h-full" fittingType="fill" />
           ) : (
-            <span className="font-bold text-muted-foreground" style={{ fontSize: Math.round(14 * scale) }}>
+            <span className="font-bold text-muted-foreground" style={{ fontSize: Math.round(16 * scale) }}>
               {(name || "?").slice(0, 2).toUpperCase()}
             </span>
           )}
@@ -54,29 +55,31 @@ export default function MiniProfile({ user, isMe, live, training, onView, scale 
         )}
       </div>
 
-      {/* Name + age/gender + training status */}
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold leading-tight truncate" style={{ fontSize: nameSize }}>
-          {isMe ? t("home.you") : name}
-        </div>
-        {ageGender && <div className="text-muted-foreground" style={{ fontSize: subSize, marginTop: 1 }}>{ageGender}</div>}
-        {training && (
-          <div className="text-orange-400 flex items-center gap-0.5" style={{ fontSize: subSize, marginTop: 1 }}>
-            <Flame className="shrink-0" style={{ width: Math.round(subSize), height: Math.round(subSize) }} />
-            {live ? tWorkout(live.workout_type) : t("home.trainingLive")}
+      {/* Right side — 2 rows stacked */}
+      <div className="flex-1 min-w-0 flex flex-col justify-center" style={{ rowGap }}>
+        {/* Top row: name + age/gender */}
+        <div className="min-w-0">
+          <div className="font-semibold leading-tight truncate" style={{ fontSize: nameSize }}>
+            {isMe ? t("home.you") : name}
+            {ageGender && <span className="text-muted-foreground font-normal" style={{ fontSize: subSize, marginLeft: 4 }}>{ageGender}</span>}
           </div>
-        )}
+          {training && (
+            <div className="text-orange-400 flex items-center gap-0.5 leading-tight" style={{ fontSize: subSize, marginTop: 1 }}>
+              <Flame className="shrink-0" style={{ width: Math.round(subSize), height: Math.round(subSize) }} />
+              {live ? tWorkout(live.workout_type) : t("home.trainingLive")}
+            </div>
+          )}
+        </div>
+        {/* Bottom row: view profile button */}
+        <button
+          onClick={onView}
+          className="w-full bg-primary text-primary-foreground font-semibold rounded-lg hover:opacity-90 transition flex items-center justify-center"
+          style={{ fontSize: btnSize, paddingLeft: btnPadX, paddingRight: btnPadX, paddingTop: btnPadY, paddingBottom: btnPadY }}
+        >
+          {t("home.viewProfile")}
+          <ChevronRight style={{ width: Math.round(btnSize * 1.1), height: Math.round(btnSize * 1.1), marginLeft: 2 }} />
+        </button>
       </div>
-
-      {/* View profile button */}
-      <button
-        onClick={onView}
-        className="shrink-0 bg-primary text-primary-foreground font-semibold rounded-lg hover:opacity-90 transition flex items-center justify-center"
-        style={{ fontSize: btnSize, paddingLeft: btnPadX, paddingRight: btnPadX, paddingTop: btnPadY, paddingBottom: btnPadY }}
-      >
-        {t("home.viewProfile")}
-        <ChevronRight style={{ width: Math.round(btnSize * 1.1), height: Math.round(btnSize * 1.1), marginLeft: 2 }} />
-      </button>
     </div>
   );
 }
