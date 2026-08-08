@@ -214,6 +214,7 @@ export default function NearbyMap() {
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2],
           });
+          const popupScale = Math.min(1, Math.max(0.45, 0.45 + (mapZoom - 1) * 0.06));
           return (
             <Marker
               key={u.id}
@@ -232,6 +233,7 @@ export default function NearbyMap() {
                   live={live}
                   training={training}
                   onView={() => navigate(`/profile/${u.id}`)}
+                  scale={popupScale}
                 />
               </Popup>
               <Tooltip direction="top" offset={[0, -size / 2 - 4]} opacity={1}>
