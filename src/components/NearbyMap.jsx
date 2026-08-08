@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame, Info } from "lucide-react";
+import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Flame, Info } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import MiniProfile from "@/components/map/MiniProfile";
@@ -236,20 +236,6 @@ export default function NearbyMap() {
                   scale={popupScale}
                 />
               </Popup>
-              <Tooltip direction="top" offset={[0, -size / 2 - 4]} opacity={1}>
-                <div className="text-xs">
-                  <div className="font-medium">{isMe ? t("home.you") : name}</div>
-                  {training ? (
-                    <div className="text-orange-400 flex items-center gap-1">
-                      <Flame className="w-3 h-3" /> {live ? tWorkout(live.workout_type) : t("home.trainingLive")}
-                    </div>
-                  ) : (
-                    <div className="text-green-400 flex items-center gap-1">
-                      <Radio className="w-3 h-3" /> {t("home.online")}
-                    </div>
-                  )}
-                </div>
-              </Tooltip>
             </Marker>
           );
         })}
