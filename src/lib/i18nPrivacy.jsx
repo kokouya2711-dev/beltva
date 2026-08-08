@@ -5,8 +5,8 @@ export const privacyTranslations = {
   ja: {
     "privacy.showOnlineStatus": "オンライン状態を表示",
     "privacy.showOnlineStatusDesc": "他のユーザーにオンライン状態を公開します",
-    "privacy.agePublic": "年齢をプロフィールに表示",
-    "privacy.agePublicDesc": "プロフィールページに年齢を表示します",
+    "privacy.agePublic": "年齢を公開",
+    "privacy.agePublicDesc": "他のユーザーに年齢を公開します",
     "privacy.searchableById": "IDでの検索を許可",
     "privacy.searchableByIdDesc": "ユーザーIDで検索されるのを許可します",
     "privacy.searchableBy": "私を検索できる人",
@@ -32,8 +32,8 @@ export const privacyTranslations = {
   en: {
     "privacy.showOnlineStatus": "Show online status",
     "privacy.showOnlineStatusDesc": "Let others see when you're online",
-    "privacy.agePublic": "Show age on profile",
-    "privacy.agePublicDesc": "Display your age on your profile page",
+    "privacy.agePublic": "Show age",
+    "privacy.agePublicDesc": "Let others see your age",
     "privacy.searchableById": "Allow search by ID",
     "privacy.searchableByIdDesc": "Let others find you by your user ID",
     "privacy.searchableBy": "Who can find me",
@@ -58,7 +58,7 @@ export const privacyTranslations = {
   },
   zh: {
     "privacy.showOnlineStatus": "显示在线状态", "privacy.showOnlineStatusDesc": "让其他人看到你的在线状态",
-    "privacy.agePublic": "在资料页显示年龄", "privacy.agePublicDesc": "在你的个人资料上显示年龄",
+    "privacy.agePublic": "公开年龄", "privacy.agePublicDesc": "让其他人看到你的年龄",
     "privacy.searchableById": "允许通过ID搜索", "privacy.searchableByIdDesc": "允许他人通过用户ID找到你",
     "privacy.searchableBy": "谁可以搜索我", "privacy.searchableByEveryone": "所有人", "privacy.searchableByFollowings": "仅关注者", "privacy.searchableByNone": "不允许",
     "privacy.timelineVisibility": "动态可见范围", "privacy.timelineEveryone": "所有人", "privacy.timelineFollowers": "仅关注者", "privacy.timelinePrivate": "不公开",
@@ -68,7 +68,7 @@ export const privacyTranslations = {
   },
   "zh-TW": {
     "privacy.showOnlineStatus": "顯示在線狀態", "privacy.showOnlineStatusDesc": "讓其他人看到你的在線狀態",
-    "privacy.agePublic": "在資料頁顯示年齡", "privacy.agePublicDesc": "在你的個人資料上顯示年齡",
+    "privacy.agePublic": "公開年齡", "privacy.agePublicDesc": "讓其他人看到你的年齡",
     "privacy.searchableById": "允許透過ID搜尋", "privacy.searchableByIdDesc": "允許他人透過使用者ID找到你",
     "privacy.searchableBy": "誰可以搜尋我", "privacy.searchableByEveryone": "所有人", "privacy.searchableByFollowings": "僅追蹤者", "privacy.searchableByNone": "不允許",
     "privacy.timelineVisibility": "動態可見範圍", "privacy.timelineEveryone": "所有人", "privacy.timelineFollowers": "僅追蹤者", "privacy.timelinePrivate": "不公開",
@@ -78,7 +78,7 @@ export const privacyTranslations = {
   },
   ko: {
     "privacy.showOnlineStatus": "온라인 상태 표시", "privacy.showOnlineStatusDesc": "다른 사람이 내 온라인 상태를 볼 수 있게 합니다",
-    "privacy.agePublic": "프로필에 나이 표시", "privacy.agePublicDesc": "프로필 페이지에 나이를 표시합니다",
+    "privacy.agePublic": "나이 공개", "privacy.agePublicDesc": "다른 사람이 내 나이를 볼 수 있게 합니다",
     "privacy.searchableById": "ID로 검색 허용", "privacy.searchableByIdDesc": "사용자 ID로 검색되는 것을 허용합니다",
     "privacy.searchableBy": "나를 검색할 수 있는 사람", "privacy.searchableByEveryone": "전체", "privacy.searchableByFollowings": "팔로워만", "privacy.searchableByNone": "허용 안 함",
     "privacy.timelineVisibility": "타임라인 공개 범위", "privacy.timelineEveryone": "전체", "privacy.timelineFollowers": "팔로워만", "privacy.timelinePrivate": "비공개",
@@ -88,7 +88,7 @@ export const privacyTranslations = {
   },
   es: {
     "privacy.showOnlineStatus": "Mostrar estado en línea", "privacy.showOnlineStatusDesc": "Permitir que otros vean tu estado en línea",
-    "privacy.agePublic": "Mostrar edad en el perfil", "privacy.agePublicDesc": "Mostrar tu edad en tu página de perfil",
+    "privacy.agePublic": "Mostrar edad", "privacy.agePublicDesc": "Permitir que otros vean tu edad",
     "privacy.searchableById": "Permitir búsqueda por ID", "privacy.searchableByIdDesc": "Permitir que te encuentren por tu ID de usuario",
     "privacy.searchableBy": "Quién puede buscarme", "privacy.searchableByEveryone": "Todos", "privacy.searchableByFollowings": "Solo seguidores", "privacy.searchableByNone": "Nadie",
     "privacy.timelineVisibility": "Visibilidad de la línea de tiempo", "privacy.timelineEveryone": "Todos", "privacy.timelineFollowers": "Solo seguidores", "privacy.timelinePrivate": "Privado",
@@ -98,7 +98,7 @@ export const privacyTranslations = {
   },
   fr: {
     "privacy.showOnlineStatus": "Afficher le statut en ligne", "privacy.showOnlineStatusDesc": "Permettre aux autres de voir ton statut en ligne",
-    "privacy.agePublic": "Afficher l'âge sur le profil", "privacy.agePublicDesc": "Afficher ton âge sur ta page de profil",
+    "privacy.agePublic": "Afficher l'âge", "privacy.agePublicDesc": "Permettre aux autres de voir ton âge",
     "privacy.searchableById": "Autoriser la recherche par ID", "privacy.searchableByIdDesc": "Permettre de te trouver par ton ID utilisateur",
     "privacy.searchableBy": "Qui peut me chercher", "privacy.searchableByEveryone": "Tout le monde", "privacy.searchableByFollowings": "Abonnés seulement", "privacy.searchableByNone": "Personne",
     "privacy.timelineVisibility": "Visibilité de la timeline", "privacy.timelineEveryone": "Tout le monde", "privacy.timelineFollowers": "Abonnés seulement", "privacy.timelinePrivate": "Privé",
@@ -108,7 +108,7 @@ export const privacyTranslations = {
   },
   de: {
     "privacy.showOnlineStatus": "Online-Status anzeigen", "privacy.showOnlineStatusDesc": "Andere können deinen Online-Status sehen",
-    "privacy.agePublic": "Alter im Profil anzeigen", "privacy.agePublicDesc": "Zeigt dein Alter auf deiner Profilseite an",
+    "privacy.agePublic": "Alter anzeigen", "privacy.agePublicDesc": "Andere können dein Alter sehen",
     "privacy.searchableById": "Suche per ID erlauben", "privacy.searchableByIdDesc": "Andere können dich über deine Nutzer-ID finden",
     "privacy.searchableBy": "Wer kann mich finden", "privacy.searchableByEveryone": "Alle", "privacy.searchableByFollowings": "Nur Follower", "privacy.searchableByNone": "Niemand",
     "privacy.timelineVisibility": "Timeline-Sichtbarkeit", "privacy.timelineEveryone": "Alle", "privacy.timelineFollowers": "Nur Follower", "privacy.timelinePrivate": "Privat",
@@ -118,7 +118,7 @@ export const privacyTranslations = {
   },
   pt: {
     "privacy.showOnlineStatus": "Mostrar status online", "privacy.showOnlineStatusDesc": "Permitir que outros vejam seu status online",
-    "privacy.agePublic": "Mostrar idade no perfil", "privacy.agePublicDesc": "Exibe sua idade na página de perfil",
+    "privacy.agePublic": "Mostrar idade", "privacy.agePublicDesc": "Permitir que outros vejam sua idade",
     "privacy.searchableById": "Permitir busca por ID", "privacy.searchableByIdDesc": "Permitir que te encontrem pelo seu ID de usuário",
     "privacy.searchableBy": "Quem pode me buscar", "privacy.searchableByEveryone": "Todos", "privacy.searchableByFollowings": "Apenas seguidores", "privacy.searchableByNone": "Ninguém",
     "privacy.timelineVisibility": "Visibilidade da linha do tempo", "privacy.timelineEveryone": "Todos", "privacy.timelineFollowers": "Apenas seguidores", "privacy.timelinePrivate": "Privado",
@@ -128,7 +128,7 @@ export const privacyTranslations = {
   },
   it: {
     "privacy.showOnlineStatus": "Mostra stato online", "privacy.showOnlineStatusDesc": "Permetti ad altri di vedere il tuo stato online",
-    "privacy.agePublic": "Mostra età nel profilo", "privacy.agePublicDesc": "Mostra la tua età nella pagina del profilo",
+    "privacy.agePublic": "Mostra età", "privacy.agePublicDesc": "Permetti ad altri di vedere la tua età",
     "privacy.searchableById": "Consenti ricerca per ID", "privacy.searchableByIdDesc": "Permetti di trovarti tramite il tuo ID utente",
     "privacy.searchableBy": "Chi può cercarmi", "privacy.searchableByEveryone": "Tutti", "privacy.searchableByFollowings": "Solo follower", "privacy.searchableByNone": "Nessuno",
     "privacy.timelineVisibility": "Visibilità timeline", "privacy.timelineEveryone": "Tutti", "privacy.timelineFollowers": "Solo follower", "privacy.timelinePrivate": "Privato",
@@ -138,7 +138,7 @@ export const privacyTranslations = {
   },
   ru: {
     "privacy.showOnlineStatus": "Показывать онлайн-статус", "privacy.showOnlineStatusDesc": "Позволить другим видеть ваш онлайн-статус",
-    "privacy.agePublic": "Показывать возраст в профиле", "privacy.agePublicDesc": "Отображать возраст на странице профиля",
+    "privacy.agePublic": "Показывать возраст", "privacy.agePublicDesc": "Позволить другим видеть ваш возраст",
     "privacy.searchableById": "Разрешить поиск по ID", "privacy.searchableByIdDesc": "Разрешить находить вас по ID пользователя",
     "privacy.searchableBy": "Кто может меня искать", "privacy.searchableByEveryone": "Все", "privacy.searchableByFollowings": "Только подписчики", "privacy.searchableByNone": "Никто",
     "privacy.timelineVisibility": "Видимость ленты", "privacy.timelineEveryone": "Все", "privacy.timelineFollowers": "Только подписчики", "privacy.timelinePrivate": "Приватно",
@@ -148,7 +148,7 @@ export const privacyTranslations = {
   },
   vi: {
     "privacy.showOnlineStatus": "Hiển thị trạng thái trực tuyến", "privacy.showOnlineStatusDesc": "Cho người khác thấy trạng thái trực tuyến của bạn",
-    "privacy.agePublic": "Hiển thị tuổi trên hồ sơ", "privacy.agePublicDesc": "Hiển thị tuổi trên trang hồ sơ của bạn",
+    "privacy.agePublic": "Công khai tuổi", "privacy.agePublicDesc": "Cho người khác thấy tuổi của bạn",
     "privacy.searchableById": "Cho phép tìm kiếm theo ID", "privacy.searchableByIdDesc": "Cho phép người khác tìm bạn theo ID người dùng",
     "privacy.searchableBy": "Ai có thể tìm tôi", "privacy.searchableByEveryone": "Tất cả", "privacy.searchableByFollowings": "Chỉ người theo dõi", "privacy.searchableByNone": "Không ai",
     "privacy.timelineVisibility": "Phạm vi hiển thị bảng tin", "privacy.timelineEveryone": "Tất cả", "privacy.timelineFollowers": "Chỉ người theo dõi", "privacy.timelinePrivate": "Riêng tư",
@@ -158,7 +158,7 @@ export const privacyTranslations = {
   },
   id: {
     "privacy.showOnlineStatus": "Tampilkan status online", "privacy.showOnlineStatusDesc": "Biarkan orang lain melihat status online Anda",
-    "privacy.agePublic": "Tampilkan usia di profil", "privacy.agePublicDesc": "Tampilkan usia di halaman profil Anda",
+    "privacy.agePublic": "Tampilkan usia", "privacy.agePublicDesc": "Biarkan orang lain melihat usia Anda",
     "privacy.searchableById": "Izinkan pencarian via ID", "privacy.searchableByIdDesc": "Izinkan orang menemukan Anda via ID pengguna",
     "privacy.searchableBy": "Siapa bisa mencari saya", "privacy.searchableByEveryone": "Semua", "privacy.searchableByFollowings": "Pengikut saja", "privacy.searchableByNone": "Tidak ada",
     "privacy.timelineVisibility": "Visibilitas linimasa", "privacy.timelineEveryone": "Semua", "privacy.timelineFollowers": "Pengikut saja", "privacy.timelinePrivate": "Privat",
@@ -168,7 +168,7 @@ export const privacyTranslations = {
   },
   th: {
     "privacy.showOnlineStatus": "แสดงสถานะออนไลน์", "privacy.showOnlineStatusDesc": "ให้ผู้อื่นเห็นสถานะออนไลน์ของคุณ",
-    "privacy.agePublic": "แสดงอายุในโปรไฟล์", "privacy.agePublicDesc": "แสดงอายุบนหน้าโปรไฟล์ของคุณ",
+    "privacy.agePublic": "เปิดเผยอายุ", "privacy.agePublicDesc": "ให้ผู้อื่นเห็นอายุของคุณ",
     "privacy.searchableById": "อนุญาตให้ค้นหาด้วย ID", "privacy.searchableByIdDesc": "อนุญาตให้ผู้อื่นค้นหาคุณด้วย ID ผู้ใช้",
     "privacy.searchableBy": "ใครสามารถค้นหาฉันได้", "privacy.searchableByEveryone": "ทุกคน", "privacy.searchableByFollowings": "ผู้ติดตามเท่านั้น", "privacy.searchableByNone": "ไม่มีใคร",
     "privacy.timelineVisibility": "การมองเห็นไทม์ไลน์", "privacy.timelineEveryone": "ทุกคน", "privacy.timelineFollowers": "ผู้ติดตามเท่านั้น", "privacy.timelinePrivate": "ส่วนตัว",
@@ -178,7 +178,7 @@ export const privacyTranslations = {
   },
   ar: {
     "privacy.showOnlineStatus": "إظهار الحالة المتصلة", "privacy.showOnlineStatusDesc": "السماح للآخرين برؤية حالتك المتصلة",
-    "privacy.agePublic": "إظهار العمر في الملف الشخصي", "privacy.agePublicDesc": "إظهار عمرك في صفحة ملفك الشخصي",
+    "privacy.agePublic": "إظهار العمر", "privacy.agePublicDesc": "السماح للآخرين برؤية عمرك",
     "privacy.searchableById": "السماح بالبحث عبر ID", "privacy.searchableByIdDesc": "السماح للآخرين بالعثور عليك عبر معرف المستخدم",
     "privacy.searchableBy": "من يمكن البحث عني", "privacy.searchableByEveryone": "الجميع", "privacy.searchableByFollowings": "المتابعون فقط", "privacy.searchableByNone": "لا أحد",
     "privacy.timelineVisibility": "رؤية الجدول الزمني", "privacy.timelineEveryone": "الجميع", "privacy.timelineFollowers": "المتابعون فقط", "privacy.timelinePrivate": "خاص",
@@ -188,7 +188,7 @@ export const privacyTranslations = {
   },
   tr: {
     "privacy.showOnlineStatus": "Çevrimiçi durumu göster", "privacy.showOnlineStatusDesc": "Diğerlerinin çevrimiçi durumunu görmesine izin ver",
-    "privacy.agePublic": "Profilde yaşı göster", "privacy.agePublicDesc": "Profil sayfanda yaşını göster",
+    "privacy.agePublic": "Yaşı göster", "privacy.agePublicDesc": "Diğerlerinin yaşını görmesine izin ver",
     "privacy.searchableById": "ID ile aramaya izin ver", "privacy.searchableByIdDesc": "Kullanıcı ID'n ile bulunmana izin ver",
     "privacy.searchableBy": "Beni kim arayabilir", "privacy.searchableByEveryone": "Herkes", "privacy.searchableByFollowings": "Sadece takipçiler", "privacy.searchableByNone": "Kimse",
     "privacy.timelineVisibility": "Zaman çizelgesi görünürlüğü", "privacy.timelineEveryone": "Herkes", "privacy.timelineFollowers": "Sadece takipçiler", "privacy.timelinePrivate": "Gizli",
@@ -198,7 +198,7 @@ export const privacyTranslations = {
   },
   hi: {
     "privacy.showOnlineStatus": "ऑनलाइन स्थिति दिखाएँ", "privacy.showOnlineStatusDesc": "अन्य लोगों को आपकी ऑनलाइन स्थिति देखने दें",
-    "privacy.agePublic": "प्रोफ़ाइल पर उम्र दिखाएँ", "privacy.agePublicDesc": "अपनी प्रोफ़ाइल पेज पर उम्र दिखाएँ",
+    "privacy.agePublic": "उम्र सार्वजनिक करें", "privacy.agePublicDesc": "अन्य लोगों को आपकी उम्र देखने दें",
     "privacy.searchableById": "ID द्वारा खोज की अनुमति दें", "privacy.searchableByIdDesc": "अन्य लोगों को आपका ID खोजने दें",
     "privacy.searchableBy": "मुझे कौन खोज सकता है", "privacy.searchableByEveryone": "सभी", "privacy.searchableByFollowings": "केवल फ़ॉलोअर", "privacy.searchableByNone": "कोई नहीं",
     "privacy.timelineVisibility": "टाइमलाइन दृश्यता", "privacy.timelineEveryone": "सभी", "privacy.timelineFollowers": "केवल फ़ॉलोअर", "privacy.timelinePrivate": "निजी",

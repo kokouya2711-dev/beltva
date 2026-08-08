@@ -11,7 +11,8 @@ export default function MiniProfile({ user, isMe, live, training, onView, scale 
   const name = user.display_name || user.email?.split("@")[0] || "user";
   const genderLabel = user.gender === "male" ? "男" : user.gender === "female" ? "女" : "";
   const showGender = user.gender_public && genderLabel;
-  const ageGender = [user.age, showGender].filter(v => v != null && v !== "").join("/");
+  const showAge = user.age_public === true ? user.age : null;
+  const ageGender = [showAge, showGender].filter(v => v != null && v !== "").join("/");
   const flag = flagEmoji(user.country);
 
   // Base sizes at scale=1 — horizontal: avatar left (2-row tall), right 2 rows
