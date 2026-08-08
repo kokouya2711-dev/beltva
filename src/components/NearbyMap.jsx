@@ -24,16 +24,18 @@ const FILTERS = ["all", "online", "training", "following", "nearby"];
 // Permanently overrides _animateZoom so the zoom parameter is clamped to
 // maxZoom on EVERY call — including intermediate pinch-zoom frames.
 // This prevents the temporary visual over-zoom during pinch gestures.
-function MapZoomLimiter({ onZoomChange }) {
+function MapZoomLimiter({ onZoomChange, onMapMove }) {
   const map = useMap();
   React.useEffect(() => {
     const MAX = 12.5;
     map.setMaxZoom(MAX);
-    map.on("zoomend", () => {
+    const handleZoomEnd = () => {
       const z = map.getZoom();
       if (z > MAX) map.setZoom(MAX);
       onZoomChange(z);
-    });
+    };
+    map.on("zoomend", handleZoomEnd);
+    map.on("moveend", onMapMove);
     onZoomChange(map.getZoom());
     // Prevent iOS Safari native pinch-to-zoom on the map container
     const container = map.getContainer();
@@ -41,10 +43,12 @@ function MapZoomLimiter({ onZoomChange }) {
     container.addEventListener("gesturestart", preventGesture);
     container.addEventListener("gesturechange", preventGesture);
     return () => {
+      map.off("zoomend", handleZoomEnd);
+      map.off("moveend", onMapMove);
       container.removeEventListener("gesturestart", preventGesture);
       container.removeEventListener("gesturechange", preventGesture);
     };
-  }, [map, onZoomChange]);
+  }, [map, onZoomChange, onMapMove]);
   return null;
 }
 
@@ -64,11 +68,17 @@ export default function NearbyMap() {
   const [filter, setFilter] = useState("all");
   const [showLegend, setShowLegend] = useState(false);
   const [mapZoom, setMapZoom] = useState(13);
+  const [offsets, setOffsets] = useState({});
+  const [mapMoveTick, setMapMoveTick] = useState(0);
   const { toast } = useToast();
   const pressTimer = useRef(null);
   const longPressActiveRef = useRef(false);
   const [longPressUserId, setLongPressUserId] = useState(null);
   const [reactionTarget, setReactionTarget] = useState(null);
+
+  const handleMapMove = React.useCallback(() => {
+    setMapMoveTick((t) => t + 1);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -148,6 +158,75 @@ export default function NearbyMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filter, presence, followIds, center]);
 
+  // Resolve overlapping markers by computing visual offsets in screen space,
+  // then converting back to lat/lng. Actual user position data is never changed.
+  useEffect(() => {
+    if (!mapRef.current || filtered.length === 0) {
+      setOffsets({});
+      return;
+    }
+    const map = mapRef.current;
+    const zoomScale = mapZoom <= 7 ? 0 : Math.min(1, 0.6 + 0.4 * (mapZoom - 8) / 5);
+    const baseSize = mapZoom <= 7 ? 5 : Math.round(36 * zoomScale);
+    const minDist = baseSize + 8;
+
+    const pts = filtered.map((u) => ({
+      id: u.id,
+      x: map.latLngToContainerPoint([u.lat, u.lng]).x,
+      y: map.latLngToContainerPoint([u.lat, u.lng]).y,
+    }));
+
+    // Group overlapping markers (transitive closure by screen distance)
+    const assigned = new Set();
+    const groups = [];
+    for (let i = 0; i < pts.length; i++) {
+      if (assigned.has(pts[i].id)) continue;
+      const group = [pts[i]];
+      assigned.add(pts[i].id);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (let j = 0; j < pts.length; j++) {
+          if (assigned.has(pts[j].id)) continue;
+          for (const g of group) {
+            if (Math.hypot(g.x - pts[j].x, g.y - pts[j].y) < minDist) {
+              group.push(pts[j]);
+              assigned.add(pts[j].id);
+              changed = true;
+              break;
+            }
+          }
+        }
+      }
+      if (group.length > 1) groups.push(group);
+    }
+
+    const newOffsets = {};
+    for (const group of groups) {
+      const cx = group.reduce((s, p) => s + p.x, 0) / group.length;
+      const cy = group.reduce((s, p) => s + p.y, 0) / group.length;
+      const n = group.length;
+      group.forEach((p, idx) => {
+        let dx, dy;
+        if (n <= 8) {
+          const angle = (idx / n) * Math.PI * 2 - Math.PI / 2;
+          const r = minDist * 0.6;
+          dx = Math.cos(angle) * r;
+          dy = Math.sin(angle) * r;
+        } else {
+          // Spiral for large groups
+          const angle = idx * 0.5;
+          const r = minDist * 0.4 + idx * minDist * 0.12;
+          dx = Math.cos(angle) * r;
+          dy = Math.sin(angle) * r;
+        }
+        const ll = map.containerPointToLatLng([cx + dx, cy + dy]);
+        newOffsets[p.id] = [ll.lat, ll.lng];
+      });
+    }
+    setOffsets(newOffsets);
+  }, [filtered, mapZoom, mapMoveTick]);
+
   function startPress(u) {
     if (u.id === me?.id) return;
     longPressActiveRef.current = false;
@@ -157,7 +236,8 @@ export default function NearbyMap() {
       setLongPressUserId(u.id);
       const map = mapRef.current;
       if (map) {
-        const pt = map.latLngToContainerPoint([u.lat, u.lng]);
+        const pos = offsets[u.id] || [u.lat, u.lng];
+        const pt = map.latLngToContainerPoint(pos);
         setReactionTarget({ user: u, x: pt.x, y: pt.y });
       }
     }, 500);
@@ -222,7 +302,7 @@ export default function NearbyMap() {
         className="w-full h-full"
         attributionControl={false}
       >
-        <MapZoomLimiter onZoomChange={setMapZoom} />
+        <MapZoomLimiter onZoomChange={setMapZoom} onMapMove={handleMapMove} />
         <TileLayer
           url={satellite ? SAT_TILE : NORMAL_TILE}
           className={satellite ? "sat-tiles" : "dark-tiles"}
@@ -260,10 +340,11 @@ export default function NearbyMap() {
             iconAnchor: [size / 2, size / 2],
           });
           const popupScale = Math.min(1, Math.max(0.45, 0.45 + (mapZoom - 1) * 0.06));
+          const pos = offsets[u.id] || [u.lat, u.lng];
           return (
             <Marker
               key={u.id}
-              position={[u.lat, u.lng]}
+              position={pos}
               icon={icon}
               eventHandlers={{
                 mousedown: () => startPress(u),
