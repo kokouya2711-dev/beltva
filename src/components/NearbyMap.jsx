@@ -194,8 +194,8 @@ export default function NearbyMap() {
           const initials = (name || "?").slice(0, 2).toUpperCase();
           let iconHtml, size;
           if (isDot) {
-            size = training ? 10 : 8;
-            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};box-shadow:0 0 4px ${color},0 0 8px ${color}66;border:1px solid rgba(0,0,0,0.3);"></div>`;
+            size = training ? 5 : 4;
+            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};box-shadow:0 0 2px ${color}aa;border:1px solid rgba(0,0,0,0.3);"></div>`;
           } else {
             const zoomScale = 0.6 + 0.4 * (mapZoom - 8) / 5;
             size = Math.round((training ? 42 : 36) * zoomScale);
