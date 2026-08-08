@@ -76,6 +76,14 @@ export default function NearbyMap() {
     return () => { clearTimeout(timeout); if (unsubscribe) unsubscribe(); };
   }, []);
 
+  // Enforce maxZoom on the map instance — belt-and-suspenders to ensure
+  // no zoom method (wheel, pinch, double-click) can exceed zoom 14 (~2-3km)
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.setMaxZoom(14);
+    }
+  }, [center]);
+
   const liveByUser = useMemo(() => {
     const m = {};
     sessions.forEach((s) => { if (s.created_by_id) m[s.created_by_id] = s; });
@@ -138,7 +146,7 @@ export default function NearbyMap() {
         <TileLayer
           url={satellite ? SAT_TILE : NORMAL_TILE}
           className={satellite ? "sat-tiles" : "dark-tiles"}
-          maxZoom={satellite ? 19 : 19}
+          maxZoom={14}
         />
 
         {/* users — profile icons with colored rings; online=green, training=orange-red */}
