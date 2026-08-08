@@ -56,6 +56,11 @@
       "type": "number",
       "title": "\u5e74\u9f62"
     },
+    "age_public": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u5e74\u9f62\u516c\u958b"
+    },
     "lat": {
       "type": "number",
       "title": "\u7def\u5ea6"
@@ -68,6 +73,46 @@
       "type": "boolean",
       "default": true,
       "title": "\u4f4d\u7f6e\u60c5\u5831\u516c\u958b"
+    },
+    "show_online_status": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u30aa\u30f3\u30e9\u30a4\u30f3\u72b6\u614b\u8868\u793a"
+    },
+    "searchable_by_id": {
+      "type": "boolean",
+      "default": true,
+      "title": "ID\u691c\u7d22\u8a31\u53ef"
+    },
+    "searchable_by": {
+      "type": "string",
+      "title": "\u691c\u7d22\u53ef\u80fd\u7bc4\u56f2",
+      "enum": [
+        "everyone",
+        "followings",
+        "none"
+      ],
+      "default": "everyone"
+    },
+    "timeline_visibility": {
+      "type": "string",
+      "title": "\u30bf\u30a4\u30e0\u30e9\u30a4\u30f3\u516c\u958b\u7bc4\u56f2",
+      "enum": [
+        "everyone",
+        "followers",
+        "private"
+      ],
+      "default": "everyone"
+    },
+    "timeline_gender_restriction": {
+      "type": "string",
+      "title": "\u30bf\u30a4\u30e0\u30e9\u30a4\u30f3\u6027\u5225\u5236\u9650",
+      "enum": [
+        "none",
+        "female_only",
+        "male_only"
+      ],
+      "default": "none"
     },
     "notif_prefs": {
       "type": "string",

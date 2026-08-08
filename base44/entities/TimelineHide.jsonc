@@ -1,0 +1,18 @@
+{
+  "name": "TimelineHide",
+  "type": "object",
+  "properties": {
+    "hider_id": {
+      "type": "string",
+      "title": "\u975e\u8868\u793a\u306b\u3057\u305f\u4eba"
+    },
+    "hidden_id": {
+      "type": "string",
+      "title": "\u975e\u8868\u793a\u5bfe\u8c61"
+    }
+  },
+  "required": [
+    "hider_id",
+    "hidden_id"
+  ]
+}

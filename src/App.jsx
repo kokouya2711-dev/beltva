@@ -32,6 +32,7 @@ import WorkoutDayDetailPage from '@/pages/WorkoutDayDetailPage';
 import MePage from '@/pages/MePage';
 import ActivityPage from '@/pages/ActivityPage';
 import SupportPage from '@/pages/SupportPage';
+import TimelineHidePage from '@/pages/TimelineHidePage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -78,6 +79,7 @@ const AuthenticatedApp = () => {
           <Route path="/messages/:conversationId" element={<Chat />} />
           <Route path="/posts/:id" element={<PostDetail />} />
           <Route path="/blocked-users" element={<BlockedUsersPage />} />
+          <Route path="/timeline-hide" element={<TimelineHidePage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />

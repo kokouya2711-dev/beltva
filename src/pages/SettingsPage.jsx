@@ -4,7 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
-  ShieldCheck, Ban, Dumbbell, Search, Check, Timer, MapPin
+  ShieldCheck, Ban, Dumbbell, Search, Check, Timer, MapPin,
+  EyeOff, Eye, UserSearch, Lock
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
 import { getGeolocation } from "@/lib/workouts";
@@ -215,22 +216,38 @@ function TrainingSection() {
 function PrivacySection() {
   const t = useT();
   const navigate = useNavigate();
-  const [shareLocation, setShareLocation] = useState(true);
+  const [settings, setSettings] = useState({
+    share_location: true,
+    show_online_status: true,
+    age_public: false,
+    searchable_by_id: true,
+    searchable_by: "everyone",
+    timeline_visibility: "everyone",
+    timeline_gender_restriction: "none",
+  });
 
   useEffect(() => {
     base44.auth.me().then((u) => {
-      if (u.share_location === false) setShareLocation(false);
+      setSettings((prev) => ({
+        ...prev,
+        share_location: u.share_location !== false,
+        show_online_status: u.show_online_status !== false,
+        age_public: u.age_public === true,
+        searchable_by_id: u.searchable_by_id !== false,
+        searchable_by: u.searchable_by || "everyone",
+        timeline_visibility: u.timeline_visibility || "everyone",
+        timeline_gender_restriction: u.timeline_gender_restriction || "none",
+      }));
     }).catch(() => {});
   }, []);
 
-  async function toggleLocation() {
-    const next = !shareLocation;
-    setShareLocation(next);
+  async function update(key, value) {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+    const updates = { [key]: value };
+    if (key === "share_location" && !value) { updates.lat = null; updates.lng = null; }
     try {
-      const updates = { share_location: next };
-      if (!next) { updates.lat = null; updates.lng = null; }
       await base44.auth.updateMe(updates);
-      if (next) {
+      if (key === "share_location" && value) {
         const geo = await getGeolocation();
         if (geo) await base44.auth.updateMe({ lat: geo.lat, lng: geo.lng });
       }
@@ -240,19 +257,37 @@ function PrivacySection() {
   return (
     <div className="space-y-5">
       <h2 className="font-bold text-lg">{t("settings.privacy")}</h2>
-      <div className="glass rounded-2xl border border-border p-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 text-sm font-medium"><MapPin className="w-4 h-4" /> {t("settings.shareLocation")}</div>
-            <div className="text-xs text-muted-foreground mt-1">{t("settings.shareLocationDesc")}</div>
-          </div>
-          <button onClick={toggleLocation} className={`w-11 h-6 rounded-full transition relative shrink-0 ${shareLocation ? "bg-primary" : "bg-secondary border border-border"}`}>
-            <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${shareLocation ? "left-[22px]" : "left-0.5"}`} />
-          </button>
-        </div>
-      </div>
+
+      {/* Toggle settings */}
       <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        <Row icon={ShieldCheck} label={t("settings.privacy")} onClick={() => navigate("/privacy")} />
+        <ToggleRowWithDesc icon={MapPin} label={t("settings.shareLocation")} desc={t("settings.shareLocationDesc")} checked={settings.share_location} onChange={() => update("share_location", !settings.share_location)} />
+        <ToggleRowWithDesc icon={Eye} label={t("privacy.showOnlineStatus")} desc={t("privacy.showOnlineStatusDesc")} checked={settings.show_online_status} onChange={() => update("show_online_status", !settings.show_online_status)} />
+        <ToggleRowWithDesc icon={User} label={t("privacy.agePublic")} desc={t("privacy.agePublicDesc")} checked={settings.age_public} onChange={() => update("age_public", !settings.age_public)} />
+        <ToggleRowWithDesc icon={UserSearch} label={t("privacy.searchableById")} desc={t("privacy.searchableByIdDesc")} checked={settings.searchable_by_id} onChange={() => update("searchable_by_id", !settings.searchable_by_id)} />
+      </div>
+
+      {/* Selector settings */}
+      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+        <SelectorRow icon={UserSearch} label={t("privacy.searchableBy")} value={settings.searchable_by} options={[
+          { key: "everyone", label: t("privacy.searchableByEveryone") },
+          { key: "followings", label: t("privacy.searchableByFollowings") },
+          { key: "none", label: t("privacy.searchableByNone") },
+        ]} onChange={(v) => update("searchable_by", v)} />
+        <SelectorRow icon={Globe} label={t("privacy.timelineVisibility")} value={settings.timeline_visibility} options={[
+          { key: "everyone", label: t("privacy.timelineEveryone") },
+          { key: "followers", label: t("privacy.timelineFollowers") },
+          { key: "private", label: t("privacy.timelinePrivate") },
+        ]} onChange={(v) => update("timeline_visibility", v)} />
+        <SelectorRow icon={User} label={t("privacy.timelineGenderRestriction")} value={settings.timeline_gender_restriction} options={[
+          { key: "none", label: t("privacy.genderNone") },
+          { key: "female_only", label: t("privacy.genderFemaleOnly") },
+          { key: "male_only", label: t("privacy.genderMaleOnly") },
+        ]} onChange={(v) => update("timeline_gender_restriction", v)} />
+      </div>
+
+      {/* Link rows */}
+      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+        <Row icon={EyeOff} label={t("privacy.timelineHideTitle")} onClick={() => navigate("/timeline-hide")} />
         <Row icon={Ban} label={t("settings.blockedUsers")} onClick={() => navigate("/blocked-users")} />
       </div>
     </div>
@@ -276,6 +311,35 @@ function ToggleRow({ label, checked, onChange }) {
       <button onClick={onChange} className={`w-11 h-6 rounded-full transition relative ${checked ? "bg-primary" : "bg-secondary border border-border"}`}>
         <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
       </button>
+    </div>
+  );
+}
+
+function ToggleRowWithDesc({ icon: Icon, label, desc, checked, onChange }) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-4 py-3.5 text-sm">
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2 font-medium"><Icon className="w-4 h-4 text-muted-foreground shrink-0" /> {label}</div>
+        <div className="text-xs text-muted-foreground mt-1 pl-6">{desc}</div>
+      </div>
+      <button onClick={onChange} className={`w-11 h-6 rounded-full transition relative shrink-0 ${checked ? "bg-primary" : "bg-secondary border border-border"}`}>
+        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
+      </button>
+    </div>
+  );
+}
+
+function SelectorRow({ icon: Icon, label, value, options, onChange }) {
+  return (
+    <div className="px-4 py-3.5 text-sm">
+      <div className="flex items-center gap-2 font-medium mb-2"><Icon className="w-4 h-4 text-muted-foreground shrink-0" /> {label}</div>
+      <div className="flex gap-2 flex-wrap pl-6">
+        {options.map((opt) => (
+          <button key={opt.key} onClick={() => onChange(opt.key)} className={`text-xs px-3 py-1.5 rounded-full border transition ${value === opt.key ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+            {opt.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
