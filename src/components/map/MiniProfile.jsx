@@ -57,14 +57,14 @@ export default function MiniProfile({ user, isMe, live, training, onView, scale 
 
       {/* Right side — 2 rows stacked */}
       <div className="flex-1 min-w-0 flex flex-col justify-center" style={{ rowGap }}>
-        {/* Top row: name + age/gender */}
-        <div className="min-w-0">
-          <div className="font-semibold leading-tight truncate" style={{ fontSize: nameSize }}>
-            {isMe ? t("home.you") : name}
-            {ageGender && <span className="text-muted-foreground font-normal" style={{ fontSize: subSize, marginLeft: 4 }}>{ageGender}</span>}
+        {/* Top row: age/gender then username (same line) */}
+        <div className="min-w-0 leading-tight">
+          <div className="truncate" style={{ fontSize: nameSize }}>
+            {ageGender && <span className="text-muted-foreground font-normal" style={{ fontSize: subSize, marginRight: 4 }}>{ageGender}</span>}
+            <span className="font-semibold">{isMe ? t("home.you") : name}</span>
           </div>
           {training && (
-            <div className="text-orange-400 flex items-center gap-0.5 leading-tight" style={{ fontSize: subSize, marginTop: 1 }}>
+            <div className="text-orange-400 flex items-center gap-0.5" style={{ fontSize: subSize, marginTop: 1 }}>
               <Flame className="shrink-0" style={{ width: Math.round(subSize), height: Math.round(subSize) }} />
               {live ? tWorkout(live.workout_type) : t("home.trainingLive")}
             </div>
