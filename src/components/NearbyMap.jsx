@@ -120,7 +120,7 @@ export default function NearbyMap() {
   }, [sessions]);
 
   const isOnline = (uid) => !!(presence[uid]?.last_seen && Date.now() - new Date(presence[uid].last_seen).getTime() < ONLINE_WINDOW);
-  const isTraining = (uid) => !!(presence[uid]?.is_training && presence[uid]?.last_seen && Date.now() - new Date(presence[uid].last_seen).getTime() < TRAINING_WINDOW);
+  const isTraining = (uid) => !!presence[uid]?.is_training;
 
   const filtered = useMemo(() => {
     // show online (green) and training (orange-red) users; offline users are excluded

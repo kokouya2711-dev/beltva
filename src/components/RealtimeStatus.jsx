@@ -24,7 +24,7 @@ export default function RealtimeStatus() {
     userMap.forEach(p => {
       const lastSeen = p.last_seen ? new Date(p.last_seen).getTime() : 0;
       if (now - lastSeen < ONLINE_WINDOW) onlineCount++;
-      if (p.is_training && now - lastSeen < TRAINING_WINDOW) trainingCount++;
+      if (p.is_training) trainingCount++;
     });
     setOnline(onlineCount);
     setTraining(trainingCount);
