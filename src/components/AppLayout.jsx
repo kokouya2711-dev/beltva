@@ -50,9 +50,20 @@ function AppLayoutInner() {
   const [showWorkoutSession, setShowWorkoutSession] = useState(false);
   const [showSimpleSession, setShowSimpleSession] = useState(false);
   const location = useLocation();
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   React.useEffect(() => {
     base44.auth.me().then(setMe).catch(() => {});
+  }, []);
+
+  // Detect mobile keyboard open/close via VisualViewport API
+  React.useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const check = () => setKeyboardOpen(vv.height < window.innerHeight - 100);
+    check();
+    vv.addEventListener("resize", check);
+    return () => vv.removeEventListener("resize", check);
   }, []);
 
   React.useEffect(() => {
@@ -152,12 +163,12 @@ function AppLayoutInner() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 pb-28 md:pb-8">
+      <main className={`flex-1 min-w-0 md:pb-8 ${keyboardOpen ? "pb-4" : "pb-28"}`}>
         <MemoizedOutlet />
       </main>
 
-      {/* Mobile bottom tab bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-border flex" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+      {/* Mobile bottom tab bar — hidden while keyboard is open */}
+      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-border flex transition-opacity duration-200 ${keyboardOpen ? "opacity-0 pointer-events-none translate-y-full" : "opacity-100"}`} style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         {nav.map((n) => {
           const active = location.pathname === n.to;
           const Icon = n.icon;
