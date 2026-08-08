@@ -20,14 +20,17 @@ const FILTERS = ["all", "online", "training", "following", "nearby"];
 // Permanently overrides _animateZoom so the zoom parameter is clamped to
 // maxZoom on EVERY call — including intermediate pinch-zoom frames.
 // This prevents the temporary visual over-zoom during pinch gestures.
-function MapZoomLimiter() {
+function MapZoomLimiter({ onZoomChange }) {
   const map = useMap();
   React.useEffect(() => {
     const MAX = 13;
     map.setMaxZoom(MAX);
     map.on("zoomend", () => {
-      if (map.getZoom() > MAX) map.setZoom(MAX);
+      const z = map.getZoom();
+      if (z > MAX) map.setZoom(MAX);
+      onZoomChange(z);
     });
+    onZoomChange(map.getZoom());
     // Prevent iOS Safari native pinch-to-zoom on the map container
     const container = map.getContainer();
     const preventGesture = (e) => e.preventDefault();
@@ -37,7 +40,7 @@ function MapZoomLimiter() {
       container.removeEventListener("gesturestart", preventGesture);
       container.removeEventListener("gesturechange", preventGesture);
     };
-  }, [map]);
+  }, [map, onZoomChange]);
   return null;
 }
 
@@ -56,6 +59,7 @@ export default function NearbyMap() {
   const [satellite, setSatellite] = useState(false);
   const [filter, setFilter] = useState("all");
   const [showLegend, setShowLegend] = useState(false);
+  const [mapZoom, setMapZoom] = useState(13);
 
   useEffect(() => {
     (async () => {
@@ -172,7 +176,7 @@ export default function NearbyMap() {
         className="w-full h-full"
         attributionControl={false}
       >
-        <MapZoomLimiter />
+        <MapZoomLimiter onZoomChange={setMapZoom} />
         <TileLayer
           url={satellite ? SAT_TILE : NORMAL_TILE}
           className={satellite ? "sat-tiles" : "dark-tiles"}
@@ -185,16 +189,19 @@ export default function NearbyMap() {
           const training = isTraining(u.id);
           const isMe = u.id === me?.id;
           const color = training ? "#f97316" : "#22c55e";
-          const size = training ? 42 : 36;
-          const imgSize = size - 6;
+          const zoomScale = 0.45 + 0.55 * (mapZoom - 1) / 12;
+          const size = Math.round((training ? 42 : 36) * zoomScale);
+          const imgSize = Math.max(8, size - Math.round(6 * zoomScale));
+          const borderW = Math.max(1.5, 2.5 * zoomScale).toFixed(1);
+          const fontSize = Math.max(8, Math.round(12 * zoomScale));
           const name = u.display_name || u.email?.split("@")[0] || "user";
           const initials = (name || "?").slice(0, 2).toUpperCase();
           const inner = u.avatar_url
             ? `<img src="${u.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
-            : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:12px;font-weight:700;">${initials}</div>`;
+            : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:${fontSize}px;font-weight:700;">${initials}</div>`;
           const icon = L.divIcon({
             className: "profile-marker",
-            html: `<div style="width:${size}px;height:${size}px;border-radius:50%;border:2.5px solid ${color};box-shadow:0 0 6px ${color}88,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`,
+            html: `<div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}88,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`,
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2],
           });
