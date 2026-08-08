@@ -7,7 +7,8 @@ import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame, I
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 
-const ONLINE_WINDOW = 120000; // 2 min — matches UsersPage online definition
+const ONLINE_WINDOW = 120000;
+const TRAINING_WINDOW = 300000; // 5 min — training users may not touch phone between sets
 const NORMAL_TILE = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 // Esri World Imagery — high quality worldwide satellite imagery
 const SAT_TILE = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
@@ -44,7 +45,7 @@ export default function NearbyMap() {
         setMe(meUser);
         setUsers(us.filter((u) => u.id !== meUser?.id && u.lat != null));
         const pm = {};
-        pres.forEach((p) => { pm[p.created_by_id] = p.last_seen; });
+        pres.forEach((p) => { pm[p.created_by_id] = { last_seen: p.last_seen, is_training: p.is_training }; });
         setPresence(pm);
         setSessions(live.filter((s) => s.lat != null));
         setFollowIds(new Set(follows.filter((f) => f.follower_id === meUser?.id).map((f) => f.followee_id)));
@@ -65,19 +66,34 @@ export default function NearbyMap() {
     })();
   }, []);
 
+  useEffect(() => {
+    let timeout;
+    const unsubscribe = base44.entities.Presence.subscribe(() => {
+      clearTimeout(timeout);
+      timeout = setTimeout(async () => {
+        const pres = await base44.entities.Presence.list("-last_seen", 100).catch(() => []);
+        const pm = {};
+        pres.forEach((p) => { pm[p.created_by_id] = { last_seen: p.last_seen, is_training: p.is_training }; });
+        setPresence(pm);
+      }, 300);
+    });
+    return () => { clearTimeout(timeout); if (unsubscribe) unsubscribe(); };
+  }, []);
+
   const liveByUser = useMemo(() => {
     const m = {};
     sessions.forEach((s) => { if (s.created_by_id) m[s.created_by_id] = s; });
     return m;
   }, [sessions]);
 
-  const isOnline = (uid) => !!(presence[uid] && Date.now() - new Date(presence[uid]).getTime() < ONLINE_WINDOW);
+  const isOnline = (uid) => !!(presence[uid]?.last_seen && Date.now() - new Date(presence[uid].last_seen).getTime() < ONLINE_WINDOW);
+  const isTraining = (uid) => !!(presence[uid]?.is_training && presence[uid]?.last_seen && Date.now() - new Date(presence[uid].last_seen).getTime() < TRAINING_WINDOW);
 
   const filtered = useMemo(() => {
-    // always exclude offline users
-    let arr = users.filter((u) => isOnline(u.id) || liveByUser[u.id]);
-    if (filter === "online") arr = arr.filter((u) => isOnline(u.id));
-    else if (filter === "training") arr = arr.filter((u) => liveByUser[u.id]);
+    // show online (green) and training (orange-red) users; offline users are excluded
+    let arr = users.filter((u) => isOnline(u.id) || isTraining(u.id));
+    if (filter === "online") arr = arr.filter((u) => isOnline(u.id) && !isTraining(u.id));
+    else if (filter === "training") arr = arr.filter((u) => isTraining(u.id));
     else if (filter === "following") arr = arr.filter((u) => followIds.has(u.id));
     else if (filter === "nearby") {
       if (!center) return [];
@@ -88,7 +104,7 @@ export default function NearbyMap() {
     }
     return arr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [users, filter, presence, liveByUser, followIds, center]);
+  }, [users, filter, presence, followIds, center]);
 
   function flyToCurrent() {
     if (!mapRef.current || !center) return;
@@ -142,22 +158,21 @@ export default function NearbyMap() {
           </Circle>
         )}
 
-        {/* users */}
+        {/* users — online (green) and training (orange-red) only; offline excluded */}
         {filtered.map((u) => {
           const live = liveByUser[u.id];
-          const online = isOnline(u.id);
-          const isTraining = !!live;
-          const color = isTraining ? "#ef4444" : online ? "#22c55e" : "#64748b";
+          const training = isTraining(u.id);
+          const color = training ? "#f97316" : "#22c55e";
           const name = u.display_name || u.email?.split("@")[0] || "user";
           return (
             <CircleMarker
               key={u.id}
               center={[u.lat, u.lng]}
-              radius={isTraining ? 8 : 6}
+              radius={training ? 8 : 6}
               pathOptions={{
                 color,
                 fillColor: color,
-                fillOpacity: isTraining ? 0.9 : online ? 0.8 : 0.45,
+                fillOpacity: training ? 0.9 : 0.8,
                 weight: 2
               }}
               eventHandlers={{ click: () => navigate(`/profile/${u.id}`) }}
@@ -165,16 +180,14 @@ export default function NearbyMap() {
               <Tooltip direction="top" offset={[0, -8]} opacity={1}>
                 <div className="text-xs">
                   <div className="font-medium">{name}</div>
-                  {isTraining ? (
-                    <div className="text-red-400 flex items-center gap-1">
-                      <Flame className="w-3 h-3" /> {tWorkout(live.workout_type)}
+                  {training ? (
+                    <div className="text-orange-400 flex items-center gap-1">
+                      <Flame className="w-3 h-3" /> {live ? tWorkout(live.workout_type) : t("home.trainingLive")}
                     </div>
-                  ) : online ? (
+                  ) : (
                     <div className="text-green-400 flex items-center gap-1">
                       <Radio className="w-3 h-3" /> {t("home.online")}
                     </div>
-                  ) : (
-                    <div className="text-slate-400">{t("home.offline")}</div>
                   )}
                 </div>
               </Tooltip>
@@ -236,8 +249,7 @@ export default function NearbyMap() {
         <div className="absolute bottom-2 left-2 z-[400] glass rounded-md px-2.5 py-1.5 text-[10px] space-y-0.5">
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#ccff00]" /> {t("home.you")}</div>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#22c55e]" /> {t("home.online")}</div>
-          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#ef4444]" /> {t("home.trainingLive")}</div>
-          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#64748b]" /> {t("home.offline")}</div>
+          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#f97316]" /> {t("home.trainingLive")}</div>
         </div>
       )}
     </div>
