@@ -138,7 +138,11 @@ export default function NearbyMap() {
     return m;
   }, [sessions]);
 
-  const isOnline = (uid) => !!(presence[uid]?.last_seen && Date.now() - new Date(presence[uid].last_seen).getTime() < ONLINE_WINDOW);
+  const isOnline = (uid) => {
+    const u = users.find((x) => x.id === uid);
+    if (!u || u.show_online_status === false) return false;
+    return !!(presence[uid]?.last_seen && Date.now() - new Date(presence[uid].last_seen).getTime() < ONLINE_WINDOW);
+  };
   const isTraining = (uid) => !!presence[uid]?.is_training;
 
   const filtered = useMemo(() => {

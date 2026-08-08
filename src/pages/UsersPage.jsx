@@ -82,6 +82,7 @@ export default function UsersPage() {
   const myLanguages = useMemo(() => parseLanguages(me?.languages), [me]);
 
   function isOnline(u) {
+    if (u.show_online_status === false) return false;
     return !!(presence[u.id] && Date.now() - new Date(presence[u.id]).getTime() < ONLINE_WINDOW);
   }
   function isTraining(u) { return trainingIds.has(u.id); }
