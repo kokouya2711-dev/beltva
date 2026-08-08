@@ -56,14 +56,17 @@ function AppLayoutInner() {
     base44.auth.me().then(setMe).catch(() => {});
   }, []);
 
-  // Detect mobile keyboard open/close via VisualViewport API
+  // Detect mobile keyboard open/close via focus/blur on input elements
   React.useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const check = () => setKeyboardOpen(vv.height < window.innerHeight - 100);
-    check();
-    vv.addEventListener("resize", check);
-    return () => vv.removeEventListener("resize", check);
+    const isInput = (el) => el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+    const onFocusIn = (e) => { if (isInput(e.target)) setKeyboardOpen(true); };
+    const onFocusOut = (e) => { if (isInput(e.target)) setKeyboardOpen(false); };
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
+    return () => {
+      document.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("focusout", onFocusOut);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -168,7 +171,7 @@ function AppLayoutInner() {
       </main>
 
       {/* Mobile bottom tab bar — hidden while keyboard is open */}
-      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-border flex transition-opacity duration-200 ${keyboardOpen ? "opacity-0 pointer-events-none translate-y-full" : "opacity-100"}`} style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-border flex ${keyboardOpen ? "hidden" : "flex"}`} style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         {nav.map((n) => {
           const active = location.pathname === n.to;
           const Icon = n.icon;
