@@ -24,7 +24,7 @@ const FILTERS = ["all", "online", "training", "following", "nearby"];
 function MapZoomLimiter({ onZoomChange }) {
   const map = useMap();
   React.useEffect(() => {
-    const MAX = 13;
+    const MAX = 12.5;
     map.setMaxZoom(MAX);
     map.on("zoomend", () => {
       const z = map.getZoom();
@@ -107,10 +107,10 @@ export default function NearbyMap() {
   }, []);
 
   // Enforce maxZoom on the map instance — belt-and-suspenders to ensure
-  // no zoom method (wheel, pinch, double-click) can exceed zoom 14 (~2-3km)
+  // no zoom method (wheel, pinch, double-click) can exceed zoom 12.5 (~1.5x wider than before)
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.setMaxZoom(13);
+      mapRef.current.setMaxZoom(12.5);
     }
   }, [center]);
 
@@ -142,7 +142,7 @@ export default function NearbyMap() {
 
   function flyToCurrent() {
     if (!mapRef.current || !center) return;
-    mapRef.current.flyTo(center, 13, { duration: 0.8 });
+    mapRef.current.flyTo(center, 12.5, { duration: 0.8 });
   }
   function flyToWorld() {
     if (!mapRef.current) return;
@@ -162,11 +162,11 @@ export default function NearbyMap() {
       <MapContainer
         ref={mapRef}
         center={center}
-        zoom={13}
+        zoom={12.5}
         minZoom={1}
-        maxZoom={13}
-        zoomSnap={1}
-        zoomDelta={1}
+        maxZoom={12.5}
+        zoomSnap={0.5}
+        zoomDelta={0.5}
         scrollWheelZoom
         touchZoom
         doubleClickZoom={false}
@@ -181,7 +181,7 @@ export default function NearbyMap() {
         <TileLayer
           url={satellite ? SAT_TILE : NORMAL_TILE}
           className={satellite ? "sat-tiles" : "dark-tiles"}
-          maxZoom={13}
+          maxZoom={12.5}
         />
 
         {/* users — profile icons with colored rings; online=green, training=orange-red */}
