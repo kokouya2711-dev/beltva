@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Radio, Flame, Info } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
+import MiniProfile from "@/components/map/MiniProfile";
 
 const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000; // 5 min — training users may not touch phone between sets
@@ -218,8 +219,21 @@ export default function NearbyMap() {
               key={u.id}
               position={[u.lat, u.lng]}
               icon={icon}
-              eventHandlers={{ click: () => navigate(`/profile/${u.id}`) }}
             >
+              <Popup
+                closeButton={false}
+                autoPan={false}
+                className="mini-profile-popup"
+                offset={[0, -size / 2 - 6]}
+              >
+                <MiniProfile
+                  user={u}
+                  isMe={isMe}
+                  live={live}
+                  training={training}
+                  onView={() => navigate(`/profile/${u.id}`)}
+                />
+              </Popup>
               <Tooltip direction="top" offset={[0, -size / 2 - 4]} opacity={1}>
                 <div className="text-xs">
                   <div className="font-medium">{isMe ? t("home.you") : name}</div>

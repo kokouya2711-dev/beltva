@@ -98,3 +98,19 @@
 .leaflet-tile.sat-tiles {
   filter: brightness(0.92) contrast(1.05) saturate(1.1);
 }
+.leaflet-popup.mini-profile-popup .leaflet-popup-content-wrapper {
+  background: hsl(240 5% 10%);
+  color: hsl(0 0% 98%);
+  border: 1px solid hsl(240 5% 16%);
+  border-radius: 0.85rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+}
+.leaflet-popup.mini-profile-popup .leaflet-popup-tip {
+  background: hsl(240 5% 10%);
+  border: 1px solid hsl(240 5% 16%);
+}
+.leaflet-popup.mini-profile-popup .leaflet-popup-content {
+  margin: 8px 10px;
+  line-height: 1.3;
+}
