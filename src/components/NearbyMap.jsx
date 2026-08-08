@@ -146,11 +146,28 @@ export default function NearbyMap() {
         className="w-full h-full"
         attributionControl={false}
         whenReady={() => {
-          if (mapRef.current) {
-            mapRef.current.setMaxZoom(14);
-            mapRef.current.on("zoomend", () => {
-              if (mapRef.current.getZoom() > 14) mapRef.current.setZoom(14);
-            });
+          const map = mapRef.current;
+          if (!map) return;
+          map.setMaxZoom(14);
+          map.on("zoomend", () => {
+            if (map.getZoom() > 14) map.setZoom(14);
+          });
+          // Patch TouchZoom handler: clamp zoom to maxZoom DURING the pinch
+          // so the map never visually over-zooms past the limit (no snap-back).
+          const tz = map.touchZoom;
+          if (tz && tz._onTouchMove) {
+            const origMove = tz._onTouchMove.bind(tz);
+            tz._onTouchMove = function (e) {
+              if (!this._zooming) return;
+              const m = this._map;
+              const origAZ = m._animateZoom;
+              m._animateZoom = function (center, zoom, opts) {
+                zoom = Math.min(zoom, m.getMaxZoom());
+                zoom = Math.max(zoom, m.getMinZoom());
+                return origAZ.call(m, center, zoom, opts);
+              };
+              try { origMove(e); } finally { m._animateZoom = origAZ; }
+            };
           }
         }}
       >
