@@ -8,6 +8,9 @@ import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Flame, Info } f
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import MiniProfile from "@/components/map/MiniProfile";
+import ReactionPicker from "@/components/map/ReactionPicker";
+import { notify } from "@/lib/dm";
+import { useToast } from "@/components/ui/use-toast";
 
 const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000; // 5 min — training users may not touch phone between sets
@@ -61,6 +64,11 @@ export default function NearbyMap() {
   const [filter, setFilter] = useState("all");
   const [showLegend, setShowLegend] = useState(false);
   const [mapZoom, setMapZoom] = useState(13);
+  const { toast } = useToast();
+  const pressTimer = useRef(null);
+  const longPressActiveRef = useRef(false);
+  const [longPressUserId, setLongPressUserId] = useState(null);
+  const [reactionTarget, setReactionTarget] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -139,6 +147,43 @@ export default function NearbyMap() {
     return arr;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filter, presence, followIds, center]);
+
+  function startPress(u) {
+    if (u.id === me?.id) return;
+    longPressActiveRef.current = false;
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+    pressTimer.current = setTimeout(() => {
+      longPressActiveRef.current = true;
+      setLongPressUserId(u.id);
+      const map = mapRef.current;
+      if (map) {
+        const pt = map.latLngToContainerPoint([u.lat, u.lng]);
+        setReactionTarget({ user: u, x: pt.x, y: pt.y });
+      }
+    }, 500);
+  }
+  function endPress() {
+    if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; }
+  }
+  function handleMarkerClick() {
+    if (longPressActiveRef.current) {
+      longPressActiveRef.current = false;
+      if (mapRef.current) mapRef.current.closePopup();
+    }
+  }
+  async function sendReaction(emoji) {
+    const target = reactionTarget;
+    if (!target || !me) return;
+    setReactionTarget(null);
+    setLongPressUserId(null);
+    if (target.user.id === me.id) return;
+    notify(target.user.id, me.id, "reaction", emoji, target.user.id);
+    toast({ description: `${emoji} ${t("home.reactionSent")}` });
+  }
+  function closeReactionPicker() {
+    setReactionTarget(null);
+    setLongPressUserId(null);
+  }
 
   function flyToCurrent() {
     if (!mapRef.current || !center) return;
@@ -220,7 +265,14 @@ export default function NearbyMap() {
               key={u.id}
               position={[u.lat, u.lng]}
               icon={icon}
+              eventHandlers={{
+                mousedown: () => startPress(u),
+                mouseup: endPress,
+                mouseout: endPress,
+                click: handleMarkerClick,
+              }}
             >
+              {longPressUserId !== u.id && (
               <Popup
                 closeButton={false}
                 autoPan={false}
@@ -236,10 +288,19 @@ export default function NearbyMap() {
                   scale={popupScale}
                 />
               </Popup>
+              )}
             </Marker>
           );
         })}
       </MapContainer>
+
+      {reactionTarget && (
+        <ReactionPicker
+          position={{ x: reactionTarget.x, y: reactionTarget.y }}
+          onSelect={sendReaction}
+          onClose={closeReactionPicker}
+        />
+      )}
 
       {/* top-right controls */}
       <div className="absolute top-11 right-2 z-[400] flex flex-col gap-1.5">

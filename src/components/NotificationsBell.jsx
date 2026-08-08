@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
   Bell, Heart, UserPlus, Send, MessageSquare, BarChart3,
-  CheckCheck, X, Inbox
+  CheckCheck, X, Inbox, Zap
 } from "lucide-react";
 import { displayName, fetchUser } from "@/lib/profile";
 import { useT } from "@/lib/i18n";
@@ -12,6 +12,7 @@ import { Image } from "@/components/ui/image";
 
 const TYPE_CONFIG = {
   like:          { icon: Heart,        bg: "bg-rose-500/20",    fg: "text-rose-400" },
+  reaction:      { icon: Zap,          bg: "bg-amber-500/20",   fg: "text-amber-400" },
   follow:        { icon: UserPlus,     bg: "bg-primary/20",     fg: "text-primary" },
   dm:            { icon: Send,        bg: "bg-sky-500/20",      fg: "text-sky-400" },
   comment:       { icon: MessageSquare,bg: "bg-violet-500/20",  fg: "text-violet-400" },
