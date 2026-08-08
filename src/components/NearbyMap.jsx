@@ -189,7 +189,7 @@ export default function NearbyMap() {
           const training = isTraining(u.id);
           const isMe = u.id === me?.id;
           const color = training ? "#f97316" : "#22c55e";
-          const isDot = mapZoom <= 5;
+          const isDot = mapZoom <= 7;
           const name = u.display_name || u.email?.split("@")[0] || "user";
           const initials = (name || "?").slice(0, 2).toUpperCase();
           let iconHtml, size;
@@ -197,7 +197,7 @@ export default function NearbyMap() {
             size = training ? 10 : 8;
             iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};box-shadow:0 0 4px ${color},0 0 8px ${color}66;border:1px solid rgba(0,0,0,0.3);"></div>`;
           } else {
-            const zoomScale = 0.6 + 0.4 * (mapZoom - 6) / 7;
+            const zoomScale = 0.6 + 0.4 * (mapZoom - 8) / 5;
             size = Math.round((training ? 42 : 36) * zoomScale);
             const imgSize = Math.max(8, size - Math.round(6 * zoomScale));
             const borderW = Math.max(1.5, 2.5 * zoomScale).toFixed(1);
