@@ -4,6 +4,7 @@ import { Flame } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const ONLINE_WINDOW = 120000;
+const TRAINING_WINDOW = 300000;
 
 export default function RealtimeStatus() {
   const t = useT();
@@ -13,15 +14,30 @@ export default function RealtimeStatus() {
   async function load() {
     const pres = await base44.entities.Presence.list("-last_seen", 200).catch(() => []);
     const now = Date.now();
-    const active = pres.filter((p) => p.last_seen && now - new Date(p.last_seen).getTime() < ONLINE_WINDOW);
-    setOnline(active.length);
-    setTraining(active.filter((p) => p.is_training).length);
+    // Deduplicate by created_by_id — same user only counted once
+    const userMap = new Map();
+    pres.forEach(p => {
+      if (p.created_by_id && !userMap.has(p.created_by_id)) userMap.set(p.created_by_id, p);
+    });
+    let onlineCount = 0;
+    let trainingCount = 0;
+    userMap.forEach(p => {
+      const lastSeen = p.last_seen ? new Date(p.last_seen).getTime() : 0;
+      if (now - lastSeen < ONLINE_WINDOW) onlineCount++;
+      if (p.is_training && now - lastSeen < TRAINING_WINDOW) trainingCount++;
+    });
+    setOnline(onlineCount);
+    setTraining(trainingCount);
   }
 
   useEffect(() => {
     load();
-    const i = setInterval(load, 45000);
-    return () => clearInterval(i);
+    let timeout;
+    const unsubscribe = base44.entities.Presence.subscribe(() => {
+      clearTimeout(timeout);
+      timeout = setTimeout(load, 300);
+    });
+    return () => { clearTimeout(timeout); if (unsubscribe) unsubscribe(); };
   }, []);
 
   return (

@@ -99,8 +99,11 @@ export async function updatePresence(meId, isTraining = false) {
   if (!meId) return;
   const ex = await base44.entities.Presence.filter({ created_by_id: meId });
   const now = new Date().toISOString();
-  if (ex[0]) await base44.entities.Presence.update(ex[0].id, { last_seen: now, is_training: isTraining });
-  else await base44.entities.Presence.create({ last_seen: now, is_training: isTraining });
+  if (ex.length > 0) {
+    await Promise.all(ex.map(r => base44.entities.Presence.update(r.id, { last_seen: now, is_training: isTraining })));
+  } else {
+    await base44.entities.Presence.create({ last_seen: now, is_training: isTraining });
+  }
 }
 
 export async function notify(userId, actorId, type, text, targetId) {
