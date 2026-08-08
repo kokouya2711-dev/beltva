@@ -128,20 +128,31 @@ export default function NearbyMap() {
   }
 
   return (
-    <div className="relative z-0 rounded-2xl overflow-hidden border border-border h-[58svh] max-h-[calc(100svh-160px)] md:h-[640px] md:max-h-[calc(100svh-200px)]">
+    <div className="relative z-0 rounded-2xl overflow-hidden border border-border h-[58svh] max-h-[calc(100svh-160px)] md:h-[640px] md:max-h-[calc(100svh-200px)]" style={{ touchAction: "none" }}>
       <MapContainer
         ref={mapRef}
         center={center}
         zoom={14}
         minZoom={1}
         maxZoom={14}
+        zoomSnap={1}
+        zoomDelta={1}
         scrollWheelZoom
         touchZoom
+        doubleClickZoom={false}
         zoomControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
         className="w-full h-full"
         attributionControl={false}
+        whenReady={() => {
+          if (mapRef.current) {
+            mapRef.current.setMaxZoom(14);
+            mapRef.current.on("zoomend", () => {
+              if (mapRef.current.getZoom() > 14) mapRef.current.setZoom(14);
+            });
+          }
+        }}
       >
         <TileLayer
           url={satellite ? SAT_TILE : NORMAL_TILE}
