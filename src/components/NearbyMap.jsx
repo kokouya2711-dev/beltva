@@ -25,21 +25,9 @@ function MapZoomLimiter() {
   React.useEffect(() => {
     const MAX = 14;
     map.setMaxZoom(MAX);
-
-    if (!map._azPatched) {
-      map._azPatched = true;
-      const origAZ = map._animateZoom.bind(map);
-      map._animateZoom = function (center, zoom, opts) {
-        zoom = Math.min(zoom, map.getMaxZoom());
-        zoom = Math.max(zoom, map.getMinZoom());
-        return origAZ(center, zoom, opts);
-      };
-    }
-
     map.on("zoomend", () => {
       if (map.getZoom() > MAX) map.setZoom(MAX);
     });
-
     // Prevent iOS Safari native pinch-to-zoom on the map container
     const container = map.getContainer();
     const preventGesture = (e) => e.preventDefault();
@@ -177,6 +165,7 @@ export default function NearbyMap() {
         scrollWheelZoom
         touchZoom
         doubleClickZoom={false}
+        bounceAtZoomLimits={false}
         zoomControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
