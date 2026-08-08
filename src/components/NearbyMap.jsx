@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Tooltip } from "react-leaflet";
+import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +27,6 @@ export default function NearbyMap() {
   const [sessions, setSessions] = useState([]);
   const [followIds, setFollowIds] = useState(new Set());
   const [center, setCenter] = useState(null);
-  const [displayCenter, setDisplayCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [satellite, setSatellite] = useState(false);
   const [filter, setFilter] = useState("all");
@@ -43,7 +43,7 @@ export default function NearbyMap() {
           base44.entities.Follow.list("-created_date", 200).catch(() => [])
         ]);
         setMe(meUser);
-        setUsers(us.filter((u) => u.id !== meUser?.id && u.lat != null));
+        setUsers(us.filter((u) => u.lat != null && u.share_location !== false));
         const pm = {};
         pres.forEach((p) => { pm[p.created_by_id] = { last_seen: p.last_seen, is_training: p.is_training }; });
         setPresence(pm);
@@ -56,10 +56,6 @@ export default function NearbyMap() {
         if (geo) c = [geo.lat, geo.lng];
         if (!c) c = [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng];
         setCenter(c);
-        // offset the displayed circle center from the real GPS so the exact
-        // position is not revealed (real point stays inside the 900m circle)
-        const off = () => (Math.random() - 0.5) * 0.008;
-        setDisplayCenter([c[0] + off(), c[1] + off()]);
       } finally {
         setLoading(false);
       }
@@ -130,7 +126,7 @@ export default function NearbyMap() {
         center={center}
         zoom={14}
         minZoom={1}
-        maxZoom={18}
+        maxZoom={14}
         scrollWheelZoom
         touchZoom
         zoomControl={false}
@@ -145,41 +141,35 @@ export default function NearbyMap() {
           maxZoom={satellite ? 19 : 19}
         />
 
-        {/* current user — shown as an approximate area for privacy.
-            The circle is centered on a fuzzed point (not the real GPS),
-            and no exact dot is drawn so the real position stays hidden. */}
-        {displayCenter && (
-          <Circle
-            center={displayCenter}
-            radius={900}
-            pathOptions={{ color: "#ccff00", fillColor: "#ccff00", fillOpacity: 0.18, weight: 1.5, dashArray: "4 4" }}
-          >
-            <Tooltip direction="top" offset={[0, -8]} opacity={1}>{t("home.you")}</Tooltip>
-          </Circle>
-        )}
-
-        {/* users — online (green) and training (orange-red) only; offline excluded */}
+        {/* users — profile icons with colored rings; online=green, training=orange-red */}
         {filtered.map((u) => {
           const live = liveByUser[u.id];
           const training = isTraining(u.id);
+          const isMe = u.id === me?.id;
           const color = training ? "#f97316" : "#22c55e";
+          const size = training ? 42 : 36;
+          const imgSize = size - 6;
           const name = u.display_name || u.email?.split("@")[0] || "user";
+          const initials = (name || "?").slice(0, 2).toUpperCase();
+          const inner = u.avatar_url
+            ? `<img src="${u.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
+            : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:12px;font-weight:700;">${initials}</div>`;
+          const icon = L.divIcon({
+            className: "profile-marker",
+            html: `<div style="width:${size}px;height:${size}px;border-radius:50%;border:2.5px solid ${color};box-shadow:0 0 6px ${color}88,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2],
+          });
           return (
-            <CircleMarker
+            <Marker
               key={u.id}
-              center={[u.lat, u.lng]}
-              radius={training ? 8 : 6}
-              pathOptions={{
-                color,
-                fillColor: color,
-                fillOpacity: training ? 0.9 : 0.8,
-                weight: 2
-              }}
+              position={[u.lat, u.lng]}
+              icon={icon}
               eventHandlers={{ click: () => navigate(`/profile/${u.id}`) }}
             >
-              <Tooltip direction="top" offset={[0, -8]} opacity={1}>
+              <Tooltip direction="top" offset={[0, -size / 2 - 4]} opacity={1}>
                 <div className="text-xs">
-                  <div className="font-medium">{name}</div>
+                  <div className="font-medium">{isMe ? t("home.you") : name}</div>
                   {training ? (
                     <div className="text-orange-400 flex items-center gap-1">
                       <Flame className="w-3 h-3" /> {live ? tWorkout(live.workout_type) : t("home.trainingLive")}
@@ -191,7 +181,7 @@ export default function NearbyMap() {
                   )}
                 </div>
               </Tooltip>
-            </CircleMarker>
+            </Marker>
           );
         })}
       </MapContainer>
@@ -247,7 +237,6 @@ export default function NearbyMap() {
       {/* legend — toggle via info button */}
       {showLegend && (
         <div className="absolute bottom-2 left-2 z-[400] glass rounded-md px-2.5 py-1.5 text-[10px] space-y-0.5">
-          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#ccff00]" /> {t("home.you")}</div>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#22c55e]" /> {t("home.online")}</div>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#f97316]" /> {t("home.trainingLive")}</div>
         </div>

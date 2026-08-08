@@ -14,7 +14,7 @@ import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
 import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
-import { getGeolocation, fuzzCoords } from "@/lib/workouts";
+import { getGeolocation } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
@@ -63,12 +63,11 @@ function AppLayoutInner() {
   }, [me, isActive]);
 
   React.useEffect(() => {
-    if (!me || me.lat) return;
+    if (!me || me.lat || me.share_location === false) return;
     (async () => {
       const geo = await getGeolocation();
       if (!geo) return;
-      const f = fuzzCoords(geo.lat, geo.lng);
-      base44.auth.updateMe({ lat: f.lat, lng: f.lng }).catch(() => {});
+      base44.auth.updateMe({ lat: geo.lat, lng: geo.lng }).catch(() => {});
     })();
   }, [me]);
 

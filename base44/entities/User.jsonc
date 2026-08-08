@@ -58,11 +58,16 @@
     },
     "lat": {
       "type": "number",
-      "title": "\u7def\u5ea6(\u307c\u304b\u3057)"
+      "title": "\u7def\u5ea6"
     },
     "lng": {
       "type": "number",
-      "title": "\u7d4c\u5ea6(\u307c\u304b\u3057)"
+      "title": "\u7d4c\u5ea6"
+    },
+    "share_location": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u4f4d\u7f6e\u60c5\u5831\u516c\u958b"
     },
     "notif_prefs": {
       "type": "string",

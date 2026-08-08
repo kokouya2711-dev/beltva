@@ -4,9 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
-  ShieldCheck, Ban, Dumbbell, Search, Check, Timer
+  ShieldCheck, Ban, Dumbbell, Search, Check, Timer, MapPin
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
+import { getGeolocation } from "@/lib/workouts";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -214,9 +215,42 @@ function TrainingSection() {
 function PrivacySection() {
   const t = useT();
   const navigate = useNavigate();
+  const [shareLocation, setShareLocation] = useState(true);
+
+  useEffect(() => {
+    base44.auth.me().then((u) => {
+      if (u.share_location === false) setShareLocation(false);
+    }).catch(() => {});
+  }, []);
+
+  async function toggleLocation() {
+    const next = !shareLocation;
+    setShareLocation(next);
+    try {
+      const updates = { share_location: next };
+      if (!next) { updates.lat = null; updates.lng = null; }
+      await base44.auth.updateMe(updates);
+      if (next) {
+        const geo = await getGeolocation();
+        if (geo) await base44.auth.updateMe({ lat: geo.lat, lng: geo.lng });
+      }
+    } catch {}
+  }
+
   return (
     <div className="space-y-5">
       <h2 className="font-bold text-lg">{t("settings.privacy")}</h2>
+      <div className="glass rounded-2xl border border-border p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-sm font-medium"><MapPin className="w-4 h-4" /> {t("settings.shareLocation")}</div>
+            <div className="text-xs text-muted-foreground mt-1">{t("settings.shareLocationDesc")}</div>
+          </div>
+          <button onClick={toggleLocation} className={`w-11 h-6 rounded-full transition relative shrink-0 ${shareLocation ? "bg-primary" : "bg-secondary border border-border"}`}>
+            <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${shareLocation ? "left-[22px]" : "left-0.5"}`} />
+          </button>
+        </div>
+      </div>
       <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
         <Row icon={ShieldCheck} label={t("settings.privacy")} onClick={() => navigate("/privacy")} />
         <Row icon={Ban} label={t("settings.blockedUsers")} onClick={() => navigate("/blocked-users")} />
