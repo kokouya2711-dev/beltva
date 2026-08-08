@@ -232,6 +232,11 @@ function PrivacySection() {
     { key: "followings", label: t("privacy.searchableByFollowings") },
     { key: "none", label: t("privacy.searchableByNone") },
   ];
+  const timelineVisibilityOptions = [
+    { key: "everyone", label: t("privacy.timelineEveryone") },
+    { key: "followers", label: t("privacy.timelineFollowers") },
+    { key: "private", label: t("privacy.timelinePrivate") },
+  ];
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -262,6 +267,7 @@ function PrivacySection() {
   }
 
   const searchableByLabel = searchableByOptions.find((o) => o.key === settings.searchable_by)?.label || searchableByOptions[0].label;
+  const timelineVisibilityLabel = timelineVisibilityOptions.find((o) => o.key === settings.timeline_visibility)?.label || timelineVisibilityOptions[0].label;
 
   if (subPage === "searchableBy") {
     return (
@@ -275,6 +281,25 @@ function PrivacySection() {
             <button key={opt.key} onClick={() => update("searchable_by", opt.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
               <span className="flex-1">{opt.label}</span>
               {settings.searchable_by === opt.key && <Check className="w-4 h-4 text-primary" />}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (subPage === "timelineVisibility") {
+    return (
+      <div className="space-y-5">
+        <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-2">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <h2 className="font-bold text-lg">{t("privacy.timelineVisibility")}</h2>
+        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+          {timelineVisibilityOptions.map((opt) => (
+            <button key={opt.key} onClick={() => update("timeline_visibility", opt.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
+              <span className="flex-1">{opt.label}</span>
+              {settings.timeline_visibility === opt.key && <Check className="w-4 h-4 text-primary" />}
             </button>
           ))}
         </div>
@@ -302,11 +327,12 @@ function PrivacySection() {
           <span className="text-muted-foreground text-xs">{searchableByLabel}</span>
           <ChevronRight className="w-4 h-4 text-muted-foreground" />
         </button>
-        <SelectorRow icon={Globe} label={t("privacy.timelineVisibility")} value={settings.timeline_visibility} options={[
-          { key: "everyone", label: t("privacy.timelineEveryone") },
-          { key: "followers", label: t("privacy.timelineFollowers") },
-          { key: "private", label: t("privacy.timelinePrivate") },
-        ]} onChange={(v) => update("timeline_visibility", v)} />
+        <button onClick={() => setSubPage("timelineVisibility")} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
+          <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
+          <span className="flex-1">{t("privacy.timelineVisibility")}</span>
+          <span className="text-muted-foreground text-xs">{timelineVisibilityLabel}</span>
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        </button>
         <SelectorRow icon={User} label={t("privacy.timelineGenderRestriction")} value={settings.timeline_gender_restriction} options={[
           { key: "none", label: t("privacy.genderNone") },
           { key: "female_only", label: t("privacy.genderFemaleOnly") },
