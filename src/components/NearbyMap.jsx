@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
@@ -15,6 +15,43 @@ const NORMAL_TILE = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.p
 const SAT_TILE = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 const FILTERS = ["all", "online", "training", "following", "nearby"];
+
+// Child component that uses useMap() to reliably access the map instance.
+// Permanently overrides _animateZoom so the zoom parameter is clamped to
+// maxZoom on EVERY call — including intermediate pinch-zoom frames.
+// This prevents the temporary visual over-zoom during pinch gestures.
+function MapZoomLimiter() {
+  const map = useMap();
+  React.useEffect(() => {
+    const MAX = 14;
+    map.setMaxZoom(MAX);
+
+    if (!map._azPatched) {
+      map._azPatched = true;
+      const origAZ = map._animateZoom.bind(map);
+      map._animateZoom = function (center, zoom, opts) {
+        zoom = Math.min(zoom, map.getMaxZoom());
+        zoom = Math.max(zoom, map.getMinZoom());
+        return origAZ(center, zoom, opts);
+      };
+    }
+
+    map.on("zoomend", () => {
+      if (map.getZoom() > MAX) map.setZoom(MAX);
+    });
+
+    // Prevent iOS Safari native pinch-to-zoom on the map container
+    const container = map.getContainer();
+    const preventGesture = (e) => e.preventDefault();
+    container.addEventListener("gesturestart", preventGesture);
+    container.addEventListener("gesturechange", preventGesture);
+    return () => {
+      container.removeEventListener("gesturestart", preventGesture);
+      container.removeEventListener("gesturechange", preventGesture);
+    };
+  }, [map]);
+  return null;
+}
 
 export default function NearbyMap() {
   const t = useT();
@@ -145,32 +182,8 @@ export default function NearbyMap() {
         maxBoundsViscosity={1.0}
         className="w-full h-full"
         attributionControl={false}
-        whenReady={() => {
-          const map = mapRef.current;
-          if (!map) return;
-          map.setMaxZoom(14);
-          map.on("zoomend", () => {
-            if (map.getZoom() > 14) map.setZoom(14);
-          });
-          // Patch TouchZoom handler: clamp zoom to maxZoom DURING the pinch
-          // so the map never visually over-zooms past the limit (no snap-back).
-          const tz = map.touchZoom;
-          if (tz && tz._onTouchMove) {
-            const origMove = tz._onTouchMove.bind(tz);
-            tz._onTouchMove = function (e) {
-              if (!this._zooming) return;
-              const m = this._map;
-              const origAZ = m._animateZoom;
-              m._animateZoom = function (center, zoom, opts) {
-                zoom = Math.min(zoom, m.getMaxZoom());
-                zoom = Math.max(zoom, m.getMinZoom());
-                return origAZ.call(m, center, zoom, opts);
-              };
-              try { origMove(e); } finally { m._animateZoom = origAZ; }
-            };
-          }
-        }}
       >
+        <MapZoomLimiter />
         <TileLayer
           url={satellite ? SAT_TILE : NORMAL_TILE}
           className={satellite ? "sat-tiles" : "dark-tiles"}
