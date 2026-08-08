@@ -60,7 +60,7 @@ export default function MiniProfile({ user, isMe, live, training, onView, scale 
         {/* Top row: age/gender then username (same line) */}
         <div className="min-w-0 leading-tight">
           <div className="truncate" style={{ fontSize: nameSize }}>
-            {ageGender && <span className="text-muted-foreground font-normal" style={{ fontSize: subSize, marginRight: 4 }}>{ageGender}</span>}
+            {ageGender && <span className="text-muted-foreground font-normal" style={{ fontSize: subSize, marginRight: 8 }}>{ageGender}</span>}
             <span className="font-semibold">{isMe ? t("home.you") : name}</span>
           </div>
           {training && (
