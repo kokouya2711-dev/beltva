@@ -189,19 +189,27 @@ export default function NearbyMap() {
           const training = isTraining(u.id);
           const isMe = u.id === me?.id;
           const color = training ? "#f97316" : "#22c55e";
-          const zoomScale = 0.45 + 0.55 * (mapZoom - 1) / 12;
-          const size = Math.round((training ? 42 : 36) * zoomScale);
-          const imgSize = Math.max(8, size - Math.round(6 * zoomScale));
-          const borderW = Math.max(1.5, 2.5 * zoomScale).toFixed(1);
-          const fontSize = Math.max(8, Math.round(12 * zoomScale));
+          const isDot = mapZoom <= 5;
           const name = u.display_name || u.email?.split("@")[0] || "user";
           const initials = (name || "?").slice(0, 2).toUpperCase();
-          const inner = u.avatar_url
-            ? `<img src="${u.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
-            : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:${fontSize}px;font-weight:700;">${initials}</div>`;
+          let iconHtml, size;
+          if (isDot) {
+            size = training ? 10 : 8;
+            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};box-shadow:0 0 4px ${color},0 0 8px ${color}66;border:1px solid rgba(0,0,0,0.3);"></div>`;
+          } else {
+            const zoomScale = 0.6 + 0.4 * (mapZoom - 6) / 7;
+            size = Math.round((training ? 42 : 36) * zoomScale);
+            const imgSize = Math.max(8, size - Math.round(6 * zoomScale));
+            const borderW = Math.max(1.5, 2.5 * zoomScale).toFixed(1);
+            const fontSize = Math.max(8, Math.round(12 * zoomScale));
+            const inner = u.avatar_url
+              ? `<img src="${u.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
+              : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:${fontSize}px;font-weight:700;">${initials}</div>`;
+            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}88,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`;
+          }
           const icon = L.divIcon({
             className: "profile-marker",
-            html: `<div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}88,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`,
+            html: iconHtml,
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2],
           });
