@@ -21,13 +21,13 @@ const NOTIF_TYPES = [
   { key: "follow", labelKey: "notif.follow" },
   { key: "like", labelKey: "notif.like" },
   { key: "comment", labelKey: "notif.comment" },
+  { key: "reaction", labelKey: "notif.reaction" },
   { key: "trainingStart", labelKey: "notif.trainingStart" },
-  { key: "prUpdate", labelKey: "notif.prUpdate" },
+  { key: "admin", labelKey: "notif.admin" },
 ];
 
 const DEFAULT_NOTIF_PREFS = {
-  inApp: { dm: true, follow: true, like: true, comment: true, trainingStart: true, prUpdate: true },
-  push: { dm: true, follow: true, like: false, comment: true, trainingStart: true, prUpdate: false }
+  dm: true, follow: true, like: false, comment: true, reaction: true, trainingStart: true, admin: true,
 };
 
 export default function SettingsPage() {
@@ -119,14 +119,14 @@ function NotificationsSection() {
       if (u.notif_prefs) {
         try {
           const parsed = JSON.parse(u.notif_prefs);
-          if (parsed.inApp && parsed.push) setPrefs(parsed);
+          if (parsed && typeof parsed === "object" && !parsed.inApp && !parsed.push) setPrefs({ ...DEFAULT_NOTIF_PREFS, ...parsed });
         } catch {}
       }
     }).catch(() => {});
   }, []);
 
-  async function togglePref(category, key) {
-    const next = { ...prefs, [category]: { ...prefs[category], [key]: !prefs[category][key] } };
+  async function togglePref(key) {
+    const next = { ...prefs, [key]: !prefs[key] };
     setPrefs(next);
     try { await base44.auth.updateMe({ notif_prefs: JSON.stringify(next) }); } catch {}
   }
@@ -135,18 +135,10 @@ function NotificationsSection() {
     <div className="space-y-5">
       <h2 className="font-bold text-lg">{t("settings.notifications")}</h2>
       <div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("notif.inApp")}</div>
+        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("notif.smartphone")}</div>
         <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
           {NOTIF_TYPES.map((n) => (
-            <ToggleRow key={n.key} label={t(n.labelKey)} checked={prefs.inApp[n.key]} onChange={() => togglePref("inApp", n.key)} />
-          ))}
-        </div>
-      </div>
-      <div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("notif.push")}</div>
-        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-          {NOTIF_TYPES.map((n) => (
-            <ToggleRow key={n.key} label={t(n.labelKey)} checked={prefs.push[n.key]} onChange={() => togglePref("push", n.key)} />
+            <ToggleRow key={n.key} label={t(n.labelKey)} checked={prefs[n.key]} onChange={() => togglePref(n.key)} />
           ))}
         </div>
       </div>
