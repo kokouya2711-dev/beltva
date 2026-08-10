@@ -393,7 +393,7 @@ export default function NearbyMap() {
       )}
 
       {/* top-right controls */}
-      <div className="absolute top-11 right-2 z-[400] flex flex-col gap-2">
+      <div className="absolute top-11 right-2 z-[400] flex flex-col gap-3">
         {fullscreen ? (
           <button
             onClick={() => setFullscreen(false)}
@@ -440,7 +440,7 @@ export default function NearbyMap() {
           <button
             key={k}
             onClick={() => setFilter(k)}
-            className={`shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition ${
+            className={`shrink-0 text-[13px] font-semibold px-3 py-1.5 rounded-full border transition ${
               filter === k
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border glass text-foreground/80"
