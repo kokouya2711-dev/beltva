@@ -9,7 +9,7 @@ import { useT } from "@/lib/i18n";
 const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000;
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-const MAX_ZOOM = 14;
+const MAX_ZOOM = 11;
 // Snap user positions to a city/region-level grid for privacy.
 // 0.1° ≈ 11km — groups users in the same city to one representative point.
 const GRID_SIZE = 0.1;
@@ -78,7 +78,7 @@ export default function NearbyMap() {
   const [center, setCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
-  const [mapZoom, setMapZoom] = useState(13);
+  const [mapZoom, setMapZoom] = useState(11);
   const [cityClusters, setCityClusters] = useState([]);
   const [fullscreen, setFullscreen] = useState(false);
 
@@ -224,7 +224,7 @@ export default function NearbyMap() {
         key={fullscreen ? "fs" : "home"}
         ref={mapRef}
         center={center}
-        zoom={13}
+        zoom={11}
         minZoom={1}
         maxZoom={MAX_ZOOM}
         zoomSnap={1}
@@ -258,38 +258,48 @@ export default function NearbyMap() {
           const name = firstUser?.display_name || firstUser?.email?.split("@")[0] || "user";
           const initials = (name || "?").slice(0, 2).toUpperCase();
 
-          let iconHtml, size, badgeSize;
+          let iconHtml, iconW, iconH, anchorY;
           if (isDot) {
-            size = 6;
-            badgeSize = 10;
+            const dotSize = 6;
+            iconW = dotSize;
+            iconH = dotSize;
+            anchorY = dotSize / 2;
             iconHtml = `
-              <div style="position:relative;width:${size}px;height:${size}px;">
-                <div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:1px solid rgba(0,0,0,0.3);"></div>
-                <div style="position:absolute;top:-3px;right:-5px;background:white;color:black;font-size:7px;font-weight:bold;border-radius:5px;padding:0 2px;min-width:${badgeSize - 2}px;height:${badgeSize - 2}px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc;line-height:1;">${count}</div>
+              <div style="position:relative;width:${dotSize}px;height:${dotSize}px;">
+                <div style="width:${dotSize}px;height:${dotSize}px;border-radius:50%;background:${color};border:1px solid rgba(0,0,0,0.3);"></div>
+                <div style="position:absolute;top:-3px;right:-5px;background:white;color:black;font-size:7px;font-weight:bold;border-radius:5px;padding:0 2px;min-width:8px;height:8px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc;line-height:1;">${count}</div>
               </div>`;
           } else {
-            const zoomScale = Math.min(1, 0.6 + 0.4 * (mapZoom - 8) / 6);
-            size = Math.round(44 * zoomScale);
-            const imgSize = Math.max(8, size - Math.round(6 * zoomScale));
-            const borderW = Math.max(1.5, 2.5 * zoomScale).toFixed(1);
+            const zoomScale = Math.min(1, 0.55 + 0.45 * (mapZoom - 8) / 3);
+            const circleSize = Math.round(40 * zoomScale);
+            const imgSize = Math.max(8, circleSize - Math.round(6 * zoomScale));
+            const borderW = Math.max(1.5, 3 * zoomScale).toFixed(1);
             const fontSize = Math.max(8, Math.round(12 * zoomScale));
-            badgeSize = Math.max(16, Math.round(20 * zoomScale));
-            const badgeFontSize = Math.max(9, Math.round(11 * zoomScale));
+            const badgeSize = Math.max(15, Math.round(18 * zoomScale));
+            const badgeFontSize = Math.max(9, Math.round(10 * zoomScale));
+            const triW = Math.round(circleSize * 0.35);
+            const triH = Math.round(circleSize * 0.3);
+            iconW = circleSize;
+            iconH = circleSize + triH;
+            anchorY = iconH;
             const inner = firstUser?.avatar_url
               ? `<img src="${firstUser.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
               : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:${fontSize}px;font-weight:700;">${initials}</div>`;
             iconHtml = `
-              <div style="position:relative;width:${size}px;height:${size}px;">
-                <div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}aa,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>
-                <div style="position:absolute;top:-${Math.round(badgeSize * 0.25)}px;right:-${Math.round(badgeSize * 0.3)}px;background:white;color:black;font-size:${badgeFontSize}px;font-weight:bold;border-radius:${badgeSize / 2}px;padding:0 ${Math.round(badgeSize * 0.2)}px;min-width:${badgeSize}px;height:${badgeSize}px;display:flex;align-items:center;justify-content:center;border:1px solid #d4d4d4;box-shadow:0 1px 2px rgba(0,0,0,0.3);line-height:1;">${count}</div>
+              <div style="position:relative;width:${iconW}px;display:flex;flex-direction:column;align-items:center;">
+                <div style="position:relative;width:${circleSize}px;height:${circleSize}px;">
+                  <div style="width:${circleSize}px;height:${circleSize}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}aa,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>
+                  <div style="position:absolute;top:-${Math.round(badgeSize * 0.25)}px;right:-${Math.round(badgeSize * 0.3)}px;background:white;color:black;font-size:${badgeFontSize}px;font-weight:bold;border-radius:${badgeSize / 2}px;padding:0 ${Math.round(badgeSize * 0.2)}px;min-width:${badgeSize}px;height:${badgeSize}px;display:flex;align-items:center;justify-content:center;border:1px solid #d4d4d4;box-shadow:0 1px 2px rgba(0,0,0,0.3);line-height:1;">${count}</div>
+                </div>
+                <div style="width:0;height:0;border-left:${triW}px solid transparent;border-right:${triW}px solid transparent;border-top:${triH}px solid ${color};margin-top:-1px;"></div>
               </div>`;
           }
 
           const icon = L.divIcon({
             className: "city-marker",
             html: iconHtml,
-            iconSize: [size, size],
-            iconAnchor: [size / 2, size / 2],
+            iconSize: [iconW, iconH],
+            iconAnchor: [iconW / 2, anchorY],
           });
 
           return (
@@ -302,7 +312,7 @@ export default function NearbyMap() {
                 closeButton={false}
                 autoPan={false}
                 className="mini-profile-popup"
-                offset={[0, -size / 2 - 6]}
+                offset={[0, -iconH - 6]}
               >
                 <div style={{ padding: "4px 10px", textAlign: "center", minWidth: "80px" }}>
                   <div style={{ fontWeight: 700, fontSize: "13px" }}>{cluster.city}</div>
