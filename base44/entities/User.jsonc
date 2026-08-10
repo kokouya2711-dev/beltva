@@ -63,16 +63,39 @@
     },
     "lat": {
       "type": "number",
-      "title": "\u7def\u5ea6"
+      "title": "\u7def\u5ea6(\u90fd\u5e02\u4ee3\u8868\u70b9)"
     },
     "lng": {
       "type": "number",
-      "title": "\u7d4c\u5ea6"
+      "title": "\u7d4c\u5ea6(\u90fd\u5e02\u4ee3\u8868\u70b9)"
+    },
+    "city_name": {
+      "type": "string",
+      "title": "\u90fd\u5e02\u540d"
+    },
+    "country_name": {
+      "type": "string",
+      "title": "\u56fd\uff0f\u5730\u57df\u540d"
+    },
+    "share_country": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u56fd\uff0f\u5730\u57df\u3092\u516c\u958b"
+    },
+    "share_city": {
+      "type": "boolean",
+      "default": true,
+      "title": "\u90fd\u5e02\u3092\u516c\u958b"
+    },
+    "update_location": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u4f4d\u7f6e\u60c5\u5831\u3092\u66f4\u65b0"
     },
     "share_location": {
       "type": "boolean",
       "default": true,
-      "title": "\u4f4d\u7f6e\u60c5\u5831\u516c\u958b"
+      "title": "\u4f4d\u7f6e\u60c5\u5831\u516c\u958b(\u65e7)"
     },
     "show_online_status": {
       "type": "boolean",

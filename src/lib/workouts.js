@@ -66,6 +66,32 @@ export function fuzzCoords(lat, lng) {
   };
 }
 
+// Reverse geocode device coordinates to city + country display names.
+// Uses bigdatacloud's free client-side reverse geocoding API.
+export async function reverseGeocodeCity(lat, lng, lang = "ja") {
+  try {
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=${lang}`
+    );
+    const data = await res.json();
+    const city = data.city || data.locality || data.principalSubdivision || "";
+    const country = data.countryName || "";
+    const countryCode = data.countryCode || "";
+    return { city, country, countryCode };
+  } catch {
+    return { city: "", country: "", countryCode: "" };
+  }
+}
+
+// Snap coordinates to a city-level grid (0.1° ≈ 11km) for privacy.
+const LOC_GRID = 0.1;
+export function snapToCityGrid(lat, lng) {
+  return [
+    Math.floor(lat / LOC_GRID) * LOC_GRID + LOC_GRID / 2,
+    Math.floor(lng / LOC_GRID) * LOC_GRID + LOC_GRID / 2,
+  ];
+}
+
 // Tokyo fallback
 export const DEFAULT_CENTER = { lat: 35.6762, lng: 139.6503 };
 

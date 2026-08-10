@@ -60,8 +60,8 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <Link to={`/profile/${user.id}`} className="font-semibold truncate hover:text-primary">{name}</Link>
-          {user.country && <span className="text-base leading-none">{flagEmoji(user.country)}</span>}
-          {user.country && <span className="text-[10px] text-muted-foreground truncate">{countryName(user.country, lang)}</span>}
+          {user.country && user.share_country !== false && <span className="text-base leading-none">{flagEmoji(user.country)}</span>}
+          {user.country && user.share_country !== false && <span className="text-[10px] text-muted-foreground truncate">{countryName(user.country, lang)}</span>}
         </div>
         {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{user.bio}</p>}
         <div className="flex flex-wrap gap-1 mt-1.5">

@@ -8,7 +8,7 @@ import {
   EyeOff, Eye, UserSearch, Lock
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
-import { getGeolocation } from "@/lib/workouts";
+import { getGeolocation, reverseGeocodeCity, snapToCityGrid } from "@/lib/workouts";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -209,7 +209,11 @@ function PrivacySection() {
   const t = useT();
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
-    share_location: true,
+    share_country: true,
+    share_city: true,
+    update_location: false,
+    city_name: "",
+    country_name: "",
     show_online_status: true,
     age_public: false,
     searchable_by_id: true,
@@ -217,6 +221,7 @@ function PrivacySection() {
     timeline_visibility: "everyone",
     timeline_gender_restriction: "none",
   });
+  const [locUpdating, setLocUpdating] = useState(false);
   const [subPage, setSubPage] = useState(null);
 
   const searchableByOptions = [
@@ -239,7 +244,11 @@ function PrivacySection() {
     base44.auth.me().then((u) => {
       setSettings((prev) => ({
         ...prev,
-        share_location: u.share_location !== false,
+        share_country: u.share_country !== false,
+        share_city: u.share_city !== false,
+        update_location: u.update_location === true,
+        city_name: u.city_name || "",
+        country_name: u.country_name || "",
         show_online_status: u.show_online_status !== false,
         age_public: u.age_public === true,
         searchable_by_id: u.searchable_by_id !== false,
@@ -252,15 +261,46 @@ function PrivacySection() {
 
   async function update(key, value) {
     setSettings((prev) => ({ ...prev, [key]: value }));
-    const updates = { [key]: value };
-    if (key === "share_location" && !value) { updates.lat = null; updates.lng = null; }
     try {
-      await base44.auth.updateMe(updates);
-      if (key === "share_location" && value) {
-        const geo = await getGeolocation();
-        if (geo) await base44.auth.updateMe({ lat: geo.lat, lng: geo.lng });
+      if (key === "update_location") {
+        if (value) {
+          setLocUpdating(true);
+          const geo = await getGeolocation();
+          if (!geo) {
+            setSettings((prev) => ({ ...prev, update_location: false }));
+            setLocUpdating(false);
+            return;
+          }
+          const { city, country, countryCode } = await reverseGeocodeCity(geo.lat, geo.lng);
+          const [snapLat, snapLng] = snapToCityGrid(geo.lat, geo.lng);
+          const updates = {
+            update_location: true,
+            city_name: city,
+            country_name: country,
+            lat: snapLat,
+            lng: snapLng,
+          };
+          if (countryCode) updates.country = countryCode;
+          await base44.auth.updateMe(updates);
+          setSettings((prev) => ({ ...prev, city_name: city, country_name: country }));
+          setLocUpdating(false);
+        } else {
+          await base44.auth.updateMe({
+            update_location: false,
+            city_name: "",
+            country_name: "",
+            lat: null,
+            lng: null,
+          });
+          setSettings((prev) => ({ ...prev, city_name: "", country_name: "" }));
+        }
+      } else {
+        await base44.auth.updateMe({ [key]: value });
       }
-    } catch {}
+    } catch {
+      setSettings((prev) => ({ ...prev, [key]: !value }));
+      setLocUpdating(false);
+    }
   }
 
   const searchableByLabel = searchableByOptions.find((o) => o.key === settings.searchable_by)?.label || searchableByOptions[0].label;
@@ -328,9 +368,25 @@ function PrivacySection() {
     <div className="space-y-5">
       <h2 className="font-bold text-lg">{t("settings.privacy")}</h2>
 
+      {/* Location section */}
+      <div>
+        <div className="text-sm text-muted-foreground px-1 mb-2">
+          {settings.city_name || settings.country_name
+            ? [settings.city_name, settings.country_name].filter(Boolean).join(", ")
+            : t("privacy.noLocation")}
+        </div>
+        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+          <ToggleRow label={t("privacy.shareCountry")} checked={settings.share_country} onChange={() => update("share_country", !settings.share_country)} />
+          <ToggleRow label={t("privacy.shareCity")} checked={settings.share_city} onChange={() => update("share_city", !settings.share_city)} />
+          <ToggleRow label={locUpdating ? t("privacy.locationUpdating") : t("privacy.updateLocation")} checked={settings.update_location} onChange={() => !locUpdating && update("update_location", !settings.update_location)} />
+        </div>
+        <div className="text-xs text-muted-foreground px-1 mt-2 leading-relaxed">
+          {t("privacy.locationHelper")}
+        </div>
+      </div>
+
       {/* Toggle settings */}
       <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        <ToggleRowWithDesc icon={MapPin} label={t("settings.shareLocation")} desc={t("settings.shareLocationDesc")} checked={settings.share_location} onChange={() => update("share_location", !settings.share_location)} />
         <ToggleRowWithDesc icon={Eye} label={t("privacy.showOnlineStatus")} desc={t("privacy.showOnlineStatusDesc")} checked={settings.show_online_status} onChange={() => update("show_online_status", !settings.show_online_status)} />
         <ToggleRowWithDesc icon={User} label={t("privacy.agePublic")} desc={t("privacy.agePublicDesc")} checked={settings.age_public} onChange={() => update("age_public", !settings.age_public)} />
         <ToggleRowWithDesc icon={UserSearch} label={t("privacy.searchableById")} desc={t("privacy.searchableByIdDesc")} checked={settings.searchable_by_id} onChange={() => update("searchable_by_id", !settings.searchable_by_id)} />

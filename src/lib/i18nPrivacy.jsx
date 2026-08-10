@@ -3,6 +3,12 @@
 
 export const privacyTranslations = {
   ja: {
+    "privacy.shareCountry": "国／地域を公開",
+    "privacy.shareCity": "都市を公開",
+    "privacy.updateLocation": "位置情報を更新",
+    "privacy.noLocation": "位置情報がありません",
+    "privacy.locationHelper": "現在地から都市情報を取得します。正確な位置が他のユーザーに表示されることはありません。",
+    "privacy.locationUpdating": "位置情報を取得中…",
     "privacy.showOnlineStatus": "オンライン状態を表示",
     "privacy.showOnlineStatusDesc": "他のユーザーにオンライン状態を公開します",
     "privacy.agePublic": "年齢を公開",
@@ -30,6 +36,12 @@ export const privacyTranslations = {
     "privacy.remove": "解除",
   },
   en: {
+    "privacy.shareCountry": "Share country/region",
+    "privacy.shareCity": "Share city",
+    "privacy.updateLocation": "Update location",
+    "privacy.noLocation": "No location data",
+    "privacy.locationHelper": "City info is obtained from your current location. Your exact location is never shown to other users.",
+    "privacy.locationUpdating": "Getting location…",
     "privacy.showOnlineStatus": "Show online status",
     "privacy.showOnlineStatusDesc": "Let others see when you're online",
     "privacy.agePublic": "Show age",

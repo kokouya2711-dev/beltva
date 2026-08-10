@@ -13,7 +13,7 @@ export default function MiniProfile({ user, isMe, live, training, onView, scale 
   const showGender = user.gender_public && genderLabel;
   const showAge = user.age_public === true ? user.age : null;
   const ageGender = [showAge, showGender].filter(v => v != null && v !== "").join("/");
-  const flag = flagEmoji(user.country);
+  const flag = user.share_country !== false ? flagEmoji(user.country) : null;
 
   // Base sizes at scale=1 — horizontal: avatar left (2-row tall), right 2 rows
   const width = Math.round(180 * scale);

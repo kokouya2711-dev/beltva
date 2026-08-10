@@ -10,36 +10,6 @@ const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000;
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 const MAX_ZOOM = 11;
-// Snap user positions to a city/region-level grid for privacy.
-// 0.1° ≈ 11km — groups users in the same city to one representative point.
-const GRID_SIZE = 0.1;
-function snapToGrid(lat, lng) {
-  return [
-    Math.floor(lat / GRID_SIZE) * GRID_SIZE + GRID_SIZE / 2,
-    Math.floor(lng / GRID_SIZE) * GRID_SIZE + GRID_SIZE / 2,
-  ];
-}
-
-// Reverse geocoding cache (module-level, persists across renders)
-const geocodeCache = new Map();
-
-async function reverseGeocode(lat, lng) {
-  const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
-  if (geocodeCache.has(key)) return geocodeCache.get(key);
-  try {
-    const res = await fetch(
-      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ja`
-    );
-    const data = await res.json();
-    const name = data.city || data.locality || data.principalSubdivision || "";
-    geocodeCache.set(key, name);
-    return name;
-  } catch {
-    geocodeCache.set(key, "");
-    return "";
-  }
-}
-
 const FILTERS = ["all", "online", "training", "following", "nearby"];
 
 // Child component that uses useMap() to reliably access the map instance.
@@ -92,7 +62,7 @@ export default function NearbyMap() {
           base44.entities.Follow.list("-created_date", 200).catch(() => [])
         ]);
         setMe(meUser);
-        setUsers(us.filter((u) => u.lat != null && u.share_location !== false));
+        setUsers(us.filter((u) => u.lat != null && u.city_name && u.share_city !== false));
         const pm = {};
         pres.forEach((p) => { pm[p.created_by_id] = { last_seen: p.last_seen, is_training: p.is_training }; });
         setPresence(pm);
@@ -139,10 +109,7 @@ export default function NearbyMap() {
     else if (filter === "nearby") {
       if (!center) return [];
       arr = [...arr]
-        .map((u) => {
-          const [slat, slng] = snapToGrid(u.lat, u.lng);
-          return { ...u, _d: Math.hypot(slat - center[0], slng - center[1]) };
-        })
+        .map((u) => ({ ...u, _d: Math.hypot(u.lat - center[0], u.lng - center[1]) }))
         .sort((a, b) => a._d - b._d)
         .slice(0, 40);
     }
@@ -150,49 +117,23 @@ export default function NearbyMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filter, presence, followIds, center]);
 
-  // Build city clusters from filtered users via reverse geocoding
+  // Build city clusters from filtered users — grouped by stored city_name
   useEffect(() => {
     if (filtered.length === 0) {
       setCityClusters([]);
       return;
     }
-    let cancelled = false;
-    (async () => {
-      // Group by grid cell
-      const gridMap = new Map();
-      for (const u of filtered) {
-        const [slat, slng] = snapToGrid(u.lat, u.lng);
-        const key = `${slat.toFixed(3)},${slng.toFixed(3)}`;
-        if (!gridMap.has(key)) gridMap.set(key, { lat: slat, lng: slng, users: [] });
-        gridMap.get(key).users.push(u);
+    const cityMap = new Map();
+    for (const u of filtered) {
+      const cityName = u.city_name || "Unknown";
+      if (!cityMap.has(cityName)) {
+        cityMap.set(cityName, { city: cityName, lat: u.lat, lng: u.lng, users: [], count: 0 });
       }
-      // Reverse geocode each unique grid cell
-      const gridEntries = Array.from(gridMap.values());
-      const cityNames = await Promise.all(
-        gridEntries.map((g) => reverseGeocode(g.lat, g.lng))
-      );
-      // Group by city name — merge grid cells in the same city
-      const cityMap = new Map();
-      gridEntries.forEach((g, i) => {
-        const cityName = cityNames[i] || `${g.lat.toFixed(1)}, ${g.lng.toFixed(1)}`;
-        if (!cityMap.has(cityName)) {
-          cityMap.set(cityName, { city: cityName, lat: g.lat, lng: g.lng, users: [], count: 0, maxCellCount: 0 });
-        }
-        const c = cityMap.get(cityName);
-        c.users.push(...g.users);
-        c.count += g.users.length;
-        // Use the most populated grid cell's position as the marker position
-        if (g.users.length > c.maxCellCount) {
-          c.maxCellCount = g.users.length;
-          c.lat = g.lat;
-          c.lng = g.lng;
-        }
-      });
-      if (!cancelled) {
-        setCityClusters(Array.from(cityMap.values()));
-      }
-    })();
-    return () => { cancelled = true; };
+      const c = cityMap.get(cityName);
+      c.users.push(u);
+      c.count += 1;
+    }
+    setCityClusters(Array.from(cityMap.values()));
   }, [filtered]);
 
   function flyToCurrent() {
