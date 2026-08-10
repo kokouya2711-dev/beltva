@@ -93,7 +93,7 @@
   touch-action: none;
 }
 .leaflet-tile.voyager-tiles {
-  filter: saturate(0.82) brightness(1.03);
+  filter: saturate(1.08) brightness(0.97) contrast(1.02);
 }
 .leaflet-popup.mini-profile-popup .leaflet-popup-content-wrapper {
   background: hsl(240 5% 10%);
