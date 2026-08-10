@@ -3,19 +3,13 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
-import { useNavigate } from "react-router-dom";
-import { Loader2, LocateFixed, Plus, Minus, Maximize2, X, Flame } from "lucide-react";
+import { Loader2, LocateFixed, Plus, Minus, Maximize2, X } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { useTWorkout } from "@/lib/i18nHelpers";
-import MiniProfile from "@/components/map/MiniProfile";
-import ReactionPicker from "@/components/map/ReactionPicker";
-import { notify } from "@/lib/dm";
-import { useToast } from "@/components/ui/use-toast";
 
 const ONLINE_WINDOW = 120000;
-const TRAINING_WINDOW = 300000; // 5 min — training users may not touch phone between sets
+const TRAINING_WINDOW = 300000;
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-const MAX_ZOOM = 12.5;
+const MAX_ZOOM = 14;
 // Snap user positions to a city/region-level grid for privacy.
 // 0.1° ≈ 11km — groups users in the same city to one representative point.
 const GRID_SIZE = 0.1;
@@ -26,10 +20,30 @@ function snapToGrid(lat, lng) {
   ];
 }
 
+// Reverse geocoding cache (module-level, persists across renders)
+const geocodeCache = new Map();
+
+async function reverseGeocode(lat, lng) {
+  const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+  if (geocodeCache.has(key)) return geocodeCache.get(key);
+  try {
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ja`
+    );
+    const data = await res.json();
+    const name = data.city || data.locality || data.principalSubdivision || "";
+    geocodeCache.set(key, name);
+    return name;
+  } catch {
+    geocodeCache.set(key, "");
+    return "";
+  }
+}
+
 const FILTERS = ["all", "online", "training", "following", "nearby"];
 
 // Child component that uses useMap() to reliably access the map instance.
-function MapController({ onZoomChange, onMapMove }) {
+function MapController({ onZoomChange }) {
   const map = useMap();
   React.useEffect(() => {
     map.setMaxZoom(MAX_ZOOM);
@@ -39,7 +53,6 @@ function MapController({ onZoomChange, onMapMove }) {
       onZoomChange(z);
     };
     map.on("zoomend", handleZoomEnd);
-    map.on("moveend", onMapMove);
     onZoomChange(map.getZoom());
     // Prevent iOS Safari native pinch-to-zoom on the map container
     const container = map.getContainer();
@@ -48,49 +61,34 @@ function MapController({ onZoomChange, onMapMove }) {
     container.addEventListener("gesturechange", preventGesture);
     return () => {
       map.off("zoomend", handleZoomEnd);
-      map.off("moveend", onMapMove);
       container.removeEventListener("gesturestart", preventGesture);
       container.removeEventListener("gesturechange", preventGesture);
     };
-  }, [map, onZoomChange, onMapMove]);
+  }, [map, onZoomChange]);
   return null;
 }
 
 export default function NearbyMap() {
   const t = useT();
-  const tWorkout = useTWorkout();
-  const navigate = useNavigate();
   const mapRef = useRef(null);
   const [me, setMe] = useState(null);
   const [users, setUsers] = useState([]);
   const [presence, setPresence] = useState({});
-  const [sessions, setSessions] = useState([]);
   const [followIds, setFollowIds] = useState(new Set());
   const [center, setCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [mapZoom, setMapZoom] = useState(13);
-  const [offsets, setOffsets] = useState({});
-  const [mapMoveTick, setMapMoveTick] = useState(0);
+  const [cityClusters, setCityClusters] = useState([]);
   const [fullscreen, setFullscreen] = useState(false);
-  const { toast } = useToast();
-  const pressTimer = useRef(null);
-  const longPressActiveRef = useRef(false);
-  const [longPressUserId, setLongPressUserId] = useState(null);
-  const [reactionTarget, setReactionTarget] = useState(null);
-
-  const handleMapMove = React.useCallback(() => {
-    setMapMoveTick((t) => t + 1);
-  }, []);
 
   useEffect(() => {
     (async () => {
       try {
-        const [meUser, us, pres, live, follows] = await Promise.all([
+        const [meUser, us, pres, follows] = await Promise.all([
           base44.auth.me().catch(() => null),
           base44.entities.User.list("-created_date", 100),
           base44.entities.Presence.list("-last_seen", 100).catch(() => []),
-          base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 100),
           base44.entities.Follow.list("-created_date", 200).catch(() => [])
         ]);
         setMe(meUser);
@@ -98,7 +96,6 @@ export default function NearbyMap() {
         const pm = {};
         pres.forEach((p) => { pm[p.created_by_id] = { last_seen: p.last_seen, is_training: p.is_training }; });
         setPresence(pm);
-        setSessions(live.filter((s) => s.lat != null));
         setFollowIds(new Set(follows.filter((f) => f.follower_id === meUser?.id).map((f) => f.followee_id)));
 
         let c = null;
@@ -127,12 +124,6 @@ export default function NearbyMap() {
     return () => { clearTimeout(timeout); if (unsubscribe) unsubscribe(); };
   }, []);
 
-  const liveByUser = useMemo(() => {
-    const m = {};
-    sessions.forEach((s) => { if (s.created_by_id) m[s.created_by_id] = s; });
-    return m;
-  }, [sessions]);
-
   const isOnline = (uid) => {
     const u = users.find((x) => x.id === uid);
     if (!u || u.show_online_status === false) return false;
@@ -159,122 +150,60 @@ export default function NearbyMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filter, presence, followIds, center]);
 
-  // Resolve overlapping markers by computing visual offsets in screen space
+  // Build city clusters from filtered users via reverse geocoding
   useEffect(() => {
-    if (!mapRef.current || filtered.length === 0) {
-      setOffsets({});
+    if (filtered.length === 0) {
+      setCityClusters([]);
       return;
     }
-    const map = mapRef.current;
-    const zoomScale = mapZoom <= 7 ? 0 : Math.min(1, 0.6 + 0.4 * (mapZoom - 8) / 5);
-    const baseSize = mapZoom <= 7 ? 5 : Math.round(36 * zoomScale);
-    const minDist = baseSize + 8;
-
-    const pts = filtered.map((u) => {
-      const [slat, slng] = snapToGrid(u.lat, u.lng);
-      return {
-        id: u.id,
-        x: map.latLngToContainerPoint([slat, slng]).x,
-        y: map.latLngToContainerPoint([slat, slng]).y,
-      };
-    });
-
-    const assigned = new Set();
-    const groups = [];
-    for (let i = 0; i < pts.length; i++) {
-      if (assigned.has(pts[i].id)) continue;
-      const group = [pts[i]];
-      assigned.add(pts[i].id);
-      let changed = true;
-      while (changed) {
-        changed = false;
-        for (let j = 0; j < pts.length; j++) {
-          if (assigned.has(pts[j].id)) continue;
-          for (const g of group) {
-            if (Math.hypot(g.x - pts[j].x, g.y - pts[j].y) < minDist) {
-              group.push(pts[j]);
-              assigned.add(pts[j].id);
-              changed = true;
-              break;
-            }
-          }
-        }
+    let cancelled = false;
+    (async () => {
+      // Group by grid cell
+      const gridMap = new Map();
+      for (const u of filtered) {
+        const [slat, slng] = snapToGrid(u.lat, u.lng);
+        const key = `${slat.toFixed(3)},${slng.toFixed(3)}`;
+        if (!gridMap.has(key)) gridMap.set(key, { lat: slat, lng: slng, users: [] });
+        gridMap.get(key).users.push(u);
       }
-      if (group.length > 1) groups.push(group);
-    }
-
-    const newOffsets = {};
-    for (const group of groups) {
-      const cx = group.reduce((s, p) => s + p.x, 0) / group.length;
-      const cy = group.reduce((s, p) => s + p.y, 0) / group.length;
-      const n = group.length;
-      group.forEach((p, idx) => {
-        let dx, dy;
-        if (n <= 8) {
-          const angle = (idx / n) * Math.PI * 2 - Math.PI / 2;
-          const r = minDist * 0.6;
-          dx = Math.cos(angle) * r;
-          dy = Math.sin(angle) * r;
-        } else {
-          const angle = idx * 0.5;
-          const r = minDist * 0.4 + idx * minDist * 0.12;
-          dx = Math.cos(angle) * r;
-          dy = Math.sin(angle) * r;
+      // Reverse geocode each unique grid cell
+      const gridEntries = Array.from(gridMap.values());
+      const cityNames = await Promise.all(
+        gridEntries.map((g) => reverseGeocode(g.lat, g.lng))
+      );
+      // Group by city name — merge grid cells in the same city
+      const cityMap = new Map();
+      gridEntries.forEach((g, i) => {
+        const cityName = cityNames[i] || `${g.lat.toFixed(1)}, ${g.lng.toFixed(1)}`;
+        if (!cityMap.has(cityName)) {
+          cityMap.set(cityName, { city: cityName, lat: g.lat, lng: g.lng, users: [], count: 0, maxCellCount: 0 });
         }
-        const ll = map.containerPointToLatLng([cx + dx, cy + dy]);
-        newOffsets[p.id] = [ll.lat, ll.lng];
+        const c = cityMap.get(cityName);
+        c.users.push(...g.users);
+        c.count += g.users.length;
+        // Use the most populated grid cell's position as the marker position
+        if (g.users.length > c.maxCellCount) {
+          c.maxCellCount = g.users.length;
+          c.lat = g.lat;
+          c.lng = g.lng;
+        }
       });
-    }
-    setOffsets(newOffsets);
-  }, [filtered, mapZoom, mapMoveTick]);
-
-  function startPress(u) {
-    if (u.id === me?.id) return;
-    longPressActiveRef.current = false;
-    if (pressTimer.current) clearTimeout(pressTimer.current);
-    pressTimer.current = setTimeout(() => {
-      longPressActiveRef.current = true;
-      setLongPressUserId(u.id);
-      const map = mapRef.current;
-      if (map) {
-        const pos = offsets[u.id] || [u.lat, u.lng];
-        const pt = map.latLngToContainerPoint(pos);
-        setReactionTarget({ user: u, x: pt.x, y: pt.y });
+      if (!cancelled) {
+        setCityClusters(Array.from(cityMap.values()));
       }
-    }, 500);
-  }
-  function endPress() {
-    if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; }
-  }
-  function handleMarkerClick() {
-    if (longPressActiveRef.current) {
-      longPressActiveRef.current = false;
-      if (mapRef.current) mapRef.current.closePopup();
-    }
-  }
-  async function sendReaction(emoji) {
-    const target = reactionTarget;
-    if (!target || !me) return;
-    setReactionTarget(null);
-    setLongPressUserId(null);
-    if (target.user.id === me.id) return;
-    notify(target.user.id, me.id, "reaction", emoji, target.user.id);
-    toast({ description: `${emoji} ${t("home.reactionSent")}` });
-  }
-  function closeReactionPicker() {
-    setReactionTarget(null);
-    setLongPressUserId(null);
-  }
+    })();
+    return () => { cancelled = true; };
+  }, [filtered]);
 
   function flyToCurrent() {
     if (!mapRef.current || !center) return;
     mapRef.current.flyTo(center, MAX_ZOOM, { duration: 0.8 });
   }
   function zoomIn() {
-    if (mapRef.current) mapRef.current.zoomIn(1.5);
+    if (mapRef.current) mapRef.current.zoomIn(1);
   }
   function zoomOut() {
-    if (mapRef.current) mapRef.current.zoomOut(1.5);
+    if (mapRef.current) mapRef.current.zoomOut(1);
   }
 
   if (loading || !center) {
@@ -295,11 +224,11 @@ export default function NearbyMap() {
         key={fullscreen ? "fs" : "home"}
         ref={mapRef}
         center={center}
-        zoom={12.5}
+        zoom={13}
         minZoom={1}
         maxZoom={MAX_ZOOM}
-        zoomSnap={0.5}
-        zoomDelta={0.5}
+        zoomSnap={1}
+        zoomDelta={1}
         scrollWheelZoom
         touchZoom
         doubleClickZoom={false}
@@ -310,87 +239,82 @@ export default function NearbyMap() {
         className="w-full h-full"
         attributionControl={false}
       >
-        <MapController onZoomChange={setMapZoom} onMapMove={handleMapMove} />
+        <MapController onZoomChange={setMapZoom} />
         <TileLayer
           url={TILE_URL}
           className="voyager-tiles"
           maxZoom={MAX_ZOOM}
-          maxNativeZoom={14}
+          maxNativeZoom={19}
+          detectRetina={true}
         />
 
-        {/* users — profile icons with colored rings; online=lime, training=orange */}
-        {filtered.map((u) => {
-          const live = liveByUser[u.id];
-          const training = isTraining(u.id);
-          const isMe = u.id === me?.id;
-          const color = training ? "#f97316" : "#a3e635";
+        {/* city cluster markers — one per city with count badge */}
+        {cityClusters.map((cluster) => {
           const isDot = mapZoom <= 7;
-          const name = u.display_name || u.email?.split("@")[0] || "user";
+          const count = cluster.count;
+          const firstUser = cluster.users[0];
+          const anyTraining = cluster.users.some((u) => isTraining(u.id));
+          const color = anyTraining ? "#f97316" : "#a3e635";
+          const name = firstUser?.display_name || firstUser?.email?.split("@")[0] || "user";
           const initials = (name || "?").slice(0, 2).toUpperCase();
-          let iconHtml, size;
+
+          let iconHtml, size, badgeSize;
           if (isDot) {
-            size = training ? 5 : 4;
-            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};box-shadow:0 0 2px ${color}aa;border:1px solid rgba(0,0,0,0.3);"></div>`;
+            size = 6;
+            badgeSize = 10;
+            iconHtml = `
+              <div style="position:relative;width:${size}px;height:${size}px;">
+                <div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:1px solid rgba(0,0,0,0.3);"></div>
+                <div style="position:absolute;top:-3px;right:-5px;background:white;color:black;font-size:7px;font-weight:bold;border-radius:5px;padding:0 2px;min-width:${badgeSize - 2}px;height:${badgeSize - 2}px;display:flex;align-items:center;justify-content:center;border:1px solid #ccc;line-height:1;">${count}</div>
+              </div>`;
           } else {
-            const zoomScale = 0.6 + 0.4 * (mapZoom - 8) / 5;
-            size = Math.round((training ? 42 : 36) * zoomScale);
+            const zoomScale = Math.min(1, 0.6 + 0.4 * (mapZoom - 8) / 6);
+            size = Math.round(44 * zoomScale);
             const imgSize = Math.max(8, size - Math.round(6 * zoomScale));
             const borderW = Math.max(1.5, 2.5 * zoomScale).toFixed(1);
             const fontSize = Math.max(8, Math.round(12 * zoomScale));
-            const inner = u.avatar_url
-              ? `<img src="${u.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
+            badgeSize = Math.max(16, Math.round(20 * zoomScale));
+            const badgeFontSize = Math.max(9, Math.round(11 * zoomScale));
+            const inner = firstUser?.avatar_url
+              ? `<img src="${firstUser.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
               : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:${fontSize}px;font-weight:700;">${initials}</div>`;
-            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}aa,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`;
+            iconHtml = `
+              <div style="position:relative;width:${size}px;height:${size}px;">
+                <div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}aa,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>
+                <div style="position:absolute;top:-${Math.round(badgeSize * 0.25)}px;right:-${Math.round(badgeSize * 0.3)}px;background:white;color:black;font-size:${badgeFontSize}px;font-weight:bold;border-radius:${badgeSize / 2}px;padding:0 ${Math.round(badgeSize * 0.2)}px;min-width:${badgeSize}px;height:${badgeSize}px;display:flex;align-items:center;justify-content:center;border:1px solid #d4d4d4;box-shadow:0 1px 2px rgba(0,0,0,0.3);line-height:1;">${count}</div>
+              </div>`;
           }
+
           const icon = L.divIcon({
-            className: "profile-marker",
+            className: "city-marker",
             html: iconHtml,
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2],
           });
-          const popupScale = Math.min(1, Math.max(0.45, 0.45 + (mapZoom - 1) * 0.06));
-          const pos = offsets[u.id] || snapToGrid(u.lat, u.lng);
+
           return (
             <Marker
-              key={u.id}
-              position={pos}
+              key={cluster.city}
+              position={[cluster.lat, cluster.lng]}
               icon={icon}
-              eventHandlers={{
-                mousedown: () => startPress(u),
-                mouseup: endPress,
-                mouseout: endPress,
-                click: handleMarkerClick,
-              }}
             >
-              {longPressUserId !== u.id && (
               <Popup
                 closeButton={false}
                 autoPan={false}
                 className="mini-profile-popup"
                 offset={[0, -size / 2 - 6]}
               >
-                <MiniProfile
-                  user={u}
-                  isMe={isMe}
-                  live={live}
-                  training={training}
-                  onView={() => navigate(`/profile/${u.id}`)}
-                  scale={popupScale}
-                />
+                <div style={{ padding: "4px 10px", textAlign: "center", minWidth: "80px" }}>
+                  <div style={{ fontWeight: 700, fontSize: "13px" }}>{cluster.city}</div>
+                  <div style={{ fontSize: "11px", color: "hsl(240 5% 60%)", marginTop: "2px" }}>
+                    {count}人
+                  </div>
+                </div>
               </Popup>
-              )}
             </Marker>
           );
         })}
       </MapContainer>
-
-      {reactionTarget && (
-        <ReactionPicker
-          position={{ x: reactionTarget.x, y: reactionTarget.y }}
-          onSelect={sendReaction}
-          onClose={closeReactionPicker}
-        />
-      )}
 
       {/* bottom-right controls */}
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col gap-3">
