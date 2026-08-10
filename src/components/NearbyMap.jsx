@@ -4,7 +4,7 @@ import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
-import { Loader2, LocateFixed, Plus, Minus, Maximize2, X, Flame, Info } from "lucide-react";
+import { Loader2, LocateFixed, Plus, Minus, Maximize2, X, Flame } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import MiniProfile from "@/components/map/MiniProfile";
@@ -69,7 +69,6 @@ export default function NearbyMap() {
   const [center, setCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
-  const [showLegend, setShowLegend] = useState(false);
   const [mapZoom, setMapZoom] = useState(13);
   const [offsets, setOffsets] = useState({});
   const [mapMoveTick, setMapMoveTick] = useState(0);
@@ -394,51 +393,44 @@ export default function NearbyMap() {
       )}
 
       {/* top-right controls */}
-      <div className="absolute top-11 right-2 z-[400] flex flex-col gap-1.5">
+      <div className="absolute top-11 right-2 z-[400] flex flex-col gap-2">
         {fullscreen ? (
           <button
             onClick={() => setFullscreen(false)}
-            className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+            className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
             title={t("common.close")}
           >
-            <X className="w-3.5 h-3.5 text-primary" />
+            <X className="w-5 h-5 text-primary" />
           </button>
         ) : (
           <button
             onClick={() => setFullscreen(true)}
-            className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+            className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
             title={t("home.expandMap")}
           >
-            <Maximize2 className="w-3.5 h-3.5 text-primary" />
+            <Maximize2 className="w-5 h-5 text-primary" />
           </button>
         )}
         <button
           onClick={zoomIn}
-          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+          className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.zoomIn")}
         >
-          <Plus className="w-3.5 h-3.5 text-primary" />
+          <Plus className="w-5 h-5 text-primary" />
         </button>
         <button
           onClick={zoomOut}
-          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+          className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.zoomOut")}
         >
-          <Minus className="w-3.5 h-3.5 text-primary" />
+          <Minus className="w-5 h-5 text-primary" />
         </button>
         <button
           onClick={flyToCurrent}
-          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+          className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.locateMe")}
         >
-          <LocateFixed className="w-3.5 h-3.5 text-primary" />
-        </button>
-        <button
-          onClick={() => setShowLegend((v) => !v)}
-          className={`glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition ${showLegend ? "bg-primary/20" : ""}`}
-          title={t("home.legend")}
-        >
-          <Info className="w-3.5 h-3.5 text-primary" />
+          <LocateFixed className="w-5 h-5 text-primary" />
         </button>
       </div>
 
@@ -459,13 +451,6 @@ export default function NearbyMap() {
         ))}
       </div>
 
-      {/* legend — toggle via info button */}
-      {showLegend && (
-        <div className="absolute bottom-2 left-2 z-[400] glass rounded-md px-2.5 py-1.5 text-[10px] space-y-0.5">
-          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#a3e635]" /> {t("home.online")}</div>
-          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#f97316]" /> {t("home.trainingLive")}</div>
-        </div>
-      )}
     </div>
   );
 }
