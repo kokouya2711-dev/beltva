@@ -301,6 +301,7 @@ export default function NearbyMap() {
           url={TILE_URL}
           className="voyager-tiles"
           maxZoom={MAX_ZOOM}
+          maxNativeZoom={10}
         />
 
         {/* users — profile icons with colored rings; online=lime, training=orange */}
