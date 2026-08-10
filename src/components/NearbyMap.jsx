@@ -272,10 +272,10 @@ export default function NearbyMap() {
     mapRef.current.flyTo(center, MAX_ZOOM, { duration: 0.8 });
   }
   function zoomIn() {
-    if (mapRef.current) mapRef.current.zoomIn();
+    if (mapRef.current) mapRef.current.zoomIn(1.5);
   }
   function zoomOut() {
-    if (mapRef.current) mapRef.current.zoomOut();
+    if (mapRef.current) mapRef.current.zoomOut(1.5);
   }
 
   if (loading || !center) {
