@@ -440,9 +440,9 @@ export default function NearbyMap() {
           <button
             key={k}
             onClick={() => setFilter(k)}
-            className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full border transition ${
+            className={`shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border transition ${
               filter === k
-                ? "border-primary bg-primary/15 text-primary"
+                ? "border-primary bg-primary text-primary-foreground"
                 : "border-border glass text-foreground/80"
             }`}
           >
