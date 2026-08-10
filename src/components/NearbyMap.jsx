@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { base44 } from "@/api/base44Client";
-import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
+import { getGeolocation, DEFAULT_CENTER, forwardGeocodeCity } from "@/lib/workouts";
 import { Loader2, LocateFixed, Plus, Minus, Maximize2, X } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
@@ -117,23 +117,42 @@ export default function NearbyMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filter, presence, followIds, center]);
 
-  // Build city clusters from filtered users — grouped by stored city_name
+  // Build city clusters from filtered users — grouped by stored city_name.
+  // Forward geocode each city to place the marker at the city center,
+  // aligned with the city name label on the map tiles.
   useEffect(() => {
     if (filtered.length === 0) {
       setCityClusters([]);
       return;
     }
-    const cityMap = new Map();
-    for (const u of filtered) {
-      const cityName = u.city_name || "Unknown";
-      if (!cityMap.has(cityName)) {
-        cityMap.set(cityName, { city: cityName, lat: u.lat, lng: u.lng, users: [], count: 0 });
+    let cancelled = false;
+    (async () => {
+      const cityMap = new Map();
+      for (const u of filtered) {
+        const cityName = u.city_name || "Unknown";
+        if (!cityMap.has(cityName)) {
+          cityMap.set(cityName, { city: cityName, lat: u.lat, lng: u.lng, users: [], count: 0 });
+        }
+        const c = cityMap.get(cityName);
+        c.users.push(u);
+        c.count += 1;
       }
-      const c = cityMap.get(cityName);
-      c.users.push(u);
-      c.count += 1;
-    }
-    setCityClusters(Array.from(cityMap.values()));
+      const clusters = Array.from(cityMap.values());
+      const cityCenters = await Promise.all(
+        clusters.map((c) => forwardGeocodeCity(c.city))
+      );
+      clusters.forEach((c, i) => {
+        const center = cityCenters[i];
+        if (center) {
+          c.lat = center.lat;
+          c.lng = center.lng;
+        }
+      });
+      if (!cancelled) {
+        setCityClusters(clusters);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [filtered]);
 
   function flyToCurrent() {

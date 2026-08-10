@@ -8,7 +8,7 @@ import {
   EyeOff, Eye, UserSearch, Lock
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
-import { getGeolocation, reverseGeocodeCity, snapToCityGrid } from "@/lib/workouts";
+import { getGeolocation, reverseGeocodeCity, snapToCityGrid, forwardGeocodeCity } from "@/lib/workouts";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -273,12 +273,18 @@ function PrivacySection() {
           }
           const { city, country, countryCode } = await reverseGeocodeCity(geo.lat, geo.lng);
           const [snapLat, snapLng] = snapToCityGrid(geo.lat, geo.lng);
+          let storeLat = snapLat, storeLng = snapLng;
+          const cityCenter = await forwardGeocodeCity(city, countryCode);
+          if (cityCenter) {
+            storeLat = cityCenter.lat;
+            storeLng = cityCenter.lng;
+          }
           const updates = {
             update_location: true,
             city_name: city,
             country_name: country,
-            lat: snapLat,
-            lng: snapLng,
+            lat: storeLat,
+            lng: storeLng,
           };
           if (countryCode) updates.country = countryCode;
           await base44.auth.updateMe(updates);

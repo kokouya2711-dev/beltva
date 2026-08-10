@@ -92,6 +92,32 @@ export function snapToCityGrid(lat, lng) {
   ];
 }
 
+// Forward geocode a city name to its center coordinates for map marker placement.
+// Uses OpenStreetMap Nominatim. Results are cached at module level.
+const forwardGeocodeCache = new Map();
+
+export async function forwardGeocodeCity(cityName, countryCode = "") {
+  if (!cityName) return null;
+  const cacheKey = `${cityName}|${countryCode}`;
+  if (forwardGeocodeCache.has(cacheKey)) return forwardGeocodeCache.get(cacheKey);
+  try {
+    const query = countryCode ? `${cityName}, ${countryCode}` : cityName;
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&accept-language=ja`
+    );
+    const data = await res.json();
+    if (data && data.length > 0) {
+      const result = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      forwardGeocodeCache.set(cacheKey, result);
+      return result;
+    }
+    forwardGeocodeCache.set(cacheKey, null);
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 // Tokyo fallback
 export const DEFAULT_CENTER = { lat: 35.6762, lng: 139.6503 };
 
