@@ -4,7 +4,7 @@ import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER } from "@/lib/workouts";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Globe, LocateFixed, Satellite, Map as MapIcon, Flame, Info } from "lucide-react";
+import { Loader2, LocateFixed, Plus, Minus, Maximize2, X, Flame, Info } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import MiniProfile from "@/components/map/MiniProfile";
@@ -14,24 +14,19 @@ import { useToast } from "@/components/ui/use-toast";
 
 const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000; // 5 min — training users may not touch phone between sets
-const NORMAL_TILE = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-// Esri World Imagery — high quality worldwide satellite imagery
-const SAT_TILE = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const MAX_ZOOM = 12.5;
 
 const FILTERS = ["all", "online", "training", "following", "nearby"];
 
 // Child component that uses useMap() to reliably access the map instance.
-// Permanently overrides _animateZoom so the zoom parameter is clamped to
-// maxZoom on EVERY call — including intermediate pinch-zoom frames.
-// This prevents the temporary visual over-zoom during pinch gestures.
-function MapZoomLimiter({ onZoomChange, onMapMove }) {
+function MapController({ onZoomChange, onMapMove }) {
   const map = useMap();
   React.useEffect(() => {
-    const MAX = 12.5;
-    map.setMaxZoom(MAX);
+    map.setMaxZoom(MAX_ZOOM);
     const handleZoomEnd = () => {
       const z = map.getZoom();
-      if (z > MAX) map.setZoom(MAX);
+      if (z > MAX_ZOOM) map.setZoom(MAX_ZOOM);
       onZoomChange(z);
     };
     map.on("zoomend", handleZoomEnd);
@@ -64,12 +59,12 @@ export default function NearbyMap() {
   const [followIds, setFollowIds] = useState(new Set());
   const [center, setCenter] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [satellite, setSatellite] = useState(false);
   const [filter, setFilter] = useState("all");
   const [showLegend, setShowLegend] = useState(false);
   const [mapZoom, setMapZoom] = useState(13);
   const [offsets, setOffsets] = useState({});
   const [mapMoveTick, setMapMoveTick] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
   const { toast } = useToast();
   const pressTimer = useRef(null);
   const longPressActiveRef = useRef(false);
@@ -124,14 +119,6 @@ export default function NearbyMap() {
     return () => { clearTimeout(timeout); if (unsubscribe) unsubscribe(); };
   }, []);
 
-  // Enforce maxZoom on the map instance — belt-and-suspenders to ensure
-  // no zoom method (wheel, pinch, double-click) can exceed zoom 12.5 (~1.5x wider than before)
-  useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.setMaxZoom(12.5);
-    }
-  }, [center]);
-
   const liveByUser = useMemo(() => {
     const m = {};
     sessions.forEach((s) => { if (s.created_by_id) m[s.created_by_id] = s; });
@@ -146,7 +133,6 @@ export default function NearbyMap() {
   const isTraining = (uid) => !!presence[uid]?.is_training;
 
   const filtered = useMemo(() => {
-    // show online (green) and training (orange-red) users; offline users are excluded
     let arr = users.filter((u) => isOnline(u.id) || isTraining(u.id));
     if (filter === "online") arr = arr.filter((u) => isOnline(u.id) && !isTraining(u.id));
     else if (filter === "training") arr = arr.filter((u) => isTraining(u.id));
@@ -162,8 +148,7 @@ export default function NearbyMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, filter, presence, followIds, center]);
 
-  // Resolve overlapping markers by computing visual offsets in screen space,
-  // then converting back to lat/lng. Actual user position data is never changed.
+  // Resolve overlapping markers by computing visual offsets in screen space
   useEffect(() => {
     if (!mapRef.current || filtered.length === 0) {
       setOffsets({});
@@ -180,7 +165,6 @@ export default function NearbyMap() {
       y: map.latLngToContainerPoint([u.lat, u.lng]).y,
     }));
 
-    // Group overlapping markers (transitive closure by screen distance)
     const assigned = new Set();
     const groups = [];
     for (let i = 0; i < pts.length; i++) {
@@ -218,7 +202,6 @@ export default function NearbyMap() {
           dx = Math.cos(angle) * r;
           dy = Math.sin(angle) * r;
         } else {
-          // Spiral for large groups
           const angle = idx * 0.5;
           const r = minDist * 0.4 + idx * minDist * 0.12;
           dx = Math.cos(angle) * r;
@@ -271,11 +254,13 @@ export default function NearbyMap() {
 
   function flyToCurrent() {
     if (!mapRef.current || !center) return;
-    mapRef.current.flyTo(center, 12.5, { duration: 0.8 });
+    mapRef.current.flyTo(center, MAX_ZOOM, { duration: 0.8 });
   }
-  function flyToWorld() {
-    if (!mapRef.current) return;
-    mapRef.current.flyTo([20, 0], 1, { duration: 0.9 });
+  function zoomIn() {
+    if (mapRef.current) mapRef.current.zoomIn();
+  }
+  function zoomOut() {
+    if (mapRef.current) mapRef.current.zoomOut();
   }
 
   if (loading || !center) {
@@ -286,14 +271,19 @@ export default function NearbyMap() {
     );
   }
 
+  const containerClass = fullscreen
+    ? "fixed inset-0 z-[1000] bg-background"
+    : "relative z-0 rounded-2xl overflow-hidden border border-border h-[58svh] max-h-[calc(100svh-160px)] md:h-[640px] md:max-h-[calc(100svh-200px)]";
+
   return (
-    <div className="relative z-0 rounded-2xl overflow-hidden border border-border h-[58svh] max-h-[calc(100svh-160px)] md:h-[640px] md:max-h-[calc(100svh-200px)]" style={{ touchAction: "none" }}>
+    <div className={containerClass} style={{ touchAction: "none" }}>
       <MapContainer
+        key={fullscreen ? "fs" : "home"}
         ref={mapRef}
         center={center}
         zoom={12.5}
         minZoom={1}
-        maxZoom={12.5}
+        maxZoom={MAX_ZOOM}
         zoomSnap={0.5}
         zoomDelta={0.5}
         scrollWheelZoom
@@ -306,19 +296,19 @@ export default function NearbyMap() {
         className="w-full h-full"
         attributionControl={false}
       >
-        <MapZoomLimiter onZoomChange={setMapZoom} onMapMove={handleMapMove} />
+        <MapController onZoomChange={setMapZoom} onMapMove={handleMapMove} />
         <TileLayer
-          url={satellite ? SAT_TILE : NORMAL_TILE}
-          className={satellite ? "sat-tiles" : "dark-tiles"}
-          maxZoom={12.5}
+          url={TILE_URL}
+          className="voyager-tiles"
+          maxZoom={MAX_ZOOM}
         />
 
-        {/* users — profile icons with colored rings; online=green, training=orange-red */}
+        {/* users — profile icons with colored rings; online=lime, training=orange */}
         {filtered.map((u) => {
           const live = liveByUser[u.id];
           const training = isTraining(u.id);
           const isMe = u.id === me?.id;
-          const color = training ? "#f97316" : "#22c55e";
+          const color = training ? "#f97316" : "#a3e635";
           const isDot = mapZoom <= 7;
           const name = u.display_name || u.email?.split("@")[0] || "user";
           const initials = (name || "?").slice(0, 2).toUpperCase();
@@ -335,7 +325,7 @@ export default function NearbyMap() {
             const inner = u.avatar_url
               ? `<img src="${u.avatar_url}" style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;object-fit:cover;display:block;" />`
               : `<div style="width:${imgSize}px;height:${imgSize}px;border-radius:50%;background:hsl(240 5% 20%);display:flex;align-items:center;justify-content:center;color:hsl(0 0% 70%);font-size:${fontSize}px;font-weight:700;">${initials}</div>`;
-            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}88,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`;
+            iconHtml = `<div style="width:${size}px;height:${size}px;border-radius:50%;border:${borderW}px solid ${color};box-shadow:0 0 6px ${color}aa,0 1px 3px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;background:hsl(240 6% 12%);">${inner}</div>`;
           }
           const icon = L.divIcon({
             className: "profile-marker",
@@ -389,11 +379,36 @@ export default function NearbyMap() {
 
       {/* top-right controls */}
       <div className="absolute top-11 right-2 z-[400] flex flex-col gap-1.5">
+        {fullscreen ? (
+          <button
+            onClick={() => setFullscreen(false)}
+            className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+            title={t("common.close")}
+          >
+            <X className="w-3.5 h-3.5 text-primary" />
+          </button>
+        ) : (
+          <button
+            onClick={() => setFullscreen(true)}
+            className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+            title={t("home.expandMap")}
+          >
+            <Maximize2 className="w-3.5 h-3.5 text-primary" />
+          </button>
+        )}
         <button
-          onClick={flyToWorld}
-          className="glass rounded-md px-2 py-1 text-[10px] flex items-center gap-1 hover:bg-secondary transition"
+          onClick={zoomIn}
+          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+          title={t("home.zoomIn")}
         >
-          <Globe className="w-3 h-3 text-primary" /> {t("home.worldView")}
+          <Plus className="w-3.5 h-3.5 text-primary" />
+        </button>
+        <button
+          onClick={zoomOut}
+          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
+          title={t("home.zoomOut")}
+        >
+          <Minus className="w-3.5 h-3.5 text-primary" />
         </button>
         <button
           onClick={flyToCurrent}
@@ -401,13 +416,6 @@ export default function NearbyMap() {
           title={t("home.locateMe")}
         >
           <LocateFixed className="w-3.5 h-3.5 text-primary" />
-        </button>
-        <button
-          onClick={() => setSatellite((v) => !v)}
-          className="glass rounded-md p-1.5 flex items-center justify-center hover:bg-secondary transition"
-          title={satellite ? t("home.normalMap") : t("home.satellite")}
-        >
-          {satellite ? <MapIcon className="w-3.5 h-3.5 text-primary" /> : <Satellite className="w-3.5 h-3.5 text-primary" />}
         </button>
         <button
           onClick={() => setShowLegend((v) => !v)}
@@ -438,7 +446,7 @@ export default function NearbyMap() {
       {/* legend — toggle via info button */}
       {showLegend && (
         <div className="absolute bottom-2 left-2 z-[400] glass rounded-md px-2.5 py-1.5 text-[10px] space-y-0.5">
-          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#22c55e]" /> {t("home.online")}</div>
+          <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#a3e635]" /> {t("home.online")}</div>
           <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#f97316]" /> {t("home.trainingLive")}</div>
         </div>
       )}

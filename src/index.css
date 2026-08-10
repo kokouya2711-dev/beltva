@@ -88,15 +88,12 @@
 }
 
 .leaflet-container {
-  background: hsl(240 6% 8%);
+  background: hsl(0 0% 90%);
   font-family: inherit;
   touch-action: none;
 }
-.leaflet-tile.dark-tiles {
-  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
-}
-.leaflet-tile.sat-tiles {
-  filter: brightness(0.92) contrast(1.05) saturate(1.1);
+.leaflet-tile.voyager-tiles {
+  filter: saturate(0.82) brightness(1.03);
 }
 .leaflet-popup.mini-profile-popup .leaflet-popup-content-wrapper {
   background: hsl(240 5% 10%);
