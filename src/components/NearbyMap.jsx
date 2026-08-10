@@ -204,7 +204,7 @@ export default function NearbyMap() {
         <TileLayer
           url={TILE_URL}
           className="esri-tiles"
-          maxZoom={MAX_ZOOM}
+          maxZoom={19}
           maxNativeZoom={19}
           detectRetina={true}
         />
@@ -292,7 +292,7 @@ export default function NearbyMap() {
         {fullscreen ? (
           <button
             onClick={() => setFullscreen(false)}
-            className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
+            className="bg-card/95 border border-border shadow-lg rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
             title={t("common.close")}
           >
             <X className="w-5 h-5 text-primary" />
@@ -300,7 +300,7 @@ export default function NearbyMap() {
         ) : (
           <button
             onClick={() => setFullscreen(true)}
-            className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
+            className="bg-card/95 border border-border shadow-lg rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
             title={t("home.expandMap")}
           >
             <Maximize2 className="w-5 h-5 text-primary" />
@@ -308,21 +308,21 @@ export default function NearbyMap() {
         )}
         <button
           onClick={zoomIn}
-          className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
+          className="bg-card/95 border border-border shadow-lg rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.zoomIn")}
         >
           <Plus className="w-5 h-5 text-primary" />
         </button>
         <button
           onClick={zoomOut}
-          className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
+          className="bg-card/95 border border-border shadow-lg rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.zoomOut")}
         >
           <Minus className="w-5 h-5 text-primary" />
         </button>
         <button
           onClick={flyToCurrent}
-          className="glass rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
+          className="bg-card/95 border border-border shadow-lg rounded-lg p-2.5 flex items-center justify-center hover:bg-secondary transition"
           title={t("home.locateMe")}
         >
           <LocateFixed className="w-5 h-5 text-primary" />
@@ -338,7 +338,7 @@ export default function NearbyMap() {
             className={`shrink-0 text-[13px] font-semibold px-3 py-1.5 rounded-full border transition ${
               filter === k
                 ? "border-primary bg-primary text-primary-foreground"
-                : "border-border glass text-foreground/80"
+                : "border-border bg-card/80 text-foreground/80"
             }`}
           >
             {t(`home.filter_${k}`)}
