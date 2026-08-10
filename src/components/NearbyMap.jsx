@@ -10,6 +10,7 @@ const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000;
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 const MAX_ZOOM = 11;
+const MIN_MARKER_ZOOM = 9;
 const FILTERS = ["all", "online", "training", "following", "nearby"];
 
 // Child component that uses useMap() to reliably access the map instance.
@@ -208,8 +209,8 @@ export default function NearbyMap() {
           detectRetina={true}
         />
 
-        {/* city cluster markers — one per city with count badge */}
-        {cityClusters.map((cluster) => {
+        {/* city cluster markers — only visible when zoomed in to city level */}
+        {mapZoom >= MIN_MARKER_ZOOM && cityClusters.map((cluster) => {
           const isDot = mapZoom <= 7;
           const count = cluster.count;
           const firstUser = cluster.users[0];
