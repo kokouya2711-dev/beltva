@@ -16,6 +16,15 @@ const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000; // 5 min — training users may not touch phone between sets
 const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 const MAX_ZOOM = 12.5;
+// Snap user positions to a city/region-level grid for privacy.
+// 0.1° ≈ 11km — groups users in the same city to one representative point.
+const GRID_SIZE = 0.1;
+function snapToGrid(lat, lng) {
+  return [
+    Math.floor(lat / GRID_SIZE) * GRID_SIZE + GRID_SIZE / 2,
+    Math.floor(lng / GRID_SIZE) * GRID_SIZE + GRID_SIZE / 2,
+  ];
+}
 
 const FILTERS = ["all", "online", "training", "following", "nearby"];
 
@@ -140,7 +149,10 @@ export default function NearbyMap() {
     else if (filter === "nearby") {
       if (!center) return [];
       arr = [...arr]
-        .map((u) => ({ ...u, _d: Math.hypot(u.lat - center[0], u.lng - center[1]) }))
+        .map((u) => {
+          const [slat, slng] = snapToGrid(u.lat, u.lng);
+          return { ...u, _d: Math.hypot(slat - center[0], slng - center[1]) };
+        })
         .sort((a, b) => a._d - b._d)
         .slice(0, 40);
     }
@@ -159,11 +171,14 @@ export default function NearbyMap() {
     const baseSize = mapZoom <= 7 ? 5 : Math.round(36 * zoomScale);
     const minDist = baseSize + 8;
 
-    const pts = filtered.map((u) => ({
-      id: u.id,
-      x: map.latLngToContainerPoint([u.lat, u.lng]).x,
-      y: map.latLngToContainerPoint([u.lat, u.lng]).y,
-    }));
+    const pts = filtered.map((u) => {
+      const [slat, slng] = snapToGrid(u.lat, u.lng);
+      return {
+        id: u.id,
+        x: map.latLngToContainerPoint([slat, slng]).x,
+        y: map.latLngToContainerPoint([slat, slng]).y,
+      };
+    });
 
     const assigned = new Set();
     const groups = [];
@@ -335,7 +350,7 @@ export default function NearbyMap() {
             iconAnchor: [size / 2, size / 2],
           });
           const popupScale = Math.min(1, Math.max(0.45, 0.45 + (mapZoom - 1) * 0.06));
-          const pos = offsets[u.id] || [u.lat, u.lng];
+          const pos = offsets[u.id] || snapToGrid(u.lat, u.lng);
           return (
             <Marker
               key={u.id}
