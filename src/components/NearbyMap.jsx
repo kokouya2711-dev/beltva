@@ -392,8 +392,8 @@ export default function NearbyMap() {
         />
       )}
 
-      {/* top-right controls */}
-      <div className="absolute top-11 right-2 z-[400] flex flex-col gap-3">
+      {/* bottom-right controls */}
+      <div className="absolute bottom-3 right-3 z-[400] flex flex-col gap-3">
         {fullscreen ? (
           <button
             onClick={() => setFullscreen(false)}
