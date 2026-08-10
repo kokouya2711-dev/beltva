@@ -88,12 +88,12 @@
 }
 
 .leaflet-container {
-  background: hsl(0 0% 90%);
+  background: #b8d4ea;
   font-family: inherit;
   touch-action: none;
 }
-.leaflet-tile.voyager-tiles {
-  filter: saturate(1.08) brightness(0.97) contrast(1.02);
+.leaflet-tile.esri-tiles {
+  filter: saturate(1.5) contrast(1.1) brightness(0.97);
 }
 .leaflet-popup.mini-profile-popup .leaflet-popup-content-wrapper {
   background: hsl(240 5% 10%);

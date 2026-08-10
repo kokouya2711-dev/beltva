@@ -8,7 +8,7 @@ import { useT } from "@/lib/i18n";
 
 const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000;
-const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
 const MAX_ZOOM = 11;
 const MIN_MARKER_ZOOM = 9;
 const FILTERS = ["all", "online", "training", "following", "nearby"];
@@ -203,7 +203,7 @@ export default function NearbyMap() {
         <MapController onZoomChange={setMapZoom} />
         <TileLayer
           url={TILE_URL}
-          className="voyager-tiles"
+          className="esri-tiles"
           maxZoom={MAX_ZOOM}
           maxNativeZoom={19}
           detectRetina={true}
