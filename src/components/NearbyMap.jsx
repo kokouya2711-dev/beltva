@@ -3,12 +3,13 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { base44 } from "@/api/base44Client";
 import { getGeolocation, DEFAULT_CENTER, forwardGeocodeCity } from "@/lib/workouts";
+import { MAJOR_CITIES } from "@/lib/mapLabels";
 import { Loader2, LocateFixed, Plus, Minus, Maximize2, X } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const ONLINE_WINDOW = 120000;
 const TRAINING_WINDOW = 300000;
-const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png";
 const MAX_ZOOM = 11;
 const MIN_MARKER_ZOOM = 9;
 const FILTERS = ["all", "online", "training", "following", "nearby"];
@@ -205,7 +206,7 @@ export default function NearbyMap() {
           url={TILE_URL}
           className="minimal-tiles"
           maxZoom={19}
-          maxNativeZoom={11}
+          maxNativeZoom={19}
           detectRetina={true}
           subdomains="abcd"
         />
@@ -287,6 +288,25 @@ export default function NearbyMap() {
           );
         })}
 
+        {/* major city labels — prefecture capitals and major cities only */}
+        {mapZoom >= 4 && MAJOR_CITIES.map((city) => {
+          const fontSize = Math.max(10, Math.min(14, 8 + mapZoom * 0.5));
+          const labelIcon = L.divIcon({
+            className: "city-label-marker",
+            html: `<span style="font-size:${fontSize}px">${city.name}</span>`,
+            iconSize: [0, 0],
+            iconAnchor: [0, 0],
+          });
+          return (
+            <Marker
+              key={`label-${city.name}`}
+              position={[city.lat, city.lng]}
+              icon={labelIcon}
+              interactive={false}
+              zIndexOffset={-1000}
+            />
+          );
+        })}
       </MapContainer>
 
       {/* bottom-right controls */}
