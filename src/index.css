@@ -43,6 +43,10 @@
   html, body, #root {
     min-height: 100dvh;
   }
+  html {
+    background: hsl(var(--background));
+    overscroll-behavior-y: none;
+  }
   body {
     @apply bg-background text-foreground font-body antialiased;
     background-image:

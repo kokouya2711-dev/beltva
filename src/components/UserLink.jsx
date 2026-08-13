@@ -11,7 +11,7 @@ export default function UserLink({ user, size = "sm", showName = true, className
   const flag = flagEmoji(user.country);
   const sizeCls = size === "lg" ? "w-12 h-12" : size === "md" ? "w-10 h-10" : "w-8 h-8";
   const textCls = size === "lg" ? "text-base" : "text-sm";
-  const badgeCls = size === "lg" ? "w-5 h-5 text-[11px]" : size === "md" ? "w-4 h-4 text-[9px]" : "w-3.5 h-3.5 text-[8px]";
+  const flagCls = size === "lg" ? "w-4 h-4 text-[18px] rounded-[4px]" : size === "md" ? "w-3.5 h-3.5 text-[16px] rounded-[3px]" : "w-3 h-3 text-[14px] rounded-[3px]";
   return (
     <Link to={`/profile/${user.id}`} className={`flex items-center gap-2 min-w-0 group ${className}`}>
       <div className={`relative shrink-0`}>
@@ -21,7 +21,7 @@ export default function UserLink({ user, size = "sm", showName = true, className
           <div className={`${sizeCls} rounded-full bg-secondary flex items-center justify-center font-bold text-xs`}>{initials}</div>
         )}
         {flag && (
-          <span className={`absolute -bottom-0.5 -right-0.5 ${badgeCls} rounded-full bg-card border-2 border-card flex items-center justify-center leading-none overflow-hidden`}>
+          <span className={`absolute -bottom-0.5 -right-0.5 ${flagCls} flex items-center justify-center leading-none overflow-hidden shadow-md`}>
             <span className="leading-none">{flag}</span>
           </span>
         )}
