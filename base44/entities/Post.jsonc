@@ -35,6 +35,10 @@
       "type": "boolean",
       "default": false,
       "title": "\u533f\u540d\u6295\u7a3f"
+    },
+    "media_url": {
+      "type": "string",
+      "title": "\u753b\u50cf\u30fb\u52d5\u753bURL"
     }
   },
   "required": [

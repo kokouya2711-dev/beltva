@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Image } from "@/components/ui/image";
 import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
 import UserLink from "@/components/UserLink";
@@ -88,6 +89,16 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
       <div className="text-xs text-muted-foreground mb-3">{timeAgo(currentPost.created_date)}{currentPost.workout_type ? ` · ${tWorkout(currentPost.workout_type)}` : ""}</div>
 
       <div className="text-sm whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
+
+      {currentPost.media_url && (
+        <div className="mb-3 rounded-lg overflow-hidden">
+          {currentPost.media_url.match(/\.(mp4|mov|webm|avi)$/i) ? (
+            <video src={currentPost.media_url} controls className="w-full max-h-80 object-cover" />
+          ) : (
+            <Image src={currentPost.media_url} className="w-full max-h-80" fittingType="fill" />
+          )}
+        </div>
+      )}
 
       <div className="flex items-center gap-4 text-sm">
         <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { X, Plus, Loader2 } from "lucide-react";
+import { X, Plus, Loader2, Image as ImageIcon } from "lucide-react";
+import { Image } from "@/components/ui/image";
 import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
 import WorkoutSelect from "@/components/WorkoutSelect";
 import { useT } from "@/lib/i18n";
@@ -11,11 +12,25 @@ const POST_MODE_KEY = "beltva:post_mode";
 export default function CreatePostDialog({ onClose, onSaved }) {
   const t = useT();
   const tCat = useTCategory();
+  const fileRef = useRef(null);
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("シェア");
   const [workoutType, setWorkoutType] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(() => localStorage.getItem(POST_MODE_KEY) === "anonymous");
   const [submitting, setSubmitting] = useState(false);
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFileSelect(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setMediaUrl(file_url);
+    } catch {}
+    setUploading(false);
+  }
 
   function selectMode(anon) {
     setIsAnonymous(anon);
@@ -30,6 +45,7 @@ export default function CreatePostDialog({ onClose, onSaved }) {
       category,
       workout_type: workoutType || undefined,
       is_anonymous: isAnonymous,
+      media_url: mediaUrl || undefined,
       likes: 0,
       comments_count: 0
     });
@@ -66,6 +82,31 @@ export default function CreatePostDialog({ onClose, onSaved }) {
         <div>
           <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.body")}</label>
           <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder={t("post.bodyPlaceholder")} className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm mt-1.5 outline-none focus:border-primary" />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.media")}</label>
+          {mediaUrl ? (
+            <div className="relative mt-1.5 rounded-lg overflow-hidden">
+              {mediaUrl.match(/\.(mp4|mov|webm|avi)$/i) ? (
+                <video src={mediaUrl} controls className="w-full max-h-48 object-cover" />
+              ) : (
+                <Image src={mediaUrl} className="w-full max-h-48" fittingType="fill" />
+              )}
+              <button onClick={() => setMediaUrl("")} className="absolute top-2 right-2 bg-black/70 rounded-full p-1">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="mt-1.5 w-full flex items-center justify-center gap-2 border border-dashed border-border rounded-lg py-4 text-sm text-muted-foreground hover:border-primary hover:text-primary transition"
+            >
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
+              {uploading ? t("post.uploading") : t("post.addMedia")}
+            </button>
+          )}
+          <input ref={fileRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
         </div>
         <div>
           <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.bodyPart")}</label>
