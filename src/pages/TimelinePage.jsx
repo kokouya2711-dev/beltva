@@ -78,12 +78,12 @@ export default function TimelinePage() {
 
       <div className="grid lg:grid-cols-[1fr_280px] gap-6">
         <div className="min-w-0">
-          <div className="flex gap-4 mb-1 overflow-x-auto no-scrollbar border-b border-border">
+          <div className="flex gap-5 mb-1 overflow-x-auto no-scrollbar border-b border-border">
             {FILTER_TABS.map((c) => {
               const active = filter === c;
               const label = c === "all" ? t("common.all") : c === "latest" ? t("post.tab_latest") : c === "popular" ? t("post.tab_popular") : c === "following" ? t("post.tab_following") : tCat(c);
               return (
-                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-sm py-2.5 border-b-2 transition whitespace-nowrap ${active ? "border-primary text-primary font-semibold" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{label}</button>
+                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-[17px] py-3 border-b-2 transition whitespace-nowrap ${active ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground font-medium"}`}>{label}</button>
               );
             })}
           </div>

@@ -166,7 +166,7 @@ export default function PostDetail() {
           <button onClick={toggleLike} className={`flex items-center gap-1.5 text-sm transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
             <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
           </button>
-          <span className="text-sm text-muted-foreground">{fmtNum(comments.length)} {t("post.commentCount").replace("{n}", "").trim()}</span>
+          <span className="text-sm text-muted-foreground">{t("post.commentCount").replace("{n}", fmtNum(comments.length))}</span>
         </div>
 
         {/* Likers preview — BELTVA original */}
