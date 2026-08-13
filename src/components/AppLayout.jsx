@@ -139,31 +139,37 @@ function AppLayoutInner() {
         </div>
       </aside>
 
-      {/* Mobile top bar */}
-      <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2">
-        <div className="flex items-center gap-2">
-          <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />
-          <span className="font-semibold tracking-tight text-sm">BELTVA</span>
-        </div>
-        <div className="flex items-center gap-1">
+      {/* Mobile top bar — minimal on timeline, full on other pages */}
+      {location.pathname === "/timeline" ? (
+        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-end px-4 py-2">
           <NotificationsBell meId={me?.id} />
-          {isActive ? (
-            <button
-              onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
-              className="flex items-center gap-1.5 bg-accent text-accent-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
-            >
-              <Dumbbell className="w-3.5 h-3.5" /> {isPaused ? `⏸ ${mm}:${ss}` : `${mm}:${ss}`}
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowGoLive(true)}
-              className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
-            >
-              <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
-            </button>
-          )}
-        </div>
-      </header>
+        </header>
+      ) : (
+        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-2">
+            <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />
+            <span className="font-semibold tracking-tight text-sm">BELTVA</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <NotificationsBell meId={me?.id} />
+            {isActive ? (
+              <button
+                onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
+                className="flex items-center gap-1.5 bg-accent text-accent-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
+              >
+                <Dumbbell className="w-3.5 h-3.5" /> {isPaused ? `⏸ ${mm}:${ss}` : `${mm}:${ss}`}
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowGoLive(true)}
+                className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
+              >
+                <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
+              </button>
+            )}
+          </div>
+        </header>
+      )}
 
       {/* Main content */}
       <main className={`flex-1 min-w-0 md:pb-8 ${keyboardOpen ? "pb-4" : "pb-28"}`}>

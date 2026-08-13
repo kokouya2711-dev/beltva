@@ -61,9 +61,9 @@ export default function PostDetail() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-6 space-y-4">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition">
-        <ArrowLeft className="w-4 h-4" /> {t("common.back")}
+    <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-6 pb-32 space-y-4">
+      <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition">
+        <ArrowLeft className="w-5 h-5" />
       </button>
 
       <PostCard post={post} meId={meId} />
@@ -77,6 +77,7 @@ export default function PostDetail() {
             placeholder={t("post.commentPlaceholder")}
             className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary"
             onKeyDown={(e) => e.key === "Enter" && addComment()}
+            onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ behavior: "smooth", block: "center" }), 300)}
           />
           <button onClick={addComment} disabled={posting || !draft.trim()} className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary text-primary-foreground disabled:opacity-40">
             {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}

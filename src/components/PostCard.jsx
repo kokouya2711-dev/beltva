@@ -18,7 +18,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
   const fmtNum = useFormatNumber();
   const [likes, setLikes] = useState(post.likes || 0);
   const [likers, setLikers] = useState(initialLikers);
-  const [showLikers, setShowLikers] = useState(false);
+
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
   const [previewComments, setPreviewComments] = useState(initialComments.slice(0, 2));
   const [showEdit, setShowEdit] = useState(false);
@@ -71,7 +71,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
             <span className="text-sm font-medium">{t("post.anonymousLabel")}</span>
           </div>
         ) : (
-          <UserLink user={author} size="md" className="flex-1" />
+          <UserLink user={author} size="lg" className="flex-1" />
         )}
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
         {isOwner && (
@@ -98,22 +98,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialCommen
         </Link>
       </div>
 
-      {likes > 0 && (
-        <div className="mt-2 flex items-center gap-2">
-          <div className="flex -space-x-2">
-            {likers.slice(0, 5).map((l) => (
-              <LikerAvatar key={l.id} userId={l.created_by_id} />
-            ))}
-          </div>
-          <button onClick={() => setShowLikers((v) => !v)} className="text-xs text-muted-foreground hover:text-foreground transition">
-            {showLikers ? t("common.close") : t("post.likersCount").replace("{n}", fmtNum(likes))}
-          </button>
-        </div>
-      )}
-
-      {showLikers && (
-        <LikersList likers={likers} />
-      )}
 
       <div className="mt-3 pt-3 border-t border-border">
         {previewComments.length === 0 ? (
@@ -169,53 +153,4 @@ function CommentName({ userId }) {
   const [user, setUser] = useState(null);
   useEffect(() => { fetchUser(userId).then(setUser).catch(() => {}); }, [userId]);
   return <span className="font-medium">{displayName(user)}</span>;
-}
-
-function LikerAvatar({ userId }) {
-  const [user, setUser] = useState(null);
-  useEffect(() => { fetchUser(userId).then(setUser).catch(() => {}); }, [userId]);
-  const name = displayName(user);
-  return (
-    <Link to={user ? `/profile/${user.id}` : "#"} className="w-6 h-6 rounded-full bg-secondary border-2 border-card overflow-hidden flex items-center justify-center text-[9px] font-bold shrink-0 hover:z-10 relative">
-      {user?.avatar_url ? (
-        <img src={user.avatar_url} className="w-full h-full object-cover" />
-      ) : (
-        name.slice(0, 2).toUpperCase()
-      )}
-    </Link>
-  );
-}
-
-function LikersList({ likers }) {
-  const timeAgo = useTimeAgo();
-  const [users, setUsers] = useState({});
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    (async () => {
-      const ids = [...new Set(likers.map((l) => l.created_by_id))];
-      const us = await Promise.all(ids.map((id) => fetchUser(id).catch(() => null)));
-      const m = {};
-      us.forEach((u) => { if (u) m[u.id] = u; });
-      setUsers(m);
-      setLoading(false);
-    })();
-  }, [likers]);
-  if (loading) return <div className="mt-2 flex justify-center py-2"><Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /></div>;
-  return (
-    <div className="mt-2 pt-2 border-t border-border space-y-2">
-      {likers.map((l) => {
-        const u = users[l.created_by_id];
-        const name = displayName(u);
-        return (
-          <Link key={l.id} to={u ? `/profile/${u.id}` : "#"} className="flex items-center gap-2 hover:bg-secondary/40 rounded-lg px-1.5 py-1 transition">
-            <div className="w-7 h-7 rounded-full bg-secondary overflow-hidden flex items-center justify-center text-[10px] font-bold shrink-0">
-              {u?.avatar_url ? <img src={u.avatar_url} className="w-full h-full object-cover" /> : name.slice(0, 2).toUpperCase()}
-            </div>
-            <span className="text-sm truncate">{name}</span>
-            <span className="text-[10px] text-muted-foreground ml-auto">{timeAgo(l.created_date)}</span>
-          </Link>
-        );
-      })}
-    </div>
-  );
 }
