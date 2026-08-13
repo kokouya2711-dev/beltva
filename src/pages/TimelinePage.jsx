@@ -41,6 +41,13 @@ export default function TimelinePage() {
 
   useEffect(() => { load(); }, []);
 
+  // Listen for create-post trigger from AppLayout top bar (mobile)
+  useEffect(() => {
+    const handler = () => setShowCreate(true);
+    window.addEventListener("timeline-create-post", handler);
+    return () => window.removeEventListener("timeline-create-post", handler);
+  }, []);
+
   // Lazy-load follow IDs only when "following" scope is selected
   useEffect(() => {
     if (scope !== "following" || !me || followIds) return;
@@ -63,14 +70,7 @@ export default function TimelinePage() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
-      {/* Mobile: fixed +投稿 button in top bar, left of notification bell */}
-      <button
-        onClick={() => setShowCreate(true)}
-        className="md:hidden fixed top-2 right-14 z-40 flex items-center gap-1 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg shadow-lg"
-      >
-        <Plus className="w-4 h-4" /> {t("post.create")}
-      </button>
-      {/* Desktop: +投稿 button at top right */}
+      {/* Desktop: +投稿 button at top right (mobile button is in AppLayout top bar) */}
       <div className="hidden md:flex justify-end mb-5">
         <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">
           <Plus className="w-4 h-4" /> {t("post.create")}

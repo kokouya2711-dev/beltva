@@ -7,7 +7,8 @@ import {
   Send,
   MessageSquare,
   User,
-  Dumbbell
+  Dumbbell,
+  Plus
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
@@ -141,8 +142,14 @@ function AppLayoutInner() {
 
       {/* Mobile top bar — minimal on timeline, full on other pages */}
       {location.pathname === "/timeline" ? (
-        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-end px-4 py-2">
+        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-end px-4 py-2 gap-2">
           <NotificationsBell meId={me?.id} />
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("timeline-create-post"))}
+            className="flex items-center gap-1 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg shadow-lg"
+          >
+            <Plus className="w-4 h-4" /> {t("post.create")}
+          </button>
         </header>
       ) : (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2">
