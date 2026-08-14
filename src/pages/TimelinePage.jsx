@@ -4,17 +4,15 @@ import PostCard from "@/components/PostCard";
 import CreatePostDialog from "@/components/CreatePostDialog";
 import SuggestedUsers from "@/components/SuggestedUsers";
 import { Plus, Loader2, MessageSquare } from "lucide-react";
-import { POST_CATEGORIES } from "@/lib/community";
 import { useT } from "@/lib/i18n";
-import { useTCategory } from "@/lib/i18nHelpers";
+import { useTimelineFilter } from "@/lib/timelineFilterContext";
 
 export default function TimelinePage() {
   const t = useT();
-  const tCat = useTCategory();
+  const { filter, setFilter } = useTimelineFilter();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [filter, setFilter] = useState("all");
   const [me, setMe] = useState(null);
   const [followIds, setFollowIds] = useState(null);
   const [likesByPost, setLikesByPost] = useState({});
@@ -66,8 +64,6 @@ export default function TimelinePage() {
     filtered = [...filtered].sort((a, b) => ((b.likes || 0) + (b.comments_count || 0)) - ((a.likes || 0) + (a.comments_count || 0)));
   }
 
-  const FILTER_TABS = ["all", "latest", "popular", "following", ...POST_CATEGORIES];
-
   return (
     <div className="px-2 md:px-4 max-w-2xl mx-auto">
       <div className="hidden md:flex justify-end mb-3">
@@ -78,16 +74,6 @@ export default function TimelinePage() {
 
       <div className="grid lg:grid-cols-[1fr_280px] gap-6">
         <div className="min-w-0">
-          <div className="flex gap-5 mb-1 overflow-x-auto no-scrollbar border-b border-border">
-            {FILTER_TABS.map((c) => {
-              const active = filter === c;
-              const label = c === "all" ? t("common.all") : c === "latest" ? t("post.tab_latest") : c === "popular" ? t("post.tab_popular") : c === "following" ? t("post.tab_following") : tCat(c);
-              return (
-                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-[17px] py-3 border-b-2 transition whitespace-nowrap ${active ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground font-medium"}`}>{label}</button>
-              );
-            })}
-          </div>
-
           {loading ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin" /></div>
           ) : filtered.length === 0 ? (
