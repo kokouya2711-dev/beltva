@@ -2,14 +2,16 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle, Pencil, Trash2 } from "lucide-react";
-import { Image } from "@/components/ui/image";
 import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
 import UserLink from "@/components/UserLink";
+import MediaGrid from "@/components/MediaGrid";
+import MediaViewer from "@/components/MediaViewer";
 import { useT } from "@/lib/i18n";
 import { useTCategory, useTWorkout, useTimeAgo, useFormatNumber } from "@/lib/i18nHelpers";
 import { fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
+import { getMediaUrls } from "@/lib/media";
 
 export default function PostCard({ post, meId, initialLikers = [] }) {
   const t = useT();
@@ -24,6 +26,8 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
   const [showEdit, setShowEdit] = useState(false);
   const [currentPost, setCurrentPost] = useState(post);
   const [author, setAuthor] = useState(post.created_by || null);
+  const [viewerIndex, setViewerIndex] = useState(null);
+  const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
     if (currentPost.is_anonymous || currentPost.created_by) return;
@@ -90,14 +94,11 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
 
       <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
-      {currentPost.media_url && (
-        <div className="mb-3 mx-4 rounded-xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-          {currentPost.media_url.match(/\.(mp4|mov|webm|avi)$/i) ? (
-            <video src={currentPost.media_url} controls className="w-full max-h-80 object-cover" />
-          ) : (
-            <Image src={currentPost.media_url} className="w-full max-h-80" fittingType="fill" />
-          )}
-        </div>
+      {mediaUrls.length > 0 && (
+        <MediaGrid mediaUrls={mediaUrls} onTap={(i) => setViewerIndex(i)} />
+      )}
+      {viewerIndex !== null && (
+        <MediaViewer mediaUrls={mediaUrls} startIndex={viewerIndex} onClose={() => setViewerIndex(null)} />
       )}
 
       <div className="flex items-center gap-4 text-sm" onClick={(e) => e.stopPropagation()}>

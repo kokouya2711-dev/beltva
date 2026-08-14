@@ -39,6 +39,11 @@
     "media_url": {
       "type": "string",
       "title": "\u753b\u50cf\u30fb\u52d5\u753bURL"
+    },
+    "media_urls": {
+      "type": "string",
+      "title": "\u30e1\u30c7\u30a3\u30a2URL\u4e00\u89a7",
+      "default": "[]"
     }
   },
   "required": [

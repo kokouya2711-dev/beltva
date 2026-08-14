@@ -2,8 +2,10 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Send, Loader2, Heart, X } from "lucide-react";
-import { Image } from "@/components/ui/image";
 import { CATEGORY_STYLE } from "@/lib/community";
+import MediaGrid from "@/components/MediaGrid";
+import MediaViewer from "@/components/MediaViewer";
+import { getMediaUrls } from "@/lib/media";
 import UserLink from "@/components/UserLink";
 import { useT } from "@/lib/i18n";
 import { useTCategory, useTWorkout, useTimeAgo, useFormatNumber } from "@/lib/i18nHelpers";
@@ -30,6 +32,7 @@ export default function PostDetail() {
   const [author, setAuthor] = useState(null);
   const [showLikers, setShowLikers] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(null);
   const inputBarRef = useRef(null);
 
   useEffect(() => {
@@ -74,6 +77,7 @@ export default function PostDetail() {
   }, []);
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
+  const mediaUrls = post ? getMediaUrls(post) : [];
   const liked = !!myLikeId;
   const style = CATEGORY_STYLE[post?.category] || CATEGORY_STYLE["シェア"];
 
@@ -151,14 +155,11 @@ export default function PostDetail() {
         <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{post.content}</div>
 
         {/* Media */}
-        {post.media_url && (
-          <div className="mb-3 rounded-xl overflow-hidden">
-            {post.media_url.match(/\.(mp4|mov|webm|avi)$/i) ? (
-              <video src={post.media_url} controls className="w-full max-h-96 object-cover" />
-            ) : (
-              <Image src={post.media_url} className="w-full max-h-96" fittingType="fill" />
-            )}
-          </div>
+        {mediaUrls.length > 0 && (
+          <MediaGrid mediaUrls={mediaUrls} onTap={(i) => setViewerIndex(i)} />
+        )}
+        {viewerIndex !== null && (
+          <MediaViewer mediaUrls={mediaUrls} startIndex={viewerIndex} onClose={() => setViewerIndex(null)} />
         )}
 
         {/* Likes & comments count */}
