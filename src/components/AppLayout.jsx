@@ -19,6 +19,7 @@ import { getGeolocation } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 
@@ -52,6 +53,7 @@ function AppLayoutInner() {
   const [showSimpleSession, setShowSimpleSession] = useState(false);
   const location = useLocation();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const headerHidden = useScrollDirection([location.pathname]);
 
   React.useEffect(() => {
     base44.auth.me().then(setMe).catch(() => {});
@@ -142,7 +144,7 @@ function AppLayoutInner() {
 
       {/* Mobile top bar — minimal on timeline, full on other pages, hidden on post detail */}
       {location.pathname === "/timeline" ? (
-        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-end px-4 py-2 gap-2">
+        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-end px-4 py-2 gap-2 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <NotificationsBell meId={me?.id} />
           <button
             onClick={() => window.dispatchEvent(new CustomEvent("timeline-create-post"))}
@@ -152,7 +154,7 @@ function AppLayoutInner() {
           </button>
         </header>
       ) : location.pathname.startsWith("/posts/") ? null : (
-        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2">
+        <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <div className="flex items-center gap-2">
             <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />
             <span className="font-semibold tracking-tight text-sm">BELTVA</span>
