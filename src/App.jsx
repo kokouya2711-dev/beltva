@@ -23,6 +23,7 @@ import FollowList from '@/pages/FollowList';
 import Messages from '@/pages/Messages';
 import Chat from '@/pages/Chat';
 import PostDetail from '@/pages/PostDetail';
+import LikersPage from '@/pages/LikersPage';
 import BlockedUsersPage from '@/pages/BlockedUsersPage';
 import TermsPage from '@/pages/TermsPage';
 import ContactPage from '@/pages/ContactPage';
@@ -78,6 +79,7 @@ const AuthenticatedApp = () => {
           <Route path="/messages" element={<Messages />} />
           <Route path="/messages/:conversationId" element={<Chat />} />
           <Route path="/posts/:id" element={<PostDetail />} />
+          <Route path="/posts/:id/likers" element={<LikersPage />} />
           <Route path="/blocked-users" element={<BlockedUsersPage />} />
           <Route path="/timeline-hide" element={<TimelineHidePage />} />
           <Route path="/terms" element={<TermsPage />} />

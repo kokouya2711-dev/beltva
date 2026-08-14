@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, flagEmoji, fetchUser } from "@/lib/profile";
 import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
@@ -8,7 +8,7 @@ import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
-import { Pencil, Mail, Loader2 } from "lucide-react";
+import { Pencil, Mail, Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Profile() {
@@ -16,6 +16,7 @@ export default function Profile() {
   const { lang } = useI18n();
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [me, setMe] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -52,6 +53,7 @@ export default function Profile() {
   if (!user) return <div className="text-center py-20 text-muted-foreground">{t("profile.notFound")}</div>;
 
   const isMe = me && me.id === id;
+  const fromLikers = location.state?.from === "likers";
   const name = displayName(user);
   const hobbies = parseHobbies(user.hobbies);
 
@@ -65,6 +67,14 @@ export default function Profile() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
+      {fromLikers && (
+        <div className="flex items-center gap-2">
+          <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-full hover:bg-secondary transition">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <span className="text-sm text-muted-foreground">{t("common.back")}</span>
+        </div>
+      )}
       {/* Header card */}
       <div className="glass rounded-3xl border border-border p-6 relative overflow-hidden">
         <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-primary/15 blur-3xl" />

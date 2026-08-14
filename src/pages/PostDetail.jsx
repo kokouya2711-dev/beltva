@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, Send, Loader2, Heart, X } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Heart } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
@@ -30,7 +30,6 @@ export default function PostDetail() {
   const [likers, setLikers] = useState([]);
   const [likes, setLikes] = useState(0);
   const [author, setAuthor] = useState(null);
-  const [showLikers, setShowLikers] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(null);
   const inputBarRef = useRef(null);
@@ -174,7 +173,7 @@ export default function PostDetail() {
 
         {/* Likers preview — BELTVA original */}
         {likers.length > 0 && (
-          <button onClick={() => setShowLikers(true)} className="w-full flex items-center gap-2 py-3 border-b border-border hover:opacity-80 transition text-left">
+          <button onClick={() => navigate(`/posts/${id}/likers`)} className="w-full flex items-center gap-2 py-3 border-b border-border hover:opacity-80 transition text-left">
             <div className="flex -space-x-2">
               {likers.slice(0, 6).map((l) => {
                 const u = users[l.created_by_id];
@@ -244,36 +243,7 @@ export default function PostDetail() {
         </div>
       </div>
 
-      {/* Likers modal — bottom sheet */}
-      {showLikers && (
-        <div className="fixed inset-0 z-50 flex items-end" onClick={() => setShowLikers(false)}>
-          <div className="absolute inset-0 bg-black/60" style={{ bottom: 'calc(56px + env(safe-area-inset-bottom))' }} />
-          <div
-            className="relative w-full glass border-t border-border rounded-t-2xl flex flex-col"
-            style={{ marginBottom: 'calc(56px + env(safe-area-inset-bottom))', maxHeight: '60vh' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-4 pb-2 shrink-0">
-              <h3 className="text-sm font-semibold">{t("post.likersCount").replace("{n}", likes)}</h3>
-              <button onClick={() => setShowLikers(false)} className="p-1 rounded-lg hover:bg-secondary">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="px-4 pb-4 overflow-y-auto no-scrollbar">
-              <div className="divide-y divide-border">
-                {likers.map((l) => {
-                  const u = users[l.created_by_id];
-                  return (
-                    <div key={l.id} className="py-2.5">
-                      {u ? <UserLink user={u} size="md" /> : <span className="text-sm text-muted-foreground">User</span>}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
