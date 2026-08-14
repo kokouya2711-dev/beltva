@@ -97,7 +97,12 @@ export default function TimelinePage() {
             </div>
           ) : (
             <div>
-              {filtered.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} />)}
+              {filtered.map((p, i) => (
+                <React.Fragment key={p.id}>
+                  <PostCard post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} />
+                  {i < filtered.length - 1 && <div className="-mx-2 md:-mx-4 h-[10px] bg-separator" />}
+                </React.Fragment>
+              ))}
             </div>
           )}
         </div>

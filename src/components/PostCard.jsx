@@ -64,7 +64,7 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
   }
 
   return (
-    <div className="pt-5 pb-5 border-b-[10px] border-secondary cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
+    <div className="pt-5 pb-5 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
       <div className="flex items-center gap-3 mb-2" onClick={(e) => e.stopPropagation()}>
         {currentPost.is_anonymous ? (
           <div className="flex items-center gap-2 flex-1">
