@@ -96,7 +96,7 @@ export default function TimelinePage() {
               <div className="text-sm">{filter === "following" ? t("post.noFollowingPosts") : t("post.emptyPrompt")}</div>
             </div>
           ) : (
-            <div className="space-y-7">
+            <div>
               {filtered.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} />)}
             </div>
           )}
