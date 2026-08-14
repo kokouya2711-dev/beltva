@@ -247,23 +247,29 @@ export default function PostDetail() {
       {/* Likers modal — bottom sheet */}
       {showLikers && (
         <div className="fixed inset-0 z-50 flex items-end" onClick={() => setShowLikers(false)}>
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="relative w-full glass border-t border-border rounded-t-2xl p-4 max-h-[60vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-3">
+          <div className="absolute inset-0 bg-black/60" style={{ bottom: 'calc(56px + env(safe-area-inset-bottom))' }} />
+          <div
+            className="relative w-full glass border-t border-border rounded-t-2xl flex flex-col"
+            style={{ marginBottom: 'calc(56px + env(safe-area-inset-bottom))', maxHeight: '60vh' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 pb-2 shrink-0">
               <h3 className="text-sm font-semibold">{t("post.likersCount").replace("{n}", likes)}</h3>
               <button onClick={() => setShowLikers(false)} className="p-1 rounded-lg hover:bg-secondary">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="divide-y divide-border">
-              {likers.map((l) => {
-                const u = users[l.created_by_id];
-                return (
-                  <div key={l.id} className="py-2.5">
-                    {u ? <UserLink user={u} size="md" /> : <span className="text-sm text-muted-foreground">User</span>}
-                  </div>
-                );
-              })}
+            <div className="px-4 pb-4 overflow-y-auto no-scrollbar">
+              <div className="divide-y divide-border">
+                {likers.map((l) => {
+                  const u = users[l.created_by_id];
+                  return (
+                    <div key={l.id} className="py-2.5">
+                      {u ? <UserLink user={u} size="md" /> : <span className="text-sm text-muted-foreground">User</span>}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
