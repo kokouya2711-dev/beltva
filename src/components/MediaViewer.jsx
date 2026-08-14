@@ -7,6 +7,7 @@ export default function MediaViewer({ mediaUrls, startIndex = 0, onClose }) {
   const scrollRef = useRef(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const scrollYRef = useRef(0);
 
   useEffect(() => {
     if (scrollRef.current && startIndex > 0) {
@@ -18,12 +19,20 @@ export default function MediaViewer({ mediaUrls, startIndex = 0, onClose }) {
     }
   }, []);
 
-  // Push history state so browser back closes the viewer instead of navigating away
+  // Push history state so browser back closes the viewer instead of navigating away.
+  // Save scroll position to restore it when the viewer closes (history.back can reset scroll).
   useEffect(() => {
+    scrollYRef.current = window.scrollY;
+    const prevRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
     window.history.pushState({ mediaViewer: true }, "");
     const onPopState = () => onCloseRef.current();
     window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+      window.history.scrollRestoration = prevRestoration;
+      requestAnimationFrame(() => window.scrollTo(0, scrollYRef.current));
+    };
   }, []);
 
   function handleClose() {
@@ -43,7 +52,7 @@ export default function MediaViewer({ mediaUrls, startIndex = 0, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[80] bg-black flex flex-col">
+    <div className="fixed inset-0 z-[80] bg-black flex flex-col" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center justify-between px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))]">
         <button onClick={handleClose} className="p-2 -ml-2 rounded-full hover:bg-white/10">
           <X className="w-6 h-6 text-white" />

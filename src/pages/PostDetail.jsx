@@ -123,15 +123,17 @@ export default function PostDetail() {
 
   return (
     <div>
-      {/* Header — back button only, no border */}
-      <div className="sticky top-0 z-20 glass px-3 py-1.5 flex items-center">
-        <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-lg text-foreground hover:bg-secondary transition">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-      </div>
+      {/* Floating back button — round, no header bar */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed left-3 z-30 w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-secondary transition"
+        style={{ top: 'calc(0.5rem + env(safe-area-inset-top))' }}
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
 
       {/* Content */}
-      <div className="max-w-2xl mx-auto px-3 pt-2" style={{ paddingBottom: "calc(120px + env(safe-area-inset-bottom))" }}>
+      <div className="max-w-2xl mx-auto px-3" style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top))', paddingBottom: 'calc(120px + env(safe-area-inset-bottom))' }}>
         {/* Poster info */}
         <div className="flex items-center justify-between mb-3">
           {post.is_anonymous ? (
