@@ -64,7 +64,7 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
   }
 
   return (
-    <div className="py-4 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
+    <div className="py-6 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
       <div className="flex items-center gap-3 mb-2" onClick={(e) => e.stopPropagation()}>
         {currentPost.is_anonymous ? (
           <div className="flex items-center gap-2 flex-1">
@@ -91,7 +91,7 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
       <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
       {currentPost.media_url && (
-        <div className="mb-3 rounded-xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="mb-3 mx-4 rounded-xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
           {currentPost.media_url.match(/\.(mp4|mov|webm|avi)$/i) ? (
             <video src={currentPost.media_url} controls className="w-full max-h-80 object-cover" />
           ) : (
