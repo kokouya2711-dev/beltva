@@ -140,7 +140,7 @@ function AppLayoutInner() {
         </div>
       </aside>
 
-      {/* Mobile top bar — minimal on timeline, full on other pages */}
+      {/* Mobile top bar — minimal on timeline, full on other pages, hidden on post detail */}
       {location.pathname === "/timeline" ? (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-end px-4 py-2 gap-2">
           <NotificationsBell meId={me?.id} />
@@ -151,7 +151,7 @@ function AppLayoutInner() {
             <Plus className="w-4 h-4" /> {t("post.create")}
           </button>
         </header>
-      ) : (
+      ) : location.pathname.startsWith("/posts/") ? null : (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2">
           <div className="flex items-center gap-2">
             <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />
