@@ -8,7 +8,8 @@ import MediaViewer from "@/components/MediaViewer";
 import { getMediaUrls } from "@/lib/media";
 import UserLink from "@/components/UserLink";
 import { useT } from "@/lib/i18n";
-import { useTCategory, useTWorkout, useTimeAgo, useFormatNumber } from "@/lib/i18nHelpers";
+import { useTCategory, useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
+import { formatAbsoluteTime } from "@/lib/timeFormat";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 
@@ -16,7 +17,6 @@ export default function PostDetail() {
   const t = useT();
   const tCat = useTCategory();
   const tWorkout = useTWorkout();
-  const timeAgo = useTimeAgo();
   const fmtNum = useFormatNumber();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -144,7 +144,7 @@ export default function PostDetail() {
           ) : (
             <UserLink user={author} size="lg" />
           )}
-          <span className="text-xs text-muted-foreground">{timeAgo(post.created_date)}</span>
+          <span className="text-xs text-muted-foreground">{formatAbsoluteTime(post.created_date)}</span>
         </div>
 
         {/* Category + workout type */}
@@ -206,7 +206,7 @@ export default function PostDetail() {
                     <div className="flex-1 min-w-0">
                       <div className="text-xs">
                         <Link to={u ? `/profile/${u.id}` : "#"} className="font-medium hover:text-primary">{name}</Link>
-                        <span className="text-muted-foreground ml-1.5">{timeAgo(c.created_date)}</span>
+                        <span className="text-muted-foreground ml-1.5">{formatAbsoluteTime(c.created_date)}</span>
                       </div>
                       <div className="text-sm mt-0.5 whitespace-pre-wrap break-words">{c.content}</div>
                     </div>

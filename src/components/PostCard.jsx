@@ -8,7 +8,8 @@ import UserLink from "@/components/UserLink";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
 import { useT } from "@/lib/i18n";
-import { useTCategory, useTWorkout, useTimeAgo, useFormatNumber } from "@/lib/i18nHelpers";
+import { useTCategory, useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
+import { formatPostListTime } from "@/lib/timeFormat";
 import { fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 import { getMediaUrls } from "@/lib/media";
@@ -17,7 +18,6 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
   const t = useT();
   const tCat = useTCategory();
   const tWorkout = useTWorkout();
-  const timeAgo = useTimeAgo();
   const fmtNum = useFormatNumber();
   const navigate = useNavigate();
   const [likes, setLikes] = useState(post.likes || 0);
@@ -90,7 +90,7 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
           </div>
         )}
       </div>
-      <div className="text-xs text-muted-foreground mb-2">{timeAgo(currentPost.created_date)}{currentPost.workout_type ? ` · ${tWorkout(currentPost.workout_type)}` : ""}</div>
+      <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` · ${tWorkout(currentPost.workout_type)}` : ""}</div>
 
       <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
