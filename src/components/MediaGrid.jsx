@@ -73,9 +73,9 @@ export default function MediaGrid({ mediaUrls, onTap }) {
   else cols = 3;
 
   return (
-    <div className="mb-3 grid gap-0.5 rounded-xl overflow-hidden" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className="mb-3 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
       {mediaUrls.slice(0, 9).map((url, i) => (
-        <div key={i} className="relative aspect-square cursor-pointer" onClick={(e) => { e.stopPropagation(); onTap?.(i); }}>
+        <div key={i} className="relative aspect-square cursor-pointer rounded-lg overflow-hidden" onClick={(e) => { e.stopPropagation(); onTap?.(i); }}>
           {isVideoUrl(url) ? (
             <>
               <video src={url} className="w-full h-full object-cover" muted preload="metadata" />
