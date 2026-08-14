@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Image } from "@/components/ui/image";
 import { Play } from "lucide-react";
 import { isVideoUrl } from "@/lib/media";
 
@@ -73,20 +72,20 @@ export default function MediaGrid({ mediaUrls, onTap }) {
   else cols = 3;
 
   return (
-    <div className="mb-3 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className="mb-3 grid gap-1.5 w-fit max-w-full" style={{ gridTemplateColumns: `repeat(${cols}, 80px)` }}>
       {mediaUrls.slice(0, 9).map((url, i) => (
         <div key={i} className="relative aspect-square cursor-pointer rounded-lg overflow-hidden" onClick={(e) => { e.stopPropagation(); onTap?.(i); }}>
           {isVideoUrl(url) ? (
             <>
               <video src={url} className="w-full h-full object-cover" muted preload="metadata" />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
-                  <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+                <div className="w-7 h-7 rounded-full bg-black/50 flex items-center justify-center">
+                  <Play className="w-3.5 h-3.5 text-white fill-white ml-0.5" />
                 </div>
               </div>
             </>
           ) : (
-            <Image src={url} className="w-full h-full" fittingType="fill" />
+            <img src={url} className="w-full h-full object-cover" alt="" loading="lazy" />
           )}
         </div>
       ))}
