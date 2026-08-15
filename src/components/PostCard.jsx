@@ -107,7 +107,10 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             <span className="text-sm font-medium">{t("post.anonymousLabel")}</span>
           </div>
         ) : (
-          <UserLink user={author} size="lg" className="flex-1" />
+          <>
+            <UserLink user={author} size="lg" />
+            <div className="flex-1" />
+          </>
         )}
         <span className={`text-xs px-2.5 py-1 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
         <span className="w-1 shrink-0" />

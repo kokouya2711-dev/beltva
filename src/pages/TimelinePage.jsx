@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import PostCard from "@/components/PostCard";
 import CreatePostDialog from "@/components/CreatePostDialog";
@@ -6,20 +6,26 @@ import SuggestedUsers from "@/components/SuggestedUsers";
 import { Plus, Loader2, MessageSquare } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useTimelineFilter } from "@/lib/timelineFilterContext";
+import { saveTimelineCache, getTimelineCache, getTimelineScrollY } from "@/lib/timelineScrollCache";
 
 export default function TimelinePage() {
   const t = useT();
   const { filter, setFilter } = useTimelineFilter();
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cached = getTimelineCache();
+  const [posts, setPosts] = useState(cached?.posts || []);
+  const [loading, setLoading] = useState(!cached);
   const [showCreate, setShowCreate] = useState(false);
-  const [me, setMe] = useState(null);
-  const [followIds, setFollowIds] = useState(null);
-  const [likesByPost, setLikesByPost] = useState({});
-  const [mutedIds, setMutedIds] = useState(null);
-  const [blockedIds, setBlockedIds] = useState(null);
-  const [hiddenPostIds, setHiddenPostIds] = useState(null);
-  const [favMap, setFavMap] = useState({});
+  const [me, setMe] = useState(cached?.me || null);
+  const [followIds, setFollowIds] = useState(cached?.followIds || null);
+  const [likesByPost, setLikesByPost] = useState(cached?.likesByPost || {});
+  const [mutedIds, setMutedIds] = useState(cached?.mutedIds || null);
+  const [blockedIds, setBlockedIds] = useState(cached?.blockedIds || null);
+  const [hiddenPostIds, setHiddenPostIds] = useState(cached?.hiddenPostIds || null);
+  const [favMap, setFavMap] = useState(cached?.favMap || {});
+
+  // Keep latest state in a ref so the unmount cleanup always saves current data
+  const stateRef = useRef({ posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, followIds });
+  stateRef.current = { posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, followIds };
 
   async function load() {
     const [ps, meUser, allLikes] = await Promise.all([
@@ -52,7 +58,16 @@ export default function TimelinePage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    if (cached) {
+      // Restore scroll position after render
+      requestAnimationFrame(() => window.scrollTo(0, getTimelineScrollY()));
+    } else {
+      load();
+    }
+    // Save state + scroll position on unmount (navigating to post detail, profile, etc.)
+    return () => saveTimelineCache(stateRef.current);
+  }, []);
 
   useEffect(() => {
     const handler = () => setShowCreate(true);
