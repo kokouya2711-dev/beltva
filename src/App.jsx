@@ -36,6 +36,7 @@ import SupportPage from '@/pages/SupportPage';
 import TimelineHidePage from '@/pages/TimelineHidePage';
 import FavoritesPage from '@/pages/FavoritesPage';
 import MutedUsersPage from '@/pages/MutedUsersPage';
+import NotificationsPage from '@/pages/NotificationsPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -86,6 +87,7 @@ const AuthenticatedApp = () => {
           <Route path="/timeline-hide" element={<TimelineHidePage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/muted-users" element={<MutedUsersPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
