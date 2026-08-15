@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, Send, Loader2, Heart } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Heart, Reply, X } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
@@ -37,6 +37,9 @@ export default function PostDetail() {
   const [isFavorited, setIsFavorited] = useState(false);
   const [favId, setFavId] = useState(null);
   const [bounceKey, setBounceKey] = useState(0);
+  const [commentLikers, setCommentLikers] = useState({});
+  const [commentBounceKey, setCommentBounceKey] = useState({});
+  const [replyTo, setReplyTo] = useState(null);
   const inputBarRef = useRef(null);
 
   useEffect(() => {
@@ -63,6 +66,15 @@ export default function PostDetail() {
       if (me?.id && p?.id) {
         const fs = await base44.entities.Favorite.filter({ post_id: p.id, created_by_id: me.id }).catch(() => []);
         if (fs.length) { setIsFavorited(true); setFavId(fs[0].id); }
+      }
+      // Fetch current user's likes for each comment
+      if (me?.id && cs.length) {
+        const myCLikes = await Promise.all(
+          cs.map(c => base44.entities.Like.filter({ comment_id: c.id, created_by_id: me.id }).catch(() => []))
+        );
+        const clMap = {};
+        cs.forEach((c, i) => { if (myCLikes[i].length) clMap[c.id] = myCLikes[i][0].id; });
+        setCommentLikers(clMap);
       }
       setLoading(false);
     })();
@@ -112,13 +124,46 @@ export default function PostDetail() {
   async function addComment() {
     if (!draft.trim() || !post) return;
     setPosting(true);
-    const c = await base44.entities.Comment.create({ post_id: id, content: draft.trim(), likes: 0 });
+    const parentCommentId = replyTo?.id || null;
+    const c = await base44.entities.Comment.create({ post_id: id, content: draft.trim(), likes: 0, parent_comment_id: parentCommentId });
     setComments((cs) => [c, ...cs]);
     setPost((p) => p ? { ...p, comments_count: (p.comments_count || 0) + 1 } : p);
     setDraft("");
+    setReplyTo(null);
     setPosting(false);
     base44.entities.Post.update(id, { comments_count: (post.comments_count || 0) + 1 }).catch(() => {});
-    if (post.created_by_id && post.created_by_id !== meId) notify(post.created_by_id, meId, "comment", `${t("post.commentPlaceholder")}: ${draft.trim().slice(0, 30)}`, id).catch(() => {});
+    // Notify post owner (not self)
+    if (post.created_by_id && post.created_by_id !== meId) {
+      notify(post.created_by_id, meId, "comment", t("notif.commented"), id, id).catch(() => {});
+    }
+    // Notify parent comment owner (not self, not post owner)
+    if (parentCommentId) {
+      const parent = comments.find(cc => cc.id === parentCommentId);
+      if (parent?.created_by_id && parent.created_by_id !== meId && parent.created_by_id !== post.created_by_id) {
+        notify(parent.created_by_id, meId, "comment_reply", t("notif.replied"), parentCommentId, id).catch(() => {});
+      }
+    }
+  }
+
+  async function toggleCommentLike(comment) {
+    if (!meId) return;
+    const existingId = commentLikers[comment.id];
+    if (existingId) {
+      setCommentLikers(prev => { const n = { ...prev }; delete n[comment.id]; return n; });
+      setComments(arr => arr.map(c => c.id === comment.id ? { ...c, likes: Math.max(0, (c.likes || 0) - 1) } : c));
+      base44.entities.Like.delete(existingId).catch(() => {});
+      base44.entities.Comment.update(comment.id, { likes: Math.max(0, (comment.likes || 0) - 1) }).catch(() => {});
+    } else {
+      const vibrated = haptic(30);
+      if (!vibrated) setCommentBounceKey(prev => ({ ...prev, [comment.id]: (prev[comment.id] || 0) + 1 }));
+      const rec = await base44.entities.Like.create({ comment_id: comment.id });
+      setCommentLikers(prev => ({ ...prev, [comment.id]: rec.id }));
+      setComments(arr => arr.map(c => c.id === comment.id ? { ...c, likes: (c.likes || 0) + 1 } : c));
+      base44.entities.Comment.update(comment.id, { likes: (comment.likes || 0) + 1 }).catch(() => {});
+      if (comment.created_by_id && comment.created_by_id !== meId) {
+        notify(comment.created_by_id, meId, "comment_like", t("notif.commentLiked"), comment.id, post.id).catch(() => {});
+      }
+    }
   }
 
   async function toggleFavorite() {
@@ -242,6 +287,10 @@ export default function PostDetail() {
               {comments.map((c) => {
                 const u = users[c.created_by_id];
                 const name = displayName(u);
+                const cLiked = !!commentLikers[c.id];
+                const cBounceKey = commentBounceKey[c.id] || 0;
+                const parent = c.parent_comment_id ? comments.find(pc => pc.id === c.parent_comment_id) : null;
+                const parentUser = parent ? users[parent.created_by_id] : null;
                 return (
                   <div key={c.id} className="py-3 flex gap-2.5">
                     <Link to={u ? `/profile/${u.id}` : "#"} className="w-8 h-8 rounded-full bg-secondary overflow-hidden flex items-center justify-center text-[10px] font-bold shrink-0">
@@ -252,7 +301,23 @@ export default function PostDetail() {
                         <Link to={u ? `/profile/${u.id}` : "#"} className="font-medium hover:text-primary">{name}</Link>
                         <span className="text-muted-foreground ml-1.5">{formatAbsoluteTime(c.created_date)}</span>
                       </div>
+                      {parent && (
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
+                          <Reply className="w-3 h-3 inline mr-1 -mt-0.5" />
+                          {parentUser ? `@${displayName(parentUser)}` : ""}
+                        </div>
+                      )}
                       <div className="text-sm mt-0.5 whitespace-pre-wrap break-words">{c.content}</div>
+                      <div className="flex items-center gap-3 mt-1.5">
+                        <button onClick={() => toggleCommentLike(c)} className={`flex items-center gap-1 text-xs transition ${cLiked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
+                          <span key={cBounceKey} className={cBounceKey > 0 ? "heart-bounce" : "inline-flex"}>
+                            <Heart className={`w-3 h-3 ${cLiked ? "fill-current" : ""}`} />
+                          </span> {fmtNum(c.likes || 0)}
+                        </button>
+                        <button onClick={() => setReplyTo(c)} className="text-xs text-muted-foreground hover:text-foreground transition">
+                          <Reply className="w-3 h-3 inline mr-0.5 -mt-0.5" /> {t("post.reply")}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

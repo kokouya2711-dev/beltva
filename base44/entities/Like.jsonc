@@ -5,9 +5,11 @@
     "post_id": {
       "type": "string",
       "title": "\u6295\u7a3fID"
+    },
+    "comment_id": {
+      "type": "string",
+      "title": "\u30b3\u30e1\u30f3\u30c8ID"
     }
   },
-  "required": [
-    "post_id"
-  ]
+  "required": []
 }

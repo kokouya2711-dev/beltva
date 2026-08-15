@@ -30,6 +30,10 @@
     "target_type": {
       "type": "string",
       "title": "\u5bfe\u8c61\u7a2e\u5225"
+    },
+    "post_id": {
+      "type": "string",
+      "title": "\u6295\u7a3fID"
     }
   },
   "required": [

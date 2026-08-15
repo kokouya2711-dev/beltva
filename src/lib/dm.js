@@ -106,7 +106,7 @@ export async function updatePresence(meId, isTraining = false) {
   }
 }
 
-export async function notify(userId, actorId, type, text, targetId) {
+export async function notify(userId, actorId, type, text, targetId, postId) {
   if (!userId || userId === actorId) return;
   const [bl, mt, user] = await Promise.all([
     base44.entities.Block.filter({ blocker_id: userId, blocked_id: actorId }),
@@ -114,11 +114,11 @@ export async function notify(userId, actorId, type, text, targetId) {
     base44.entities.User.get(userId).catch(() => null)
   ]);
   if (bl.length || mt.length) return;
-  let prefs = { dm: true, follow: true, comment: true };
+  let prefs = { dm: true, follow: true, comment: true, like: true };
   if (user?.notif_prefs) { try { prefs = { ...prefs, ...JSON.parse(user.notif_prefs) }; } catch {} }
-  const key = type === "dm" ? "dm" : type === "follow" ? "follow" : "comment";
+  const key = type === "dm" ? "dm" : type === "follow" ? "follow" : (type === "like" || type === "comment_like") ? "like" : "comment";
   if (prefs[key] === false) return;
-  base44.entities.Notification.create({ user_id: userId, type, actor_id: actorId, text, read: false, target_id: targetId, target_type: type }).catch(() => {});
+  base44.entities.Notification.create({ user_id: userId, type, actor_id: actorId, text, read: false, target_id: targetId, target_type: type, post_id: postId || targetId }).catch(() => {});
 }
 
 export function parseReactions(s) {

@@ -14,6 +14,10 @@
       "type": "number",
       "default": 0,
       "title": "\u3044\u3044\u306d\u6570"
+    },
+    "parent_comment_id": {
+      "type": "string",
+      "title": "\u89aa\u30b3\u30e1\u30f3\u30c8ID"
     }
   },
   "required": [
