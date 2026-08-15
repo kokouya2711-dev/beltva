@@ -337,19 +337,32 @@ export default function PostDetail() {
           transition: "bottom 0.15s ease-out",
         }}
       >
-        <div className="flex gap-2 max-w-2xl mx-auto items-end">
-          <input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder={t("post.commentPlaceholder")}
-            className="flex-1 bg-secondary/80 border border-border rounded-full px-4 py-2 text-sm outline-none focus:border-primary"
-            onKeyDown={(e) => e.key === "Enter" && addComment()}
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
-          />
-          <button onClick={addComment} disabled={posting || !draft.trim()} className="flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground disabled:opacity-40 shrink-0">
-            {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-          </button>
+        <div className="max-w-2xl mx-auto">
+          {replyTo && (
+            <div className="flex items-center justify-between mb-1.5 px-2">
+              <span className="text-xs text-muted-foreground">
+                <Reply className="w-3 h-3 inline mr-1 -mt-0.5" />
+                {t("post.replyingTo")} {displayName(users[replyTo.created_by_id])}
+              </span>
+              <button onClick={() => setReplyTo(null)} className="p-1 rounded-full hover:bg-secondary">
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            </div>
+          )}
+          <div className="flex gap-2 items-end">
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder={replyTo ? t("post.replyPlaceholder") : t("post.commentPlaceholder")}
+              className="flex-1 bg-secondary/80 border border-border rounded-full px-4 py-2 text-sm outline-none focus:border-primary"
+              onKeyDown={(e) => e.key === "Enter" && addComment()}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+            <button onClick={addComment} disabled={posting || !draft.trim()} className="flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground disabled:opacity-40 shrink-0">
+              {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
       </div>
 
