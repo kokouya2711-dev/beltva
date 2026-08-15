@@ -106,18 +106,25 @@ export function formatDuration(sec, t) {
   return `${sec}秒`;
 }
 
+const _userCache = new Map();
+
 export async function fetchUser(id) {
+  if (!id) return null;
+  if (_userCache.has(id)) return _userCache.get(id);
   try {
-    return await base44.entities.User.get(id);
+    const u = await base44.entities.User.get(id);
+    _userCache.set(id, u);
+    return u;
   } catch {
     try {
       const recs = await base44.entities.WorkoutRecord.filter({ created_by_id: id }, "-created_date", 1);
-      if (recs[0]?.created_by) return recs[0].created_by;
+      if (recs[0]?.created_by) { _userCache.set(id, recs[0].created_by); return recs[0].created_by; }
     } catch {}
     try {
       const ps = await base44.entities.Post.filter({ created_by_id: id }, "-created_date", 1);
-      if (ps[0]?.created_by) return ps[0].created_by;
+      if (ps[0]?.created_by) { _userCache.set(id, ps[0].created_by); return ps[0].created_by; }
     } catch {}
+    _userCache.set(id, null);
     return null;
   }
 }

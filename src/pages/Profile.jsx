@@ -24,6 +24,7 @@ export default function Profile() {
   const [following, setFollowing] = useState(0);
   const [blocked, setBlocked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [favMap, setFavMap] = useState({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,6 +44,12 @@ export default function Profile() {
         setFollowers(fols.length);
         setFollowing(fols2.length);
         if (meUser && meUser.id !== id) setBlocked(await blockExists(meUser.id, id));
+        if (meUser) {
+          const myFavs = await base44.entities.Favorite.filter({ created_by_id: meUser.id }).catch(() => []);
+          const fMap = {};
+          myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
+          setFavMap(fMap);
+        }
       } finally {
         setLoading(false);
       }
@@ -143,7 +150,7 @@ export default function Profile() {
         {posts.length === 0 ? (
           <div className="glass rounded-2xl border border-border py-10 text-center text-sm text-muted-foreground">{t("profile.noPosts")}</div>
         ) : (
-          <div className="space-y-4">{posts.map((p) => <PostCard key={p.id} post={p} />)}</div>
+          <div className="space-y-4">{posts.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />)}</div>
         )}
       </div>
     </div>

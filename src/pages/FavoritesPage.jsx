@@ -50,7 +50,7 @@ export default function FavoritesPage() {
           {posts.map((p, i) => (
             <React.Fragment key={p.id}>
               <div className="relative">
-                <PostCard post={p} meId={me?.id} />
+                <PostCard post={p} meId={me?.id} initialFavorited={true} initialFavId={favs.find((f) => f.post_id === p.id)?.id ?? null} />
                 <button
                   onClick={() => removeFav(favs.find((f) => f.post_id === p.id)?.id, p.id)}
                   className="absolute top-2 right-2 z-10 text-xs px-2 py-1 rounded-lg bg-secondary/80 border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 transition"

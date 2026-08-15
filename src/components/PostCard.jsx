@@ -15,7 +15,7 @@ import { fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 import { getMediaUrls } from "@/lib/media";
 
-export default function PostCard({ post, meId, initialLikers = [] }) {
+export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId }) {
   const t = useT();
   const tCat = useTCategory();
   const tWorkout = useTWorkout();
@@ -28,8 +28,8 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
   const [currentPost, setCurrentPost] = useState(post);
   const [author, setAuthor] = useState(post.created_by || null);
   const [viewerIndex, setViewerIndex] = useState(null);
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [favId, setFavId] = useState(null);
+  const [isFavorited, setIsFavorited] = useState(initialFavorited ?? false);
+  const [favId, setFavId] = useState(initialFavId ?? null);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
@@ -38,12 +38,14 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
     fetchUser(currentPost.created_by_id).then(setAuthor).catch(() => {});
   }, [currentPost.created_by_id, currentPost.is_anonymous, currentPost.created_by]);
 
+  // Only fetch favorite status individually if not provided by parent (batch-fetched)
   useEffect(() => {
+    if (initialFavorited !== undefined) return;
     if (!meId || !currentPost.id) return;
     base44.entities.Favorite.filter({ post_id: currentPost.id, created_by_id: meId }).then((fs) => {
       if (fs.length) { setIsFavorited(true); setFavId(fs[0].id); }
     }).catch(() => {});
-  }, [meId, currentPost.id]);
+  }, [meId, currentPost.id, initialFavorited]);
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 

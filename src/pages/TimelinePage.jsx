@@ -19,6 +19,7 @@ export default function TimelinePage() {
   const [mutedIds, setMutedIds] = useState(null);
   const [blockedIds, setBlockedIds] = useState(null);
   const [hiddenPostIds, setHiddenPostIds] = useState(null);
+  const [favMap, setFavMap] = useState({});
 
   async function load() {
     const [ps, meUser, allLikes] = await Promise.all([
@@ -33,15 +34,19 @@ export default function TimelinePage() {
     setLikesByPost(lMap);
 
     if (meUser) {
-      const [mutes, blocksByMe, blocksOnMe, hiddenPosts] = await Promise.all([
+      const [mutes, blocksByMe, blocksOnMe, hiddenPosts, myFavs] = await Promise.all([
         base44.entities.Mute.filter({ muter_id: meUser.id }).catch(() => []),
         base44.entities.Block.filter({ blocker_id: meUser.id }).catch(() => []),
         base44.entities.Block.filter({ blocked_id: meUser.id }).catch(() => []),
         base44.entities.HiddenPost.filter({ created_by_id: meUser.id }).catch(() => []),
+        base44.entities.Favorite.filter({ created_by_id: meUser.id }).catch(() => []),
       ]);
       setMutedIds(new Set(mutes.map((m) => m.muted_id)));
       setBlockedIds(new Set([...blocksByMe.map((b) => b.blocked_id), ...blocksOnMe.map((b) => b.blocker_id)]));
       setHiddenPostIds(new Set(hiddenPosts.map((h) => h.post_id)));
+      const fMap = {};
+      myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
+      setFavMap(fMap);
     }
 
     setLoading(false);
@@ -107,7 +112,7 @@ export default function TimelinePage() {
             <div>
               {filtered.map((p, i) => (
                 <React.Fragment key={p.id}>
-                  <PostCard post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} />
+                  <PostCard post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />
                   {i < filtered.length - 1 && <div className="-mx-2 md:-mx-4 h-[10px] bg-separator" />}
                 </React.Fragment>
               ))}
