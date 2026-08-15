@@ -34,6 +34,8 @@ import MePage from '@/pages/MePage';
 import ActivityPage from '@/pages/ActivityPage';
 import SupportPage from '@/pages/SupportPage';
 import TimelineHidePage from '@/pages/TimelineHidePage';
+import FavoritesPage from '@/pages/FavoritesPage';
+import MutedUsersPage from '@/pages/MutedUsersPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -82,6 +84,8 @@ const AuthenticatedApp = () => {
           <Route path="/posts/:id/likers" element={<LikersPage />} />
           <Route path="/blocked-users" element={<BlockedUsersPage />} />
           <Route path="/timeline-hide" element={<TimelineHidePage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/muted-users" element={<MutedUsersPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />

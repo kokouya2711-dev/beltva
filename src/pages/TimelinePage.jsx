@@ -16,6 +16,9 @@ export default function TimelinePage() {
   const [me, setMe] = useState(null);
   const [followIds, setFollowIds] = useState(null);
   const [likesByPost, setLikesByPost] = useState({});
+  const [mutedIds, setMutedIds] = useState(null);
+  const [blockedIds, setBlockedIds] = useState(null);
+  const [hiddenPostIds, setHiddenPostIds] = useState(null);
 
   async function load() {
     const [ps, meUser, allLikes] = await Promise.all([
@@ -28,6 +31,19 @@ export default function TimelinePage() {
     const lMap = {};
     allLikes.forEach((l) => { (lMap[l.post_id] = lMap[l.post_id] || []).push(l); });
     setLikesByPost(lMap);
+
+    if (meUser) {
+      const [mutes, blocksByMe, blocksOnMe, hiddenPosts] = await Promise.all([
+        base44.entities.Mute.filter({ muter_id: meUser.id }).catch(() => []),
+        base44.entities.Block.filter({ blocker_id: meUser.id }).catch(() => []),
+        base44.entities.Block.filter({ blocked_id: meUser.id }).catch(() => []),
+        base44.entities.HiddenPost.filter({ created_by_id: meUser.id }).catch(() => []),
+      ]);
+      setMutedIds(new Set(mutes.map((m) => m.muted_id)));
+      setBlockedIds(new Set([...blocksByMe.map((b) => b.blocked_id), ...blocksOnMe.map((b) => b.blocker_id)]));
+      setHiddenPostIds(new Set(hiddenPosts.map((h) => h.post_id)));
+    }
+
     setLoading(false);
   }
 
@@ -55,6 +71,12 @@ export default function TimelinePage() {
 
   const SPECIAL_FILTERS = ["all", "latest", "popular", "following"];
   let filtered = posts;
+
+  // Filter out muted, blocked, and hidden posts
+  if (mutedIds) filtered = filtered.filter((p) => !mutedIds.has(p.created_by_id));
+  if (blockedIds) filtered = filtered.filter((p) => !blockedIds.has(p.created_by_id));
+  if (hiddenPostIds) filtered = filtered.filter((p) => !hiddenPostIds.has(p.id));
+
   if (filter === "following") {
     if (me && followIds) filtered = filtered.filter((p) => followIds.has(p.created_by_id) || p.created_by_id === me.id);
   } else if (!SPECIAL_FILTERS.includes(filter)) {

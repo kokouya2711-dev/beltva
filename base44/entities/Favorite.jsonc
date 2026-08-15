@@ -1,0 +1,13 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "title": "\u6295\u7a3fID"
+    }
+  },
+  "required": [
+    "post_id"
+  ]
+}

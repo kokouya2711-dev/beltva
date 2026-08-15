@@ -5,7 +5,7 @@ import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
   ShieldCheck, Ban, Dumbbell, Search, Check, Timer, MapPin,
-  EyeOff, Eye, UserSearch, Lock
+  EyeOff, Eye, UserSearch, Lock, VolumeX
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
 import { getGeolocation, reverseGeocodeCity, snapToCityGrid, forwardGeocodeCity } from "@/lib/workouts";
@@ -423,6 +423,7 @@ function PrivacySection() {
       {/* Link rows */}
       <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
         <Row icon={EyeOff} label={t("privacy.timelineHideTitle")} onClick={() => navigate("/timeline-hide")} />
+        <Row icon={VolumeX} label={t("settings.mutedUsers")} onClick={() => navigate("/muted-users")} />
         <Row icon={Ban} label={t("settings.blockedUsers")} onClick={() => navigate("/blocked-users")} />
       </div>
     </div>

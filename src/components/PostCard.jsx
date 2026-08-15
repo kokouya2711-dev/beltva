@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Pencil, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
+import PostMenu from "@/components/PostMenu";
 import UserLink from "@/components/UserLink";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
@@ -27,6 +28,8 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
   const [currentPost, setCurrentPost] = useState(post);
   const [author, setAuthor] = useState(post.created_by || null);
   const [viewerIndex, setViewerIndex] = useState(null);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favId, setFavId] = useState(null);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
@@ -34,6 +37,13 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
     if (!currentPost.created_by_id) return;
     fetchUser(currentPost.created_by_id).then(setAuthor).catch(() => {});
   }, [currentPost.created_by_id, currentPost.is_anonymous, currentPost.created_by]);
+
+  useEffect(() => {
+    if (!meId || !currentPost.id) return;
+    base44.entities.Favorite.filter({ post_id: currentPost.id, created_by_id: meId }).then((fs) => {
+      if (fs.length) { setIsFavorited(true); setFavId(fs[0].id); }
+    }).catch(() => {});
+  }, [meId, currentPost.id]);
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 
@@ -46,6 +56,28 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
     if (!window.confirm(t("post.deleteConfirm"))) return;
     await base44.entities.Post.delete(currentPost.id).catch(() => {});
     window.location.reload();
+  }
+
+  async function toggleFavorite() {
+    if (!meId) return;
+    if (isFavorited && favId) {
+      await base44.entities.Favorite.delete(favId).catch(() => {});
+      setIsFavorited(false);
+      setFavId(null);
+    } else {
+      const rec = await base44.entities.Favorite.create({ post_id: currentPost.id });
+      setIsFavorited(true);
+      setFavId(rec.id);
+    }
+  }
+
+  async function sharePost() {
+    const url = `${window.location.origin}/posts/${currentPost.id}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "BELTVA", text: currentPost.content?.slice(0, 100), url }); } catch {}
+    } else {
+      try { await navigator.clipboard.writeText(url); alert(t("post.linkCopied")); } catch {}
+    }
   }
 
   async function toggleLike(e) {
@@ -79,16 +111,17 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
           <UserLink user={author} size="lg" className="flex-1" />
         )}
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
-        {isOwner && (
-          <div className="flex items-center gap-1 shrink-0">
-            <button onClick={() => setShowEdit(true)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition" title={t("common.edit")}>
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-            <button onClick={deletePost} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-destructive transition" title={t("common.delete")}>
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        )}
+        <PostMenu
+          post={currentPost}
+          meId={meId}
+          isOwner={isOwner}
+          onEdit={() => setShowEdit(true)}
+          onDelete={deletePost}
+          onShare={sharePost}
+          onFavoriteToggle={toggleFavorite}
+          isFavorited={isFavorited}
+          onHidden={() => window.location.reload()}
+        />
       </div>
       <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
 
@@ -101,13 +134,18 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
         <MediaViewer mediaUrls={mediaUrls} startIndex={viewerIndex} onClose={() => setViewerIndex(null)} />
       )}
 
-      <div className="flex items-center gap-4 text-sm" onClick={(e) => e.stopPropagation()}>
-        <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
-          <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
+      <div className="flex items-center justify-between text-sm" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-4">
+          <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
+            <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
+          </button>
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
+          </span>
+        </div>
+        <button onClick={sharePost} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
+          <Share2 className="w-4 h-4" />
         </button>
-        <span className="flex items-center gap-1.5 text-muted-foreground">
-          <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
-        </span>
       </div>
 
       {showEdit && (

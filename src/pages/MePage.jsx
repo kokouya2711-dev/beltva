@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
-import { User, Activity, Settings as SettingsIcon, HelpCircle, ChevronRight, Pencil } from "lucide-react";
+import { User, Activity, Settings as SettingsIcon, HelpCircle, ChevronRight, Pencil, Bookmark } from "lucide-react";
 
 export default function MePage() {
   const t = useT();
@@ -15,6 +15,7 @@ export default function MePage() {
 
   const sections = [
     { icon: User, label: t("me.profile"), to: me ? `/profile/${me.id}` : "/" },
+    { icon: Bookmark, label: t("me.favorites"), to: "/favorites" },
     { icon: Activity, label: t("me.activity"), to: "/activity" },
     { icon: SettingsIcon, label: t("me.settings"), to: "/settings" },
     { icon: HelpCircle, label: t("me.support"), to: "/support" },

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, Send, Loader2, Heart } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Heart, Share2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
+import PostMenu from "@/components/PostMenu";
 import { getMediaUrls } from "@/lib/media";
 import UserLink from "@/components/UserLink";
 import { useT } from "@/lib/i18n";
@@ -32,6 +33,8 @@ export default function PostDetail() {
   const [author, setAuthor] = useState(null);
   const [inputFocused, setInputFocused] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(null);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favId, setFavId] = useState(null);
   const inputBarRef = useRef(null);
 
   useEffect(() => {
@@ -55,6 +58,10 @@ export default function PostDetail() {
       us.forEach((u) => { if (u) m[u.id] = u; });
       setUsers(m);
       if (p?.created_by_id && !p.is_anonymous) setAuthor(m[p.created_by_id] || null);
+      if (me?.id && p?.id) {
+        const fs = await base44.entities.Favorite.filter({ post_id: p.id, created_by_id: me.id }).catch(() => []);
+        if (fs.length) { setIsFavorited(true); setFavId(fs[0].id); }
+      }
       setLoading(false);
     })();
   }, [id]);
@@ -110,6 +117,34 @@ export default function PostDetail() {
     if (post.created_by_id && post.created_by_id !== meId) notify(post.created_by_id, meId, "comment", `${t("post.commentPlaceholder")}: ${draft.trim().slice(0, 30)}`, id).catch(() => {});
   }
 
+  async function toggleFavorite() {
+    if (!meId || !post) return;
+    if (isFavorited && favId) {
+      await base44.entities.Favorite.delete(favId).catch(() => {});
+      setIsFavorited(false);
+      setFavId(null);
+    } else {
+      const rec = await base44.entities.Favorite.create({ post_id: post.id });
+      setIsFavorited(true);
+      setFavId(rec.id);
+    }
+  }
+
+  async function sharePost() {
+    const url = `${window.location.origin}/posts/${post.id}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "BELTVA", text: post.content?.slice(0, 100), url }); } catch {}
+    } else {
+      try { await navigator.clipboard.writeText(url); alert(t("post.linkCopied")); } catch {}
+    }
+  }
+
+  async function deletePost() {
+    if (!window.confirm(t("post.deleteConfirm"))) return;
+    await base44.entities.Post.delete(post.id).catch(() => {});
+    navigate(-1);
+  }
+
   if (loading) return (
     <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
   );
@@ -144,6 +179,16 @@ export default function PostDetail() {
             <UserLink user={author} size="lg" />
           )}
           <span className="text-xs text-muted-foreground">{formatAbsoluteTime(post.created_date)}</span>
+          <PostMenu
+            post={post}
+            meId={meId}
+            isOwner={meId && post.created_by_id === meId && !post.is_anonymous}
+            onEdit={() => navigate(`/timeline`)}
+            onDelete={deletePost}
+            onShare={sharePost}
+            onFavoriteToggle={toggleFavorite}
+            isFavorited={isFavorited}
+          />
         </div>
 
         {/* Category + workout type */}
@@ -164,11 +209,16 @@ export default function PostDetail() {
         )}
 
         {/* Likes & comments count */}
-        <div className="flex items-center gap-4 py-3 border-b border-border">
-          <button onClick={toggleLike} className={`flex items-center gap-1.5 text-sm transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
-            <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
+        <div className="flex items-center justify-between py-3 border-b border-border">
+          <div className="flex items-center gap-4">
+            <button onClick={toggleLike} className={`flex items-center gap-1.5 text-sm transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
+              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
+            </button>
+            <span className="text-sm text-muted-foreground">{t("post.commentCount").replace("{n}", fmtNum(comments.length))}</span>
+          </div>
+          <button onClick={sharePost} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition">
+            <Share2 className="w-4 h-4" />
           </button>
-          <span className="text-sm text-muted-foreground">{t("post.commentCount").replace("{n}", fmtNum(comments.length))}</span>
         </div>
 
         {/* Likers preview — BELTVA original */}

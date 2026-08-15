@@ -128,7 +128,10 @@ export const extraTranslations = {
     "voice.unmute": "ミュート解除", "voice.leave": "退室", "voice.empty": "まだルームがありません。最初の部屋を作ろう！",
     "home.legend": "凡例",
     "error.accessRestricted": "アクセス制限", "error.notRegistered": "このアプリは利用登録されていません。アクセスについてはアプリ管理者にお問い合わせください。", "error.ifError": "エラーだと思われる場合は以下をお試しください：", "error.verifyAccount": "正しいアカウントでログインしているか確認", "error.contactAdmin": "アクセスについてアプリ管理者に連絡", "error.tryRelogin": "ログアウトして再度ログイン",
-    "error.404": "ページが見つかりません", "error.pageNotFound": "ページ「{page}」はこのアプリに見つかりませんでした。", "error.adminNote": "管理者メモ", "error.adminNoteDesc": "AIがまだこのページを実装していない可能性があります。チャットで実装を依頼してください。", "error.goHome": "ホームへ"
+    "error.404": "ページが見つかりません", "error.pageNotFound": "ページ「{page}」はこのアプリに見つかりませんでした。", "error.adminNote": "管理者メモ", "error.adminNoteDesc": "AIがまだこのページを実装していない可能性があります。チャットで実装を依頼してください。", "error.goHome": "ホームへ",
+    "post.favorite": "お気に入りに追加", "post.unfavorite": "お気に入りから削除", "post.hidePost": "この投稿を表示しない", "post.hideConfirm": "この投稿をタイムラインから非表示にしますか？", "post.muteUser": "ユーザーをミュート", "post.mutedDone": "ミュートしました", "post.blockUser": "ユーザーをブロック", "post.blockConfirm": "このユーザーをブロックしますか？ブロックするとお互いに表示されなくなります。", "post.blockedDone": "ブロックしました", "post.reportedDone": "通報しました", "post.share": "共有", "post.linkCopied": "リンクをコピーしました",
+    "me.favorites": "お気に入り", "favorites.title": "お気に入り", "favorites.empty": "お気に入りの投稿はありません",
+    "settings.mutedUsers": "ミュート中のユーザー", "muted.title": "ミュート中のユーザー", "muted.empty": "ミュート中のユーザーはいません"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -254,6 +257,9 @@ export const extraTranslations = {
     "home.legend": "Legend",
     "error.accessRestricted": "Access Restricted", "error.notRegistered": "You are not registered to use this application. Please contact the app administrator to request access.", "error.ifError": "If you believe this is an error, you can:", "error.verifyAccount": "Verify you are logged in with the correct account", "error.contactAdmin": "Contact the app administrator for access", "error.tryRelogin": "Try logging out and back in again",
     "error.404": "Page Not Found", "error.pageNotFound": "The page \"{page}\" could not be found in this application.", "error.adminNote": "Admin Note", "error.adminNoteDesc": "This could mean that the AI hasn't implemented this page yet. Ask it to implement it in the chat.", "error.goHome": "Go Home",
+    "post.favorite": "Add to favorites", "post.unfavorite": "Remove from favorites", "post.hidePost": "Hide this post", "post.hideConfirm": "Hide this post from your timeline?", "post.muteUser": "Mute user", "post.mutedDone": "User muted", "post.blockUser": "Block user", "post.blockConfirm": "Block this user? You will both be hidden from each other.", "post.blockedDone": "User blocked", "post.reportedDone": "Reported", "post.share": "Share", "post.linkCopied": "Link copied",
+    "me.favorites": "Favorites", "favorites.title": "Favorites", "favorites.empty": "No favorite posts yet",
+    "settings.mutedUsers": "Muted users", "muted.title": "Muted users", "muted.empty": "No muted users",
     "ベンチプレス": "Bench Press", "インクラインベンチプレス": "Incline Bench Press",
     "ダンベルベンチプレス": "Dumbbell Bench Press", "ダンベルインクラインベンチ": "Dumbbell Incline Bench",
     "ディップス": "Dips", "腕立て伏せ": "Push-ups", "ケーブルクロスオーバー": "Cable Crossover",
