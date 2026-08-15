@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X, Search, Check, Link2, Loader2, ChevronRight } from "lucide-react";
+import { X, Search, Check, Link2, Loader2, ChevronRight, Share2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import { displayName, flagEmoji, fetchUser } from "@/lib/profile";
 import { getOrCreateConversation, checkDmScope, sendMessage } from "@/lib/dm";
 import { getMediaUrls } from "@/lib/media";
-import { LineIcon, XIcon, FacebookIcon, WhatsAppIcon, TelegramIcon, OthersIcon } from "@/components/ShareAppIcons";
 
 export default function ShareSheet({ post, meId, onClose }) {
   const t = useT();
@@ -67,10 +66,6 @@ export default function ShareSheet({ post, meId, onClose }) {
     setTimeout(() => { setSentTo(null); onClose(); }, 1200);
   }
 
-  function openAppShareUrl(url) {
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
-
   async function openNativeShare() {
     if (sharing) return;
     setSharing(true);
@@ -119,18 +114,6 @@ export default function ShareSheet({ post, meId, onClose }) {
 
   const displayUsers = searchResults || recentUsers;
   const isSearching = !!search.trim();
-
-  const encodedUrl = encodeURIComponent(shareUrl);
-  const encodedText = encodeURIComponent(shareText);
-  const encodedFull = encodeURIComponent(shareText + " " + shareUrl);
-
-  const apps = [
-    { key: "line", label: "LINE", Icon: LineIcon, url: `https://line.me/R/share?text=${encodedFull}` },
-    { key: "x", label: "X", Icon: XIcon, url: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}` },
-    { key: "facebook", label: "Facebook", Icon: FacebookIcon, url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
-    { key: "whatsapp", label: "WhatsApp", Icon: WhatsAppIcon, url: `https://wa.me/?text=${encodedFull}` },
-    { key: "telegram", label: "Telegram", Icon: TelegramIcon, url: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}` },
-  ];
 
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center" onClick={onClose}>
@@ -227,29 +210,14 @@ export default function ShareSheet({ post, meId, onClose }) {
             )
           )}
 
-          {/* Apps — square rounded icons */}
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 mb-5">
-            {apps.map(({ key, label, Icon, url }) => (
-              <button key={key} onClick={() => openAppShareUrl(url)} className="flex flex-col items-center gap-1.5 shrink-0 w-16 group">
-                <Icon size={56} />
-                <span className="text-[11px] truncate w-full text-center group-hover:text-primary transition">{label}</span>
-              </button>
-            ))}
-            {/* Others — opens native share sheet for all remaining apps */}
-            <button onClick={openNativeShare} className="flex flex-col items-center gap-1.5 shrink-0 w-16 group">
-              {sharing ? (
-                <div className="w-14 h-14 rounded-[14px] bg-secondary border border-border flex items-center justify-center">
-                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                </div>
-              ) : (
-                <OthersIcon size={56} />
-              )}
-              <span className="text-[11px] truncate w-full text-center group-hover:text-primary transition">{t("share.more")}</span>
-            </button>
-          </div>
-
-          {/* Copy link — standalone list item */}
+          {/* External apps + Copy link — list items */}
           <div className="border-t border-border pt-3">
+            <button onClick={openNativeShare} className="w-full flex items-center gap-3 px-1 py-3 rounded-lg hover:bg-secondary transition">
+              <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center">
+                {sharing ? <Loader2 className="w-4 h-4 text-primary animate-spin" /> : <Share2 className="w-4 h-4 text-muted-foreground" />}
+              </div>
+              <span className="text-sm font-medium">{t("share.toApps")}</span>
+            </button>
             <button onClick={copyLink} className="w-full flex items-center gap-3 px-1 py-3 rounded-lg hover:bg-secondary transition">
               <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center">
                 {copied ? <Check className="w-4 h-4 text-primary" /> : <Link2 className="w-4 h-4 text-muted-foreground" />}
