@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, Send, Loader2, Heart, Share2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Heart } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
@@ -130,15 +130,6 @@ export default function PostDetail() {
     }
   }
 
-  async function sharePost() {
-    const url = `${window.location.origin}/posts/${post.id}`;
-    if (navigator.share) {
-      try { await navigator.share({ title: "BELTVA", text: post.content?.slice(0, 100), url }); } catch {}
-    } else {
-      try { await navigator.clipboard.writeText(url); alert(t("post.linkCopied")); } catch {}
-    }
-  }
-
   async function deletePost() {
     if (!window.confirm(t("post.deleteConfirm"))) return;
     await base44.entities.Post.delete(post.id).catch(() => {});
@@ -185,7 +176,6 @@ export default function PostDetail() {
             isOwner={meId && post.created_by_id === meId && !post.is_anonymous}
             onEdit={() => navigate(`/timeline`)}
             onDelete={deletePost}
-            onShare={sharePost}
             onFavoriteToggle={toggleFavorite}
             isFavorited={isFavorited}
           />
@@ -215,11 +205,8 @@ export default function PostDetail() {
               <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
             </button>
             <span className="text-sm text-muted-foreground">{t("post.commentCount").replace("{n}", fmtNum(comments.length))}</span>
-          </div>
-          <button onClick={sharePost} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition">
-            <Share2 className="w-4 h-4" />
-          </button>
-        </div>
+            </div>
+            </div>
 
         {/* Likers preview — BELTVA original */}
         {likers.length > 0 && (

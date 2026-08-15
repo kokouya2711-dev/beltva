@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
 import PostMenu from "@/components/PostMenu";
-import ShareSheet from "@/components/ShareSheet";
 import UserLink from "@/components/UserLink";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
@@ -31,7 +30,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   const [viewerIndex, setViewerIndex] = useState(null);
   const [isFavorited, setIsFavorited] = useState(initialFavorited ?? false);
   const [favId, setFavId] = useState(initialFavId ?? null);
-  const [showShare, setShowShare] = useState(false);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
@@ -75,10 +73,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
     }
   }
 
-  async function sharePost() {
-    setShowShare(true);
-  }
-
   async function toggleLike(e) {
     e.stopPropagation();
     if (!meId) return;
@@ -120,7 +114,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
           isOwner={isOwner}
           onEdit={() => setShowEdit(true)}
           onDelete={deletePost}
-          onShare={sharePost}
           onFavoriteToggle={toggleFavorite}
           isFavorited={isFavorited}
           onHidden={() => window.location.reload()}
@@ -146,9 +139,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
           </span>
         </div>
-        <button onClick={sharePost} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition pr-3">
-          <Share2 className="w-4 h-4" />
-        </button>
       </div>
 
       {showEdit && (
@@ -156,14 +146,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
           post={currentPost}
           onClose={() => setShowEdit(false)}
           onSaved={(updated) => setCurrentPost(updated)}
-        />
-      )}
-
-      {showShare && (
-        <ShareSheet
-          post={currentPost}
-          meId={meId}
-          onClose={() => setShowShare(false)}
         />
       )}
     </div>

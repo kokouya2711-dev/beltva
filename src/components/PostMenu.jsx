@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MoreVertical, Pencil, Trash2, Bookmark, BookmarkCheck, EyeOff, VolumeX, Ban, Flag, Share2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Bookmark, BookmarkCheck, EyeOff, VolumeX, Ban, Flag } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { muteUser, blockUser, reportUser } from "@/lib/dm";
 
-export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onShare, onFavoriteToggle, isFavorited, onHidden }) {
+export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavoriteToggle, isFavorited, onHidden }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -54,11 +54,6 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onShar
     onFavoriteToggle?.();
   }
 
-  function handleShare() {
-    setOpen(false);
-    onShare?.();
-  }
-
   if (post.is_anonymous && !isOwner) {
     // For anonymous posts by others, only show limited options
   }
@@ -82,7 +77,6 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onShar
           ) : (
             <>
               <MenuItem icon={isFavorited ? BookmarkCheck : Bookmark} label={isFavorited ? t("post.unfavorite") : t("post.favorite")} onClick={handleFavorite} />
-              <MenuItem icon={Share2} label={t("post.share")} onClick={handleShare} />
               {!post.is_anonymous && <MenuItem icon={EyeOff} label={t("post.hidePost")} onClick={handleHidePost} />}
               {!post.is_anonymous && <MenuItem icon={VolumeX} label={t("post.muteUser")} onClick={handleMute} />}
               {!post.is_anonymous && <MenuItem icon={Ban} label={t("post.blockUser")} onClick={handleBlock} />}
