@@ -173,16 +173,18 @@ export default function PostDetail() {
           ) : (
             <UserLink user={author} size="lg" />
           )}
-          <span className="text-xs text-muted-foreground">{formatAbsoluteTime(post.created_date)}</span>
-          <PostMenu
-            post={post}
-            meId={meId}
-            isOwner={meId && post.created_by_id === meId && !post.is_anonymous}
-            onEdit={() => navigate(`/timeline`)}
-            onDelete={deletePost}
-            onFavoriteToggle={toggleFavorite}
-            isFavorited={isFavorited}
-          />
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{formatAbsoluteTime(post.created_date)}</span>
+            <PostMenu
+              post={post}
+              meId={meId}
+              isOwner={meId && post.created_by_id === meId && !post.is_anonymous}
+              onEdit={() => navigate(`/timeline`)}
+              onDelete={deletePost}
+              onFavoriteToggle={toggleFavorite}
+              isFavorited={isFavorited}
+            />
+          </div>
         </div>
 
         {/* Category + workout type */}
