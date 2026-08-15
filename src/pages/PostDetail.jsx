@@ -13,6 +13,7 @@ import { useTCategory, useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
 import { formatAbsoluteTime } from "@/lib/timeFormat";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
+import { haptic } from "@/lib/haptics";
 
 export default function PostDetail() {
   const t = useT();
@@ -95,7 +96,7 @@ export default function PostDetail() {
       base44.entities.Like.delete(myLikeId).catch(() => {});
       base44.entities.Post.update(post.id, { likes: Math.max(0, likes - 1) }).catch(() => {});
     } else {
-      navigator.vibrate?.(30);
+      haptic(30);
       const rec = await base44.entities.Like.create({ post_id: post.id });
       setLikes((l) => l + 1);
       setLikers((arr) => [rec, ...arr]);
