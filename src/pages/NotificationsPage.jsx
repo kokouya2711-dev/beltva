@@ -8,9 +8,12 @@ import NotifItem from "@/components/NotifItem";
 
 const TABS = ["all", "like", "comment"];
 
+// Only timeline reactions are shown on this screen
+const TIMELINE_TYPES = new Set(["like", "comment", "comment_reply", "comment_like"]);
+
 function matchesTab(n, tab) {
   if (tab === "all") return true;
-  if (tab === "like") return n.type === "like" || n.type === "comment_like" || n.type === "reaction";
+  if (tab === "like") return n.type === "like" || n.type === "comment_like";
   if (tab === "comment") return n.type === "comment" || n.type === "comment_reply";
   return false;
 }
@@ -62,7 +65,7 @@ export default function NotificationsPage() {
     setMarking(false);
   }
 
-  const filtered = items.filter((n) => matchesTab(n, tab));
+  const filtered = items.filter((n) => TIMELINE_TYPES.has(n.type) && matchesTab(n, tab));
   const tabLabel = (c) => c === "all" ? t("common.all") : c === "like" ? t("notif.like") : t("notif.comment");
 
   return (
@@ -122,7 +125,8 @@ export default function NotificationsPage() {
             <div className="w-14 h-14 rounded-full bg-secondary/60 flex items-center justify-center">
               <Inbox className="w-7 h-7 text-muted-foreground" />
             </div>
-            <div className="text-sm text-muted-foreground">{t("notif.empty")}</div>
+            <div className="text-sm font-medium">{t("notif.emptyReactions")}</div>
+            <div className="text-xs text-muted-foreground">{t("notif.emptyReactionsPrompt")}</div>
           </div>
         ) : (
           <div className="divide-y divide-border">
