@@ -90,7 +90,7 @@ export default function PostCard({ post, meId, initialLikers = [] }) {
           </div>
         )}
       </div>
-      <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` · ${tWorkout(currentPost.workout_type)}` : ""}</div>
+      <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
 
       <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
