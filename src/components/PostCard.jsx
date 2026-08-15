@@ -112,7 +112,8 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
         ) : (
           <UserLink user={author} size="lg" className="flex-1" />
         )}
-        <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
+        <span className={`text-xs px-2.5 py-1 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
+        <span className="w-1 shrink-0" />
         <PostMenu
           post={currentPost}
           meId={meId}
@@ -145,7 +146,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
           </span>
         </div>
-        <button onClick={sharePost} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
+        <button onClick={sharePost} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition pr-3">
           <Share2 className="w-4 h-4" />
         </button>
       </div>
