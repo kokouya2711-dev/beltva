@@ -95,6 +95,7 @@ export default function PostDetail() {
       base44.entities.Like.delete(myLikeId).catch(() => {});
       base44.entities.Post.update(post.id, { likes: Math.max(0, likes - 1) }).catch(() => {});
     } else {
+      navigator.vibrate?.(30);
       const rec = await base44.entities.Like.create({ post_id: post.id });
       setLikes((l) => l + 1);
       setLikers((arr) => [rec, ...arr]);
