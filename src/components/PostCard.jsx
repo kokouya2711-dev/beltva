@@ -5,6 +5,7 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
 import PostMenu from "@/components/PostMenu";
+import ShareSheet from "@/components/ShareSheet";
 import UserLink from "@/components/UserLink";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
@@ -30,6 +31,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   const [viewerIndex, setViewerIndex] = useState(null);
   const [isFavorited, setIsFavorited] = useState(initialFavorited ?? false);
   const [favId, setFavId] = useState(initialFavId ?? null);
+  const [showShare, setShowShare] = useState(false);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
@@ -74,12 +76,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   }
 
   async function sharePost() {
-    const url = `${window.location.origin}/posts/${currentPost.id}`;
-    if (navigator.share) {
-      try { await navigator.share({ title: "BELTVA", text: currentPost.content?.slice(0, 100), url }); } catch {}
-    } else {
-      try { await navigator.clipboard.writeText(url); alert(t("post.linkCopied")); } catch {}
-    }
+    setShowShare(true);
   }
 
   async function toggleLike(e) {
@@ -156,6 +153,16 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
           post={currentPost}
           onClose={() => setShowEdit(false)}
           onSaved={(updated) => setCurrentPost(updated)}
+        />
+      )}
+
+      {showShare && (
+        <ShareSheet
+          post={currentPost}
+          meId={meId}
+          isFavorited={isFavorited}
+          onFavoriteToggle={toggleFavorite}
+          onClose={() => setShowShare(false)}
         />
       )}
     </div>

@@ -131,7 +131,9 @@ export const extraTranslations = {
     "error.404": "ページが見つかりません", "error.pageNotFound": "ページ「{page}」はこのアプリに見つかりませんでした。", "error.adminNote": "管理者メモ", "error.adminNoteDesc": "AIがまだこのページを実装していない可能性があります。チャットで実装を依頼してください。", "error.goHome": "ホームへ",
     "post.favorite": "お気に入りに追加", "post.unfavorite": "お気に入りから削除", "post.hidePost": "この投稿を表示しない", "post.hideConfirm": "この投稿をタイムラインから非表示にしますか？", "post.muteUser": "ユーザーをミュート", "post.mutedDone": "ミュートしました", "post.blockUser": "ユーザーをブロック", "post.blockConfirm": "このユーザーをブロックしますか？ブロックするとお互いに表示されなくなります。", "post.blockedDone": "ブロックしました", "post.reportedDone": "通報しました", "post.share": "共有", "post.linkCopied": "リンクをコピーしました",
     "me.favorites": "お気に入り", "favorites.title": "お気に入り", "favorites.empty": "お気に入りの投稿はありません",
-    "settings.mutedUsers": "ミュート中のユーザー", "muted.title": "ミュート中のユーザー", "muted.empty": "ミュート中のユーザーはいません"
+    "settings.mutedUsers": "ミュート中のユーザー", "muted.title": "ミュート中のユーザー", "muted.empty": "ミュート中のユーザーはいません",
+    "share.title": "共有", "share.toBeltva": "BELTVAで共有", "share.toApps": "アプリで共有", "share.more": "その他",
+    "share.copyLink": "リンクをコピー", "share.saveFavorite": "お気に入りに保存", "share.searchUsers": "ユーザーを検索", "share.noFollowing": "フォロー中のユーザーがいません", "share.sent": "送信しました"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -260,6 +262,8 @@ export const extraTranslations = {
     "post.favorite": "Add to favorites", "post.unfavorite": "Remove from favorites", "post.hidePost": "Hide this post", "post.hideConfirm": "Hide this post from your timeline?", "post.muteUser": "Mute user", "post.mutedDone": "User muted", "post.blockUser": "Block user", "post.blockConfirm": "Block this user? You will both be hidden from each other.", "post.blockedDone": "User blocked", "post.reportedDone": "Reported", "post.share": "Share", "post.linkCopied": "Link copied",
     "me.favorites": "Favorites", "favorites.title": "Favorites", "favorites.empty": "No favorite posts yet",
     "settings.mutedUsers": "Muted users", "muted.title": "Muted users", "muted.empty": "No muted users",
+    "share.title": "Share", "share.toBeltva": "Share on BELTVA", "share.toApps": "Share via apps", "share.more": "More",
+    "share.copyLink": "Copy link", "share.saveFavorite": "Save to favorites", "share.searchUsers": "Search users", "share.noFollowing": "No users you follow", "share.sent": "Sent",
     "ベンチプレス": "Bench Press", "インクラインベンチプレス": "Incline Bench Press",
     "ダンベルベンチプレス": "Dumbbell Bench Press", "ダンベルインクラインベンチ": "Dumbbell Incline Bench",
     "ディップス": "Dips", "腕立て伏せ": "Push-ups", "ケーブルクロスオーバー": "Cable Crossover",
