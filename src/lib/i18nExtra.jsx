@@ -133,7 +133,8 @@ export const extraTranslations = {
     "me.favorites": "お気に入り", "favorites.title": "お気に入り", "favorites.empty": "お気に入りの投稿はありません",
     "settings.mutedUsers": "ミュート中のユーザー", "muted.title": "ミュート中のユーザー", "muted.empty": "ミュート中のユーザーはいません",
     "share.title": "共有", "share.toBeltva": "BELTVAで共有", "share.toApps": "アプリで共有", "share.more": "その他",
-    "share.copyLink": "リンクをコピー", "share.saveFavorite": "お気に入りに保存", "share.searchUsers": "ユーザーを検索", "share.noFollowing": "フォロー中のユーザーがいません", "share.sent": "送信しました"
+    "share.copyLink": "リンクをコピー", "share.searchUsers": "ユーザーを検索", "share.noRecent": "最近のやり取りがありません", "share.sent": "送信しました",
+    "share.openNative": "その他のアプリで共有", "share.openNativeDesc": "端末の共有メニューを開いてすべてのアプリから選べます"
   },
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
@@ -263,7 +264,8 @@ export const extraTranslations = {
     "me.favorites": "Favorites", "favorites.title": "Favorites", "favorites.empty": "No favorite posts yet",
     "settings.mutedUsers": "Muted users", "muted.title": "Muted users", "muted.empty": "No muted users",
     "share.title": "Share", "share.toBeltva": "Share on BELTVA", "share.toApps": "Share via apps", "share.more": "More",
-    "share.copyLink": "Copy link", "share.saveFavorite": "Save to favorites", "share.searchUsers": "Search users", "share.noFollowing": "No users you follow", "share.sent": "Sent",
+    "share.copyLink": "Copy link", "share.searchUsers": "Search users", "share.noRecent": "No recent conversations", "share.sent": "Sent",
+    "share.openNative": "Share with other apps", "share.openNativeDesc": "Open the share menu to see all available apps",
     "ベンチプレス": "Bench Press", "インクラインベンチプレス": "Incline Bench Press",
     "ダンベルベンチプレス": "Dumbbell Bench Press", "ダンベルインクラインベンチ": "Dumbbell Incline Bench",
     "ディップス": "Dips", "腕立て伏せ": "Push-ups", "ケーブルクロスオーバー": "Cable Crossover",

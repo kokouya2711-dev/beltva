@@ -1,45 +1,44 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X, Search, Check, Bookmark, BookmarkCheck, Link2, MoreHorizontal, Mail, MessageSquare, Loader2 } from "lucide-react";
+import { X, Search, Check, Link2, Share2, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import { displayName, flagEmoji, fetchUser } from "@/lib/profile";
 import { getOrCreateConversation, checkDmScope, sendMessage } from "@/lib/dm";
+import { getMediaUrls } from "@/lib/media";
 
-// App share targets with web intent URLs that work on mobile + desktop.
-// The OS will open the native app if installed, otherwise the web version.
-const APP_TARGETS = [
-  { key: "whatsapp", label: "WhatsApp", bg: "#25D366", fn: (url, text) => `https://wa.me/?text=${encodeURIComponent(text + " " + url)}` },
-  { key: "x", label: "X", bg: "#000000", fn: (url, text) => `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}` },
-  { key: "telegram", label: "Telegram", bg: "#0088CC", fn: (url, text) => `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}` },
-  { key: "messenger", label: "Messenger", bg: "#006AFF", fn: (url) => `fb-messenger://share?link=${encodeURIComponent(url)}` },
-  { key: "instagram", label: "Instagram", bg: "#E1306C", fn: (url, text) => `instagram://share?text=${encodeURIComponent(text + " " + url)}` },
-  { key: "email", label: "Email", bg: "#6B7280", icon: Mail, fn: (url, text) => `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}` },
-  { key: "sms", label: "SMS", bg: "#10B981", icon: MessageSquare, fn: (url, text) => `sms:?&body=${encodeURIComponent(text + " " + url)}` },
-];
-
-export default function ShareSheet({ post, meId, onClose, onFavoriteToggle, isFavorited }) {
+export default function ShareSheet({ post, meId, onClose }) {
   const t = useT();
-  const [following, setFollowing] = useState([]);
+  const [recentUsers, setRecentUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState(null);
   const [sentTo, setSentTo] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [favSaving, setFavSaving] = useState(false);
-  const sheetRef = useRef(null);
+  const [sharing, setSharing] = useState(false);
   const searchTimer = useRef(null);
 
   const shareUrl = `${window.location.origin}/posts/${post.id}`;
   const shareText = post.content?.slice(0, 100) || "BELTVA";
+  const mediaUrls = getMediaUrls(post);
 
   useEffect(() => {
     (async () => {
       if (!meId) { setLoading(false); return; }
-      const myFollows = await base44.entities.Follow.filter({ follower_id: meId }, "-created_date", 50);
+      // Fetch recent conversations (both as a_id and b_id)
+      const [asA, asB] = await Promise.all([
+        base44.entities.Conversation.filter({ a_id: meId }, "-last_message_at", 30).catch(() => []),
+        base44.entities.Conversation.filter({ b_id: meId }, "-last_message_at", 30).catch(() => []),
+      ]);
+      const allConvs = [...asA, ...asB];
+      allConvs.sort((a, b) => new Date(b.last_message_at || 0) - new Date(a.last_message_at || 0));
+      const otherIds = allConvs
+        .map((c) => (c.a_id === meId ? c.b_id : c.a_id))
+        .filter((id) => id && id !== meId);
+      const uniqueIds = [...new Set(otherIds)].slice(0, 20);
       const users = await Promise.all(
-        myFollows.map((f) => fetchUser(f.followee_id).catch(() => null))
+        uniqueIds.map((id) => fetchUser(id).catch(() => null))
       );
-      setFollowing(users.filter(Boolean));
+      setRecentUsers(users.filter(Boolean));
       setLoading(false);
     })();
   }, [meId]);
@@ -49,7 +48,7 @@ export default function ShareSheet({ post, meId, onClose, onFavoriteToggle, isFa
     if (!search.trim()) { setSearchResults(null); return; }
     clearTimeout(searchTimer.current);
     searchTimer.current = setTimeout(async () => {
-      const results = await base44.entities.User.list(20).catch(() => []);
+      const results = await base44.entities.User.list(50).catch(() => []);
       const q = search.toLowerCase();
       const filtered = results.filter((u) => {
         const name = (displayName(u) || "").toLowerCase();
@@ -69,36 +68,57 @@ export default function ShareSheet({ post, meId, onClose, onFavoriteToggle, isFa
     setTimeout(() => { setSentTo(null); onClose(); }, 1200);
   }
 
-  function openApp(target) {
-    const url = target.fn(shareUrl, shareText);
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
-
   async function openNativeShare() {
-    if (navigator.share) {
-      try { await navigator.share({ title: "BELTVA", text: shareText, url: shareUrl }); } catch {}
-    } else {
-      try { await navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch {}
+    setSharing(true);
+    try {
+      // Try to share with media files if the post has images/videos
+      if (mediaUrls.length > 0 && navigator.canShare && navigator.canShare({ files: [] })) {
+        const files = await Promise.all(
+          mediaUrls.slice(0, 5).map(async (url) => {
+            try {
+              const res = await fetch(url);
+              const blob = await res.blob();
+              const isVideo = url.match(/\.(mp4|mov|webm)$/i) || blob.type.startsWith("video");
+              return new File([blob], isVideo ? "video.mp4" : "image.jpg", {
+                type: isVideo ? "video/mp4" : "image/jpeg",
+              });
+            } catch { return null; }
+          })
+        );
+        const validFiles = files.filter(Boolean);
+        if (validFiles.length > 0 && navigator.canShare({ files: validFiles })) {
+          await navigator.share({ title: "BELTVA", text: shareText, files: validFiles });
+          return;
+        }
+      }
+      // Fall back to sharing URL + text only
+      if (navigator.share) {
+        await navigator.share({ title: "BELTVA", text: shareText, url: shareUrl });
+      } else {
+        // No Web Share API — copy link as fallback
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError") {
+        try { await navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch {}
+      }
+    } finally {
+      setSharing(false);
     }
   }
 
   async function copyLink() {
-    try { await navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch {}
+    try { await navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch {}
   }
 
-  async function saveFavorite() {
-    setFavSaving(true);
-    await onFavoriteToggle?.();
-    setFavSaving(false);
-  }
-
-  const displayUsers = searchResults || following;
+  const displayUsers = searchResults || recentUsers;
 
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        ref={sheetRef}
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-2xl bg-card border-t border-border rounded-t-2xl max-h-[85vh] flex flex-col animate-[slideUp_0.25s_ease-out]"
         style={{ animationName: "slideUp" }}
@@ -117,7 +137,7 @@ export default function ShareSheet({ post, meId, onClose, onFavoriteToggle, isFa
         </div>
 
         <div className="overflow-y-auto px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-          {/* Section 1: BELTVA users */}
+          {/* Section 1: BELTVA users (recent conversations + search) */}
           <div className="mb-4">
             <div className="text-xs font-semibold text-muted-foreground mb-2">{t("share.toBeltva")}</div>
             <div className="relative mb-2">
@@ -132,7 +152,7 @@ export default function ShareSheet({ post, meId, onClose, onFavoriteToggle, isFa
             {loading ? (
               <div className="flex items-center justify-center py-4 text-muted-foreground"><Loader2 className="w-5 h-5 animate-spin" /></div>
             ) : displayUsers.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-3 text-center">{search ? t("users.noUsers") : t("share.noFollowing")}</div>
+              <div className="text-sm text-muted-foreground py-3 text-center">{search ? t("users.noUsers") : t("share.noRecent")}</div>
             ) : (
               <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                 {displayUsers.map((u) => (
@@ -161,40 +181,31 @@ export default function ShareSheet({ post, meId, onClose, onFavoriteToggle, isFa
             )}
           </div>
 
-          {/* Section 2: Apps */}
+          {/* Section 2: Native share sheet (all installed apps with official logos) */}
           <div className="mb-4">
             <div className="text-xs font-semibold text-muted-foreground mb-2">{t("share.toApps")}</div>
-            <div className="grid grid-cols-5 gap-3">
-              {APP_TARGETS.map((app) => (
-                <button key={app.key} onClick={() => openApp(app)} className="flex flex-col items-center gap-1.5 group">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-sm group-hover:scale-105 transition" style={{ background: app.bg }}>
-                    {app.icon ? <app.icon className="w-5 h-5" /> : app.label.slice(0, 1)}
-                  </div>
-                  <span className="text-[10px] text-muted-foreground truncate w-full text-center">{app.label}</span>
-                </button>
-              ))}
-              <button onClick={openNativeShare} className="flex flex-col items-center gap-1.5 group">
-                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-105 transition">
-                  <MoreHorizontal className="w-5 h-5 text-foreground" />
-                </div>
-                <span className="text-[10px] text-muted-foreground truncate w-full text-center">{t("share.more")}</span>
-              </button>
-            </div>
+            <button
+              onClick={openNativeShare}
+              disabled={sharing}
+              className="w-full flex items-center gap-3 bg-secondary border border-border rounded-xl px-4 py-3.5 hover:bg-muted transition disabled:opacity-50"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                {sharing ? <Loader2 className="w-5 h-5 text-primary animate-spin" /> : <Share2 className="w-5 h-5 text-primary" />}
+              </div>
+              <div className="text-left flex-1 min-w-0">
+                <div className="text-sm font-semibold">{t("share.openNative")}</div>
+                <div className="text-xs text-muted-foreground">{t("share.openNativeDesc")}</div>
+              </div>
+            </button>
           </div>
 
-          {/* Section 3: Copy link + Save favorite */}
-          <div className="border-t border-border pt-3 space-y-1">
+          {/* Section 3: Copy link */}
+          <div className="border-t border-border pt-3">
             <button onClick={copyLink} className="w-full flex items-center gap-3 px-2 py-3 rounded-lg hover:bg-secondary transition">
               <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center">
                 {copied ? <Check className="w-4 h-4 text-primary" /> : <Link2 className="w-4 h-4 text-muted-foreground" />}
               </div>
               <span className="text-sm font-medium">{copied ? t("post.linkCopied") : t("share.copyLink")}</span>
-            </button>
-            <button onClick={saveFavorite} disabled={favSaving} className="w-full flex items-center gap-3 px-2 py-3 rounded-lg hover:bg-secondary transition disabled:opacity-50">
-              <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center">
-                {favSaving ? <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /> : isFavorited ? <BookmarkCheck className="w-4 h-4 text-primary" /> : <Bookmark className="w-4 h-4 text-muted-foreground" />}
-              </div>
-              <span className="text-sm font-medium">{isFavorited ? t("post.unfavorite") : t("share.saveFavorite")}</span>
             </button>
           </div>
         </div>

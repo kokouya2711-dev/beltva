@@ -160,8 +160,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
         <ShareSheet
           post={currentPost}
           meId={meId}
-          isFavorited={isFavorited}
-          onFavoriteToggle={toggleFavorite}
           onClose={() => setShowShare(false)}
         />
       )}
