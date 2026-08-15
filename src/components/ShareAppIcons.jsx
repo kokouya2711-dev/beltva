@@ -6,11 +6,9 @@ import React from "react";
 export function LineIcon({ size = 48 }) {
   return (
     <div style={{ width: size, height: size }} className="rounded-[14px] bg-[#06C755] flex items-center justify-center overflow-hidden">
-      <svg viewBox="0 0 120 120" width={size * 0.62} height={size * 0.62} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M60 12C30 12 6 30 6 54c0 21 19 38 44 42 2 4 4 8 4 8s2-6 2-10c26-3 46-22 46-44 0-24-24-38-42-38z" fill="#fff"/>
-        <circle cx="38" cy="50" r="4.5" fill="#06C755"/>
-        <circle cx="60" cy="50" r="4.5" fill="#06C755"/>
-        <circle cx="82" cy="50" r="4.5" fill="#06C755"/>
+      <svg viewBox="0 0 100 100" width={size * 0.68} height={size * 0.68} xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 8C26 8 6 25 6 45c0 18 16 33 38 36 2 3 3 7 3 7s2-5 2-8c22-3 39-18 39-38 0-20-20-34-38-34z" fill="white"/>
+        <text x="50" y="50" textAnchor="middle" dominantBaseline="central" fill="#06C755" fontSize="14" fontWeight="700" fontFamily="Arial, Helvetica, sans-serif" letterSpacing="-0.5">LINE</text>
       </svg>
     </div>
   );

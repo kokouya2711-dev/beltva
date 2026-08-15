@@ -72,29 +72,39 @@ export default function ShareSheet({ post, meId, onClose }) {
   }
 
   async function openNativeShare() {
+    if (sharing) return;
     setSharing(true);
     try {
-      if (mediaUrls.length > 0 && navigator.canShare && navigator.canShare({ files: [] })) {
-        const files = await Promise.all(
-          mediaUrls.slice(0, 5).map(async (url) => {
-            try {
-              const res = await fetch(url);
-              const blob = await res.blob();
-              const isVideo = url.match(/\.(mp4|mov|webm)$/i) || blob.type.startsWith("video");
-              return new File([blob], isVideo ? "video.mp4" : "image.jpg", {
-                type: isVideo ? "video/mp4" : "image/jpeg",
-              });
-            } catch { return null; }
-          })
-        );
-        const validFiles = files.filter(Boolean);
-        if (validFiles.length > 0 && navigator.canShare({ files: validFiles })) {
-          await navigator.share({ title: "BELTVA", text: shareText, files: validFiles });
-          return;
-        }
+      if (mediaUrls.length > 0 && navigator.canShare) {
+        try {
+          const files = await Promise.all(
+            mediaUrls.slice(0, 5).map(async (url) => {
+              try {
+                const res = await fetch(url);
+                const blob = await res.blob();
+                const isVideo = url.match(/\.(mp4|mov|webm)$/i) || blob.type.startsWith("video");
+                return new File([blob], isVideo ? "video.mp4" : "image.jpg", {
+                  type: isVideo ? "video/mp4" : "image/jpeg",
+                });
+              } catch { return null; }
+            })
+          );
+          const validFiles = files.filter(Boolean);
+          if (validFiles.length > 0 && navigator.canShare({ files: validFiles })) {
+            await navigator.share({ title: "BELTVA", text: shareText, files: validFiles });
+            return;
+          }
+        } catch {}
       }
       if (navigator.share) {
         await navigator.share({ title: "BELTVA", text: shareText, url: shareUrl });
+      } else {
+        // Fallback: copy link when native share is unavailable (desktop)
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch {}
       }
     } catch (err) {
       // user cancelled or error — silently ignore
@@ -226,7 +236,7 @@ export default function ShareSheet({ post, meId, onClose }) {
               </button>
             ))}
             {/* Others — opens native share sheet for all remaining apps */}
-            <button onClick={openNativeShare} disabled={sharing} className="flex flex-col items-center gap-1.5 shrink-0 w-16 group disabled:opacity-50">
+            <button onClick={openNativeShare} className="flex flex-col items-center gap-1.5 shrink-0 w-16 group">
               {sharing ? (
                 <div className="w-14 h-14 rounded-[14px] bg-secondary border border-border flex items-center justify-center">
                   <Loader2 className="w-5 h-5 text-primary animate-spin" />
