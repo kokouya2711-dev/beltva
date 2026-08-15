@@ -36,6 +36,7 @@ export default function PostDetail() {
   const [viewerIndex, setViewerIndex] = useState(null);
   const [isFavorited, setIsFavorited] = useState(false);
   const [favId, setFavId] = useState(null);
+  const [bounceKey, setBounceKey] = useState(0);
   const inputBarRef = useRef(null);
 
   useEffect(() => {
@@ -96,7 +97,8 @@ export default function PostDetail() {
       base44.entities.Like.delete(myLikeId).catch(() => {});
       base44.entities.Post.update(post.id, { likes: Math.max(0, likes - 1) }).catch(() => {});
     } else {
-      haptic(30);
+      const vibrated = haptic(30);
+      if (!vibrated) setBounceKey((k) => k + 1);
       const rec = await base44.entities.Like.create({ post_id: post.id });
       setLikes((l) => l + 1);
       setLikers((arr) => [rec, ...arr]);
@@ -204,7 +206,9 @@ export default function PostDetail() {
         <div className="flex items-center justify-between py-3 border-b border-border">
           <div className="flex items-center gap-4">
             <button onClick={toggleLike} className={`flex items-center gap-1.5 text-sm transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
-              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
+              <span key={bounceKey} className={bounceKey > 0 ? "heart-bounce" : "inline-flex"}>
+                <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+              </span> {fmtNum(likes)}
             </button>
             <span className="text-sm text-muted-foreground">{t("post.commentCount").replace("{n}", fmtNum(comments.length))}</span>
             </div>

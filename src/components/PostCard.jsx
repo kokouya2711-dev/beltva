@@ -31,6 +31,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   const [viewerIndex, setViewerIndex] = useState(null);
   const [isFavorited, setIsFavorited] = useState(initialFavorited ?? false);
   const [favId, setFavId] = useState(initialFavId ?? null);
+  const [bounceKey, setBounceKey] = useState(0);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
@@ -83,7 +84,8 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
       base44.entities.Like.delete(myLikeId).catch(() => {});
       base44.entities.Post.update(post.id, { likes: Math.max(0, likes - 1) }).catch(() => {});
     } else {
-      haptic(30);
+      const vibrated = haptic(30);
+      if (!vibrated) setBounceKey((k) => k + 1);
       const rec = await base44.entities.Like.create({ post_id: post.id });
       setLikes((l) => l + 1);
       setLikers((arr) => [rec, ...arr]);
@@ -135,7 +137,9 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
       <div className="flex items-center justify-between text-sm" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-4">
           <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
-            <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} /> {fmtNum(likes)}
+            <span key={bounceKey} className={bounceKey > 0 ? "heart-bounce" : "inline-flex"}>
+              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+            </span> {fmtNum(likes)}
           </button>
           <span className="flex items-center gap-1.5 text-muted-foreground">
             <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
