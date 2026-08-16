@@ -18,7 +18,9 @@ export default function NotificationsBell({ meId }) {
   useEffect(() => {
     load();
     const i = setInterval(load, 15000);
-    return () => clearInterval(i);
+    const onChanged = () => load();
+    window.addEventListener("notifications-changed", onChanged);
+    return () => { clearInterval(i); window.removeEventListener("notifications-changed", onChanged); };
   }, [meId]);
 
   return (

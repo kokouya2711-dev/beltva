@@ -45,11 +45,17 @@ export default function NotificationsPage() {
   }, []);
 
   const unread = items.filter((n) => !n.read).length;
+  const unreadByTab = {
+    all: 0,
+    like: items.filter((n) => !n.read && (n.type === "like" || n.type === "comment_like")).length,
+    comment: items.filter((n) => !n.read && (n.type === "comment" || n.type === "comment_reply")).length,
+  };
 
   function openNotif(n) {
     if (!n.read) {
       base44.entities.Notification.update(n.id, { read: true }).catch(() => {});
       setItems((prev) => prev.map((x) => x.id === n.id ? { ...x, read: true } : x));
+      window.dispatchEvent(new CustomEvent("notifications-changed"));
     }
     if (n.type === "dm" && n.target_id) navigate(`/messages/${n.target_id}`);
     else if (n.type === "like" || n.type === "comment" || n.type === "comment_reply" || n.type === "comment_like") navigate(`/posts/${n.post_id || n.target_id}`);
@@ -63,6 +69,17 @@ export default function NotificationsPage() {
     await base44.entities.Notification.bulkUpdate(unreadItems.map((n) => ({ id: n.id, read: true }))).catch(() => {});
     setItems((prev) => prev.map((n) => ({ ...n, read: true })));
     setMarking(false);
+    window.dispatchEvent(new CustomEvent("notifications-changed"));
+  }
+
+  async function markTabRead(tab) {
+    if (tab === "all") return;
+    const types = tab === "like" ? ["like", "comment_like"] : ["comment", "comment_reply"];
+    const toMark = items.filter((n) => !n.read && types.includes(n.type));
+    if (!toMark.length) return;
+    await base44.entities.Notification.bulkUpdate(toMark.map((n) => ({ id: n.id, read: true }))).catch(() => {});
+    setItems((prev) => prev.map((n) => types.includes(n.type) ? { ...n, read: true } : n));
+    window.dispatchEvent(new CustomEvent("notifications-changed"));
   }
 
   const filtered = items.filter((n) => TIMELINE_TYPES.has(n.type) && matchesTab(n, tab));
@@ -103,13 +120,17 @@ export default function NotificationsPage() {
         <div className="max-w-2xl mx-auto flex border-t border-border">
           {TABS.map((c) => {
             const active = tab === c;
+            const badge = unreadByTab[c] || 0;
             return (
               <button
                 key={c}
-                onClick={() => setTab(c)}
-                className={`flex-1 py-2.5 text-sm border-b-2 transition ${active ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground font-medium"}`}
+                onClick={() => { setTab(c); markTabRead(c); }}
+                className={`flex-1 py-2.5 text-sm border-b-2 transition flex items-center justify-center gap-1.5 ${active ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground font-medium"}`}
               >
                 {tabLabel(c)}
+                {badge > 0 && (
+                  <span className="min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">{badge > 9 ? "9+" : badge}</span>
+                )}
               </button>
             );
           })}
