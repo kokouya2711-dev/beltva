@@ -26,7 +26,7 @@ export default function TimelineWorkoutFilter() {
       {open && (
         <div className="fixed inset-0 z-30" style={{ touchAction: "none", WebkitTouchCallout: "none" }} />
       )}
-      <div className="absolute right-0 top-0 bottom-0 z-40 flex items-center pl-3 pr-2 bg-background" ref={ref}>
+      <div className="absolute right-0 top-0 bottom-0 z-40 flex items-center pl-4 pr-1 bg-background" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
           className={`p-1.5 rounded-lg hover:bg-secondary transition ${workoutFilter ? "text-primary" : "text-muted-foreground"}`}
