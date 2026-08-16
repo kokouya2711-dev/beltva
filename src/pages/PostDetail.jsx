@@ -99,7 +99,7 @@ export default function PostDetail() {
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
   const mediaUrls = post ? getMediaUrls(post) : [];
   const liked = !!myLikeId;
-  const style = CATEGORY_STYLE[post?.category] || CATEGORY_STYLE["シェア"];
+  const style = CATEGORY_STYLE[post?.category] || { color: "text-muted-foreground", bg: "bg-secondary/60", border: "border-border" };
 
   async function toggleLike() {
     if (!meId || !post) return;
