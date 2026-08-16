@@ -26,12 +26,12 @@ export default function TimelineWorkoutFilter() {
       {open && (
         <div className="fixed inset-0 z-30" style={{ touchAction: "none", WebkitTouchCallout: "none" }} />
       )}
-      <div className="absolute right-0 top-0 bottom-0 z-40 flex items-center pl-6 pr-1 bg-gradient-to-l from-background/80 via-background/40 to-transparent" ref={ref}>
+      <div className="absolute right-0 top-0 bottom-0 z-40 flex items-center pr-2" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
-          className={`p-1.5 rounded-lg hover:bg-secondary/60 transition ${workoutFilter ? "text-primary" : "text-muted-foreground/70"}`}
+          className={`p-1.5 rounded-lg hover:bg-secondary/60 transition ${workoutFilter ? "text-primary" : "text-foreground"}`}
         >
-          <SlidersHorizontal className="w-4 h-4" strokeWidth={1.5} />
+          <SlidersHorizontal className="w-[18px] h-[18px]" />
         </button>
         {open && (
           <div
