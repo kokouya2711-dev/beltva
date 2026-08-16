@@ -51,7 +51,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 
-  const style = CATEGORY_STYLE[currentPost.category] || CATEGORY_STYLE["シェア"];
+  const style = CATEGORY_STYLE[currentPost.category] || { color: "text-muted-foreground", bg: "bg-secondary/60", border: "border-border" };
   const liked = !!myLikeId;
   const isOwner = meId && currentPost.created_by_id === meId && !currentPost.is_anonymous;
 
@@ -110,7 +110,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             <div className="flex-1" />
           </>
         )}
-        <span className={`text-xs px-2.5 py-1 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>
+        {currentPost.category && <span className={`text-xs px-2.5 py-1 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>}
         <span className="w-1 shrink-0" />
         <PostMenu
           post={currentPost}

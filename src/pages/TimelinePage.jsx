@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { useNavigate } from "react-router-dom";
 import PostCard from "@/components/PostCard";
-import CreatePostDialog from "@/components/CreatePostDialog";
 import SuggestedUsers from "@/components/SuggestedUsers";
 import { Plus, Loader2, MessageSquare } from "lucide-react";
 import { useT } from "@/lib/i18n";
@@ -10,11 +10,11 @@ import { saveTimelineCache, getTimelineCache, getTimelineScrollY } from "@/lib/t
 
 export default function TimelinePage() {
   const t = useT();
-  const { filter, setFilter } = useTimelineFilter();
+  const { filter, setFilter, workoutFilter } = useTimelineFilter();
   const cached = getTimelineCache();
   const [posts, setPosts] = useState(cached?.posts || []);
   const [loading, setLoading] = useState(!cached);
-  const [showCreate, setShowCreate] = useState(false);
+  const navigate = useNavigate();
   const [me, setMe] = useState(cached?.me || null);
   const [followIds, setFollowIds] = useState(cached?.followIds || null);
   const [likesByPost, setLikesByPost] = useState(cached?.likesByPost || {});
@@ -70,12 +70,6 @@ export default function TimelinePage() {
   }, []);
 
   useEffect(() => {
-    const handler = () => setShowCreate(true);
-    window.addEventListener("timeline-create-post", handler);
-    return () => window.removeEventListener("timeline-create-post", handler);
-  }, []);
-
-  useEffect(() => {
     if (filter !== "following" || !me || followIds) return;
     base44.entities.Follow.filter({ follower_id: me.id }).then((f) => setFollowIds(new Set(f.map((x) => x.followee_id))));
   }, [filter, me, followIds]);
@@ -102,6 +96,9 @@ export default function TimelinePage() {
   } else if (!SPECIAL_FILTERS.includes(filter)) {
     filtered = filtered.filter((p) => p.category === filter);
   }
+  if (workoutFilter) {
+    filtered = filtered.filter((p) => p.workout_type === workoutFilter);
+  }
   if (filter === "popular") {
     filtered = [...filtered].sort((a, b) => ((b.likes || 0) + (b.comments_count || 0)) - ((a.likes || 0) + (a.comments_count || 0)));
   }
@@ -109,7 +106,7 @@ export default function TimelinePage() {
   return (
     <div className="px-2 md:px-4 max-w-2xl mx-auto">
       <div className="hidden md:flex justify-end mb-3">
-        <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">
+        <button onClick={() => navigate("/create-post")} className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">
           <Plus className="w-4 h-4" /> {t("post.create")}
         </button>
       </div>
@@ -145,8 +142,6 @@ export default function TimelinePage() {
       <div className="lg:hidden mt-6">
         {me && <SuggestedUsers meId={me.id} />}
       </div>
-
-      {showCreate && <CreatePostDialog onClose={() => setShowCreate(false)} onSaved={load} />}
     </div>
   );
 }

@@ -10,7 +10,7 @@ export default function EditPostDialog({ post, onClose, onSaved }) {
   const t = useT();
   const tCat = useTCategory();
   const [content, setContent] = useState(post.content || "");
-  const [category, setCategory] = useState(post.category || "シェア");
+  const [category, setCategory] = useState(post.category || "");
   const [workoutType, setWorkoutType] = useState(post.workout_type || "");
   const [submitting, setSubmitting] = useState(false);
 
@@ -19,7 +19,7 @@ export default function EditPostDialog({ post, onClose, onSaved }) {
     setSubmitting(true);
     const updated = await base44.entities.Post.update(post.id, {
       content: content.trim(),
-      category,
+      category: category || undefined,
       workout_type: workoutType || undefined
     });
     setSubmitting(false);
@@ -39,11 +39,11 @@ export default function EditPostDialog({ post, onClose, onSaved }) {
         <div className="space-y-4">
           <div>
             <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.category")}</label>
-            <div className="grid grid-cols-4 gap-2 mt-1.5">
+            <div className="grid grid-cols-3 gap-2 mt-1.5">
               {POST_CATEGORIES.map((c) => {
                 const s = CATEGORY_STYLE[c];
                 return (
-                  <button key={c} onClick={() => setCategory(c)} className={`text-xs px-2 py-2 rounded-lg border transition ${category === c ? `${s.bg} ${s.color} ${s.border}` : "border-border text-muted-foreground"}`}>{tCat(c)}</button>
+                  <button key={c} onClick={() => setCategory(category === c ? "" : c)} className={`text-xs px-2 py-2 rounded-lg border transition ${category === c ? `${s.bg} ${s.color} ${s.border}` : "border-border text-muted-foreground"}`}>{tCat(c)}</button>
                 );
               })}
             </div>

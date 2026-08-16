@@ -23,6 +23,7 @@ import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { TimelineFilterProvider, useTimelineFilter } from "@/lib/timelineFilterContext";
 import { POST_CATEGORIES } from "@/lib/community";
 import { useTCategory } from "@/lib/i18nHelpers";
+import TimelineWorkoutFilter from "@/components/TimelineWorkoutFilter";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 
@@ -157,23 +158,26 @@ function AppLayoutInner() {
           <div className="flex items-center justify-end px-4 py-2 gap-2">
             <NotificationsBell meId={me?.id} />
             <button
-              onClick={() => window.dispatchEvent(new CustomEvent("timeline-create-post"))}
+              onClick={() => navigate("/create-post")}
               className="flex items-center gap-1 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg shadow-lg"
             >
               <Plus className="w-4 h-4" /> {t("post.create")}
             </button>
           </div>
-          <div className="flex gap-5 px-4 overflow-x-auto no-scrollbar border-t border-border">
-            {FILTER_TABS.map((c) => {
-              const active = filter === c;
-              const label = c === "all" ? t("common.all") : c === "latest" ? t("post.tab_latest") : c === "popular" ? t("post.tab_popular") : c === "following" ? t("post.tab_following") : tCat(c);
-              return (
-                <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-[17px] py-2.5 border-b-2 transition whitespace-nowrap ${active ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground font-medium"}`}>{label}</button>
-              );
-            })}
+          <div className="relative border-t border-border">
+            <div className="flex gap-5 px-4 overflow-x-auto no-scrollbar">
+              {FILTER_TABS.map((c) => {
+                const active = filter === c;
+                const label = c === "all" ? t("common.all") : c === "latest" ? t("post.tab_latest") : c === "popular" ? t("post.tab_popular") : c === "following" ? t("post.tab_following") : tCat(c);
+                return (
+                  <button key={c} onClick={() => setFilter(c)} className={`shrink-0 text-[17px] py-2.5 border-b-2 transition whitespace-nowrap ${active ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground font-medium"}`}>{label}</button>
+                );
+              })}
+            </div>
+            <TimelineWorkoutFilter />
           </div>
         </header>
-      ) : location.pathname.startsWith("/posts/") ? null : (
+      ) : location.pathname.startsWith("/posts/") || location.pathname === "/create-post" ? null : (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <div className="flex items-center gap-2">
             <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />

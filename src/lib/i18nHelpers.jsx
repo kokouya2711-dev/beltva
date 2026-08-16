@@ -20,6 +20,7 @@ const WORKOUT_KEYS = {
 };
 
 const BODY_PART_KEYS = {
+  "部位": "body.part",
   "胸": "body.chest",
   "背中": "body.back",
   "肩": "body.shoulders",

@@ -11,10 +11,8 @@
       "enum": [
         "\u76f8\u8ac7",
         "\u8cea\u554f",
-        "\u30b7\u30a7\u30a2",
         "\u5831\u544a"
       ],
-      "default": "\u30b7\u30a7\u30a2",
       "title": "\u30ab\u30c6\u30b4\u30ea"
     },
     "workout_type": {
@@ -47,7 +45,6 @@
     }
   },
   "required": [
-    "content",
-    "category"
+    "content"
   ]
 }
