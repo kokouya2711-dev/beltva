@@ -67,17 +67,26 @@ export default function CreatePost() {
     if (!content.trim() || anyUploading) return;
     const urls = mediaItems.map((it) => it.serverUrl).filter(Boolean);
     setSubmitting(true);
-    await base44.entities.Post.create({
-      content: content.trim(),
-      category: category || undefined,
-      workout_type: workoutType || undefined,
-      is_anonymous: false,
-      media_url: urls[0] || undefined,
-      media_urls: JSON.stringify(urls),
-      likes: 0,
-      comments_count: 0
-    });
-    setSubmitting(false);
+    try {
+      await base44.entities.Post.create({
+        content: content.trim(),
+        category: category || undefined,
+        workout_type: workoutType || undefined,
+        is_anonymous: false,
+        media_url: urls[0] || undefined,
+        media_urls: JSON.stringify(urls),
+        likes: 0,
+        comments_count: 0
+      });
+      mediaItems.forEach((it) => { if (it.localUrl) URL.revokeObjectURL(it.localUrl); });
+      clearTimelineCache();
+      navigate("/timeline");
+    } catch (err) {
+      console.error("Post creation failed:", err);
+      alert(t("common.networkError") || "Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
     mediaItems.forEach((it) => { if (it.localUrl) URL.revokeObjectURL(it.localUrl); });
     clearTimelineCache();
     navigate("/timeline");
