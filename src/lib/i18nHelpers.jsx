@@ -20,13 +20,14 @@ const WORKOUT_KEYS = {
 };
 
 const BODY_PART_KEYS = {
-  "部位": "body.part",
   "胸": "body.chest",
   "背中": "body.back",
   "肩": "body.shoulders",
+  "腕": "body.arms",
   "二頭筋": "body.biceps",
   "三頭筋": "body.triceps",
   "脚": "body.legs",
+  "腹": "body.abs",
   "腹筋": "body.abs",
   "有酸素": "body.cardio",
   "ストレッチ": "body.stretch",

@@ -4,7 +4,7 @@ import { useT } from "@/lib/i18n";
 import { useTBodyPart } from "@/lib/i18nHelpers";
 import { useTimelineFilter } from "@/lib/timelineFilterContext";
 
-const OPTIONS = ["部位", "有酸素", "その他"];
+const OPTIONS = ["胸", "背中", "肩", "腕", "脚", "腹", "有酸素", "その他"];
 
 export default function TimelineWorkoutFilter() {
   const t = useT();
