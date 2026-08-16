@@ -44,7 +44,7 @@ export default function WorkoutSelect({ value, onChange }) {
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-xl shadow-2xl max-h-72 overflow-y-auto">
+        <div className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-xl shadow-2xl max-h-72 overflow-y-auto pb-20 overscroll-contain">
           <button
             type="button"
             onClick={() => { onChange(""); setOpen(false); }}

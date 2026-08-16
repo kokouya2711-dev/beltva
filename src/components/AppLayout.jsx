@@ -165,7 +165,7 @@ function AppLayoutInner() {
             </button>
           </div>
           <div className="relative border-t border-border">
-            <div className="flex gap-5 pl-4 pr-16 overflow-x-auto no-scrollbar">
+            <div className="flex gap-5 pl-4 pr-20 overflow-x-auto no-scrollbar">
               {FILTER_TABS.map((c) => {
                 const active = filter === c;
                 const label = c === "all" ? t("common.all") : c === "latest" ? t("post.tab_latest") : c === "popular" ? t("post.tab_popular") : c === "following" ? t("post.tab_following") : tCat(c);
