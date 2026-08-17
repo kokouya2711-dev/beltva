@@ -6,7 +6,7 @@ import { parseHobbies, TRAINING_PURPOSES, HOBBY_CATEGORIES, hobbyLabel, hobbyCat
 import UserCard from "@/components/UserCard";
 import { Loader2, Search, SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
 
-const ONLINE_WINDOW = 120000;
+const ONLINE_WINDOW = 60000; // 60s — real-time individual online indicator
 
 const CATEGORIES = [
   { key: "recommended", labelKey: "users.cat_recommended" },

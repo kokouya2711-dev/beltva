@@ -44,7 +44,7 @@ export default function Chat() {
     ]);
     setOther(o);
     setMessages(msgs);
-    setOnline(o?.show_online_status !== false && presence[0]?.last_seen && Date.now() - new Date(presence[0].last_seen).getTime() < 120000);
+    setOnline(o?.show_online_status !== false && presence[0]?.last_seen && Date.now() - new Date(presence[0].last_seen).getTime() < 60000);
     setBlocked(bl);
     setMuted(mt);
     const myField = meUser.id === c.a_id ? "a_read_at" : "b_read_at";

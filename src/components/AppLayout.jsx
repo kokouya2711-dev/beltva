@@ -107,8 +107,10 @@ function AppLayoutInner() {
   React.useEffect(() => {
     if (!me) return;
     updatePresence(me.id, isActive);
-    const i = setInterval(() => updatePresence(me.id, isActive), 60000);
-    return () => clearInterval(i);
+    const i = setInterval(() => updatePresence(me.id, isActive), 30000);
+    const onVis = () => { if (!document.hidden) updatePresence(me.id, isActive); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => { clearInterval(i); document.removeEventListener("visibilitychange", onVis); };
   }, [me, isActive]);
 
 
