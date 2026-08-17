@@ -15,7 +15,6 @@ import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
 import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
-import { getGeolocation } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
@@ -89,14 +88,7 @@ function AppLayoutInner() {
     return () => clearInterval(i);
   }, [me, isActive]);
 
-  React.useEffect(() => {
-    if (!me || me.lat || me.share_location === false) return;
-    (async () => {
-      const geo = await getGeolocation();
-      if (!geo) return;
-      base44.auth.updateMe({ lat: geo.lat, lng: geo.lng }).catch(() => {});
-    })();
-  }, [me]);
+
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

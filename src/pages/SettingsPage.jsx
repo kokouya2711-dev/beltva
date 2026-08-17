@@ -4,11 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
-  ShieldCheck, Ban, Dumbbell, Search, Check, Timer, MapPin,
+  ShieldCheck, Ban, Dumbbell, Search, Check, Timer,
   EyeOff, Eye, UserSearch, Lock, VolumeX
 } from "lucide-react";
 import { useTraining } from "@/lib/trainingContext";
-import { getGeolocation, reverseGeocodeCity, snapToCityGrid, forwardGeocodeCity } from "@/lib/workouts";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -199,10 +198,6 @@ function PrivacySection() {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
     share_country: true,
-    share_city: true,
-    update_location: false,
-    city_name: "",
-    country_name: "",
     show_online_status: true,
     age_public: false,
     searchable_by_id: true,
@@ -210,7 +205,6 @@ function PrivacySection() {
     timeline_visibility: "everyone",
     timeline_gender_restriction: "none",
   });
-  const [locUpdating, setLocUpdating] = useState(false);
   const [subPage, setSubPage] = useState(null);
 
   const searchableByOptions = [
@@ -234,10 +228,6 @@ function PrivacySection() {
       setSettings((prev) => ({
         ...prev,
         share_country: u.share_country !== false,
-        share_city: u.share_city !== false,
-        update_location: u.update_location === true,
-        city_name: u.city_name || "",
-        country_name: u.country_name || "",
         show_online_status: u.show_online_status !== false,
         age_public: u.age_public === true,
         searchable_by_id: u.searchable_by_id !== false,
@@ -251,50 +241,9 @@ function PrivacySection() {
   async function update(key, value) {
     setSettings((prev) => ({ ...prev, [key]: value }));
     try {
-      if (key === "update_location") {
-        if (value) {
-          setLocUpdating(true);
-          const geo = await getGeolocation();
-          if (!geo) {
-            setSettings((prev) => ({ ...prev, update_location: false }));
-            setLocUpdating(false);
-            return;
-          }
-          const { city, country, countryCode } = await reverseGeocodeCity(geo.lat, geo.lng);
-          const [snapLat, snapLng] = snapToCityGrid(geo.lat, geo.lng);
-          let storeLat = snapLat, storeLng = snapLng;
-          const cityCenter = await forwardGeocodeCity(city, countryCode);
-          if (cityCenter) {
-            storeLat = cityCenter.lat;
-            storeLng = cityCenter.lng;
-          }
-          const updates = {
-            update_location: true,
-            city_name: city,
-            country_name: country,
-            lat: storeLat,
-            lng: storeLng,
-          };
-          if (countryCode) updates.country = countryCode;
-          await base44.auth.updateMe(updates);
-          setSettings((prev) => ({ ...prev, city_name: city, country_name: country }));
-          setLocUpdating(false);
-        } else {
-          await base44.auth.updateMe({
-            update_location: false,
-            city_name: "",
-            country_name: "",
-            lat: null,
-            lng: null,
-          });
-          setSettings((prev) => ({ ...prev, city_name: "", country_name: "" }));
-        }
-      } else {
-        await base44.auth.updateMe({ [key]: value });
-      }
+      await base44.auth.updateMe({ [key]: value });
     } catch {
       setSettings((prev) => ({ ...prev, [key]: !value }));
-      setLocUpdating(false);
     }
   }
 
@@ -363,21 +312,9 @@ function PrivacySection() {
     <div className="space-y-5">
       <h2 className="font-bold text-lg">{t("settings.privacy")}</h2>
 
-      {/* Location section */}
-      <div>
-        <div className="text-sm text-muted-foreground px-1 mb-2">
-          {settings.city_name || settings.country_name
-            ? [settings.city_name, settings.country_name].filter(Boolean).join(", ")
-            : t("privacy.noLocation")}
-        </div>
-        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-          <ToggleRow label={t("privacy.shareCountry")} checked={settings.share_country} onChange={() => update("share_country", !settings.share_country)} />
-          <ToggleRow label={t("privacy.shareCity")} checked={settings.share_city} onChange={() => update("share_city", !settings.share_city)} />
-          <ToggleRow label={locUpdating ? t("privacy.locationUpdating") : t("privacy.updateLocation")} checked={settings.update_location} onChange={() => !locUpdating && update("update_location", !settings.update_location)} />
-        </div>
-        <div className="text-xs text-muted-foreground px-1 mt-2 leading-relaxed">
-          {t("privacy.locationHelper")}
-        </div>
+      {/* Country sharing toggle */}
+      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+        <ToggleRow label={t("privacy.shareCountry")} checked={settings.share_country} onChange={() => update("share_country", !settings.share_country)} />
       </div>
 
       {/* Toggle settings */}

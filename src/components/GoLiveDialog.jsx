@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { X, Radio, Check, Zap, ClipboardList, Layers } from "lucide-react";
-import { getGeolocation, DEFAULT_CENTER, fuzzCoords } from "@/lib/workouts";
 import { useT } from "@/lib/i18n";
 
 export default function GoLiveDialog({ onClose, onDetailedSelect, onQuickStart, onQuickStartCategory, onSimpleSelect }) {

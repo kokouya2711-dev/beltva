@@ -12,7 +12,6 @@ const CATEGORIES = [
   { key: "recommended", labelKey: "users.cat_recommended" },
   { key: "online", labelKey: "users.cat_online" },
   { key: "training", labelKey: "users.cat_training" },
-  { key: "nearby", labelKey: "users.cat_nearby" },
   { key: "common-hobbies", labelKey: "users.cat_commonHobbies" },
   { key: "same-purpose", labelKey: "users.cat_samePurpose" },
   { key: "same-language", labelKey: "users.cat_sameLanguage" },
@@ -86,10 +85,6 @@ export default function UsersPage() {
     return !!(presence[u.id] && Date.now() - new Date(presence[u.id]).getTime() < ONLINE_WINDOW);
   }
   function isTraining(u) { return trainingIds.has(u.id); }
-  function dist(u) {
-    if (!me?.lat || !u.lat) return Infinity;
-    return Math.hypot(u.lat - me.lat, u.lng - me.lng);
-  }
   function commonHobbiesOf(u) {
     return parseHobbies(u.hobbies).filter((h) => myHobbies.includes(h));
   }
@@ -104,7 +99,6 @@ export default function UsersPage() {
     const refLangs = myLanguages.length > 0 ? myLanguages : [lang];
     if (langsOf(u).some((c) => refLangs.includes(c))) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_sameLanguage")); }
     if (isOnline(u)) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_online")); }
-    if (dist(u) < 5) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_nearby")); }
     const last = presence[u.id] ? new Date(presence[u.id]).getTime() : 0;
     if (last && Date.now() - last < 3600000) { score += 1; if (reasons.length < 3) reasons.push(t("users.reason_recentActive")); }
     if (!last && new Date(u.created_date) && Date.now() - new Date(u.created_date).getTime() < 604800000) {
@@ -155,8 +149,6 @@ export default function UsersPage() {
           .filter((u) => commonHobbiesOf(u).length > 0)
           .sort((a, b) => commonHobbiesOf(b).length - commonHobbiesOf(a).length)
           .map((u) => ({ u, common: commonHobbiesOf(u) }));
-      case "nearby":
-        return [...arr].sort((a, b) => dist(a) - dist(b)).map((u) => ({ u, common: commonHobbiesOf(u) }));
       case "new":
         return [...arr].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map((u) => ({ u, common: commonHobbiesOf(u) }));
       case "recommended":

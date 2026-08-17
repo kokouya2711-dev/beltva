@@ -26,6 +26,7 @@ export default function ProfileEdit() {
         display_name: u.display_name || "",
         bio: u.bio || "",
         country: u.country || "",
+        region: u.region || "",
         training_purpose: u.training_purpose || "",
         avatar_url: u.avatar_url || "",
         gender: u.gender || "",
@@ -61,6 +62,7 @@ export default function ProfileEdit() {
         display_name: form.display_name,
         bio: form.bio,
         country: form.country,
+        region: form.region,
         training_purpose: form.training_purpose,
         avatar_url: form.avatar_url,
         hobbies: JSON.stringify(hobbies),
@@ -104,6 +106,9 @@ export default function ProfileEdit() {
             return <option key={c.code} value={c.code}>{flagEmoji(c.code)} {name}</option>;
           })}
         </select>
+      </Field>
+      <Field label={t("common.regionOptional")}>
+        <input value={form.region} onChange={(e) => set("region", e.target.value)} className={inputCls} placeholder={t("common.regionPlaceholder")} />
       </Field>
       <Field label={t("common.purpose")}>
         <select value={form.training_purpose} onChange={(e) => set("training_purpose", e.target.value)} className={inputCls}>

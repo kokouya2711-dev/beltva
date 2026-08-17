@@ -95,6 +95,16 @@ export default function Profile() {
             <h1 className="text-xl font-bold">{name}</h1>
             {user.country && <span className="text-xl">{flagEmoji(user.country)}</span>}
           </div>
+          {user.country && (() => {
+            let cname = user.country;
+            try { cname = new Intl.DisplayNames([lang], { type: "region" }).of(user.country) || user.country; } catch {}
+            return (
+              <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1 justify-center flex-wrap">
+                <span>{cname}</span>
+                {user.region && <span>· {user.region}</span>}
+              </div>
+            );
+          })()}
           {user.bio && <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap max-w-md">{user.bio}</p>}
 
           <div className="flex items-center gap-6 mt-4 text-sm">
