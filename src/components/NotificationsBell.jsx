@@ -1,33 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { Bell } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { subscribeNotif, markAllNotifRead } from "@/lib/notifStore";
 
 export default function NotificationsBell({ meId }) {
   const t = useT();
   const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
 
-  async function load() {
-    if (!meId) return;
-    const ns = await base44.entities.Notification.filter({ user_id: meId }, "-created_date", 30).catch(() => []);
-    setUnread(ns.filter((n) => !n.read).length);
-  }
-
   useEffect(() => {
-    load();
-    const i = setInterval(load, 15000);
-    const onChanged = () => load();
-    window.addEventListener("notifications-changed", onChanged);
-    return () => { clearInterval(i); window.removeEventListener("notifications-changed", onChanged); };
-  }, [meId]);
+    return subscribeNotif(setUnread);
+  }, []);
+
+  async function handleClick() {
+    // Mark all as read → both bell badge and bottom nav badge clear simultaneously
+    await markAllNotifRead();
+    navigate("/notifications");
+  }
 
   return (
     <button
-      onClick={() => navigate("/notifications")}
+      onClick={handleClick}
       className="relative p-2 rounded-lg hover:bg-secondary transition-colors"
-      aria-label={t("notif.title")}
+      aria-label={t("notifications.title")}
     >
       <Bell className="w-5 h-5" />
       {unread > 0 && (

@@ -91,7 +91,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
       setLikers((arr) => [rec, ...arr]);
       base44.entities.Post.update(post.id, { likes: likes + 1 }).catch(() => {});
       if (post.created_by_id && post.created_by_id !== meId && !post.is_anonymous) {
-        notify(post.created_by_id, meId, "like", t("notif.liked"), post.id).catch(() => {});
+        notify(post.created_by_id, meId, "like", "notif.liked", post.id).catch(() => {});
       }
     }
   }

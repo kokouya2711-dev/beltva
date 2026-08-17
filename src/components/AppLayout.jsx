@@ -15,6 +15,8 @@ import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
 import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence } from "@/lib/dm";
+import { initNotifStore, subscribeNotif } from "@/lib/notifStore";
+import { initDmUnreadStore, subscribeDmUnread } from "@/lib/dmUnreadStore";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider, useTraining } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
@@ -37,6 +39,21 @@ const nav = [
 const FILTER_TABS = ["all", "latest", "popular", "following", ...POST_CATEGORIES];
 
 const MemoizedOutlet = React.memo(() => <Outlet />);
+
+// Red badge for bottom nav items (timeline notifications + DM unread)
+function NavBadge({ to }) {
+  const [count, setCount] = useState(0);
+  React.useEffect(() => {
+    if (to === "/timeline") return subscribeNotif(setCount);
+    if (to === "/messages") return subscribeDmUnread(setCount);
+  }, [to]);
+  if (!count) return null;
+  return (
+    <span className="absolute top-0.5 right-[20%] min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-background">
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
 
 export default function AppLayout() {
   return (
@@ -65,7 +82,13 @@ function AppLayoutInner() {
   const tCat = useTCategory();
 
   React.useEffect(() => {
-    base44.auth.me().then(setMe).catch(() => {});
+    base44.auth.me().then((u) => {
+      setMe(u);
+      if (u?.id) {
+        initNotifStore(u.id);
+        initDmUnreadStore(u.id);
+      }
+    }).catch(() => {});
   }, []);
 
   // Detect mobile keyboard open/close via focus/blur on input elements
@@ -216,12 +239,13 @@ function AppLayoutInner() {
             <Link
               key={n.to}
               to={n.to}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] ${
+              className={`relative flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}
             >
               <Icon style={{ width: 20, height: 20 }} />
               {t(n.labelKey)}
+              <NavBadge to={n.to} />
             </Link>
           );
         })}

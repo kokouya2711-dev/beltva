@@ -116,7 +116,7 @@ export default function PostDetail() {
       setLikers((arr) => [rec, ...arr]);
       base44.entities.Post.update(post.id, { likes: likes + 1 }).catch(() => {});
       if (post.created_by_id && post.created_by_id !== meId && !post.is_anonymous) {
-        notify(post.created_by_id, meId, "like", t("notif.liked"), post.id).catch(() => {});
+        notify(post.created_by_id, meId, "like", "notif.liked", post.id).catch(() => {});
       }
     }
   }
@@ -132,15 +132,15 @@ export default function PostDetail() {
     setReplyTo(null);
     setPosting(false);
     base44.entities.Post.update(id, { comments_count: (post.comments_count || 0) + 1 }).catch(() => {});
-    // Notify post owner (not self)
+    // Notify post owner (not self) — store translation key + comment content
     if (post.created_by_id && post.created_by_id !== meId) {
-      notify(post.created_by_id, meId, "comment", t("notif.commented"), id, id).catch(() => {});
+      notify(post.created_by_id, meId, "comment", "notif.commented", id, id, c.content).catch(() => {});
     }
     // Notify parent comment owner (not self, not post owner)
     if (parentCommentId) {
       const parent = comments.find(cc => cc.id === parentCommentId);
       if (parent?.created_by_id && parent.created_by_id !== meId && parent.created_by_id !== post.created_by_id) {
-        notify(parent.created_by_id, meId, "comment_reply", t("notif.replied"), parentCommentId, id).catch(() => {});
+        notify(parent.created_by_id, meId, "comment_reply", "notif.replied", parentCommentId, id, c.content).catch(() => {});
       }
     }
   }
@@ -161,7 +161,7 @@ export default function PostDetail() {
       setComments(arr => arr.map(c => c.id === comment.id ? { ...c, likes: (c.likes || 0) + 1 } : c));
       base44.entities.Comment.update(comment.id, { likes: (comment.likes || 0) + 1 }).catch(() => {});
       if (comment.created_by_id && comment.created_by_id !== meId) {
-        notify(comment.created_by_id, meId, "comment_like", t("notif.commentLiked"), comment.id, post.id).catch(() => {});
+        notify(comment.created_by_id, meId, "comment_like", "notif.commentLiked", comment.id, post.id).catch(() => {});
       }
     }
   }

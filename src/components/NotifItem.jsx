@@ -30,9 +30,15 @@ export default function NotifItem({ n, actor, onOpen }) {
   const Icon = cfg.icon;
   const name = actor ? displayName(actor) : "";
   const txt = n.text || "";
-  const rendered = txt.startsWith("notif.")
-    ? <><span className="font-semibold">{name}</span> {t(txt)}</>
-    : <><span className="font-semibold">{name}</span> {txt}</>;
+  const isKey = txt.startsWith("notif.");
+  const template = isKey ? t(txt) : txt;
+
+  // For comment types, append the comment content
+  const showContent = (n.type === "comment" || n.type === "comment_reply") && n.content;
+
+  const rendered = showContent
+    ? <><span className="font-semibold">{name}</span> {template}: {n.content}</>
+    : <><span className="font-semibold">{name}</span> {template}</>;
 
   return (
     <button

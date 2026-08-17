@@ -18,6 +18,10 @@
       "type": "string",
       "title": "\u5185\u5bb9"
     },
+    "content": {
+      "type": "string",
+      "title": "\u95a2\u9023\u30b3\u30f3\u30c6\u30f3\u30c4(\u30b3\u30e1\u30f3\u30c8\u672c\u6587\u7b49)"
+    },
     "read": {
       "type": "boolean",
       "default": false,

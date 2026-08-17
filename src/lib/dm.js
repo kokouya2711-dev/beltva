@@ -50,6 +50,11 @@ export async function sendMessage(conv, meId, { content, image_url }) {
   await base44.entities.Conversation.update(conv.id, updates);
   const otherId = meId === conv.a_id ? conv.b_id : conv.a_id;
   notify(otherId, meId, "dm", image_url ? "dm.imageSent" : (content || ""), conv.id);
+  // Send push notification for DM (delivered when app is closed/locked)
+  base44.functions.invoke("sendDmPushNotification", {
+    conversation_id: conv.id,
+    sender_id: meId,
+  }).catch(() => {});
   return { msg, conv: { ...conv, ...updates } };
 }
 
@@ -106,7 +111,7 @@ export async function updatePresence(meId, isTraining = false) {
   }
 }
 
-export async function notify(userId, actorId, type, text, targetId, postId) {
+export async function notify(userId, actorId, type, text, targetId, postId, content) {
   if (!userId || userId === actorId) return;
   const [bl, mt, user] = await Promise.all([
     base44.entities.Block.filter({ blocker_id: userId, blocked_id: actorId }),
@@ -118,7 +123,7 @@ export async function notify(userId, actorId, type, text, targetId, postId) {
   if (user?.notif_prefs) { try { prefs = { ...prefs, ...JSON.parse(user.notif_prefs) }; } catch {} }
   const key = type === "dm" ? "dm" : type === "follow" ? "follow" : (type === "like" || type === "comment_like") ? "like" : "comment";
   if (prefs[key] === false) return;
-  base44.entities.Notification.create({ user_id: userId, type, actor_id: actorId, text, read: false, target_id: targetId, target_type: type, post_id: postId || targetId }).catch(() => {});
+  base44.entities.Notification.create({ user_id: userId, type, actor_id: actorId, text, content: content || "", read: false, target_id: targetId, target_type: type, post_id: postId || targetId }).catch(() => {});
 }
 
 export function parseReactions(s) {

@@ -49,6 +49,7 @@ export default function Chat() {
     setMuted(mt);
     const myField = meUser.id === c.a_id ? "a_read_at" : "b_read_at";
     await base44.entities.Conversation.update(id, { [myField]: new Date().toISOString() });
+    window.dispatchEvent(new CustomEvent("dm-unread-changed"));
     setLoading(false);
   }
 
@@ -61,6 +62,7 @@ export default function Chat() {
       if (event.data.sender_id !== me?.id && conv) {
         const myField = me?.id === conv.a_id ? "a_read_at" : "b_read_at";
         base44.entities.Conversation.update(id, { [myField]: new Date().toISOString() });
+        window.dispatchEvent(new CustomEvent("dm-unread-changed"));
       }
     });
     return unsub;
