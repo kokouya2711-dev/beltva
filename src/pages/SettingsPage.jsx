@@ -38,9 +38,18 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       {section ? (
         <div>
-          <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-4">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+          {section === "language" ? (
+            <div className="relative flex items-center mb-5">
+              <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("settings.language")}</h2>
+            </div>
+          ) : (
+            <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-4">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
           {section === "account" && <AccountSection />}
           {section === "notifications" && <NotificationsSection />}
           {section === "language" && <LanguageSection />}
@@ -147,40 +156,20 @@ function NotificationsSection() {
 }
 
 function LanguageSection() {
-  const t = useT();
   const { lang, setLang } = useI18n();
-  const [search, setSearch] = useState("");
-
-  const filtered = LANGS.filter((l) =>
-    l.label.toLowerCase().includes(search.toLowerCase()) ||
-    l.code.includes(search.toLowerCase())
-  );
-
   return (
-    <div className="space-y-5">
-      <h2 className="font-bold text-lg">{t("settings.language")}</h2>
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder={t("language.search")}
-          className="w-full bg-secondary/60 border border-border rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-primary"
-        />
-      </div>
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        {filtered.map((l) => (
-          <button
-            key={l.code}
-            onClick={() => setLang(l.code)}
-            className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/40 text-left"
-          >
-            <span className="text-xl">{l.flag}</span>
-            <span className="flex-1">{l.label}</span>
-            {lang === l.code && <Check className="w-4 h-4 text-primary" />}
-          </button>
-        ))}
-      </div>
+    <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+      {LANGS.map((l) => (
+        <button
+          key={l.code}
+          onClick={() => setLang(l.code)}
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/40 text-left"
+        >
+          <span className="text-xl">{l.flag}</span>
+          <span className="flex-1">{l.label}</span>
+          {lang === l.code && <Check className="w-4 h-4 text-primary" />}
+        </button>
+      ))}
     </div>
   );
 }
