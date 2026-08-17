@@ -167,6 +167,11 @@
     "language": {
       "type": "string",
       "title": "\u8868\u793a\u8a00\u8a9e"
+    },
+    "last_image_upload_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u76f4\u8fd1\u753b\u50cf\u6295\u7a3f\u65e5"
     }
   },
   "required": [
