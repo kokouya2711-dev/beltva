@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { fetchUser } from "@/lib/profile";
+import { fetchUser, displayName } from "@/lib/profile";
 import { useT } from "@/lib/i18n";
-import { MessageCircle, Loader2, Inbox } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import SwipeableConversationRow from "@/components/messages/SwipeableConversationRow";
 
 export default function Messages() {
@@ -14,6 +14,7 @@ export default function Messages() {
   const [others, setOthers] = useState({});
   const [presence, setPresence] = useState({});
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
 
   const loadData = useCallback(async () => {
     const meUser = await base44.auth.me().catch(() => null);
@@ -26,9 +27,8 @@ export default function Messages() {
     const map = {};
     [...asA, ...asB].forEach((c) => { map[c.id] = c; });
     const all = Object.values(map).sort((a, b) => {
-      // Pinned conversations first
       const aPinned = (a.a_id === meUser.id ? a.a_pinned : a.b_pinned) ? 1 : 0;
-      const bPinned = (b.a_id === meUser.id ? b.a_pinned : b.b_pinned) ? 1 : 0;
+      const bPinned = (b.a_id === meUser.id ? b.b_pinned : b.b_pinned) ? 1 : 0;
       if (aPinned !== bPinned) return bPinned - aPinned;
       return new Date(b.last_message_at || 0) - new Date(a.last_message_at || 0);
     });
@@ -45,26 +45,51 @@ export default function Messages() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  const filtered = useMemo(() => {
+    if (!query.trim()) return convs;
+    const q = query.toLowerCase();
+    return convs.filter((c) => {
+      const otherId = c.a_id === me?.id ? c.b_id : c.a_id;
+      const o = others[otherId];
+      return displayName(o).toLowerCase().includes(q);
+    });
+  }, [convs, query, me, others]);
+
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-4">
-      <div className="flex items-center gap-2">
-        <MessageCircle className="w-5 h-5 text-primary" />
-        <h1 className="text-2xl font-bold">{t("messages.title")}</h1>
+    <div className="max-w-2xl mx-auto px-4 md:px-8 pt-4 md:pt-6 pb-4">
+      {/* Search bar — wide, no extra buttons */}
+      <div className="relative mb-4">
+        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("messages.searchPlaceholder")}
+          className="w-full bg-secondary/60 border border-border rounded-full pl-10 pr-4 py-2.5 text-sm outline-none focus:border-primary"
+        />
       </div>
 
       {loading ? (
         <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : convs.length === 0 ? (
-        <div className="glass rounded-2xl border border-border py-16 flex flex-col items-center gap-2 text-muted-foreground">
-          <Inbox className="w-10 h-10 opacity-40" />
-          <div className="text-sm">{t("messages.empty")}</div>
+        /* Empty state — no card, centered directly on screen */
+        <div className="flex flex-col items-center justify-center text-center px-6" style={{ minHeight: "60vh" }}>
+          <h2 className="text-xl font-bold text-foreground">{t("messages.emptyTitle")}</h2>
+          <p className="text-sm text-muted-foreground mt-2">{t("messages.emptySub")}</p>
+          <button
+            onClick={() => navigate("/users")}
+            className="mt-6 bg-primary text-primary-foreground font-semibold px-6 py-2.5 rounded-full text-sm hover:opacity-90 transition"
+          >
+            {t("users.title")}
+          </button>
         </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-10 text-sm text-muted-foreground">{t("messages.noResults")}</div>
       ) : (
         <div className="glass rounded-2xl border border-border overflow-hidden">
-          {convs.map((c) => {
+          {filtered.map((c) => {
             const otherId = c.a_id === me.id ? c.b_id : c.a_id;
             const o = others[otherId];
-            const isOnline = o?.show_online_status !== false && presence[otherId] && Date.now() - new Date(presence[otherId]).getTime() < 120000;
+            const isOnline = o?.show_online_status !== false && presence[otherId] && Date.now() - new Date(presence[otherId]).getTime() < 60000;
             const myRead = c[c.a_id === me.id ? "a_read_at" : "b_read_at"];
             const unread = c.last_sender_id !== me.id && c.last_message_at && (!myRead || new Date(c.last_message_at).getTime() > new Date(myRead).getTime());
             return (

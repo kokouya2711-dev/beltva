@@ -6,7 +6,7 @@ import { sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteU
 import MessageBubble from "@/components/MessageBubble";
 import ReportDialog from "@/components/ReportDialog";
 import { useT } from "@/lib/i18n";
-import { ArrowLeft, Send, Image as ImageIcon, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
 
 export default function Chat() {
   const t = useT();
@@ -18,7 +18,6 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [online, setOnline] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -90,16 +89,6 @@ export default function Chat() {
     } finally { setSending(false); }
   }
 
-  async function sendImage(file) {
-    setUploading(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      const { msg } = await sendMessage(conv, me.id, { image_url: file_url });
-      setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
-      setConv((c) => ({ ...c, status: "active", last_message: "dm.imageMessage", last_message_at: new Date().toISOString(), last_sender_id: me.id }));
-    } finally { setUploading(false); }
-  }
-
   async function react(emoji) {
     if (!reactFor) return;
     const msg = messages.find((m) => m.id === reactFor);
@@ -156,11 +145,6 @@ export default function Chat() {
 
       {canSend ? (
         <div className="flex items-center gap-2 pt-2 border-t border-border">
-          <label className="p-2 cursor-pointer hover:text-primary relative">
-            <ImageIcon className="w-5 h-5" />
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && sendImage(e.target.files[0])} />
-            {uploading && <Loader2 className="w-4 h-4 animate-spin absolute -top-0 -right-1" />}
-          </label>
           <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder={t("messages.inputPlaceholder")} className="flex-1 bg-secondary/60 border border-border rounded-full px-4 py-2 text-sm outline-none focus:border-primary" />
           <button onClick={send} disabled={sending || !draft.trim()} className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-40">
             {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
