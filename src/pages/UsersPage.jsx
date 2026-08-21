@@ -6,7 +6,7 @@ import { parseHobbies, TRAINING_PURPOSES, HOBBY_CATEGORIES, hobbyLabel, hobbyCat
 import UserCard from "@/components/UserCard";
 import { Loader2, Search, SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
 
-const ONLINE_WINDOW = 60000; // 60s — real-time individual online indicator
+const ONLINE_WINDOW = 30000; // 30s — real-time individual online indicator
 
 const CATEGORIES = [
   { key: "recommended", labelKey: "users.cat_recommended" },
@@ -75,6 +75,22 @@ export default function UsersPage() {
     })();
   }, []);
 
+  // Real-time presence subscription
+  useEffect(() => {
+    const unsubscribe = base44.entities.Presence.subscribe((event) => {
+      setPresence((prev) => {
+        const next = { ...prev };
+        if (event.type === "delete") {
+          delete next[event.data.created_by_id];
+        } else if (event.data?.created_by_id) {
+          next[event.data.created_by_id] = event.data.last_seen;
+        }
+        return next;
+      });
+    });
+    return unsubscribe;
+  }, []);
+
   const myHobbies = useMemo(() => parseHobbies(me?.hobbies), [me]);
   const myPurpose = me?.training_purpose;
   const myCountry = me?.country;
@@ -127,38 +143,52 @@ export default function UsersPage() {
     if (fOnlineOnly) arr = arr.filter(isOnline);
     if (query) arr = arr.filter((u) => (displayName(u) || "").toLowerCase().includes(query.toLowerCase()));
 
+    // Category-specific filtering
     switch (category) {
       case "online":
-        return arr.filter(isOnline).map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter(isOnline);
+        break;
       case "training":
-        return arr.filter(isTraining).map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter(isTraining);
+        break;
       case "following":
-        return arr.filter((u) => followIds.has(u.id)).map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter((u) => followIds.has(u.id));
+        break;
       case "same-country":
-        return arr.filter((u) => myCountry && u.country === myCountry).map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter((u) => myCountry && u.country === myCountry);
+        break;
       case "same-purpose":
-        return arr.filter((u) => myPurpose && u.training_purpose === myPurpose).map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter((u) => myPurpose && u.training_purpose === myPurpose);
+        break;
       case "same-language": {
         const refLangs = myLanguages.length > 0 ? myLanguages : [lang];
-        return arr
-          .filter((u) => langsOf(u).some((c) => refLangs.includes(c)))
-          .map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter((u) => langsOf(u).some((c) => refLangs.includes(c)));
+        break;
       }
       case "common-hobbies":
-        return arr
-          .filter((u) => commonHobbiesOf(u).length > 0)
-          .sort((a, b) => commonHobbiesOf(b).length - commonHobbiesOf(a).length)
-          .map((u) => ({ u, common: commonHobbiesOf(u) }));
+        arr = arr.filter((u) => commonHobbiesOf(u).length > 0);
+        break;
       case "new":
-        return [...arr].sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map((u) => ({ u, common: commonHobbiesOf(u) }));
       case "recommended":
-      default: {
-        const scored = arr
-          .map((u) => ({ u, ...recommendInfo(u) }))
-          .sort((a, b) => b.score - a.score || (new Date(b.u.created_date) - new Date(a.u.created_date)));
-        return scored.map((x) => ({ u: x.u, reason: x.reasons, common: x.common }));
-      }
+      default:
+        break;
     }
+
+    // Global sort: real-time online first, then by last_seen descending
+    const sorted = [...arr].sort((a, b) => {
+      const aOnline = isOnline(a);
+      const bOnline = isOnline(b);
+      if (aOnline !== bOnline) return bOnline - aOnline;
+      const aLast = presence[a.id] ? new Date(presence[a.id]).getTime() : 0;
+      const bLast = presence[b.id] ? new Date(presence[b.id]).getTime() : 0;
+      return bLast - aLast;
+    });
+
+    return sorted.map((u) => {
+      const common = commonHobbiesOf(u);
+      const reason = category === "recommended" ? recommendInfo(u).reasons.slice(0, 2) : [];
+      return { u, reason, common };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, category, query, fCountry, fLang, fAgeMin, fAgeMax, fGender, fHobby, fPurpose, fOnlineOnly, presence, trainingIds, followIds, me, myHobbies, myPurpose, myCountry, myLanguages, lang]);
 

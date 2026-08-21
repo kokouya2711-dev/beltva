@@ -43,7 +43,7 @@ export default function Chat() {
     ]);
     setOther(o);
     setMessages(msgs);
-    setOnline(o?.show_online_status !== false && presence[0]?.last_seen && Date.now() - new Date(presence[0].last_seen).getTime() < 60000);
+    setOnline(o?.show_online_status !== false && presence[0]?.last_seen && Date.now() - new Date(presence[0].last_seen).getTime() < 30000);
     setBlocked(bl);
     setMuted(mt);
     const myField = meUser.id === c.a_id ? "a_read_at" : "b_read_at";
@@ -66,6 +66,16 @@ export default function Chat() {
     });
     return unsub;
   }, [id, me, conv]);
+
+  useEffect(() => {
+    if (!me || !conv) return;
+    const otherId = me.id === conv.a_id ? conv.b_id : conv.a_id;
+    const unsub = base44.entities.Presence.subscribe((event) => {
+      if (event.data?.created_by_id !== otherId) return;
+      setOnline(other?.show_online_status !== false && event.data.last_seen && Date.now() - new Date(event.data.last_seen).getTime() < 30000);
+    });
+    return unsub;
+  }, [me, conv, other]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });

@@ -14,7 +14,7 @@ import GoLiveDialog from "@/components/GoLiveDialog";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
 import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
-import { updatePresence } from "@/lib/dm";
+import { updatePresence, markOffline } from "@/lib/dm";
 import { initNotifStore, subscribeNotif } from "@/lib/notifStore";
 import { initDmUnreadStore, subscribeDmUnread } from "@/lib/dmUnreadStore";
 import { useT } from "@/lib/i18n";
@@ -107,10 +107,12 @@ function AppLayoutInner() {
   React.useEffect(() => {
     if (!me) return;
     updatePresence(me.id, isActive);
-    const i = setInterval(() => updatePresence(me.id, isActive), 30000);
-    const onVis = () => { if (!document.hidden) updatePresence(me.id, isActive); };
+    const i = setInterval(() => updatePresence(me.id, isActive), 15000);
+    const onVis = () => { if (document.hidden) markOffline(me.id); else updatePresence(me.id, isActive); };
+    const onHide = () => markOffline(me.id);
     document.addEventListener("visibilitychange", onVis);
-    return () => { clearInterval(i); document.removeEventListener("visibilitychange", onVis); };
+    window.addEventListener("pagehide", onHide);
+    return () => { clearInterval(i); document.removeEventListener("visibilitychange", onVis); window.removeEventListener("pagehide", onHide); };
   }, [me, isActive]);
 
 

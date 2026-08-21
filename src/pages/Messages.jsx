@@ -45,6 +45,22 @@ export default function Messages() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // Real-time presence subscription
+  useEffect(() => {
+    const unsubscribe = base44.entities.Presence.subscribe((event) => {
+      setPresence((prev) => {
+        const next = { ...prev };
+        if (event.type === "delete") {
+          delete next[event.data.created_by_id];
+        } else if (event.data?.created_by_id) {
+          next[event.data.created_by_id] = event.data.last_seen;
+        }
+        return next;
+      });
+    });
+    return unsubscribe;
+  }, []);
+
   const filtered = useMemo(() => {
     if (!query.trim()) return convs;
     const q = query.toLowerCase();
@@ -89,7 +105,7 @@ export default function Messages() {
           {filtered.map((c) => {
             const otherId = c.a_id === me.id ? c.b_id : c.a_id;
             const o = others[otherId];
-            const isOnline = o?.show_online_status !== false && presence[otherId] && Date.now() - new Date(presence[otherId]).getTime() < 60000;
+            const isOnline = o?.show_online_status !== false && presence[otherId] && Date.now() - new Date(presence[otherId]).getTime() < 30000;
             const myRead = c[c.a_id === me.id ? "a_read_at" : "b_read_at"];
             const unread = c.last_sender_id !== me.id && c.last_message_at && (!myRead || new Date(c.last_message_at).getTime() > new Date(myRead).getTime());
             return (

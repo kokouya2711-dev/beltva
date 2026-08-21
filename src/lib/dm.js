@@ -111,6 +111,15 @@ export async function updatePresence(meId, isTraining = false) {
   }
 }
 
+export async function markOffline(meId) {
+  if (!meId) return;
+  const ex = await base44.entities.Presence.filter({ created_by_id: meId });
+  const offlineTime = new Date(Date.now() - 120000).toISOString();
+  if (ex.length > 0) {
+    await Promise.all(ex.map(r => base44.entities.Presence.update(r.id, { last_seen: offlineTime })));
+  }
+}
+
 export async function notify(userId, actorId, type, text, targetId, postId, content) {
   if (!userId || userId === actorId) return;
   const [bl, mt, user] = await Promise.all([
