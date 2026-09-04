@@ -29,14 +29,11 @@ import TimelineWorkoutFilter from "@/components/TimelineWorkoutFilter";
 import { motion } from "framer-motion";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
-const FEED_ICON_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/ac73752da_IMG_2728.jpeg";
-const CHAT_ICON_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/acb06b3ce_IMG_2729.jpeg";
-
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
-  { to: "/users", labelKey: "nav.users", icon: Users, iconUrl: LOGO_URL },
-  { to: "/messages", labelKey: "nav.messages", icon: MessageSquare, iconUrl: CHAT_ICON_URL },
-  { to: "/timeline", labelKey: "nav.timeline", icon: LayoutList, iconUrl: FEED_ICON_URL },
+  { to: "/users", labelKey: "nav.users", icon: Users },
+  { to: "/messages", labelKey: "nav.messages", icon: MessageSquare },
+  { to: "/timeline", labelKey: "nav.timeline", icon: LayoutList },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
 
@@ -65,22 +62,14 @@ function NavItem({ n, active, t }) {
     <Link
       to={n.to}
       className={`relative flex-1 flex flex-col items-center gap-1 py-1 rounded-full transition-colors duration-200 ${
-        active ? "bg-white/5 text-primary" : "text-muted-foreground"
+        active ? "bg-white/10 text-primary" : "text-muted-foreground"
       }`}
     >
       <motion.div
         animate={active ? { scale: [1, 1.12, 1], y: [0, -3, 0] } : { scale: 1, y: 0 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
       >
-        {n.iconUrl ? (
-          <img
-            src={n.iconUrl}
-            style={{ width: 26, height: 26, mixBlendMode: 'screen', opacity: active ? 1 : 0.55, background: 'transparent', filter: active ? 'none' : 'saturate(0.6)' }}
-            className="object-contain"
-          />
-        ) : (
-          <n.icon style={{ width: 26, height: 26 }} />
-        )}
+        <n.icon style={{ width: 26, height: 26 }} />
       </motion.div>
       <span className={`text-[10px] font-medium transition-colors duration-200 ${active ? "text-primary" : "text-muted-foreground"}`}>{t(n.labelKey)}</span>
       <NavBadge to={n.to} />
@@ -173,11 +162,7 @@ function AppLayoutInner() {
                   active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                 }`}
               >
-                {n.iconUrl ? (
-                  <img src={n.iconUrl} style={{ width: 18, height: 18, mixBlendMode: 'screen', opacity: active ? 1 : 0.5, background: 'transparent' }} className="object-contain" />
-                ) : (
-                  <n.icon style={{ width: 18, height: 18 }} />
-                )}
+                <n.icon style={{ width: 18, height: 18 }} />
                 {t(n.labelKey)}
               </Link>
             );
@@ -272,7 +257,7 @@ function AppLayoutInner() {
 
       {/* Mobile bottom tab bar — glass pill with bounce animation */}
       <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
-        <div className="flex items-center w-full max-w-sm bg-card/80 backdrop-blur-xl rounded-full border border-white/10 px-2 py-2 shadow-2xl shadow-black/50">
+        <div className="flex items-center w-full max-w-sm bg-card/50 backdrop-blur-xl rounded-full border border-white/10 px-2 py-2 shadow-2xl shadow-black/50">
           {nav.map((n) => (
             <NavItem key={n.to} n={n} active={location.pathname === n.to} t={t} />
           ))}
