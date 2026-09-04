@@ -8,7 +8,8 @@ import {
   MessageSquare,
   User,
   Dumbbell,
-  Plus
+  Plus,
+  LayoutList
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
@@ -28,37 +29,14 @@ import TimelineWorkoutFilter from "@/components/TimelineWorkoutFilter";
 import { motion } from "framer-motion";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
-
-// Custom SVG nav icons matching user-provided designs (transparent, inherit color via currentColor)
-function FeedNavIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <rect x="2" y="4" width="13" height="16" rx="3" />
-      <rect x="9" y="4" width="13" height="16" rx="3" />
-      <circle cx="13" cy="10" r="1" fill="currentColor" stroke="none" />
-      <line x1="16" y1="10" x2="19" y2="10" />
-      <circle cx="13" cy="15" r="1" fill="currentColor" stroke="none" />
-      <line x1="16" y1="15" x2="19" y2="15" />
-    </svg>
-  );
-}
-
-function ChatNavIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4v-4a2 2 0 0 1-1-2V6a2 2 0 0 1 2-2z" />
-      <circle cx="8.5" cy="11" r="1" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="11" r="1" fill="currentColor" stroke="none" />
-      <circle cx="15.5" cy="11" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
+const FEED_ICON_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/ac73752da_IMG_2728.jpeg";
+const CHAT_ICON_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/acb06b3ce_IMG_2729.jpeg";
 
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
-  { to: "/users", labelKey: "nav.users", icon: Users },
-  { to: "/messages", labelKey: "nav.messages", icon: ChatNavIcon },
-  { to: "/timeline", labelKey: "nav.timeline", icon: FeedNavIcon },
+  { to: "/users", labelKey: "nav.users", icon: Users, iconUrl: LOGO_URL },
+  { to: "/messages", labelKey: "nav.messages", icon: MessageSquare, iconUrl: CHAT_ICON_URL },
+  { to: "/timeline", labelKey: "nav.timeline", icon: LayoutList, iconUrl: FEED_ICON_URL },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
 
@@ -78,6 +56,35 @@ function NavBadge({ to }) {
     <span className="absolute top-0.5 right-[20%] min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-background">
       {count > 9 ? "9+" : count}
     </span>
+  );
+}
+
+// Nav item with bounce animation on selection and glass-aware icon rendering
+function NavItem({ n, active, t }) {
+  return (
+    <Link
+      to={n.to}
+      className={`relative flex-1 flex flex-col items-center gap-1 py-1 rounded-full transition-colors duration-200 ${
+        active ? "bg-white/5 text-primary" : "text-muted-foreground"
+      }`}
+    >
+      <motion.div
+        animate={active ? { scale: [1, 1.12, 1], y: [0, -3, 0] } : { scale: 1, y: 0 }}
+        transition={{ duration: 0.22, ease: "easeOut" }}
+      >
+        {n.iconUrl ? (
+          <img
+            src={n.iconUrl}
+            style={{ width: 26, height: 26, mixBlendMode: 'screen', opacity: active ? 1 : 0.45, background: 'transparent' }}
+            className="object-contain"
+          />
+        ) : (
+          <n.icon style={{ width: 26, height: 26 }} />
+        )}
+      </motion.div>
+      <span className={`text-[10px] font-medium transition-colors duration-200 ${active ? "text-primary" : "text-muted-foreground"}`}>{t(n.labelKey)}</span>
+      <NavBadge to={n.to} />
+    </Link>
   );
 }
 
@@ -166,7 +173,11 @@ function AppLayoutInner() {
                   active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                 }`}
               >
-                <n.icon style={{ width: 18, height: 18 }} />
+                {n.iconUrl ? (
+                  <img src={n.iconUrl} style={{ width: 18, height: 18, mixBlendMode: 'screen', opacity: active ? 1 : 0.5, background: 'transparent' }} className="object-contain" />
+                ) : (
+                  <n.icon style={{ width: 18, height: 18 }} />
+                )}
                 {t(n.labelKey)}
               </Link>
             );
@@ -259,30 +270,12 @@ function AppLayoutInner() {
         <MemoizedOutlet />
       </main>
 
-      {/* Mobile bottom tab bar — floating pill design */}
+      {/* Mobile bottom tab bar — glass pill with bounce animation */}
       <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
-        <div className="flex items-center w-full max-w-sm bg-card rounded-full border border-border px-2 py-2 shadow-2xl shadow-black/50">
-          {nav.map((n) => {
-            const active = location.pathname === n.to;
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                className={`relative flex-1 flex flex-col items-center gap-1 py-1 rounded-full transition-all ${
-                  active ? "bg-secondary/80 text-primary" : "text-muted-foreground"
-                }`}
-              >
-                <motion.div
-                  whileTap={{ scale: [1, 1.25, 0.9, 1.1, 1] }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <n.icon style={{ width: 26, height: 26 }} />
-                </motion.div>
-                <span className="text-[10px] font-medium">{t(n.labelKey)}</span>
-                <NavBadge to={n.to} />
-              </Link>
-            );
-          })}
+        <div className="flex items-center w-full max-w-sm bg-card/80 backdrop-blur-xl rounded-full border border-white/10 px-2 py-2 shadow-2xl shadow-black/50">
+          {nav.map((n) => (
+            <NavItem key={n.to} n={n} active={location.pathname === n.to} t={t} />
+          ))}
         </div>
       </nav>
 
