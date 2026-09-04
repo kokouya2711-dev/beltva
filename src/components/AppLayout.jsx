@@ -75,7 +75,7 @@ function NavItem({ n, active, t }) {
         {n.iconUrl ? (
           <img
             src={n.iconUrl}
-            style={{ width: 26, height: 26, mixBlendMode: 'screen', opacity: active ? 1 : 0.45, background: 'transparent' }}
+            style={{ width: 26, height: 26, mixBlendMode: 'screen', opacity: active ? 1 : 0.55, background: 'transparent', filter: active ? 'none' : 'saturate(0.6)' }}
             className="object-contain"
           />
         ) : (
