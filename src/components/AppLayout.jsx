@@ -32,7 +32,7 @@ const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
   { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30 },
-  { to: "/messages", labelKey: "nav.messages", icon: ChatIcon },
+  { to: "/messages", labelKey: "nav.messages", icon: ChatIcon, iconSize: 30 },
   { to: "/timeline", labelKey: "nav.timeline", icon: FeedIcon },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
