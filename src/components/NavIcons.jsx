@@ -24,11 +24,11 @@ export function ChatIcon(props) {
   );
 }
 
-// フィード — main rectangle with list items + partial offset outer frame line
+// フィード — two stacked rounded rectangles, front one with list items (from IMG_2823)
 export function FeedIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M7 3 L15 3 Q17 3 17 5 L17 6" />
+      <rect x="7" y="2" width="14" height="15" rx="2.5" />
       <rect x="3" y="6" width="14" height="15" rx="2.5" />
       <circle cx="7" cy="11" r="1.1" fill="currentColor" stroke="none" />
       <line x1="10" y1="11" x2="14" y2="11" />
