@@ -5,7 +5,6 @@ import {
   Home as HomeIcon,
   Users,
   Send,
-  MessageSquare,
   User,
   Dumbbell,
   Plus,
@@ -27,13 +26,13 @@ import { POST_CATEGORIES } from "@/lib/community";
 import { useTCategory } from "@/lib/i18nHelpers";
 import TimelineWorkoutFilter from "@/components/TimelineWorkoutFilter";
 import { motion } from "framer-motion";
-import { FriendsIcon, FeedIcon } from "@/components/NavIcons";
+import { FriendsIcon, FeedIcon, ChatIcon } from "@/components/NavIcons";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
   { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30 },
-  { to: "/messages", labelKey: "nav.messages", icon: MessageSquare },
+  { to: "/messages", labelKey: "nav.messages", icon: ChatIcon },
   { to: "/timeline", labelKey: "nav.timeline", icon: FeedIcon },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];

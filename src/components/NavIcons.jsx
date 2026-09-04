@@ -12,6 +12,18 @@ export function FriendsIcon(props) {
   );
 }
 
+// チャット — rounded speech bubble with tail and three dots (from IMG_2822)
+export function ChatIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M3 7 Q3 4 6 4 L18 4 Q21 4 21 7 L21 13 Q21 16 18 16 L8 16 L4 20 L6 16 Q3 16 3 13 Z" />
+      <circle cx="9" cy="10" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="10" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="10" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 // フィード — main rectangle with list items + partial offset outer frame line
 export function FeedIcon(props) {
   return (
