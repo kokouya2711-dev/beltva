@@ -32,7 +32,7 @@ import { FriendsIcon, FeedIcon } from "@/components/NavIcons";
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
-  { to: "/users", labelKey: "nav.users", icon: FriendsIcon },
+  { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30 },
   { to: "/messages", labelKey: "nav.messages", icon: MessageSquare },
   { to: "/timeline", labelKey: "nav.timeline", icon: FeedIcon },
   { to: "/me", labelKey: "nav.me", icon: User }
@@ -70,7 +70,7 @@ function NavItem({ n, active, t }) {
         animate={active ? { scale: [1, 1.12, 1], y: [0, -3, 0] } : { scale: 1, y: 0 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
       >
-        <n.icon style={{ width: 26, height: 26 }} />
+        <n.icon style={{ width: n.iconSize || 26, height: n.iconSize || 26 }} />
       </motion.div>
       <span className={`text-[10px] font-medium transition-colors duration-200 ${active ? "text-primary" : "text-muted-foreground"}`}>{t(n.labelKey)}</span>
       <NavBadge to={n.to} />
