@@ -4,9 +4,9 @@ import React from "react";
 export function FriendsIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <circle cx="7" cy="5" r="2" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="5" r="2" fill="currentColor" stroke="none" />
-      <path d="M7 9 C3 9, 3 17, 8 17 C12 17, 12 9, 16 9 C20 9, 20 17, 17 17 C13 17, 13 9, 7 9" />
+      <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="6" r="2" fill="currentColor" stroke="none" />
+      <path d="M12 11 C10.5 9, 6 9, 6 13 C6 17, 10.5 17, 12 15 C13.5 17, 18 17, 18 13 C18 9, 13.5 9, 12 11" />
     </svg>
   );
 }
