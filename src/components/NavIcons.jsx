@@ -3,10 +3,11 @@ import React from "react";
 // 仲間 — infinity loop body with two solid circle heads above (from IMG_2821)
 export function FriendsIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="6" r="2" fill="currentColor" stroke="none" />
-      <path d="M12 11 C10.5 9, 6 9, 6 13 C6 17, 10.5 17, 12 15 C13.5 17, 18 17, 18 13 C18 9, 13.5 9, 12 11" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="8" cy="5" r="2.2" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="5" r="2.2" fill="currentColor" stroke="none" />
+      <path d="M12 13 C9.5 9.5, 5 9.5, 5 13 C5 16.5, 9.5 16.5, 12 13" />
+      <path d="M12 13 C14.5 9.5, 19 9.5, 19 13 C19 16.5, 14.5 16.5, 12 13" />
     </svg>
   );
 }
