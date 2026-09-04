@@ -25,14 +25,17 @@ import { TimelineFilterProvider, useTimelineFilter } from "@/lib/timelineFilterC
 import { POST_CATEGORIES } from "@/lib/community";
 import { useTCategory } from "@/lib/i18nHelpers";
 import TimelineWorkoutFilter from "@/components/TimelineWorkoutFilter";
+import { motion } from "framer-motion";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
+const FEED_ICON_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/ac73752da_IMG_2728.jpeg";
+const CHAT_ICON_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/acb06b3ce_IMG_2729.jpeg";
 
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
-  { to: "/users", labelKey: "nav.users", icon: Users },
-  { to: "/messages", labelKey: "nav.messages", icon: Send },
-  { to: "/timeline", labelKey: "nav.timeline", icon: MessageSquare },
+  { to: "/users", labelKey: "nav.users", iconUrl: LOGO_URL },
+  { to: "/messages", labelKey: "nav.messages", iconUrl: CHAT_ICON_URL, blend: true },
+  { to: "/timeline", labelKey: "nav.timeline", iconUrl: FEED_ICON_URL, blend: true },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
 
@@ -132,7 +135,6 @@ function AppLayoutInner() {
         <nav className="flex-1 px-3 py-2 space-y-1">
           {nav.map((n) => {
             const active = location.pathname === n.to;
-            const Icon = n.icon;
             return (
               <Link
                 key={n.to}
@@ -141,7 +143,11 @@ function AppLayoutInner() {
                   active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                 }`}
               >
-                <Icon style={{ width: 18, height: 18 }} />
+                {n.iconUrl ? (
+                  <img src={n.iconUrl} style={{ width: 18, height: 18, mixBlendMode: n.blend ? 'screen' : 'normal' }} className="object-contain rounded-md" />
+                ) : (
+                  <n.icon style={{ width: 18, height: 18 }} />
+                )}
                 {t(n.labelKey)}
               </Link>
             );
@@ -234,25 +240,39 @@ function AppLayoutInner() {
         <MemoizedOutlet />
       </main>
 
-      {/* Mobile bottom tab bar — hidden while keyboard is open */}
-      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-border flex ${keyboardOpen ? "hidden" : "flex"}`} style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-        {nav.map((n) => {
-          const active = location.pathname === n.to;
-          const Icon = n.icon;
-          return (
-            <Link
-              key={n.to}
-              to={n.to}
-              className={`relative flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] ${
-                active ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Icon style={{ width: 20, height: 20 }} />
-              {t(n.labelKey)}
-              <NavBadge to={n.to} />
-            </Link>
-          );
-        })}
+      {/* Mobile bottom tab bar — floating pill design */}
+      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-3 ${keyboardOpen ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
+        <div className="flex items-center gap-0.5 bg-card backdrop-blur-xl rounded-full border border-border px-1.5 py-1.5 shadow-2xl shadow-black/50">
+          {nav.map((n) => {
+            const active = location.pathname === n.to;
+            return (
+              <Link
+                key={n.to}
+                to={n.to}
+                className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-full transition-all ${
+                  active ? "bg-secondary/80 text-primary" : "text-muted-foreground"
+                }`}
+              >
+                <motion.div
+                  whileTap={{ scale: [1, 1.25, 0.9, 1.1, 1] }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {n.iconUrl ? (
+                    <img
+                      src={n.iconUrl}
+                      style={{ width: 22, height: 22, mixBlendMode: n.blend ? 'screen' : 'normal', opacity: active ? 1 : 0.5 }}
+                      className="object-contain"
+                    />
+                  ) : (
+                    <n.icon style={{ width: 22, height: 22 }} />
+                  )}
+                </motion.div>
+                <span className="text-[9px] font-medium">{t(n.labelKey)}</span>
+                <NavBadge to={n.to} />
+              </Link>
+            );
+          })}
+        </div>
       </nav>
 
       {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} onQuickStart={(tpl) => {
