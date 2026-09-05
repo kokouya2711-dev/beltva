@@ -55,34 +55,34 @@ export default function WorkoutCalendar({ records, year, month, onPrevMonth, onN
 
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={onPrevMonth}
             disabled={!canPrev}
-            className={`p-1 -ml-1 transition-colors ${canPrev ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
+            className={`p-1.5 -ml-1.5 transition-colors ${canPrev ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
             aria-label="前の月"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </button>
-          <span className="text-lg font-bold text-foreground">{monthYear}</span>
+          <span className="text-xl font-extrabold text-foreground tracking-tight">{monthYear}</span>
           <button
             onClick={onNextMonth}
             disabled={!canNext}
-            className={`p-1 -mr-1 transition-colors ${canNext ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
+            className={`p-1.5 -mr-1.5 transition-colors ${canNext ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
             aria-label="次の月"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </button>
         </div>
-        <div className="flex items-center gap-1 text-sm font-semibold text-foreground">
-          {trainingDays > 0 && <Flame className="w-4 h-4 text-primary" />}
-          <span>{trainingDays}/{totalDays}日</span>
+        <div className="flex items-center gap-1.5 text-base font-bold text-foreground mr-1">
+          {trainingDays > 0 && <Flame className="w-5 h-5 text-primary" fill="currentColor" strokeWidth={0} />}
+          <span className="font-extrabold">{trainingDays}/{totalDays}日</span>
         </div>
       </div>
-      <div className="grid grid-cols-7 gap-1 mb-1">
+      <div className="grid grid-cols-7 gap-1 mb-1.5">
         {weekdays.map((w) => (
-          <div key={w} className="text-center text-[10px] text-muted-foreground py-1">{w}</div>
+          <div key={w} className="text-center text-xs font-semibold text-muted-foreground py-1">{w}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -91,11 +91,11 @@ export default function WorkoutCalendar({ records, year, month, onPrevMonth, onN
             <button
               key={i}
               onClick={() => cell.hasRecords ? setSelectedDay(selectedDay?.day === cell.day ? null : cell) : null}
-              className={`aspect-square rounded-lg text-xs flex items-center justify-center transition relative ${
+              className={`aspect-square rounded-lg flex items-center justify-center transition relative text-sm ${
                 cell.hasRecords
-                  ? "bg-primary text-primary-foreground font-bold hover:opacity-90"
-                  : "text-muted-foreground hover:bg-secondary/60"
-              } ${isToday(cell.day) && !cell.hasRecords ? "ring-1 ring-primary text-primary" : ""} ${isToday(cell.day) && cell.hasRecords ? "ring-2 ring-primary" : ""}`}
+                  ? "bg-primary text-primary-foreground font-extrabold hover:opacity-90"
+                  : "text-muted-foreground hover:bg-secondary/60 font-semibold"
+              } ${isToday(cell.day) && !cell.hasRecords ? "ring-2 ring-primary text-primary font-bold" : ""} ${isToday(cell.day) && cell.hasRecords ? "ring-2 ring-foreground" : ""} ${selectedDay?.day === cell.day ? "font-black" : ""}`}
             >
               {cell.day}
             </button>
