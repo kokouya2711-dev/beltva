@@ -195,7 +195,7 @@ function AppLayoutInner() {
 
       {/* Mobile top bar — minimal on timeline, full on other pages, hidden on post detail */}
       {location.pathname === "/" ? (
-        <header className="md:hidden sticky top-0 z-30 glass flex items-center px-3 py-2.5 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
+        <header className="md:hidden sticky top-0 z-30 glass border-0 flex items-center px-3 py-2.5 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <div className="flex items-center gap-2 shrink-0">
             <Link to="/settings" className="p-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
               <Settings className="w-6 h-6" />
