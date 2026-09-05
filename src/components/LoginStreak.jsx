@@ -42,15 +42,15 @@ export default function LoginStreak({ me }) {
   }, [me?.id, me?.login_days]);
 
   return (
-    <div className="flex items-stretch justify-center gap-10 px-4 py-3">
+    <div className="flex items-stretch justify-center gap-10 px-4 pt-7 pb-3">
       <div className="flex flex-col items-center">
-        <span className="text-[10px] text-muted-foreground tracking-wider uppercase mb-0.5">アクティブDAY</span>
-        <span className="text-3xl font-bold text-foreground leading-none">{activeDays}</span>
+        <span className="text-[12px] text-muted-foreground tracking-wider uppercase mb-0.5">アクティブDAY</span>
+        <span className="text-[38px] font-bold text-foreground leading-none">{activeDays}</span>
       </div>
-      <div className="w-px bg-border/30 self-center" style={{ minHeight: "2.5rem" }} />
+      <div className="w-px bg-border/30 self-center" style={{ minHeight: "3rem" }} />
       <div className="flex flex-col items-center">
-        <span className="text-[10px] text-muted-foreground tracking-wider uppercase mb-0.5">連続日数</span>
-        <span className="text-3xl font-bold text-foreground leading-none">{streak}</span>
+        <span className="text-[12px] text-muted-foreground tracking-wider uppercase mb-0.5">連続日数</span>
+        <span className="text-[38px] font-bold text-foreground leading-none">{streak}</span>
       </div>
     </div>
   );
