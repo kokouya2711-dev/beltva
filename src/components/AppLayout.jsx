@@ -12,6 +12,7 @@ import {
   Settings
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
+import LoginStreak from "@/components/LoginStreak";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
 import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
@@ -285,6 +286,7 @@ function AppLayoutInner() {
             <Plus className="w-5 h-5" />
             <span>ワークアウトを記録する</span>
           </button>
+          <LoginStreak me={me} />
         </div>
       )}
 

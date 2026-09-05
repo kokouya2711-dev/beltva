@@ -149,6 +149,11 @@
       "type": "string",
       "format": "date",
       "title": "\u76f4\u8fd1\u753b\u50cf\u6295\u7a3f\u65e5"
+    },
+    "login_days": {
+      "type": "string",
+      "title": "\u30ed\u30b0\u30a4\u30f3\u65e5(JSON\u914d\u5217)",
+      "default": "[]"
     }
   },
   "required": [
