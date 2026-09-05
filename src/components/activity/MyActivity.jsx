@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
-import { Activity } from "lucide-react";
 import WorkoutCalendar from "./WorkoutCalendar";
 import MonthlySummary from "./MonthlySummary";
 import ProgressChart from "./ProgressChart";
@@ -47,10 +46,6 @@ export default function MyActivity() {
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <Activity className="w-5 h-5 text-primary" />
-        <h2 className="font-bold text-xl">{t("activity.title")}</h2>
-      </div>
       <div className="space-y-6">
         <WorkoutCalendar records={monthRecords} year={year} month={month} />
         <MonthlySummary records={monthRecords} />
