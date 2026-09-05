@@ -197,26 +197,26 @@ function AppLayoutInner() {
       {location.pathname === "/" ? (
         <header className="md:hidden sticky top-0 z-30 glass flex items-center px-3 py-2.5 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <div className="flex items-center gap-2 shrink-0">
-            <Link to="/settings" className="p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-              <Settings className="w-5 h-5" />
+            <Link to="/settings" className="p-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+              <Settings className="w-6 h-6" />
             </Link>
             <Link to={`/profile/${me?.id || ""}`} className="shrink-0">
               {me?.avatar_url ? (
-                <img src={me.avatar_url} alt={me?.full_name || "profile"} className="w-8 h-8 rounded-full object-cover ring-1 ring-border" />
+                <img src={me.avatar_url} alt={me?.full_name || "profile"} className="w-11 h-11 rounded-full object-cover ring-1 ring-border" />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center ring-1 ring-border">
-                  <User className="w-4 h-4 text-muted-foreground" />
+                <div className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center ring-1 ring-border">
+                  <User className="w-5 h-5 text-muted-foreground" />
                 </div>
               )}
             </Link>
           </div>
           <div className="flex-1 flex justify-center items-center min-w-0 px-2">
-            <span className="text-3xl font-extrabold tracking-[0.12em] leading-none select-none" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
+            <span className="text-4xl font-extrabold tracking-[0.18em] leading-none select-none" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
               <span className="text-white">BELTV</span><span className="text-primary">A</span>
             </span>
           </div>
           <div className="shrink-0">
-            <NotificationsBell meId={me?.id} />
+            <NotificationsBell meId={me?.id} className="p-2.5" iconClassName="w-6 h-6" />
           </div>
         </header>
       ) : location.pathname === "/timeline" ? (
