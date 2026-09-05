@@ -4,11 +4,22 @@ import { useI18n, useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import { getDateKey, isCardio, formatDuration } from "@/lib/activityHelpers";
 
-export default function WorkoutCalendar({ records, year, month, onPrevMonth, onNextMonth }) {
+export default function WorkoutCalendar({ records, year, month, onPrevMonth, onNextMonth, canPrev = true, canNext = true }) {
   const t = useT();
   const { lang } = useI18n();
   const tWorkout = useTWorkout();
   const [selectedDay, setSelectedDay] = useState(null);
+  const touchStartX = React.useRef(null);
+
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) < 50) return;
+    if (dx < 0 && canNext) onNextMonth();
+    else if (dx > 0 && canPrev) onPrevMonth();
+  };
 
   const locale = lang === "zh" ? "zh-CN" : lang === "zh-TW" ? "zh-TW" : lang;
   const weekdays = useMemo(() => {
@@ -43,12 +54,13 @@ export default function WorkoutCalendar({ records, year, month, onPrevMonth, onN
   }
 
   return (
-    <div>
+    <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-1">
           <button
             onClick={onPrevMonth}
-            className="p-1 -ml-1 text-muted-foreground hover:text-foreground transition-colors"
+            disabled={!canPrev}
+            className={`p-1 -ml-1 transition-colors ${canPrev ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
             aria-label="前の月"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -56,7 +68,8 @@ export default function WorkoutCalendar({ records, year, month, onPrevMonth, onN
           <span className="text-lg font-bold text-foreground">{monthYear}</span>
           <button
             onClick={onNextMonth}
-            className="p-1 -mr-1 text-muted-foreground hover:text-foreground transition-colors"
+            disabled={!canNext}
+            className={`p-1 -mr-1 transition-colors ${canNext ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
             aria-label="次の月"
           >
             <ChevronRight className="w-5 h-5" />
