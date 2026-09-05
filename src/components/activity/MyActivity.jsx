@@ -25,15 +25,24 @@ export default function MyActivity() {
   }, []);
 
   const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
+  const [viewYear, setViewYear] = useState(now.getFullYear());
+  const [viewMonth, setViewMonth] = useState(now.getMonth());
+
+  const handlePrev = () => {
+    if (viewMonth === 0) { setViewYear(viewYear - 1); setViewMonth(11); }
+    else setViewMonth(viewMonth - 1);
+  };
+  const handleNext = () => {
+    if (viewMonth === 11) { setViewYear(viewYear + 1); setViewMonth(0); }
+    else setViewMonth(viewMonth + 1);
+  };
 
   const monthRecords = useMemo(
     () => records.filter((r) => {
       const d = new Date(r.created_date);
-      return d.getFullYear() === year && d.getMonth() === month;
+      return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
     }),
-    [records, year, month]
+    [records, viewYear, viewMonth]
   );
 
   if (loading) {
@@ -47,7 +56,7 @@ export default function MyActivity() {
   return (
     <div>
       <div className="space-y-6">
-        <WorkoutCalendar records={monthRecords} year={year} month={month} />
+        <WorkoutCalendar records={monthRecords} year={viewYear} month={viewMonth} onPrevMonth={handlePrev} onNextMonth={handleNext} />
         <MonthlySummary records={monthRecords} />
         <ProgressChart records={monthRecords} />
         <RecentRecords records={records} />

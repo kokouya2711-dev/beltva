@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from "react";
-import { useT, useI18n } from "@/lib/i18n";
+import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
+import { useI18n, useT } from "@/lib/i18n";
 import { useTWorkout } from "@/lib/i18nHelpers";
 import { getDateKey, isCardio, formatDuration } from "@/lib/activityHelpers";
 
-export default function WorkoutCalendar({ records, year, month }) {
+export default function WorkoutCalendar({ records, year, month, onPrevMonth, onNextMonth }) {
   const t = useT();
   const { lang } = useI18n();
   const tWorkout = useTWorkout();
@@ -30,6 +31,7 @@ export default function WorkoutCalendar({ records, year, month }) {
 
   const startWeekday = new Date(year, month, 1).getDay();
   const totalDays = new Date(year, month + 1, 0).getDate();
+  const trainingDays = Object.keys(recordsByDate).length;
   const today = new Date();
   const isToday = (d) => today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
 
@@ -41,10 +43,29 @@ export default function WorkoutCalendar({ records, year, month }) {
   }
 
   return (
-    <div className="glass rounded-2xl border border-border p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-sm">{t("activity.calendar")}</h3>
-        <span className="text-xs text-muted-foreground">{monthYear}</span>
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onPrevMonth}
+            className="p-1 -ml-1 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="前の月"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="text-lg font-bold text-foreground">{monthYear}</span>
+          <button
+            onClick={onNextMonth}
+            className="p-1 -mr-1 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="次の月"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="flex items-center gap-1 text-sm font-semibold text-foreground">
+          {trainingDays > 0 && <Flame className="w-4 h-4 text-primary" />}
+          <span>{trainingDays}/{totalDays}日</span>
+        </div>
       </div>
       <div className="grid grid-cols-7 gap-1 mb-1">
         {weekdays.map((w) => (
@@ -61,7 +82,7 @@ export default function WorkoutCalendar({ records, year, month }) {
                 cell.hasRecords
                   ? "bg-primary text-primary-foreground font-bold hover:opacity-90"
                   : "text-muted-foreground hover:bg-secondary/60"
-              } ${isToday(cell.day) && !cell.hasRecords ? "ring-1 ring-primary text-primary" : ""} ${isToday(cell.day) && cell.hasRecords ? "ring-2 ring-accent" : ""}`}
+              } ${isToday(cell.day) && !cell.hasRecords ? "ring-1 ring-primary text-primary" : ""} ${isToday(cell.day) && cell.hasRecords ? "ring-2 ring-primary" : ""}`}
             >
               {cell.day}
             </button>
@@ -69,7 +90,7 @@ export default function WorkoutCalendar({ records, year, month }) {
         ))}
       </div>
       {selectedDay && (
-        <div className="mt-3 pt-3 border-t border-border">
+        <div className="mt-4 pt-3 border-t border-border">
           <div className="text-xs text-muted-foreground mb-2">
             {new Intl.DateTimeFormat(locale, { month: "long", day: "numeric" }).format(new Date(year, month, selectedDay.day))}
           </div>
@@ -79,7 +100,7 @@ export default function WorkoutCalendar({ records, year, month }) {
                 <span className="font-medium">{tWorkout(r.workout_type) || r.workout_type}</span>
                 <span className="text-muted-foreground">
                   {isCardio(r.workout_type)
-                    ? `${r.distance > 0 ? `${r.distance}${t("common.kg") === "kg" ? "km" : "km"} ` : ""}${formatDuration(r.duration_sec, t)}`
+                    ? `${r.distance > 0 ? `${r.distance}km ` : ""}${formatDuration(r.duration_sec, t)}`
                     : `${r.sets} ${t("goLive.sets")} × ${r.reps} ${t("goLive.reps")}${r.weight > 0 ? ` @${r.weight}${t("common.kg")}` : ""}`}
                 </span>
               </div>
