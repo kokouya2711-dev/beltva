@@ -8,7 +8,8 @@ import {
   User,
   Dumbbell,
   Plus,
-  LayoutList
+  LayoutList,
+  Settings
 } from "lucide-react";
 import GoLiveDialog from "@/components/GoLiveDialog";
 import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
@@ -193,7 +194,24 @@ function AppLayoutInner() {
       </aside>
 
       {/* Mobile top bar — minimal on timeline, full on other pages, hidden on post detail */}
-      {location.pathname === "/timeline" ? (
+      {location.pathname === "/" ? (
+        <header className="md:hidden sticky top-0 z-30 glass flex items-center justify-between px-4 py-2.5 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
+          <div className="flex items-center gap-2">
+            <Link to={`/profile/${me?.id || ""}`} className="p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+              <User className="w-5 h-5" />
+            </Link>
+            <Link to="/settings" className="p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+              <Settings className="w-5 h-5" />
+            </Link>
+          </div>
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <span className="font-bold tracking-tight text-xl">
+              <span className="text-foreground">BELTV</span><span className="text-primary">A</span>
+            </span>
+          </div>
+          <NotificationsBell meId={me?.id} />
+        </header>
+      ) : location.pathname === "/timeline" ? (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <div className="flex items-center justify-end px-4 py-2 gap-2">
             <NotificationsBell meId={me?.id} />
