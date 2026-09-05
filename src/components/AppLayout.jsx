@@ -30,6 +30,7 @@ import { motion } from "framer-motion";
 import { FriendsIcon, FeedIcon, ChatIcon } from "@/components/NavIcons";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
+const BELTVA_WORDMARK_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/625324f4d_CFF1C1A2-9C36-4516-8943-356E5A0537C8.png";
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
   { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30 },
@@ -195,21 +196,27 @@ function AppLayoutInner() {
 
       {/* Mobile top bar — minimal on timeline, full on other pages, hidden on post detail */}
       {location.pathname === "/" ? (
-        <header className="md:hidden sticky top-0 z-30 glass flex items-center justify-between px-4 py-2.5 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
-          <div className="flex items-center gap-2">
-            <Link to={`/profile/${me?.id || ""}`} className="p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-              <User className="w-5 h-5" />
-            </Link>
+        <header className="md:hidden sticky top-0 z-30 glass flex items-center px-3 py-2.5 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
+          <div className="flex items-center gap-2 shrink-0">
             <Link to="/settings" className="p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
               <Settings className="w-5 h-5" />
             </Link>
+            <Link to={`/profile/${me?.id || ""}`} className="shrink-0">
+              {me?.avatar_url ? (
+                <img src={me.avatar_url} alt={me?.full_name || "profile"} className="w-8 h-8 rounded-full object-cover ring-1 ring-border" />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center ring-1 ring-border">
+                  <User className="w-4 h-4 text-muted-foreground" />
+                </div>
+              )}
+            </Link>
           </div>
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <span className="font-bold tracking-tight text-xl">
-              <span className="text-foreground">BELTV</span><span className="text-primary">A</span>
-            </span>
+          <div className="flex-1 flex justify-center items-center min-w-0 px-2">
+            <img src={BELTVA_WORDMARK_URL} alt="BELTVA" className="h-11 w-auto max-w-full" />
           </div>
-          <NotificationsBell meId={me?.id} />
+          <div className="shrink-0">
+            <NotificationsBell meId={me?.id} />
+          </div>
         </header>
       ) : location.pathname === "/timeline" ? (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
