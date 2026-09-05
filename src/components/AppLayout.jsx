@@ -30,7 +30,6 @@ import { motion } from "framer-motion";
 import { FriendsIcon, FeedIcon, ChatIcon } from "@/components/NavIcons";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
-const BELTVA_WORDMARK_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/625324f4d_CFF1C1A2-9C36-4516-8943-356E5A0537C8.png";
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
   { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30 },
@@ -212,7 +211,9 @@ function AppLayoutInner() {
             </Link>
           </div>
           <div className="flex-1 flex justify-center items-center min-w-0 px-2">
-            <img src={BELTVA_WORDMARK_URL} alt="BELTVA" className="h-11 w-auto max-w-full" />
+            <span className="text-3xl font-extrabold tracking-[0.12em] leading-none select-none" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
+              <span className="text-white">BELTV</span><span className="text-primary">A</span>
+            </span>
           </div>
           <div className="shrink-0">
             <NotificationsBell meId={me?.id} />
