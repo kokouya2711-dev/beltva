@@ -68,7 +68,7 @@ export default function DayDetailPopup({ dateLabel, records, diffDays, onClose, 
           <div className="text-center text-xs text-muted-foreground">3日前以前の記録は編集できません</div>
         )}
         {!editable && pastReadOnly && !hasAny && (
-          <div className="text-center text-xs text-muted-foreground">3日前以前は記録を追加できません</div>
+          <div className="text-center text-xs text-muted-foreground">3日前以前の記録は追加できません</div>
         )}
       </div>
     </div>
