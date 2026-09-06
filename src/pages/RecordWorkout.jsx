@@ -143,7 +143,7 @@ export default function RecordWorkout() {
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             rows={3}
-            placeholder="トレーニング内容、距離、感想など"
+            placeholder="今日のメモを自由に入力"
             className="w-full bg-secondary/60 border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary resize-none"
           />
         </section>
