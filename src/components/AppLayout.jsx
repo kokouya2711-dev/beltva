@@ -199,7 +199,7 @@ function AppLayoutInner() {
             </span>
           </div>
           <div className="shrink-0">
-            <NotificationsBell meId={me?.id} className="p-2.5" iconClassName="w-6 h-6" />
+            <NotificationsBell meId={me?.id} className="p-2.5" iconClassName="w-6 h-6" to="/home-notifications" />
           </div>
         </header>
       ) : location.pathname === "/timeline" ? (

@@ -4,7 +4,7 @@ import { Bell } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { subscribeNotif, markAllNotifRead } from "@/lib/notifStore";
 
-export default function NotificationsBell({ meId, className = "p-2", iconClassName = "w-5 h-5" }) {
+export default function NotificationsBell({ meId, className = "p-2", iconClassName = "w-5 h-5", to = "/notifications" }) {
   const t = useT();
   const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
@@ -14,9 +14,11 @@ export default function NotificationsBell({ meId, className = "p-2", iconClassNa
   }, []);
 
   async function handleClick() {
-    // Mark all as read → both bell badge and bottom nav badge clear simultaneously
-    await markAllNotifRead();
-    navigate("/notifications");
+    // Feed bell clears all notifications; home bell leaves feed notifications untouched
+    if (to === "/notifications") {
+      await markAllNotifRead();
+    }
+    navigate(to);
   }
 
   return (

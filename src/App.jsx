@@ -37,6 +37,7 @@ import MutedUsersPage from '@/pages/MutedUsersPage';
 import NotificationsPage from '@/pages/NotificationsPage';
 import CreatePost from '@/pages/CreatePost';
 import RecordWorkout from '@/pages/RecordWorkout';
+import HomeNotificationsPage from '@/pages/HomeNotificationsPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -88,6 +89,7 @@ const AuthenticatedApp = () => {
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/muted-users" element={<MutedUsersPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/home-notifications" element={<HomeNotificationsPage />} />
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/contact" element={<ContactPage />} />
