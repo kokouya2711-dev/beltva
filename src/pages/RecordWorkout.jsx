@@ -26,6 +26,11 @@ export default function RecordWorkout() {
     });
   };
 
+  const allSelected = PARTS.every((p) => selected.has(p));
+  const toggleAll = () => {
+    setSelected((prev) => (PARTS.every((p) => prev.has(p)) ? new Set() : new Set(PARTS)));
+  };
+
   const cardio = hours * 60 + minutes;
   const canSave = selected.size > 0 || cardio > 0;
 
@@ -33,10 +38,6 @@ export default function RecordWorkout() {
     if (!canSave || saving) return;
     setSaving(true);
     const parts = new Set(selected);
-    if (parts.has("全身")) {
-      parts.delete("全身");
-      PARTS.forEach((p) => parts.add(p));
-    }
     const records = [];
     parts.forEach((p) => {
       records.push({ workout_type: p, sets: 1, reps: 1, weight: 0, duration_sec: 0, volume: 0, notes: memo || undefined });
@@ -111,9 +112,9 @@ export default function RecordWorkout() {
             ))}
           </div>
           <button
-            onClick={() => toggle("全身")}
+            onClick={toggleAll}
             className={`mt-2.5 w-full py-4 rounded-xl font-bold text-base transition active:scale-[0.98] ${
-              selected.has("全身") ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+              allSelected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
             }`}
           >
             全身
@@ -122,8 +123,8 @@ export default function RecordWorkout() {
 
         <section>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3">有酸素運動</h2>
-          <div className="bg-secondary/40 rounded-2xl p-4">
-            <div className="flex items-end justify-center gap-10">
+          <div className="bg-secondary/40 rounded-2xl p-3">
+            <div className="flex items-end justify-center gap-8">
               <div className="flex flex-col items-center">
                 <WheelPicker values={Array.from({ length: 24 }, (_, i) => i)} value={hours} onChange={setHours} />
                 <span className="text-xs font-semibold text-muted-foreground mt-2">時間</span>
