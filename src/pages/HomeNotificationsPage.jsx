@@ -6,9 +6,9 @@ import { fetchUser } from "@/lib/profile";
 import NotifItem from "@/components/NotifItem";
 
 // Home notifications: follows + BELTVA announcements only.
-// Feed reactions (likes/comments/replies) and DMs are excluded — those live on /notifications.
-const EXCLUDE_TYPES = new Set(["like", "comment", "comment_reply", "comment_like", "reaction", "dm"]);
-const isHomeNotif = (n) => !EXCLUDE_TYPES.has(n.type);
+// Feed reactions (likes/comments/replies), DMs, and old weekly-report notifications are excluded.
+const HOME_TYPES = new Set(["follow", "admin", "announcement"]);
+const isHomeNotif = (n) => HOME_TYPES.has(n.type);
 
 export default function HomeNotificationsPage() {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export default function HomeNotificationsPage() {
   return (
     <div className="max-w-2xl mx-auto" style={{ paddingTop: "calc(3rem + env(safe-area-inset-top))" }}>
       <div
-        className="fixed top-0 left-0 right-0 z-30 glass border-b border-border"
+        className="fixed top-0 left-0 right-0 z-30 bg-background"
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between px-3 py-2.5">
