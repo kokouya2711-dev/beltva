@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import WorkoutCalendar from "./WorkoutCalendar";
 import ActivitySection from "./ActivitySection";
-import ProgressChart from "./ProgressChart";
-import RecentRecords from "./RecentRecords";
 
 export default function MyActivity() {
   const [records, setRecords] = useState([]);
@@ -58,11 +56,6 @@ export default function MyActivity() {
     <div className="space-y-8">
       <WorkoutCalendar allRecords={records} appStart={appStart} currentYear={currentYear} currentMonth={currentMonth} />
       <ActivitySection allRecords={records} appStart={appStart} currentYear={currentYear} currentMonth={currentMonth} />
-      <ProgressChart records={records.filter((r) => {
-        const d = new Date(r.created_date);
-        return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
-      })} />
-      <RecentRecords records={records} />
     </div>
   );
 }

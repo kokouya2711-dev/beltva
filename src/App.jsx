@@ -28,8 +28,6 @@ import BlockedUsersPage from '@/pages/BlockedUsersPage';
 import TermsPage from '@/pages/TermsPage';
 import ContactPage from '@/pages/ContactPage';
 import PrivacyPage from '@/pages/PrivacyPage';
-import WorkoutHistoryPage from '@/pages/WorkoutHistoryPage';
-import WorkoutDayDetailPage from '@/pages/WorkoutDayDetailPage';
 import MePage from '@/pages/MePage';
 import ActivityPage from '@/pages/ActivityPage';
 import SupportPage from '@/pages/SupportPage';
@@ -94,8 +92,6 @@ const AuthenticatedApp = () => {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/workout-history" element={<WorkoutHistoryPage />} />
-          <Route path="/workout-history/:date" element={<WorkoutDayDetailPage />} />
           <Route path="/me" element={<MePage />} />
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/support" element={<SupportPage />} />
