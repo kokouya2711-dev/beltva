@@ -42,6 +42,11 @@
       "type": "string",
       "title": "\u30bb\u30c3\u30c8\u8a73\u7d30",
       "default": "[]"
+    },
+    "workout_date": {
+      "type": "string",
+      "format": "date",
+      "title": "\u30ef\u30fc\u30af\u30a2\u30a6\u30c8\u65e5"
     }
   },
   "required": [

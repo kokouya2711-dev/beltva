@@ -48,6 +48,17 @@ export function getDateKey(iso) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+// The intended workout day. New records store workout_date (YYYY-MM-DD) so they
+// can be backdated; old records fall back to created_date.
+export function getWorkoutDate(r) {
+  return r.workout_date ? new Date(r.workout_date) : new Date(r.created_date);
+}
+
+export function getWorkoutDateKey(r) {
+  const d = getWorkoutDate(r);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export function formatTime(d) {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }

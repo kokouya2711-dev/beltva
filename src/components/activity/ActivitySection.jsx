@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { isCardio, getDateKey, getMonthNav } from "@/lib/activityHelpers";
+import { isCardio, getWorkoutDate, getWorkoutDateKey, getMonthNav } from "@/lib/activityHelpers";
 
 export default function ActivitySection({ allRecords, appStart, currentYear, currentMonth }) {
   const { lang } = useI18n();
@@ -41,9 +41,9 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
     const days = new Set();
     let cardioSec = 0;
     allRecords.forEach((r) => {
-      const d = new Date(r.created_date);
+      const d = getWorkoutDate(r);
       if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
-        days.add(getDateKey(r.created_date));
+        days.add(getWorkoutDateKey(r));
         if (isCardio(r.workout_type)) cardioSec += Number(r.duration_sec) || 0;
       }
     });

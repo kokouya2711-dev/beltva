@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import WorkoutCalendar from "./WorkoutCalendar";
 import ActivitySection from "./ActivitySection";
+import { getWorkoutDate } from "@/lib/activityHelpers";
 
 export default function MyActivity() {
   const [records, setRecords] = useState([]);
@@ -38,7 +39,7 @@ export default function MyActivity() {
       } catch { /* ignore */ }
     }
     records.forEach((r) => {
-      const dt = new Date(r.created_date);
+      const dt = getWorkoutDate(r);
       if (!isNaN(dt) && (!earliest || dt < earliest)) earliest = dt;
     });
     return earliest;

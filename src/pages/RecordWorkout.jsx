@@ -1,21 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Check, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import WheelPicker from "@/components/workout/WheelPicker";
+import { getWorkoutDateKey } from "@/lib/activityHelpers";
 
 const PARTS = ["胸", "背中", "脚", "肩", "腕", "腹"];
 const PART_GRID = ["胸", "背中", "脚", "肩", "腕", "腹"];
 
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export default function RecordWorkout() {
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
+  const targetDate = params.get("date") || todayKey();
+  const isEdit = params.get("edit") === "1";
+
   const [selected, setSelected] = useState(() => new Set());
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [memo, setMemo] = useState("");
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(isEdit);
+  const [existingIds, setExistingIds] = useState([]);
+
+  useEffect(() => {
+    if (!isEdit) return;
+    (async () => {
+      try {
+        const user = await base44.auth.me();
+        if (!user) { setLoadingEdit(false); return; }
+        const recs = await base44.entities.WorkoutRecord.filter({ created_by_id: user.id }, "-created_date", 500);
+        const dayRecs = recs.filter((r) => getWorkoutDateKey(r) === targetDate);
+        setExistingIds(dayRecs.map((r) => r.id));
+        const parts = new Set(dayRecs.filter((r) => PARTS.includes(r.workout_type)).map((r) => r.workout_type));
+        setSelected(parts);
+        const cardioRec = dayRecs.find((r) => r.workout_type === "有酸素運動");
+        if (cardioRec) {
+          const totalMin = Math.round((Number(cardioRec.duration_sec) || 0) / 60);
+          setHours(Math.floor(totalMin / 60));
+          setMinutes(totalMin % 60);
+        }
+        const m = dayRecs.map((r) => r.notes).find(Boolean);
+        if (m) setMemo(m);
+      } catch { /* ignore */ }
+      setLoadingEdit(false);
+    })();
+  }, [isEdit, targetDate]);
 
   const toggle = (p) => {
     setSelected((prev) => {
@@ -40,12 +76,17 @@ export default function RecordWorkout() {
     const parts = new Set(selected);
     const records = [];
     parts.forEach((p) => {
-      records.push({ workout_type: p, sets: 1, reps: 1, weight: 0, duration_sec: 0, volume: 0, notes: memo || undefined });
+      records.push({ workout_type: p, sets: 1, reps: 1, weight: 0, duration_sec: 0, volume: 0, notes: memo || undefined, workout_date: targetDate });
     });
     if (cardio > 0) {
-      records.push({ workout_type: "有酸素運動", sets: 0, reps: 0, weight: 0, duration_sec: cardio * 60, volume: 0, notes: memo || undefined });
+      records.push({ workout_type: "有酸素運動", sets: 0, reps: 0, weight: 0, duration_sec: cardio * 60, volume: 0, notes: memo || undefined, workout_date: targetDate });
     }
     try {
+      if (isEdit && existingIds.length > 0) {
+        for (const id of existingIds) {
+          try { await base44.entities.WorkoutRecord.delete(id); } catch { /* ignore */ }
+        }
+      }
       if (records.length > 0) await base44.entities.WorkoutRecord.bulkCreate(records);
       setSaving(false);
       setDone(true);
@@ -54,6 +95,14 @@ export default function RecordWorkout() {
       setSaving(false);
       alert("保存に失敗しました。もう一度お試しください。");
     }
+  }
+
+  if (loadingEdit) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   if (done) {
@@ -74,7 +123,7 @@ export default function RecordWorkout() {
             transition={{ delay: 0.15 }}
             className="text-lg font-bold text-foreground"
           >
-            記録しました
+            {isEdit ? "変更を保存しました" : "記録しました"}
           </motion.div>
         </div>
       </div>
@@ -85,7 +134,7 @@ export default function RecordWorkout() {
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-30 bg-background flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="w-9" />
-        <h1 className="text-lg font-bold text-foreground">ワークアウトを記録</h1>
+        <h1 className="text-lg font-bold text-foreground">{isEdit ? "ワークアウトを修正" : "ワークアウトを記録"}</h1>
         <button
           onClick={() => navigate(-1)}
           className="w-9 h-9 -mr-1 flex items-center justify-center rounded-lg hover:bg-secondary transition-colors"
@@ -159,7 +208,7 @@ export default function RecordWorkout() {
             disabled={!canSave || saving}
             className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-2xl disabled:opacity-40 transition active:scale-[0.98]"
           >
-            {saving ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "完了"}
+            {saving ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (isEdit ? "変更を保存" : "完了")}
           </button>
         </div>
       </div>

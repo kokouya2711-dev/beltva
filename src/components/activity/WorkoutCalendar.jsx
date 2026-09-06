@@ -1,12 +1,16 @@
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { getDateKey, getMonthNav } from "@/lib/activityHelpers";
+import { getWorkoutDate, getWorkoutDateKey, getMonthNav } from "@/lib/activityHelpers";
+import DayDetailPopup from "./DayDetailPopup";
 
 export default function WorkoutCalendar({ allRecords, appStart, currentYear, currentMonth }) {
   const { lang } = useI18n();
+  const navigate = useNavigate();
   const [viewYear, setViewYear] = useState(currentYear);
   const [viewMonth, setViewMonth] = useState(currentMonth);
+  const [selectedDay, setSelectedDay] = useState(null);
   const touchStartX = React.useRef(null);
 
   const nav = useMemo(
@@ -16,11 +20,13 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
 
   const handlePrev = () => {
     if (!nav.canPrev(viewYear, viewMonth)) return;
+    setSelectedDay(null);
     if (viewMonth === 0) { setViewYear(viewYear - 1); setViewMonth(11); }
     else setViewMonth(viewMonth - 1);
   };
   const handleNext = () => {
     if (!nav.canNext(viewYear, viewMonth)) return;
+    setSelectedDay(null);
     if (viewMonth === 11) { setViewYear(viewYear + 1); setViewMonth(0); }
     else setViewMonth(viewMonth + 1);
   };
@@ -46,7 +52,7 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
 
   const monthRecords = useMemo(
     () => allRecords.filter((r) => {
-      const d = new Date(r.created_date);
+      const d = getWorkoutDate(r);
       return d.getFullYear() === viewYear && d.getMonth() === viewMonth;
     }),
     [allRecords, viewYear, viewMonth]
@@ -55,7 +61,7 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
   const recordsByDate = useMemo(() => {
     const map = {};
     monthRecords.forEach((r) => {
-      const key = getDateKey(r.created_date);
+      const key = getWorkoutDateKey(r);
       if (!map[key]) map[key] = [];
       map[key].push(r);
     });
@@ -76,6 +82,17 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
   }
 
   const activeDot = nav.activeIndex(viewYear, viewMonth);
+
+  const diffDaysFor = (cellKey) => {
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    const [y, m, d] = cellKey.split("-").map(Number);
+    const target = new Date(y, m - 1, d); target.setHours(0, 0, 0, 0);
+    return Math.round((t - target) / 86400000);
+  };
+
+  const selectedDateLabel = selectedDay
+    ? new Intl.DateTimeFormat(locale, { month: "long", day: "numeric" }).format(new Date(viewYear, viewMonth, selectedDay.day))
+    : "";
 
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
@@ -114,6 +131,7 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
           cell === null ? <div key={i} /> : (
             <button
               key={i}
+              onClick={() => setSelectedDay(cell)}
               className={`aspect-square rounded-lg flex items-center justify-center transition relative text-sm ${
                 cell.hasRecords
                   ? "bg-primary text-primary-foreground font-extrabold hover:opacity-90"
@@ -136,6 +154,17 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
         ))}
       </div>
 
+      {selectedDay && (
+        <DayDetailPopup
+          dateLabel={selectedDateLabel}
+          records={selectedDay.records}
+          diffDays={diffDaysFor(selectedDay.key)}
+          dateKey={selectedDay.key}
+          onClose={() => setSelectedDay(null)}
+          onEdit={() => navigate(`/record-workout?date=${selectedDay.key}&edit=1`)}
+          onAdd={() => navigate(`/record-workout?date=${selectedDay.key}`)}
+        />
+      )}
     </div>
   );
 }

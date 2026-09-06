@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { getMonthNav } from "@/lib/activityHelpers";
+import { getWorkoutDate, getMonthNav } from "@/lib/activityHelpers";
 
 const PARTS = ["胸", "背中", "脚", "肩", "腕", "腹"];
 
@@ -46,7 +46,7 @@ export default function BodyPartRatioSection() {
       } catch { /* ignore */ }
     }
     records.forEach((r) => {
-      const dt = new Date(r.created_date);
+      const dt = getWorkoutDate(r);
       if (!isNaN(dt) && (!earliest || dt < earliest)) earliest = dt;
     });
     return earliest;
@@ -84,7 +84,7 @@ export default function BodyPartRatioSection() {
     let t = 0;
     records.forEach((r) => {
       if (!PARTS.includes(r.workout_type)) return;
-      const d = new Date(r.created_date);
+      const d = getWorkoutDate(r);
       if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
         c[r.workout_type] += 1;
         t += 1;
