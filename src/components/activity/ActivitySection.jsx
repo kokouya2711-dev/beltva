@@ -72,29 +72,29 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
             className={`p-1 transition-colors ${nav.canPrev(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
             aria-label="前の月"
           >
-            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+            <ChevronLeft className="w-5 h-5" strokeWidth={3} />
           </button>
-          <span className="text-lg font-bold text-foreground min-w-[44px] text-center">{monthLabel}</span>
+          <span className="text-[1.18rem] font-bold text-foreground min-w-[44px] text-center">{monthLabel}</span>
           <button
             onClick={handleNext}
             disabled={!nav.canNext(viewYear, viewMonth)}
             className={`p-1 transition-colors ${nav.canNext(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
             aria-label="次の月"
           >
-            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+            <ChevronRight className="w-5 h-5" strokeWidth={3} />
           </button>
         </div>
       </div>
 
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-muted-foreground">トレーニング日数</span>
+          <span className="text-[0.83rem] font-bold text-muted-foreground">トレーニング日数</span>
           <div className={`text-3xl font-extrabold leading-none tracking-tight ${dayColor}`}>
             {trainingDays}<span className="text-lg font-bold text-muted-foreground ml-0.5">日</span>
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-muted-foreground">有酸素 合計時間</span>
+          <span className="text-[0.83rem] font-bold text-muted-foreground">有酸素 合計時間</span>
           <div className={`text-3xl font-extrabold leading-none tracking-tight ${cardioColor}`}>
             {cardioVal}<span className="text-lg font-bold text-muted-foreground ml-0.5">{cardioUnit}</span>
             {h > 0 && (
