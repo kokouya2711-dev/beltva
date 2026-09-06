@@ -64,6 +64,7 @@ export default function HomeNotificationsPage() {
   }
 
   return (
+    <div className="min-h-screen bg-background">
     <div className="max-w-2xl mx-auto" style={{ paddingTop: "calc(3rem + env(safe-area-inset-top))" }}>
       <div
         className="fixed top-0 left-0 right-0 z-30 bg-background"
@@ -114,6 +115,7 @@ export default function HomeNotificationsPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }
