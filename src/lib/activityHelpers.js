@@ -3,7 +3,7 @@ import { EXERCISES_BY_BODY_PART } from "@/lib/exercises";
 const CARDIO_EXERCISES = new Set(EXERCISES_BY_BODY_PART["有酸素"] || []);
 
 export function isCardio(workoutType) {
-  return CARDIO_EXERCISES.has(workoutType);
+  return CARDIO_EXERCISES.has(workoutType) || workoutType === "有酸素運動";
 }
 
 const EXERCISE_TO_BODY_PART = {};
@@ -11,7 +11,9 @@ Object.entries(EXERCISES_BY_BODY_PART).forEach(([part, exercises]) => {
   exercises.forEach((ex) => { EXERCISE_TO_BODY_PART[ex] = part; });
 });
 
+const BODY_PART_KEYS = new Set([...Object.keys(EXERCISES_BY_BODY_PART), "腕", "腹"]);
 export function getBodyPart(workoutType) {
+  if (BODY_PART_KEYS.has(workoutType)) return workoutType;
   return EXERCISE_TO_BODY_PART[workoutType] || "その他";
 }
 

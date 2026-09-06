@@ -38,6 +38,7 @@ import FavoritesPage from '@/pages/FavoritesPage';
 import MutedUsersPage from '@/pages/MutedUsersPage';
 import NotificationsPage from '@/pages/NotificationsPage';
 import CreatePost from '@/pages/CreatePost';
+import RecordWorkout from '@/pages/RecordWorkout';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -99,6 +100,7 @@ const AuthenticatedApp = () => {
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/support" element={<SupportPage />} />
         </Route>
+        <Route path="/record-workout" element={<RecordWorkout />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

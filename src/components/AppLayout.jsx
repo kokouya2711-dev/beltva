@@ -11,16 +11,13 @@ import {
   LayoutList,
   Settings
 } from "lucide-react";
-import GoLiveDialog from "@/components/GoLiveDialog";
 import LoginStreak from "@/components/LoginStreak";
-import WorkoutSessionDialog from "@/components/workout/WorkoutSessionDialog";
-import SimpleSessionDialog from "@/components/SimpleSessionDialog";
 import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence, markOffline } from "@/lib/dm";
 import { initNotifStore, subscribeNotif } from "@/lib/notifStore";
 import { initDmUnreadStore, subscribeDmUnread } from "@/lib/dmUnreadStore";
 import { useT } from "@/lib/i18n";
-import { TrainingProvider, useTraining } from "@/lib/trainingContext";
+import { TrainingProvider } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { TimelineFilterProvider, useTimelineFilter } from "@/lib/timelineFilterContext";
@@ -92,13 +89,7 @@ export default function AppLayout() {
 function AppLayoutInner() {
   const t = useT();
   const navigate = useNavigate();
-  const { isActive, isSimple, isPaused, elapsedSec, startTraining } = useTraining();
-  const mm = String(Math.floor(elapsedSec / 60)).padStart(2, "0");
-  const ss = String(elapsedSec % 60).padStart(2, "0");
   const [me, setMe] = useState(null);
-  const [showGoLive, setShowGoLive] = useState(false);
-  const [showWorkoutSession, setShowWorkoutSession] = useState(false);
-  const [showSimpleSession, setShowSimpleSession] = useState(false);
   const location = useLocation();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const headerHidden = useScrollDirection([location.pathname]);
@@ -130,14 +121,14 @@ function AppLayoutInner() {
 
   React.useEffect(() => {
     if (!me) return;
-    updatePresence(me.id, isActive);
-    const i = setInterval(() => updatePresence(me.id, isActive), 15000);
-    const onVis = () => { if (document.hidden) markOffline(me.id); else updatePresence(me.id, isActive); };
+    updatePresence(me.id, false);
+    const i = setInterval(() => updatePresence(me.id, false), 15000);
+    const onVis = () => { if (document.hidden) markOffline(me.id); else updatePresence(me.id, false); };
     const onHide = () => markOffline(me.id);
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("pagehide", onHide);
     return () => { clearInterval(i); document.removeEventListener("visibilitychange", onVis); window.removeEventListener("pagehide", onHide); };
-  }, [me, isActive]);
+  }, [me]);
 
 
 
@@ -171,21 +162,12 @@ function AppLayoutInner() {
           })}
         </nav>
         <div className="p-3">
-          {isActive ? (
-            <button
-              onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
-              className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-accent/20"
-            >
-              <Dumbbell className="w-4 h-4" /> {isPaused ? `⏸ ${t("training.paused")} ${mm}:${ss}` : `💪 ${t("nav.training")} ${mm}:${ss}`}
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowGoLive(true)}
-              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
-            >
-              <Dumbbell className="w-4 h-4" /> {t("nav.goLive")}
-            </button>
-          )}
+          <button
+            onClick={() => navigate("/record-workout")}
+            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
+          >
+            <Dumbbell className="w-4 h-4" /> {t("nav.goLive")}
+          </button>
           {me && (
             <Link to={`/profile/${me.id}`} className="mt-3 px-2 text-xs text-muted-foreground truncate hover:text-primary block">
               @{me.email?.split("@")[0]}
@@ -258,21 +240,12 @@ function AppLayoutInner() {
           </div>
           <div className="flex items-center gap-1">
             <NotificationsBell meId={me?.id} />
-            {isActive ? (
-              <button
-                onClick={() => isSimple ? setShowSimpleSession(true) : setShowWorkoutSession(true)}
-                className="flex items-center gap-1.5 bg-accent text-accent-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
-              >
-                <Dumbbell className="w-3.5 h-3.5" /> {isPaused ? `⏸ ${mm}:${ss}` : `${mm}:${ss}`}
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowGoLive(true)}
-                className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
-              >
-                <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
-              </button>
-            )}
+            <button
+              onClick={() => navigate("/record-workout")}
+              className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-lg"
+            >
+              <Dumbbell className="w-3.5 h-3.5" /> {t("nav.goLive")}
+            </button>
           </div>
         </header>
       )}
@@ -280,7 +253,7 @@ function AppLayoutInner() {
       {location.pathname === "/" && (
         <div className="md:hidden px-4 pt-3 pb-1">
           <button
-            onClick={() => setShowGoLive(true)}
+            onClick={() => navigate("/record-workout")}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform"
           >
             <Plus className="w-5 h-5" />
@@ -304,25 +277,6 @@ function AppLayoutInner() {
         </div>
       </nav>
 
-      {showGoLive && <GoLiveDialog onClose={() => setShowGoLive(false)} onDetailedSelect={() => { setShowGoLive(false); setShowWorkoutSession(true); }} onQuickStart={(tpl) => {
-        const data = JSON.parse(tpl.exercises || "[]");
-        startTraining(data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) })));
-        setShowGoLive(false);
-        setShowWorkoutSession(true);
-      }} onQuickStartCategory={(tpls) => {
-        const allExercises = tpls.flatMap(tpl => {
-          const data = JSON.parse(tpl.exercises || "[]");
-          return data.map(e => ({ workout_type: e.workout_type, sets: e.sets.map(s => ({ weight: s.weight || 0, reps: s.reps || 0 })) }));
-        });
-        startTraining(allExercises);
-        setShowGoLive(false);
-        setShowWorkoutSession(true);
-      }} onSimpleSelect={() => {
-        startTraining([], true);
-        setShowGoLive(false);
-      }} />}
-      {showWorkoutSession && <WorkoutSessionDialog onClose={() => setShowWorkoutSession(false)} />}
-      {showSimpleSession && <SimpleSessionDialog onClose={() => setShowSimpleSession(false)} />}
     </div>
   );
 }
