@@ -88,19 +88,19 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
 
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <span className="text-[0.83rem] font-bold text-muted-foreground">トレーニング日数</span>
-          <div className={`text-3xl font-extrabold leading-none tracking-tight ${dayColor}`}>
-            {trainingDays}<span className="text-lg font-bold text-muted-foreground ml-0.5">日</span>
+          <span className="text-sm font-semibold text-foreground/70">トレーニング日数</span>
+          <div className={`text-3xl font-extrabold leading-none tracking-tight flex items-baseline ${dayColor}`}>
+            {trainingDays}<span className="text-base font-bold text-muted-foreground ml-0.5">日</span>
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-[0.83rem] font-bold text-muted-foreground">有酸素 合計時間</span>
-          <div className={`text-3xl font-extrabold leading-none tracking-tight ${cardioColor}`}>
-            {cardioVal}<span className="text-lg font-bold text-muted-foreground ml-0.5">{cardioUnit}</span>
+          <span className="text-sm font-semibold text-foreground/70">有酸素 合計時間</span>
+          <div className={`text-3xl font-extrabold leading-none tracking-tight flex items-baseline ${cardioColor}`}>
+            {cardioVal}<span className="text-base font-bold text-muted-foreground ml-0.5">{cardioUnit}</span>
             {h > 0 && (
               <>
                 <span className={cardioColor}>{m}</span>
-                <span className="text-lg font-bold text-muted-foreground ml-0.5">分</span>
+                <span className="text-base font-bold text-muted-foreground ml-0.5">分</span>
               </>
             )}
           </div>
