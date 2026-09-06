@@ -1,5 +1,6 @@
 import React from "react";
 import MyActivity from "@/components/activity/MyActivity";
+import BodyPartRatioSection from "@/components/home/BodyPartRatioSection";
 
 export default function Home() {
   return (
@@ -7,6 +8,9 @@ export default function Home() {
       {/* 📊 My Activity */}
       <section>
         <MyActivity />
+      </section>
+      <section>
+        <BodyPartRatioSection />
       </section>
     </div>
   );
