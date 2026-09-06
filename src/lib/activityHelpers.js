@@ -55,6 +55,28 @@ export function formatDateJP(d, t) {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
 }
 
+// Month navigation bounds shared by calendar & activity sections.
+// lowerBound = max(appStart month, 3 months ago). upperBound = current month.
+export function getMonthNav(appStart, currentYear, currentMonth) {
+  const threeAgo = new Date(currentYear, currentMonth - 3, 1);
+  let lowerY = threeAgo.getFullYear();
+  let lowerM = threeAgo.getMonth();
+  if (appStart) {
+    const startY = appStart.getFullYear();
+    const startM = appStart.getMonth();
+    if (startY > lowerY || (startY === lowerY && startM > lowerM)) {
+      lowerY = startY;
+      lowerM = startM;
+    }
+  }
+  const totalMonths = (currentYear - lowerY) * 12 + (currentMonth - lowerM) + 1;
+  const dotsCount = Math.min(Math.max(totalMonths, 1), 4);
+  const activeIndex = (viewY, viewM) => (viewY - lowerY) * 12 + (viewM - lowerM);
+  const canPrev = (viewY, viewM) => viewY > lowerY || (viewY === lowerY && viewM > lowerM);
+  const canNext = (viewY, viewM) => viewY < currentYear || (viewY === currentYear && viewM < currentMonth);
+  return { lowerY, lowerM, dotsCount, activeIndex, canPrev, canNext };
+}
+
 export function groupByDay(records) {
   const map = {};
   records.forEach((r) => {
