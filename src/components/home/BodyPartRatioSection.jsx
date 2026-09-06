@@ -107,7 +107,7 @@ export default function BodyPartRatioSection() {
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="flex items-center gap-2 mb-5">
-        <span className="text-xl font-extrabold text-foreground tracking-tight">部位別トレーニング割合</span>
+        <span className="text-xl font-extrabold text-foreground tracking-tight">部位別トレーニング</span>
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrev}

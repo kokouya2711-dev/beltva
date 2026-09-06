@@ -53,8 +53,9 @@ export default function MyActivity() {
   }
 
   return (
-    <div className="space-y-8">
+    <div>
       <WorkoutCalendar allRecords={records} appStart={appStart} currentYear={currentYear} currentMonth={currentMonth} />
+      <div className="h-px bg-border/70 my-5" />
       <ActivitySection allRecords={records} appStart={appStart} currentYear={currentYear} currentMonth={currentMonth} />
     </div>
   );
