@@ -4,6 +4,7 @@ import AgeRangeBar from "./AgeRangeBar";
 import LanguageSelectPage from "./LanguageSelectPage";
 import { PURPOSES, LEVELS } from "@/lib/userFilters";
 import { useI18n } from "@/lib/i18n";
+import { purposeLabel } from "@/lib/i18nPurposeFilter";
 
 // 詳細検索の全画面ページ（ボトムシートではなく専用ページ）
 // 年齢 / 目的 / 言語 / レベル — すべて任意（選択中項目を再タップで解除）
@@ -85,7 +86,7 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
                 onClick={() => setPurpose(purpose === p.key ? "" : p.key)}
                 className={`px-4 py-2.5 rounded-xl text-sm font-bold border transition ${purpose === p.key ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"}`}
               >
-                {p.label}
+                {purposeLabel(lang, p.labelKey)}
               </button>
             ))}
           </div>

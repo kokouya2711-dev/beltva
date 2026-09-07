@@ -1,10 +1,10 @@
 // 仲間画面のフィルター定義・ヘルパー
 
 export const PURPOSES = [
-  { key: "health", label: "健康維持", match: ["health"] },
-  { key: "appearance", label: "見た目改善", match: ["hypertrophy", "diet"] },
-  { key: "contest", label: "競技・大会", match: ["contest"] },
-  { key: "friends", label: "交流", match: ["friends"] },
+  { key: "health", labelKey: "health", match: ["health"] },
+  { key: "appearance", labelKey: "bodymake", match: ["hypertrophy", "diet"] },
+  { key: "contest", labelKey: "contest", match: ["contest"] },
+  { key: "friends", labelKey: "friends", match: ["friends"] },
 ];
 
 export const LEVELS = [
