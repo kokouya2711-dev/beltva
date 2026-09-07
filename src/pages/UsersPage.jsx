@@ -5,7 +5,7 @@ import { parseHobbies } from "@/lib/hobbies";
 import UserCard from "@/components/UserCard";
 import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
 import UserSearchOverlay from "@/components/users/UserSearchOverlay";
-import DetailFilterSheet from "@/components/users/DetailFilterSheet";
+import UserFilterPage from "@/components/users/UserFilterPage";
 import { PURPOSES, LEVEL_KEYS, levelKeyForYears, parseTrainingYears } from "@/lib/userFilters";
 
 const ONLINE_WINDOW = 30000;
@@ -33,7 +33,7 @@ export default function UsersPage() {
 
   const [tab, setTab] = useState("all");
   const [quick, setQuick] = useState(new Set());
-  const [detail, setDetail] = useState({ ageMin: 18, ageMax: 99, purpose: "", level: "" });
+  const [detail, setDetail] = useState({ ageMin: 18, ageMax: 99, purpose: "", language: "", level: "" });
   const [detailActive, setDetailActive] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
@@ -44,7 +44,7 @@ export default function UsersPage() {
       const meIsMinor = meUser?.age != null && meUser.age < 18;
       const aMin = meIsMinor ? 13 : 18;
       const aMax = meIsMinor ? 17 : 99;
-      setDetail({ ageMin: aMin, ageMax: aMax, purpose: "", level: "" });
+      setDetail({ ageMin: aMin, ageMax: aMax, purpose: "", language: "", level: "" });
 
       const [us, pres, live, follows, recs] = await Promise.all([
         base44.entities.User.list("-created_date", 100),
@@ -130,7 +130,7 @@ export default function UsersPage() {
     setShowDetail(false);
   }
   function clearDetail() {
-    setDetail({ ageMin: allowedMin, ageMax: allowedMax, purpose: "", level: "" });
+    setDetail({ ageMin: allowedMin, ageMax: allowedMax, purpose: "", language: "", level: "" });
     setDetailActive(false);
   }
 
@@ -139,12 +139,13 @@ export default function UsersPage() {
     if (tab === "favorites") arr = arr.filter((u) => followIds.has(u.id));
 
     if (detailActive) {
-      const { ageMin, ageMax, purpose, level } = detail;
+      const { ageMin, ageMax, purpose, language, level } = detail;
       arr = arr.filter((u) => u.age >= ageMin && u.age <= ageMax);
       if (purpose) {
         const matchKeys = PURPOSES.find((p) => p.key === purpose)?.match || [];
         arr = arr.filter((u) => matchKeys.includes(u.training_purpose));
       }
+      if (language) arr = arr.filter((u) => langsOf(u).includes(language));
       if (level) arr = arr.filter((u) => levelKeyForYears(yearsOf(u)) === level);
     } else {
       if (quick.has("same_language")) {
@@ -260,7 +261,7 @@ export default function UsersPage() {
         />
       )}
 
-      <DetailFilterSheet
+      <UserFilterPage
         open={showDetail}
         allowedMin={allowedMin}
         allowedMax={allowedMax}
