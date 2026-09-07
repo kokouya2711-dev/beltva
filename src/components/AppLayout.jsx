@@ -204,7 +204,7 @@ function AppLayoutInner() {
           </div>
         </header>
       ) : location.pathname === "/timeline" ? (
-        <header className="md:hidden sticky top-0 z-30 bg-background transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
+        <header className="md:hidden sticky top-0 z-30 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <TimelineHeader me={me} />
         </header>
       ) : location.pathname.startsWith("/posts/") || location.pathname === "/create-post" || location.pathname === "/messages" || location.pathname === "/users" ? null : (
