@@ -244,10 +244,12 @@ export default function PostDetail() {
         </div>
 
         {/* Category + workout type */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color}`}>{tCat(post.category)}</span>
-          {post.workout_type && <span className="text-xs text-muted-foreground">{tWorkout(post.workout_type)}</span>}
-        </div>
+        {(post.category || post.workout_type) && (
+          <div className="flex items-center gap-2 mb-3">
+            {post.category && <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color}`}>{tCat(post.category)}</span>}
+            {post.workout_type && <span className="text-xs text-muted-foreground">{tWorkout(post.workout_type)}</span>}
+          </div>
+        )}
 
         {/* Body */}
         <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{post.content}</div>
