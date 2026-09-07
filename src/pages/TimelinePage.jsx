@@ -151,7 +151,7 @@ export default function TimelinePage() {
               {filtered.map((p, i) => (
                 <React.Fragment key={p.id}>
                   <PostCard post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />
-                  {i < filtered.length - 1 && <div className="-mx-2 md:-mx-4 h-[10px] bg-separator" />}
+                  {i < filtered.length - 1 && <div className="-mx-2 md:-mx-4 h-[6px] bg-separator" />}
                 </React.Fragment>
               ))}
             </div>

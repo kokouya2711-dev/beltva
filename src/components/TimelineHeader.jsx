@@ -73,7 +73,7 @@ export default function TimelineHeader({ me }) {
   ];
 
   return (
-    <div className="flex items-center gap-3 px-4 py-1.5">
+    <div className="flex items-center gap-3 px-4 pt-2 pb-0">
       <Dropdown title="ルーム" options={roomOptions} value={room} onChange={setRoom} />
       <Dropdown title="表示" options={displayOptions} value={display} onChange={setDisplay} />
       <div className="flex-1" />
