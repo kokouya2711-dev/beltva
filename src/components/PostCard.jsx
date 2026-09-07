@@ -192,10 +192,35 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             {previewComments.map(c => {
               const u = commentUsers[c.created_by_id];
               const name = u ? displayName(u) : "...";
+              const initials = name.slice(0, 2).toUpperCase();
               return (
-                <div key={c.id} className="text-sm leading-snug">
-                  <span className="font-medium mr-1.5">{name}</span>
-                  <span className="text-muted-foreground whitespace-pre-wrap break-words">{c.content}</span>
+                <div key={c.id} className="flex items-start gap-2 text-sm leading-snug">
+                  <Link
+                    to={u ? `/profile/${u.id}` : "#"}
+                    onClick={(e) => e.stopPropagation()}
+                    className="shrink-0"
+                  >
+                    {u?.avatar_url ? (
+                      <img src={u.avatar_url} alt={name} className="w-6 h-6 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold">{initials}</div>
+                    )}
+                  </Link>
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      to={u ? `/profile/${u.id}` : "#"}
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-medium mr-1.5 hover:text-primary transition"
+                    >
+                      {name}
+                    </Link>
+                    <span
+                      className="text-muted-foreground whitespace-pre-wrap break-words cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }}
+                    >
+                      {c.content}
+                    </span>
+                  </div>
                 </div>
               );
             })}
