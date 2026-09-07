@@ -4,7 +4,6 @@ import { base44 } from "@/api/base44Client";
 import { ArrowLeft, X, Loader2, Image as ImageIcon, Send } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { clearTimelineCache } from "@/lib/timelineScrollCache";
-import { toast } from "@/components/ui/use-toast";
 
 function getTodayStr() {
   const d = new Date();
@@ -19,10 +18,13 @@ export default function CreatePost() {
   const [submitting, setSubmitting] = useState(false);
   const [mediaItems, setMediaItems] = useState([]);
   const [lastImageDate, setLastImageDate] = useState("");
+  const [limitMsg, setLimitMsg] = useState(false);
   const anyUploading = mediaItems.some((it) => it.uploading);
+  const limitTimer = useRef(null);
 
   useEffect(() => {
     base44.auth.me().then((u) => setLastImageDate(u?.last_image_upload_date || "")).catch(() => {});
+    return () => { if (limitTimer.current) clearTimeout(limitTimer.current); };
   }, []);
 
   const imageLocked = lastImageDate === getTodayStr();
@@ -58,7 +60,9 @@ export default function CreatePost() {
 
   function tryOpenPicker() {
     if (imageLocked) {
-      toast({ title: t("post.imageLimitToast") });
+      setLimitMsg(true);
+      if (limitTimer.current) clearTimeout(limitTimer.current);
+      limitTimer.current = setTimeout(() => setLimitMsg(false), 3000);
       return;
     }
     fileRef.current?.click();
@@ -160,6 +164,9 @@ export default function CreatePost() {
             </button>
           )}
           <input ref={fileRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+          {limitMsg && (
+            <div className="mt-2 text-xs text-amber-400">{t("post.imageLimitToast")}</div>
+          )}
         </div>
       </div>
     </div>
