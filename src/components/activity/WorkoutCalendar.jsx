@@ -68,6 +68,17 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
     return map;
   }, [monthRecords]);
 
+  const diffDaysFor = (cellKey) => {
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    const [y, m, d] = cellKey.split("-").map(Number);
+    const target = new Date(y, m - 1, d); target.setHours(0, 0, 0, 0);
+    return Math.round((t - target) / 86400000);
+  };
+  const dateLabelFor = (cellKey) => {
+    const [y, m, d] = cellKey.split("-").map(Number);
+    return new Intl.DateTimeFormat(locale, { month: "long", day: "numeric" }).format(new Date(y, m - 1, d));
+  };
+
   const startWeekday = new Date(viewYear, viewMonth, 1).getDay();
   const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
   const trainingDays = Object.keys(recordsByDate).length;
@@ -78,21 +89,23 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
   for (let i = 0; i < startWeekday; i++) cells.push(null);
   for (let d = 1; d <= totalDays; d++) {
     const key = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    cells.push({ day: d, key, hasRecords: !!recordsByDate[key], records: recordsByDate[key] || [] });
+    cells.push({ day: d, key, hasRecords: !!recordsByDate[key], records: recordsByDate[key] || [], dateLabel: dateLabelFor(key), diffDays: diffDaysFor(key) });
   }
 
   const activeDot = nav.activeIndex(viewYear, viewMonth);
 
-  const diffDaysFor = (cellKey) => {
-    const t = new Date(); t.setHours(0, 0, 0, 0);
-    const [y, m, d] = cellKey.split("-").map(Number);
-    const target = new Date(y, m - 1, d); target.setHours(0, 0, 0, 0);
-    return Math.round((t - target) / 86400000);
-  };
-
-  const selectedDateLabel = selectedDay
-    ? new Intl.DateTimeFormat(locale, { month: "long", day: "numeric" }).format(new Date(viewYear, viewMonth, selectedDay.day))
-    : "";
+  const recordedDays = useMemo(
+    () =>
+      Object.keys(recordsByDate)
+        .sort()
+        .map((key) => ({
+          key,
+          records: recordsByDate[key],
+          dateLabel: dateLabelFor(key),
+          diffDays: diffDaysFor(key),
+        })),
+    [recordsByDate, locale]
+  );
 
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
@@ -156,13 +169,11 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
 
       {selectedDay && (
         <DayDetailPopup
-          dateLabel={selectedDateLabel}
-          records={selectedDay.records}
-          diffDays={diffDaysFor(selectedDay.key)}
-          dateKey={selectedDay.key}
+          recordedDays={recordedDays}
+          initialDay={selectedDay}
           onClose={() => setSelectedDay(null)}
-          onEdit={() => navigate(`/record-workout?date=${selectedDay.key}&edit=1`)}
-          onAdd={() => navigate(`/record-workout?date=${selectedDay.key}`)}
+          onEdit={(key) => navigate(`/record-workout?date=${key}&edit=1`)}
+          onAdd={(key) => navigate(`/record-workout?date=${key}`)}
         />
       )}
     </div>
