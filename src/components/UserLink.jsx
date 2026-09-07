@@ -1,17 +1,34 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { displayName, flagEmoji } from "@/lib/profile";
+import { displayName } from "@/lib/profile";
 import { useT } from "@/lib/i18n";
+
+// 投稿者プロフィール画像右下の小さな正方形国旗バッジ（フラット・真っ直ぐ・角丸）
+function CountryFlagBadge({ code, sizeCls }) {
+  if (!code || String(code).length !== 2) return null;
+  const cc = String(code).toLowerCase();
+  const badge = sizeCls === "w-12 h-12" ? "w-4 h-4" : sizeCls === "w-10 h-10" ? "w-3.5 h-3.5" : "w-3 h-3";
+  return (
+    <span className={`absolute -bottom-0.5 -right-0.5 ${badge} rounded-[3px] overflow-hidden ring-2 ring-background shadow-sm`}>
+      <img
+        src={`https://flagcdn.com/w40/${cc}.png`}
+        srcSet={`https://flagcdn.com/w80/${cc}.png 2x`}
+        alt=""
+        className="w-full h-full object-cover"
+        loading="lazy"
+        draggable={false}
+      />
+    </span>
+  );
+}
 
 export default function UserLink({ user, size = "sm", showName = true, className = "" }) {
   const t = useT();
   if (!user) return <span className="text-muted-foreground">{t("common.anonymous")}</span>;
   const name = displayName(user);
   const initials = name.slice(0, 2).toUpperCase();
-  const flag = flagEmoji(user.country);
   const sizeCls = size === "lg" ? "w-12 h-12" : size === "md" ? "w-10 h-10" : "w-8 h-8";
   const textCls = size === "lg" ? "text-base" : "text-sm";
-  const flagCls = size === "lg" ? "w-4 h-4 text-[18px] rounded-[4px]" : size === "md" ? "w-3.5 h-3.5 text-[16px] rounded-[3px]" : "w-3 h-3 text-[14px] rounded-[3px]";
   return (
     <Link to={`/profile/${user.id}`} className={`flex items-center gap-2 min-w-0 group ${className}`}>
       <div className={`relative shrink-0`}>
@@ -20,11 +37,7 @@ export default function UserLink({ user, size = "sm", showName = true, className
         ) : (
           <div className={`${sizeCls} rounded-full bg-secondary flex items-center justify-center font-bold text-xs`}>{initials}</div>
         )}
-        {flag && (
-          <span className={`absolute -bottom-0.5 -right-0.5 ${flagCls} flex items-center justify-center leading-none overflow-hidden shadow-md`}>
-            <span className="leading-none">{flag}</span>
-          </span>
-        )}
+        <CountryFlagBadge code={user.country} sizeCls={sizeCls} />
       </div>
       {showName && <span className={`font-medium ${textCls} truncate group-hover:text-primary transition`}>{name}</span>}
     </Link>

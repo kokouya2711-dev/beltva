@@ -5,6 +5,7 @@ import { Heart, MessageCircle } from "lucide-react";
 import EditPostDialog from "@/components/EditPostDialog";
 import PostMenu from "@/components/PostMenu";
 import UserLink from "@/components/UserLink";
+import FollowButton from "@/components/FollowButton";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
 import { useT } from "@/lib/i18n";
@@ -105,6 +106,9 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
           <>
             <UserLink user={author} size="lg" />
             <div className="flex-1" />
+            {!isOwner && author?.id && (
+              <FollowButton targetId={author.id} meId={meId} size="compact" />
+            )}
           </>
         )}
         <span className="w-1 shrink-0" />

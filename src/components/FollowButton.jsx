@@ -40,6 +40,23 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
   }
 
   if (!meId || !targetId || meId === targetId) return null;
+
+  if (size === "compact") {
+    return (
+      <button
+        onClick={toggle}
+        disabled={loading || pending}
+        className={`text-xs font-semibold px-2.5 py-1 rounded-md border transition disabled:opacity-50 ${
+          following
+            ? "bg-secondary/40 border-border text-muted-foreground hover:border-red-500/40 hover:text-red-400"
+            : "bg-primary text-primary-foreground border-primary hover:opacity-90"
+        }`}
+      >
+        {pending ? "…" : following ? t("common.following") : t("common.follow")}
+      </button>
+    );
+  }
+
   const pad = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm";
   return (
     <button
