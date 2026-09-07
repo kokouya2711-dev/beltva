@@ -2,14 +2,13 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Send, Loader2, Heart, Reply, X } from "lucide-react";
-import { CATEGORY_STYLE } from "@/lib/community";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
 import PostMenu from "@/components/PostMenu";
 import { getMediaUrls } from "@/lib/media";
 import UserLink from "@/components/UserLink";
 import { useT } from "@/lib/i18n";
-import { useTCategory, useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
+import { useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
 import { formatAbsoluteTime } from "@/lib/timeFormat";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
@@ -17,7 +16,6 @@ import { haptic } from "@/lib/haptics";
 
 export default function PostDetail() {
   const t = useT();
-  const tCat = useTCategory();
   const tWorkout = useTWorkout();
   const fmtNum = useFormatNumber();
   const { id } = useParams();
@@ -110,7 +108,6 @@ export default function PostDetail() {
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
   const mediaUrls = post ? getMediaUrls(post) : [];
   const liked = !!myLikeId;
-  const style = CATEGORY_STYLE[post?.category] || { color: "text-muted-foreground", bg: "bg-secondary/60", border: "border-border" };
 
   async function toggleLike() {
     if (!meId || !post) return;
@@ -243,11 +240,10 @@ export default function PostDetail() {
           </div>
         </div>
 
-        {/* Category + workout type */}
-        {(post.category || post.workout_type) && (
-          <div className="flex items-center gap-2 mb-3">
-            {post.category && <span className={`text-[10px] px-2 py-0.5 rounded-full ${style.bg} ${style.color}`}>{tCat(post.category)}</span>}
-            {post.workout_type && <span className="text-xs text-muted-foreground">{tWorkout(post.workout_type)}</span>}
+        {/* Workout type */}
+        {post.workout_type && (
+          <div className="mb-3">
+            <span className="text-xs text-muted-foreground">{tWorkout(post.workout_type)}</span>
           </div>
         )}
 
