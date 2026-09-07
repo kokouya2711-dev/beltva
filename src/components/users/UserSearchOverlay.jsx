@@ -40,7 +40,6 @@ export default function UserSearchOverlay({ users, me, isOnline, isTraining, onC
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
-            autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="ユーザー名またはIDで検索"
