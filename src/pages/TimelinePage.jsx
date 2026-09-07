@@ -130,7 +130,7 @@ export default function TimelinePage() {
   }
 
   return (
-    <div className="px-2 md:px-4 max-w-2xl mx-auto">
+    <div className="px-3.5 md:px-4 max-w-2xl mx-auto">
       <div className="hidden md:flex justify-end mb-3">
         <button onClick={() => navigate("/create-post")} className="flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">
           <Plus className="w-4 h-4" /> {t("post.create")}
@@ -151,7 +151,7 @@ export default function TimelinePage() {
               {filtered.map((p, i) => (
                 <React.Fragment key={p.id}>
                   <PostCard post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />
-                  {i < filtered.length - 1 && <div className="-mx-2 md:-mx-4 h-[6px] bg-separator" />}
+                  {i < filtered.length - 1 && <div className="-mx-3.5 md:-mx-4 h-[6px] bg-separator" />}
                 </React.Fragment>
               ))}
             </div>
