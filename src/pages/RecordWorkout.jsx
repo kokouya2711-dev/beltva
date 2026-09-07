@@ -6,8 +6,8 @@ import { base44 } from "@/api/base44Client";
 import WheelPicker from "@/components/workout/WheelPicker";
 import { getWorkoutDateKey } from "@/lib/activityHelpers";
 
-const PARTS = ["胸", "背中", "脚", "肩", "腕", "腹"];
-const PART_GRID = ["胸", "背中", "脚", "肩", "腕", "腹"];
+const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
+const PART_GRID = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
 
 function todayKey() {
   const d = new Date();
@@ -37,8 +37,10 @@ export default function RecordWorkout() {
         if (!user) { setLoadingEdit(false); return; }
         const recs = await base44.entities.WorkoutRecord.filter({ created_by_id: user.id }, "-created_date", 500);
         const dayRecs = recs.filter((r) => getWorkoutDateKey(r) === targetDate);
-        setExistingIds(dayRecs.map((r) => r.id));
-        const parts = new Set(dayRecs.filter((r) => PARTS.includes(r.workout_type)).map((r) => r.workout_type));
+        // 新7部位＋有酸素のみ置換対象。旧「腕」記録は上書き・削除せず残す
+        const replaceable = dayRecs.filter((r) => PARTS.includes(r.workout_type) || r.workout_type === "有酸素運動");
+        setExistingIds(replaceable.map((r) => r.id));
+        const parts = new Set(replaceable.filter((r) => PARTS.includes(r.workout_type)).map((r) => r.workout_type));
         setSelected(parts);
         const cardioRec = dayRecs.find((r) => r.workout_type === "有酸素運動");
         if (cardioRec) {

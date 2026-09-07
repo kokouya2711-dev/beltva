@@ -2,7 +2,8 @@ import React, { useState, useRef, useMemo } from "react";
 import { X } from "lucide-react";
 import { formatDuration } from "@/lib/activityHelpers";
 
-const PARTS = ["胸", "背中", "脚", "肩", "腕", "腹"];
+// 新7部位＋旧「腕」（既存データの表示を残すため）
+const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹", "腕"];
 
 export default function DayDetailPopup({ recordedDays, initialDay, onClose, onEdit, onAdd }) {
   const startIndex = useMemo(

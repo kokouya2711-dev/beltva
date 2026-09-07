@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getWorkoutDate, getMonthNav } from "@/lib/activityHelpers";
 
-const PARTS = ["胸", "背中", "脚", "肩", "腕", "腹"];
+const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
 
 export default function BodyPartRatioSection() {
   const [records, setRecords] = useState([]);
