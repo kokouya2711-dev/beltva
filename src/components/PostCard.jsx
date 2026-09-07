@@ -11,10 +11,11 @@ import MediaViewer from "@/components/MediaViewer";
 import { useT } from "@/lib/i18n";
 import { useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
 import { formatPostListTime } from "@/lib/timeFormat";
-import { fetchUser } from "@/lib/profile";
+import { fetchUser, displayName } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 import { getMediaUrls } from "@/lib/media";
 import { haptic } from "@/lib/haptics";
+import { getCommentCountUpdate, clearCommentCountUpdate } from "@/lib/commentCountStore";
 
 export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId }) {
   const t = useT();
@@ -31,6 +32,9 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   const [isFavorited, setIsFavorited] = useState(initialFavorited ?? false);
   const [favId, setFavId] = useState(initialFavId ?? null);
   const [bounceKey, setBounceKey] = useState(0);
+  const [previewComments, setPreviewComments] = useState([]);
+  const [commentUsers, setCommentUsers] = useState({});
+  const [hasMoreComments, setHasMoreComments] = useState(false);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
@@ -47,6 +51,43 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
       if (fs.length) { setIsFavorited(true); setFavId(fs[0].id); }
     }).catch(() => {});
   }, [meId, currentPost.id, initialFavorited]);
+
+  // Apply pending comment count update from PostDetail (covers remount after navigation)
+  useEffect(() => {
+    if (!currentPost.id) return;
+    const updated = getCommentCountUpdate(currentPost.id);
+    if (updated !== null) {
+      setCommentsCount(updated);
+      clearCommentCountUpdate(currentPost.id);
+    }
+  }, [currentPost.id]);
+
+  // Fetch latest comments for preview
+  useEffect(() => {
+    if (!currentPost.id) return;
+    base44.entities.Comment.filter({ post_id: currentPost.id }, "-created_date", 3).then(async (cs) => {
+      setPreviewComments(cs.slice(0, 2));
+      setHasMoreComments(cs.length >= 3);
+      const uids = [...new Set(cs.slice(0, 2).map(c => c.created_by_id).filter(Boolean))];
+      if (uids.length) {
+        const us = await Promise.all(uids.map(uid => fetchUser(uid).catch(() => null)));
+        const m = {};
+        us.forEach(u => { if (u) m[u.id] = u; });
+        setCommentUsers(m);
+      }
+    }).catch(() => {});
+  }, [currentPost.id]);
+
+  // Sync comment count via Post subscription
+  useEffect(() => {
+    if (!currentPost.id) return;
+    const unsub = base44.entities.Post.subscribe((event) => {
+      if (event.data?.id === currentPost.id && event.type === "update" && event.data.comments_count !== undefined) {
+        setCommentsCount(event.data.comments_count);
+      }
+    });
+    return unsub;
+  }, [currentPost.id]);
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 
@@ -145,6 +186,29 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
           </button>
         </div>
+
+        {previewComments.length > 0 && (
+          <div className="mt-3 space-y-1.5">
+            {previewComments.map(c => {
+              const u = commentUsers[c.created_by_id];
+              const name = u ? displayName(u) : "...";
+              return (
+                <div key={c.id} className="text-sm leading-snug">
+                  <span className="font-medium mr-1.5">{name}</span>
+                  <span className="text-muted-foreground whitespace-pre-wrap break-words">{c.content}</span>
+                </div>
+              );
+            })}
+            {hasMoreComments && (
+              <button
+                onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                {t("post.viewAllComments")}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {showEdit && (

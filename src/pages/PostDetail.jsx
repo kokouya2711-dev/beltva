@@ -13,6 +13,7 @@ import { formatAbsoluteTime } from "@/lib/timeFormat";
 import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 import { haptic } from "@/lib/haptics";
+import { setCommentCountUpdate } from "@/lib/commentCountStore";
 
 export default function PostDetail() {
   const t = useT();
@@ -134,12 +135,14 @@ export default function PostDetail() {
     setPosting(true);
     const parentCommentId = replyTo?.id || null;
     const c = await base44.entities.Comment.create({ post_id: id, content: draft.trim(), likes: 0, parent_comment_id: parentCommentId });
+    const newCount = (post.comments_count || 0) + 1;
     setComments((cs) => [c, ...cs]);
-    setPost((p) => p ? { ...p, comments_count: (p.comments_count || 0) + 1 } : p);
+    setPost((p) => p ? { ...p, comments_count: newCount } : p);
     setDraft("");
     setReplyTo(null);
     setPosting(false);
-    base44.entities.Post.update(id, { comments_count: (post.comments_count || 0) + 1 }).catch(() => {});
+    base44.entities.Post.update(id, { comments_count: newCount }).catch(() => {});
+    setCommentCountUpdate(id, newCount);
     // Notify post owner (not self) — store translation key + comment content
     if (post.created_by_id && post.created_by_id !== meId) {
       notify(post.created_by_id, meId, "comment", "notif.commented", id, id, c.content).catch(() => {});
@@ -215,7 +218,7 @@ export default function PostDetail() {
       </button>
 
       {/* Content */}
-      <div className="max-w-2xl mx-auto px-3" style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top))', paddingBottom: 'calc(120px + env(safe-area-inset-bottom))' }}>
+      <div className="max-w-2xl mx-auto px-3" style={{ paddingTop: 'calc(3.75rem + env(safe-area-inset-top))', paddingBottom: 'calc(120px + env(safe-area-inset-bottom))' }}>
         {/* Poster info */}
         <div className="flex items-center justify-between mb-3">
           {post.is_anonymous ? (
