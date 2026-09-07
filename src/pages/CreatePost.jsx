@@ -98,7 +98,7 @@ export default function CreatePost() {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="sticky top-0 z-30 bg-background">
+      <header className="sticky top-0 z-30">
         <div className="flex items-center justify-between px-4 py-2.5">
           <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-lg hover:bg-secondary">
             <ArrowLeft className="w-5 h-5" />
