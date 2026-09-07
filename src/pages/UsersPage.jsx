@@ -12,9 +12,9 @@ const ONLINE_WINDOW = 30000;
 
 const QUICK_OPTIONS = [
   { key: "same_language", label: "同じ言語" },
-  { key: "beginner", label: "初級者" },
-  { key: "intermediate", label: "中級者" },
-  { key: "advanced", label: "上級者" },
+  { key: "beginner", label: "初級" },
+  { key: "intermediate", label: "中級" },
+  { key: "advanced", label: "上級" },
 ];
 
 function parseLanguages(s) {
@@ -197,17 +197,29 @@ export default function UsersPage() {
         ))}
       </div>
 
-      {/* クイックフィルター */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 py-3">
-        {QUICK_OPTIONS.map((o) => (
+      {/* クイックフィルター：同じ言語（左）と レベル群（右）を縦線で分離 */}
+      <div className="px-4 py-3">
+        <div className="flex items-stretch gap-2.5">
           <button
-            key={o.key}
-            onClick={() => toggleQuick(o.key)}
-            className={`shrink-0 text-xs px-3 py-1.5 rounded-full border transition ${quick.has(o.key) ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"}`}
+            onClick={() => toggleQuick("same_language")}
+            className={`flex-1 min-w-0 py-2.5 rounded-xl border text-sm font-bold transition ${quick.has("same_language") ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"}`}
           >
-            {o.label}
+            同じ言語
           </button>
-        ))}
+          <div className="w-px bg-border my-1" />
+          <div className="flex-[3] grid grid-cols-3 gap-2">
+            {QUICK_OPTIONS.slice(1).map((o) => (
+              <button
+                key={o.key}
+                onClick={() => toggleQuick(o.key)}
+                className={`py-2.5 rounded-xl border text-sm font-bold transition ${quick.has(o.key) ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"}`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-2 text-center">同じ言語＋レベル1つまで選択できます</p>
       </div>
 
       {detailActive && (
