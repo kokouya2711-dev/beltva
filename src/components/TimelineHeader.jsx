@@ -3,21 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ChevronDown, Plus, Check } from "lucide-react";
 import { useTimelineFilter } from "@/lib/timelineFilterContext";
 import NotificationsBell from "@/components/NotificationsBell";
-import { useI18n, LANGS } from "@/lib/i18n";
-
-function parseLangs(s) {
-  try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; }
-}
+import { useI18n } from "@/lib/i18n";
+import Flag from "@/components/Flag";
 
 function langDisplay(code, uiLang) {
   const locale = uiLang === "zh-TW" ? "zh-TW" : uiLang;
   try {
     return new Intl.DisplayNames([locale], { type: "language" }).of(code) || code;
   } catch { return code; }
-}
-
-function langFlag(code) {
-  return LANGS.find((l) => l.code === code)?.flag || "🌐";
 }
 
 function Dropdown({ title, options, value, onChange }) {
@@ -37,7 +30,7 @@ function Dropdown({ title, options, value, onChange }) {
           onClick={() => setOpen((v) => !v)}
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-primary/70 bg-primary/10 text-primary text-sm font-bold whitespace-nowrap min-h-[38px]"
         >
-          {current?.icon && <span className="text-base leading-none">{current.icon}</span>}
+          {current?.icon != null && <span className="leading-none flex items-center">{current.icon}</span>}
           <span>{current?.label}</span>
           <ChevronDown className="w-3.5 h-3.5" />
         </button>
@@ -49,7 +42,7 @@ function Dropdown({ title, options, value, onChange }) {
                 onClick={() => { onChange(o.key); setOpen(false); }}
                 className={`w-full text-left px-3.5 py-2.5 text-sm hover:bg-secondary/60 flex items-center gap-2 ${value === o.key ? "text-primary font-bold" : "text-foreground"}`}
               >
-                {o.icon && <span className="text-base leading-none">{o.icon}</span>}
+                {o.icon != null && <span className="leading-none flex items-center w-5 justify-center">{o.icon}</span>}
                 <span className="flex-1">{o.label}</span>
                 {value === o.key && <Check className="w-4 h-4" />}
               </button>
@@ -66,12 +59,16 @@ export default function TimelineHeader({ me }) {
   const { lang } = useI18n();
   const { room, setRoom, display, setDisplay } = useTimelineFilter();
 
-  const myMainLang = parseLangs(me?.languages)[0] || "";
+  const myMainLang = me?.main_language || "";
 
   const roomOptions = useMemo(() => {
     const opts = [{ key: "all", icon: "🌏", label: "すべて" }];
     if (myMainLang) {
-      opts.push({ key: "mylang", icon: langFlag(myMainLang), label: langDisplay(myMainLang, lang) });
+      opts.push({
+        key: "mylang",
+        icon: <Flag code={myMainLang} className="w-5 h-3.5 rounded-[3px] object-cover" />,
+        label: langDisplay(myMainLang, lang),
+      });
     }
     return opts;
   }, [myMainLang, lang]);
@@ -81,7 +78,7 @@ export default function TimelineHeader({ me }) {
     { key: "latest", label: "最新" },
   ];
 
-  // 言語ルーム未選択時は「すべて」にフォールバック
+  // メイン言語未設定時は「すべて」にフォールバック
   const safeRoom = room === "mylang" && !myMainLang ? "all" : room;
 
   return (

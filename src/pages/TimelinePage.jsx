@@ -69,7 +69,7 @@ export default function TimelinePage() {
     setLikesByPost(lMap);
 
     if (meUser) {
-      setMyLang(parseLangs(meUser.languages)[0] || "");
+      setMyLang(meUser.main_language || "");
       const [mutes, blocksByMe, blocksOnMe, hiddenPosts, myFavs, users] = await Promise.all([
         base44.entities.Mute.filter({ muter_id: meUser.id }).catch(() => []),
         base44.entities.Block.filter({ blocker_id: meUser.id }).catch(() => []),
@@ -85,7 +85,7 @@ export default function TimelinePage() {
       myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
       setFavMap(fMap);
       const langMap = {};
-      users.forEach((u) => { langMap[u.id] = parseLangs(u.languages); });
+      users.forEach((u) => { langMap[u.id] = u.main_language || ""; });
       setUserLangMap(langMap);
     }
 
@@ -119,12 +119,9 @@ export default function TimelinePage() {
   if (blockedIds) filtered = filtered.filter((p) => !blockedIds.has(p.created_by_id));
   if (hiddenPostIds) filtered = filtered.filter((p) => !hiddenPostIds.has(p.id));
 
-  // 自分の言語ルーム：投稿者のメイン言語（話せる言語の先頭）が自分のメイン言語と同じ投稿のみ
+  // 言語ルーム：投稿者のメイン言語が自分のメイン言語と同じ投稿のみ
   if (room === "mylang" && myLang) {
-    filtered = filtered.filter((p) => {
-      const authorLangs = userLangMap[p.created_by_id];
-      return Array.isArray(authorLangs) && authorLangs.length > 0 && authorLangs[0] === myLang;
-    });
+    filtered = filtered.filter((p) => userLangMap[p.created_by_id] === myLang);
   }
 
   // 表示：おすすめ＝新しさ＋反応＋多様性、最新＝新着順（リスト既定）
