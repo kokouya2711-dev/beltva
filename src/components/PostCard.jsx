@@ -175,8 +175,8 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
         <MediaViewer mediaUrls={mediaUrls} startIndex={viewerIndex} onClose={() => setViewerIndex(null)} />
       )}
 
-      <div className="flex items-center justify-between text-sm" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center gap-4">
+      <div onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-4 text-sm">
           <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
             <span key={bounceKey} className={bounceKey > 0 ? "heart-bounce" : "inline-flex"}>
               <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
