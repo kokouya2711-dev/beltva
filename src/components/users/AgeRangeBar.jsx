@@ -33,9 +33,6 @@ export default function AgeRangeBar({ min, max, valueMin, valueMax, onChange }) 
 
   return (
     <div>
-      <div className="flex justify-end mb-2">
-        <span className="text-sm font-bold text-primary">{valueMin}–{valueMax}歳</span>
-      </div>
       <div ref={trackRef} className="relative h-2 rounded-full bg-secondary/70 touch-none">
         <div
           className="absolute h-2 rounded-full bg-primary"
@@ -61,10 +58,6 @@ export default function AgeRangeBar({ min, max, valueMin, valueMax, onChange }) 
           role="slider"
           aria-label="最高年齢"
         />
-      </div>
-      <div className="flex justify-between mt-1.5 text-[11px] font-semibold text-muted-foreground">
-        <span>{min}歳</span>
-        <span>{max}歳</span>
       </div>
     </div>
   );
