@@ -141,9 +141,9 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
               <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
             </span> {fmtNum(likes)}
           </button>
-          <span className="flex items-center gap-1.5 text-muted-foreground">
+          <button onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
             <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
-          </span>
+          </button>
         </div>
       </div>
 

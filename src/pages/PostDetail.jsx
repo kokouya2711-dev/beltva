@@ -43,6 +43,17 @@ export default function PostDetail() {
   const inputBarRef = useRef(null);
 
   useEffect(() => {
+    if (!loading) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("scroll") === "comments") {
+        requestAnimationFrame(() => {
+          document.getElementById("comments")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    }
+  }, [loading]);
+
+  useEffect(() => {
     (async () => {
       const me = await base44.auth.me().catch(() => null);
       setMeId(me?.id);
@@ -279,7 +290,7 @@ export default function PostDetail() {
         )}
 
         {/* Comments */}
-        <div className="pt-3">
+        <div id="comments" className="pt-3 scroll-mt-20">
           {comments.length === 0 ? (
             <div className="text-sm text-muted-foreground py-4 text-center">{t("post.noComments")}</div>
           ) : (
@@ -332,9 +343,8 @@ export default function PostDetail() {
         ref={inputBarRef}
         className="fixed left-0 right-0 z-30 glass border-t border-border px-3 py-2.5"
         style={{
-          bottom: inputFocused ? "0" : "calc(56px + env(safe-area-inset-bottom))",
+          bottom: "calc(env(safe-area-inset-bottom))",
           paddingBottom: "calc(env(safe-area-inset-bottom) + 0.625rem)",
-          transition: "bottom 0.15s ease-out",
         }}
       >
         <div className="max-w-2xl mx-auto">
