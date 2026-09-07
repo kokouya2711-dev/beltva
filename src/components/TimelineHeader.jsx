@@ -23,33 +23,30 @@ function Dropdown({ title, options, value, onChange }) {
   }, []);
   const current = options.find((o) => o.key === value) || options[0];
   return (
-    <div className="flex flex-col items-center gap-1">
-      <span className="text-[10px] text-white/60 font-medium leading-none">{title}</span>
-      <div className="relative" ref={ref}>
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-primary/70 bg-primary/10 text-primary text-sm font-bold whitespace-nowrap min-h-[38px]"
-        >
-          {current?.icon != null && <span className="leading-none flex items-center">{current.icon}</span>}
-          <span>{current?.label}</span>
-          <ChevronDown className="w-3.5 h-3.5" />
-        </button>
-        {open && (
-          <div className="absolute left-0 top-full mt-1.5 z-50 bg-popover border border-border rounded-xl shadow-2xl py-1 min-w-[180px]">
-            {options.map((o) => (
-              <button
-                key={o.key}
-                onClick={() => { onChange(o.key); setOpen(false); }}
-                className={`w-full text-left px-3.5 py-2.5 text-sm hover:bg-secondary/60 flex items-center gap-2 ${value === o.key ? "text-primary font-bold" : "text-foreground"}`}
-              >
-                {o.icon != null && <span className="leading-none flex items-center w-5 justify-center">{o.icon}</span>}
-                <span className="flex-1">{o.label}</span>
-                {value === o.key && <Check className="w-4 h-4" />}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/70 bg-primary/10 text-primary text-sm font-bold whitespace-nowrap min-h-[34px]"
+      >
+        {current?.icon != null && <span className="leading-none flex items-center">{current.icon}</span>}
+        <span>{current?.label}</span>
+        <ChevronDown className="w-3.5 h-3.5" />
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1.5 z-50 bg-popover border border-border rounded-xl shadow-2xl py-1 min-w-[180px]">
+          {options.map((o) => (
+            <button
+              key={o.key}
+              onClick={() => { onChange(o.key); setOpen(false); }}
+              className={`w-full text-left px-3.5 py-2.5 text-sm hover:bg-secondary/60 flex items-center gap-2 ${value === o.key ? "text-primary font-bold" : "text-foreground"}`}
+            >
+              {o.icon != null && <span className="leading-none flex items-center w-5 justify-center">{o.icon}</span>}
+              <span className="flex-1">{o.label}</span>
+              {value === o.key && <Check className="w-4 h-4" />}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -76,7 +73,7 @@ export default function TimelineHeader({ me }) {
   ];
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-3 px-4 py-1.5">
       <Dropdown title="ルーム" options={roomOptions} value={room} onChange={setRoom} />
       <Dropdown title="表示" options={displayOptions} value={display} onChange={setDisplay} />
       <div className="flex-1" />
