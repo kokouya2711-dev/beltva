@@ -33,7 +33,7 @@ export default function UserSearchOverlay({ users, me, isOnline, isTraining, onC
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+      <div className="flex items-center gap-2 px-4 py-3">
         <button onClick={onClose} className="p-1.5 -ml-1.5 text-muted-foreground hover:text-foreground" aria-label="戻る">
           <ArrowLeft className="w-5 h-5" />
         </button>
