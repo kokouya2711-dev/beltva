@@ -1,11 +1,11 @@
 import { createContext, useContext, useState } from "react";
 
-const Ctx = createContext({ filter: "all", setFilter: () => {}, workoutFilter: "", setWorkoutFilter: () => {} });
+const Ctx = createContext({ room: "all", setRoom: () => {}, display: "recommended", setDisplay: () => {} });
 
 export function TimelineFilterProvider({ children }) {
-  const [filter, setFilter] = useState("all");
-  const [workoutFilter, setWorkoutFilter] = useState("");
-  return <Ctx.Provider value={{ filter, setFilter, workoutFilter, setWorkoutFilter }}>{children}</Ctx.Provider>;
+  const [room, setRoom] = useState("all");
+  const [display, setDisplay] = useState("recommended");
+  return <Ctx.Provider value={{ room, setRoom, display, setDisplay }}>{children}</Ctx.Provider>;
 }
 
 export function useTimelineFilter() {

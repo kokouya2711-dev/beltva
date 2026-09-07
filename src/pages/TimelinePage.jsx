@@ -8,24 +8,29 @@ import { useT } from "@/lib/i18n";
 import { useTimelineFilter } from "@/lib/timelineFilterContext";
 import { saveTimelineCache, getTimelineCache, getTimelineScrollY } from "@/lib/timelineScrollCache";
 
+function parseLangs(s) {
+  try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; }
+}
+
 export default function TimelinePage() {
   const t = useT();
-  const { filter, setFilter, workoutFilter } = useTimelineFilter();
+  const { room, display } = useTimelineFilter();
   const cached = getTimelineCache();
   const [posts, setPosts] = useState(cached?.posts || []);
   const [loading, setLoading] = useState(!cached);
   const navigate = useNavigate();
   const [me, setMe] = useState(cached?.me || null);
-  const [followIds, setFollowIds] = useState(cached?.followIds || null);
   const [likesByPost, setLikesByPost] = useState(cached?.likesByPost || {});
   const [mutedIds, setMutedIds] = useState(cached?.mutedIds || null);
   const [blockedIds, setBlockedIds] = useState(cached?.blockedIds || null);
   const [hiddenPostIds, setHiddenPostIds] = useState(cached?.hiddenPostIds || null);
   const [favMap, setFavMap] = useState(cached?.favMap || {});
+  const [userLangMap, setUserLangMap] = useState(cached?.userLangMap || {});
+  const [myLang, setMyLang] = useState(cached?.myLang || "");
 
   // Keep latest state in a ref so the unmount cleanup always saves current data
-  const stateRef = useRef({ posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, followIds });
-  stateRef.current = { posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, followIds };
+  const stateRef = useRef({ posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, userLangMap, myLang });
+  stateRef.current = { posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, userLangMap, myLang };
 
   async function load() {
     const [ps, meUser, allLikes] = await Promise.all([
@@ -40,12 +45,14 @@ export default function TimelinePage() {
     setLikesByPost(lMap);
 
     if (meUser) {
-      const [mutes, blocksByMe, blocksOnMe, hiddenPosts, myFavs] = await Promise.all([
+      setMyLang(meUser.language || "");
+      const [mutes, blocksByMe, blocksOnMe, hiddenPosts, myFavs, users] = await Promise.all([
         base44.entities.Mute.filter({ muter_id: meUser.id }).catch(() => []),
         base44.entities.Block.filter({ blocker_id: meUser.id }).catch(() => []),
         base44.entities.Block.filter({ blocked_id: meUser.id }).catch(() => []),
         base44.entities.HiddenPost.filter({ created_by_id: meUser.id }).catch(() => []),
         base44.entities.Favorite.filter({ created_by_id: meUser.id }).catch(() => []),
+        base44.entities.User.list("-created_date", 100).catch(() => []),
       ]);
       setMutedIds(new Set(mutes.map((m) => m.muted_id)));
       setBlockedIds(new Set([...blocksByMe.map((b) => b.blocked_id), ...blocksOnMe.map((b) => b.blocker_id)]));
@@ -53,6 +60,9 @@ export default function TimelinePage() {
       const fMap = {};
       myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
       setFavMap(fMap);
+      const langMap = {};
+      users.forEach((u) => { langMap[u.id] = parseLangs(u.languages); });
+      setUserLangMap(langMap);
     }
 
     setLoading(false);
@@ -70,11 +80,6 @@ export default function TimelinePage() {
   }, []);
 
   useEffect(() => {
-    if (filter !== "following" || !me || followIds) return;
-    base44.entities.Follow.filter({ follower_id: me.id }).then((f) => setFollowIds(new Set(f.map((x) => x.followee_id))));
-  }, [filter, me, followIds]);
-
-  useEffect(() => {
     const unsub = base44.entities.Post.subscribe((event) => {
       if (event.type === "create") {
         setPosts((prev) => prev.some((p) => p.id === event.data.id) ? prev : [event.data, ...prev]);
@@ -83,7 +88,6 @@ export default function TimelinePage() {
     return unsub;
   }, []);
 
-  const SPECIAL_FILTERS = ["all", "latest", "popular", "following"];
   let filtered = posts;
 
   // Filter out muted, blocked, and hidden posts
@@ -91,15 +95,13 @@ export default function TimelinePage() {
   if (blockedIds) filtered = filtered.filter((p) => !blockedIds.has(p.created_by_id));
   if (hiddenPostIds) filtered = filtered.filter((p) => !hiddenPostIds.has(p.id));
 
-  if (filter === "following") {
-    if (me && followIds) filtered = filtered.filter((p) => followIds.has(p.created_by_id) || p.created_by_id === me.id);
-  } else if (!SPECIAL_FILTERS.includes(filter)) {
-    filtered = filtered.filter((p) => p.category === filter);
+  // 自分の言語ルーム：投稿者の言語が自分の言語を含む投稿のみ
+  if (room === "mylang" && myLang) {
+    filtered = filtered.filter((p) => Array.isArray(userLangMap[p.created_by_id]) && userLangMap[p.created_by_id].includes(myLang));
   }
-  if (workoutFilter) {
-    filtered = filtered.filter((p) => p.workout_type === workoutFilter);
-  }
-  if (filter === "popular") {
+
+  // 表示：おすすめ＝人気順、最新＝新着順（リスト既定）
+  if (display === "recommended") {
     filtered = [...filtered].sort((a, b) => ((b.likes || 0) + (b.comments_count || 0)) - ((a.likes || 0) + (a.comments_count || 0)));
   }
 
@@ -118,7 +120,7 @@ export default function TimelinePage() {
           ) : filtered.length === 0 ? (
             <div className="py-16 flex flex-col items-center gap-2 text-muted-foreground">
               <MessageSquare className="w-10 h-10 opacity-40" />
-              <div className="text-sm">{filter === "following" ? t("post.noFollowingPosts") : t("post.emptyPrompt")}</div>
+              <div className="text-sm">{t("post.emptyPrompt")}</div>
             </div>
           ) : (
             <div>

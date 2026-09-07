@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, X, Loader2, Image as ImageIcon, Plus, Send } from "lucide-react";
-import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
+import { ArrowLeft, X, Loader2, Image as ImageIcon, Send } from "lucide-react";
 import WorkoutSelect from "@/components/WorkoutSelect";
 import { useT } from "@/lib/i18n";
-import { useTCategory } from "@/lib/i18nHelpers";
 import { clearTimelineCache } from "@/lib/timelineScrollCache";
 import { toast } from "@/components/ui/use-toast";
 
@@ -16,11 +14,9 @@ function getTodayStr() {
 
 export default function CreatePost() {
   const t = useT();
-  const tCat = useTCategory();
   const navigate = useNavigate();
   const fileRef = useRef(null);
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
   const [workoutType, setWorkoutType] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [mediaItems, setMediaItems] = useState([]);
@@ -77,7 +73,6 @@ export default function CreatePost() {
     try {
       await base44.entities.Post.create({
         content: content.trim(),
-        category: category || undefined,
         workout_type: workoutType || undefined,
         is_anonymous: false,
         media_url: urls[0] || undefined,
@@ -123,25 +118,6 @@ export default function CreatePost() {
       </header>
 
       <div className="flex-1 px-4 py-4 space-y-5 max-w-2xl mx-auto w-full pb-28">
-        <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.category")}</label>
-          <div className="grid grid-cols-3 gap-2 mt-1.5">
-            {POST_CATEGORIES.map((c) => {
-              const s = CATEGORY_STYLE[c];
-              const selected = category === c;
-              return (
-                <button
-                  key={c}
-                  onClick={() => setCategory(selected ? "" : c)}
-                  className={`text-xs px-2 py-2 rounded-lg border transition ${selected ? `${s.bg} ${s.color} ${s.border}` : "border-border text-muted-foreground"}`}
-                >
-                  {tCat(c)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         <div>
           <textarea
             value={content}

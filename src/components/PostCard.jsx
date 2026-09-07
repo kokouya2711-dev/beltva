@@ -2,14 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Heart, MessageCircle } from "lucide-react";
-import { CATEGORY_STYLE } from "@/lib/community";
 import EditPostDialog from "@/components/EditPostDialog";
 import PostMenu from "@/components/PostMenu";
 import UserLink from "@/components/UserLink";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
 import { useT } from "@/lib/i18n";
-import { useTCategory, useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
+import { useTWorkout, useFormatNumber } from "@/lib/i18nHelpers";
 import { formatPostListTime } from "@/lib/timeFormat";
 import { fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
@@ -18,7 +17,6 @@ import { haptic } from "@/lib/haptics";
 
 export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId }) {
   const t = useT();
-  const tCat = useTCategory();
   const tWorkout = useTWorkout();
   const fmtNum = useFormatNumber();
   const navigate = useNavigate();
@@ -51,7 +49,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 
-  const style = CATEGORY_STYLE[currentPost.category] || { color: "text-muted-foreground", bg: "bg-secondary/60", border: "border-border" };
   const liked = !!myLikeId;
   const isOwner = meId && currentPost.created_by_id === meId && !currentPost.is_anonymous;
 
@@ -110,7 +107,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             <div className="flex-1" />
           </>
         )}
-        {currentPost.category && <span className={`text-xs px-2.5 py-1 rounded-full ${style.bg} ${style.color} shrink-0`}>{tCat(currentPost.category)}</span>}
         <span className="w-1 shrink-0" />
         <PostMenu
           post={currentPost}
