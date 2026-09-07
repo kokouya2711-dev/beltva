@@ -97,8 +97,8 @@ export default function CreatePost() {
   const canSubmit = !!content.trim() && !anyUploading && !submitting;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-30 glass border-b border-border">
+    <div className="h-full flex flex-col">
+      <header className="sticky top-0 z-30 bg-background">
         <div className="flex items-center justify-between px-4 py-2.5">
           <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-lg hover:bg-secondary">
             <ArrowLeft className="w-5 h-5" />
@@ -114,16 +114,14 @@ export default function CreatePost() {
         </div>
       </header>
 
-      <div className="flex-1 px-4 py-4 space-y-5 max-w-2xl mx-auto w-full pb-28">
-        <div>
+      <div className="flex-1 flex flex-col gap-5 px-4 py-4 max-w-2xl mx-auto w-full">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={6}
             placeholder={t("post.bodyPlaceholder")}
-            className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary resize-none"
+            className="flex-1 min-h-[8rem] w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary resize-none"
           />
-        </div>
 
         <div>
           {mediaItems.length > 0 ? (
