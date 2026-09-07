@@ -8,7 +8,7 @@ export const extraTranslations = {
   ja: {
     "common.none": "なし", "common.close": "閉じる", "common.more": "もっと見る", "common.post": "投稿", "common.language": "言語",
     "post.title": "タイムライン", "post.create": "投稿", "post.createTitle": "タイムラインに投稿", "post.editTitle": "投稿を編集",
-    "post.category": "カテゴリ", "post.body": "本文", "post.bodyPlaceholder": "ベンチのフォームで悩んでます…アドバイスください！",
+    "post.category": "カテゴリ", "post.body": "本文", "post.bodyPlaceholder": "みんなにシェアしよう",
     "post.bodyPart": "関連部位（任意）", "post.postMode": "投稿形式", "post.public": "公開プロフィールで投稿", "post.anonymous": "匿名で投稿",
     "post.submit": "投稿する", "post.save": "保存する", "post.deleteConfirm": "この投稿を削除しますか？",
     "post.noPosts": "投稿がありません", "post.noFollowingPosts": "フォロー中のユーザーの投稿がありません",
@@ -142,7 +142,7 @@ export const extraTranslations = {
   en: {
     "common.none": "None", "common.close": "Close", "common.more": "More", "common.post": "Post", "common.language": "Language",
     "post.title": "Timeline", "post.create": "Post", "post.createTitle": "Post to timeline", "post.editTitle": "Edit post",
-    "post.category": "Category", "post.body": "Body", "post.bodyPlaceholder": "Struggling with bench form… any tips?",
+    "post.category": "Category", "post.body": "Body", "post.bodyPlaceholder": "Share with everyone",
     "post.bodyPart": "Body part (optional)", "post.postMode": "Post mode", "post.public": "Post with profile", "post.anonymous": "Post anonymously",
     "post.submit": "Post", "post.save": "Save", "post.deleteConfirm": "Delete this post?",
     "post.noPosts": "No posts yet", "post.noFollowingPosts": "No posts from people you follow",
@@ -316,7 +316,7 @@ export const extraTranslations = {
   zh: {
     "common.none": "无", "common.close": "关闭", "common.more": "更多", "common.post": "发帖", "common.language": "语言",
     "post.title": "动态", "post.create": "发帖", "post.createTitle": "发布动态", "post.editTitle": "编辑帖子",
-    "post.category": "分类", "post.body": "正文", "post.bodyPlaceholder": "卧推姿势有点困扰…求建议！",
+    "post.category": "分类", "post.body": "正文", "post.bodyPlaceholder": "和大家分享吧",
     "post.bodyPart": "相关部位（可选）", "post.postMode": "发布方式", "post.public": "用主页发布", "post.anonymous": "匿名发布",
     "post.submit": "发布", "post.save": "保存", "post.deleteConfirm": "删除这条帖子？",
     "post.noPosts": "暂无帖子", "post.noFollowingPosts": "你关注的人还没有帖子",
@@ -364,7 +364,7 @@ export const extraTranslations = {
   ko: {
     "common.none": "없음", "common.close": "닫기", "common.more": "더보기", "common.post": "게시", "common.language": "언어",
     "post.title": "타임라인", "post.create": "게시", "post.createTitle": "타임라인에 게시", "post.editTitle": "게시물 편집",
-    "post.category": "카테고리", "post.body": "본문", "post.bodyPlaceholder": "벤치 폼이 고민돼요… 팁 부탁해요!",
+    "post.category": "카테고리", "post.body": "본문", "post.bodyPlaceholder": "다함께 공유해요",
     "post.bodyPart": "관련 부위 (선택)", "post.postMode": "게시 방식", "post.public": "프로필로 게시", "post.anonymous": "익명 게시",
     "post.submit": "게시하기", "post.save": "저장", "post.deleteConfirm": "이 게시물을 삭제할까요?",
     "post.noPosts": "게시물이 없습니다", "post.noFollowingPosts": "팔로우 중인 유저의 게시물이 없습니다",
@@ -412,7 +412,7 @@ export const extraTranslations = {
   es: {
     "common.none": "Ninguno", "common.close": "Cerrar", "common.more": "Ver más", "common.post": "Publicar", "common.language": "Idioma",
     "post.title": "Línea de tiempo", "post.create": "Publicar", "post.createTitle": "Publicar en la línea", "post.editTitle": "Editar publicación",
-    "post.category": "Categoría", "post.body": "Contenido", "post.bodyPlaceholder": "Dudas con el banco… ¡consejos!",
+    "post.category": "Categoría", "post.body": "Contenido", "post.bodyPlaceholder": "Compártelo con todos",
     "post.bodyPart": "Parte (opcional)", "post.postMode": "Modo", "post.public": "Con perfil", "post.anonymous": "Anónimo",
     "post.submit": "Publicar", "post.save": "Guardar", "post.deleteConfirm": "¿Eliminar esta publicación?",
     "post.noPosts": "Sin publicaciones", "post.noFollowingPosts": "No hay publicaciones de quienes sigues",
@@ -460,7 +460,7 @@ export const extraTranslations = {
   fr: {
     "common.none": "Aucun", "common.close": "Fermer", "common.more": "Plus", "common.post": "Publier", "common.language": "Langue",
     "post.title": "Fil", "post.create": "Publier", "post.createTitle": "Publier sur le fil", "post.editTitle": "Modifier la publication",
-    "post.category": "Catégorie", "post.body": "Contenu", "post.bodyPlaceholder": "Soucis de forme au banc… des conseils ?",
+    "post.category": "Catégorie", "post.body": "Contenu", "post.bodyPlaceholder": "Partage avec tout le monde",
     "post.bodyPart": "Partie (optionnel)", "post.postMode": "Mode", "post.public": "Avec profil", "post.anonymous": "Anonyme",
     "post.submit": "Publier", "post.save": "Enregistrer", "post.deleteConfirm": "Supprimer cette publication ?",
     "post.noPosts": "Aucune publication", "post.noFollowingPosts": "Aucune publication de tes abonnements",
@@ -508,7 +508,7 @@ export const extraTranslations = {
   de: {
     "common.none": "Keine", "common.close": "Schließen", "common.more": "Mehr", "common.post": "Posten", "common.language": "Sprache",
     "post.title": "Timeline", "post.create": "Posten", "post.createTitle": "Auf Timeline posten", "post.editTitle": "Beitrag bearbeiten",
-    "post.category": "Kategorie", "post.body": "Text", "post.bodyPlaceholder": "Probleme mit der Bankform… Tipps?",
+    "post.category": "Kategorie", "post.body": "Text", "post.bodyPlaceholder": "Teile mit allen",
     "post.bodyPart": "Körperpartie (optional)", "post.postMode": "Modus", "post.public": "Mit Profil", "post.anonymous": "Anonym",
     "post.submit": "Posten", "post.save": "Speichern", "post.deleteConfirm": "Diesen Beitrag löschen?",
     "post.noPosts": "Keine Beiträge", "post.noFollowingPosts": "Keine Beiträge von Personen, denen du folgst",
@@ -556,7 +556,7 @@ export const extraTranslations = {
   pt: {
     "common.none": "Nenhum", "common.close": "Fechar", "common.more": "Ver mais", "common.post": "Postar", "common.language": "Idioma",
     "post.title": "Linha do tempo", "post.create": "Postar", "post.createTitle": "Postar na linha", "post.editTitle": "Editar publicação",
-    "post.category": "Categoria", "post.body": "Conteúdo", "post.bodyPlaceholder": "Dúvidas no supino… dicas?",
+    "post.category": "Categoria", "post.body": "Conteúdo", "post.bodyPlaceholder": "Compartilhe com todos",
     "post.bodyPart": "Parte (opcional)", "post.postMode": "Modo", "post.public": "Com perfil", "post.anonymous": "Anônimo",
     "post.submit": "Postar", "post.save": "Salvar", "post.deleteConfirm": "Excluir esta publicação?",
     "post.noPosts": "Sem publicações", "post.noFollowingPosts": "Sem publicações de quem você segue",
@@ -604,7 +604,7 @@ export const extraTranslations = {
   it: {
     "common.none": "Nessuno", "common.close": "Chiudi", "common.more": "Altro", "common.post": "Pubblica", "common.language": "Lingua",
     "post.title": "Timeline", "post.create": "Pubblica", "post.createTitle": "Pubblica sulla timeline", "post.editTitle": "Modifica post",
-    "post.category": "Categoria", "post.body": "Testo", "post.bodyPlaceholder": "Problemi con la panca… consigli?",
+    "post.category": "Categoria", "post.body": "Testo", "post.bodyPlaceholder": "Condividi con tutti",
     "post.bodyPart": "Parte (opzionale)", "post.postMode": "Modalità", "post.public": "Con profilo", "post.anonymous": "Anonimo",
     "post.submit": "Pubblica", "post.save": "Salva", "post.deleteConfirm": "Eliminare questo post?",
     "post.noPosts": "Nessun post", "post.noFollowingPosts": "Nessun post da chi segui",
@@ -652,7 +652,7 @@ export const extraTranslations = {
   ru: {
     "common.none": "Нет", "common.close": "Закрыть", "common.more": "Ещё", "common.post": "Опубликовать", "common.language": "Язык",
     "post.title": "Лента", "post.create": "Опубликовать", "post.createTitle": "Опубликовать в ленте", "post.editTitle": "Редактировать пост",
-    "post.category": "Категория", "post.body": "Текст", "post.bodyPlaceholder": "Проблемы с техникой жима… советы?",
+    "post.category": "Категория", "post.body": "Текст", "post.bodyPlaceholder": "Поделись со всеми",
     "post.bodyPart": "Часть тела (опц.)", "post.postMode": "Режим", "post.public": "От своего профиля", "post.anonymous": "Анонимно",
     "post.submit": "Опубликовать", "post.save": "Сохранить", "post.deleteConfirm": "Удалить этот пост?",
     "post.noPosts": "Нет публикаций", "post.noFollowingPosts": "Нет публикаций от тех, на кого вы подписаны",
@@ -700,7 +700,7 @@ export const extraTranslations = {
   vi: {
     "common.none": "Không", "common.close": "Đóng", "common.more": "Xem thêm", "common.post": "Đăng", "common.language": "Ngôn ngữ",
     "post.title": "Bảng tin", "post.create": "Đăng", "post.createTitle": "Đăng lên bảng tin", "post.editTitle": "Sửa bài viết",
-    "post.category": "Danh mục", "post.body": "Nội dung", "post.bodyPlaceholder": "Ngại form đẩy gối… xin tips!",
+    "post.category": "Danh mục", "post.body": "Nội dung", "post.bodyPlaceholder": "Chia sẻ với mọi người",
     "post.bodyPart": "Vùng cơ (tuỳ chọn)", "post.postMode": "Chế độ", "post.public": "Theo hồ sơ", "post.anonymous": "Ẩn danh",
     "post.submit": "Đăng", "post.save": "Lưu", "post.deleteConfirm": "Xoá bài viết này?",
     "post.noPosts": "Chưa có bài viết", "post.noFollowingPosts": "Chưa có bài viết từ người bạn theo dõi",
@@ -748,7 +748,7 @@ export const extraTranslations = {
   id: {
     "common.none": "Tidak ada", "common.close": "Tutup", "common.more": "Lihat lainnya", "common.post": "Posting", "common.language": "Bahasa",
     "post.title": "Linimasa", "post.create": "Posting", "post.createTitle": "Posting ke linimasa", "post.editTitle": "Edit postingan",
-    "post.category": "Kategori", "post.body": "Isi", "post.bodyPlaceholder": "Bingung form bench… ada tips?",
+    "post.category": "Kategori", "post.body": "Isi", "post.bodyPlaceholder": "Bagikan ke semua orang",
     "post.bodyPart": "Bagian (opsional)", "post.postMode": "Mode", "post.public": "Dengan profil", "post.anonymous": "Anonim",
     "post.submit": "Posting", "post.save": "Simpan", "post.deleteConfirm": "Hapus postingan ini?",
     "post.noPosts": "Belum ada postingan", "post.noFollowingPosts": "Belum ada postingan dari yang kamu ikuti",
@@ -796,7 +796,7 @@ export const extraTranslations = {
   th: {
     "common.none": "ไม่มี", "common.close": "ปิด", "common.more": "ดูเพิ่ม", "common.post": "โพสต์", "common.language": "ภาษา",
     "post.title": "ไทม์ไลน์", "post.create": "โพสต์", "post.createTitle": "โพสต์ลงไทม์ไลน์", "post.editTitle": "แก้ไขโพสต์",
-    "post.category": "หมวดหมู่", "post.body": "เนื้อหา", "post.bodyPlaceholder": "สงสัยฟอร์มเบนช์… ขอคำแนะนำ!",
+    "post.category": "หมวดหมู่", "post.body": "เนื้อหา", "post.bodyPlaceholder": "แชร์ให้ทุกคนดู",
     "post.bodyPart": "ส่วนของร่างกาย (ไม่บังคับ)", "post.postMode": "โหมด", "post.public": "โพสต์ด้วยโปรไฟล์", "post.anonymous": "โพสต์ไม่ระบุตัว",
     "post.submit": "โพสต์", "post.save": "บันทึก", "post.deleteConfirm": "ลบโพสต์นี้?",
     "post.noPosts": "ยังไม่มีโพสต์", "post.noFollowingPosts": "ยังไม่มีโพสต์จากที่คุณติดตาม",
@@ -844,7 +844,7 @@ export const extraTranslations = {
   hi: {
     "common.none": "कोई नहीं", "common.close": "बंद करें", "common.more": "और देखें", "common.post": "पोस्ट", "common.language": "भाषा",
     "post.title": "टाइमलाइन", "post.create": "पोस्ट", "post.createTitle": "टाइमलाइन पर पोस्ट करें", "post.editTitle": "पोस्ट संपादित करें",
-    "post.category": "श्रेणी", "post.body": "विषय", "post.bodyPlaceholder": "बेंच फॉर्म में परेशानी… सुझाव?",
+    "post.category": "श्रेणी", "post.body": "विषय", "post.bodyPlaceholder": "सबके साथ साझा करें",
     "post.bodyPart": "भाग (वैकल्पिक)", "post.postMode": "मोड", "post.public": "प्रोफ़ाइल से", "post.anonymous": "गुमनाम",
     "post.submit": "पोस्ट करें", "post.save": "सहेजें", "post.deleteConfirm": "यह पोस्ट हटाएँ?",
     "post.noPosts": "कोई पोस्ट नहीं", "post.noFollowingPosts": "आपके फ़ॉलो करने वालों की कोई पोस्ट नहीं",
@@ -892,7 +892,7 @@ export const extraTranslations = {
   ar: {
     "common.none": "لا شيء", "common.close": "إغلاق", "common.more": "المزيد", "common.post": "نشر", "common.language": "اللغة",
     "post.title": "الجدول الزمني", "post.create": "نشر", "post.createTitle": "انشر على الجدول الزمني", "post.editTitle": "تعديل المنشور",
-    "post.category": "الفئة", "post.body": "المحتوى", "post.bodyPlaceholder": "مشكلة في تكنيك البنش… نصائح؟",
+    "post.category": "الفئة", "post.body": "المحتوى", "post.bodyPlaceholder": "شارك مع الجميع",
     "post.bodyPart": "العضلة (اختياري)", "post.postMode": "الوضع", "post.public": "بالملف الشخصي", "post.anonymous": "مجهول",
     "post.submit": "نشر", "post.save": "حفظ", "post.deleteConfirm": "حذف هذا المنشور؟",
     "post.noPosts": "لا توجد منشورات", "post.noFollowingPosts": "لا توجد منشورات ممن تتابعهم",
@@ -940,7 +940,7 @@ export const extraTranslations = {
   tr: {
     "common.none": "Yok", "common.close": "Kapat", "common.more": "Daha fazla", "common.post": "Gönder", "common.language": "Dil",
     "post.title": "Zaman çizelgesi", "post.create": "Gönder", "post.createTitle": "Zaman çizelgesine gönder", "post.editTitle": "Gönderiyi düzenle",
-    "post.category": "Kategori", "post.body": "İçerik", "post.bodyPlaceholder": "Bench formunda sorun yaşıyorum… tavsiye?",
+    "post.category": "Kategori", "post.body": "İçerik", "post.bodyPlaceholder": "Herkesle paylaş",
     "post.bodyPart": "Bölüm (isteğe bağlı)", "post.postMode": "Gönderi modu", "post.public": "Profil ile gönder", "post.anonymous": "Anonim gönder",
     "post.submit": "Gönder", "post.save": "Kaydet", "post.deleteConfirm": "Bu gönderiyi sil?",
     "post.noPosts": "Henüz gönderi yok", "post.noFollowingPosts": "Takip ettiklerinizden gönderi yok",
@@ -1052,7 +1052,7 @@ export const extraTranslations = {
   "zh-TW": {
     "common.none": "無", "common.close": "關閉", "common.more": "更多", "common.post": "發帖", "common.language": "語言",
     "post.title": "動態", "post.create": "發帖", "post.createTitle": "發布動態", "post.editTitle": "編輯帖子",
-    "post.category": "分類", "post.body": "正文", "post.bodyPlaceholder": "臥推姿勢有點困擾…求建議！",
+    "post.category": "分類", "post.body": "正文", "post.bodyPlaceholder": "和大家分享吧",
     "post.bodyPart": "相關部位（可選）", "post.postMode": "發布方式", "post.public": "用主頁發布", "post.anonymous": "匿名發布",
     "post.submit": "發布", "post.save": "儲存", "post.deleteConfirm": "刪除這條帖子？",
     "post.noPosts": "暫無帖子", "post.noFollowingPosts": "你關注的人還沒有帖子",

@@ -122,12 +122,10 @@ export default function CreatePost() {
             rows={6}
             placeholder={t("post.bodyPlaceholder")}
             className="w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary resize-none"
-            autoFocus
           />
         </div>
 
         <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.media")}</label>
           {mediaItems.length > 0 ? (
             <div className="mt-1.5 grid grid-cols-3 gap-1.5">
               {mediaItems.map((item) => (
