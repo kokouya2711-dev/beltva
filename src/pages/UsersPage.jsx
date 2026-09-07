@@ -114,9 +114,8 @@ export default function UsersPage() {
     setQuick((prev) => {
       const next = new Set(prev);
       if (next.has(key)) { next.delete(key); return next; }
-      // レベルは1つだけ選択可能
+      // レベルは1つだけ選択可能（別のレベルを押すと前のレベルは自動解除）
       if (LEVEL_KEYS.includes(key)) LEVEL_KEYS.forEach((k) => next.delete(k));
-      if (next.size >= 2) return next; // 合計最大2
       next.add(key);
       return next;
     });
@@ -129,11 +128,6 @@ export default function UsersPage() {
     setQuick(new Set());
     setShowDetail(false);
   }
-  function clearDetail() {
-    setDetail({ ageMin: allowedMin, ageMax: allowedMax, purpose: "", language: "", level: "" });
-    setDetailActive(false);
-  }
-
   const filtered = useMemo(() => {
     let arr = users;
     if (tab === "favorites") arr = arr.filter((u) => followIds.has(u.id));
@@ -167,6 +161,16 @@ export default function UsersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users, tab, quick, detail, detailActive, presence, trainingIds, followIds, me, myLanguages, lang, earliestByUser]);
 
+  const detailCount = useMemo(() => {
+    if (!detailActive) return 0;
+    let n = 0;
+    if (detail.purpose) n++;
+    if (detail.language) n++;
+    if (detail.level) n++;
+    if (detail.ageMin !== allowedMin || detail.ageMax !== allowedMax) n++;
+    return n;
+  }, [detail, detailActive, allowedMin, allowedMax]);
+
   return (
     <div className="max-w-3xl mx-auto pb-6">
       {/* ヘッダー：検索 / タイトル / 詳細フィルター */}
@@ -177,10 +181,15 @@ export default function UsersPage() {
         <span className="text-base font-bold text-foreground">仲間を探す</span>
         <button
           onClick={() => setShowDetail(true)}
-          className={`p-2 -mr-2 ${detailActive ? "text-primary" : "text-foreground"}`}
+          className={`relative p-2 -mr-2 ${detailActive ? "text-primary" : "text-foreground"}`}
           aria-label="詳細フィルター"
         >
           <SlidersHorizontal className="w-5 h-5" />
+          {detailCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+              {detailCount}
+            </span>
+          )}
         </button>
       </div>
 
@@ -220,15 +229,8 @@ export default function UsersPage() {
             ))}
           </div>
         </div>
-        <p className="text-[11px] text-muted-foreground mt-2 text-center">同じ言語＋レベル1つまで選択できます</p>
-      </div>
 
-      {detailActive && (
-        <div className="flex items-center gap-2 px-4 pb-2">
-          <span className="text-xs text-primary font-semibold">詳細フィルター適用中</span>
-          <button onClick={clearDetail} className="text-xs text-muted-foreground underline">解除</button>
-        </div>
-      )}
+      </div>
 
       {/* リスト */}
       {loading ? (
