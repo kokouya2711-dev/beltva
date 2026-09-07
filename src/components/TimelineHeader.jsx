@@ -1,20 +1,26 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Globe, ChevronDown, Plus, Check } from "lucide-react";
+import { ChevronDown, Plus, Check } from "lucide-react";
 import { useTimelineFilter } from "@/lib/timelineFilterContext";
 import NotificationsBell from "@/components/NotificationsBell";
+import { useI18n, LANGS } from "@/lib/i18n";
 
-const ROOMS = [
-  { key: "all", label: "すべて" },
-  { key: "mylang", label: "自分の言語ルーム" },
-];
+function parseLangs(s) {
+  try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; }
+}
 
-const DISPLAYS = [
-  { key: "recommended", label: "おすすめ" },
-  { key: "latest", label: "最新" },
-];
+function langDisplay(code, uiLang) {
+  const locale = uiLang === "zh-TW" ? "zh-TW" : uiLang;
+  try {
+    return new Intl.DisplayNames([locale], { type: "language" }).of(code) || code;
+  } catch { return code; }
+}
 
-function Dropdown({ title, options, value, onChange, withGlobe }) {
+function langFlag(code) {
+  return LANGS.find((l) => l.code === code)?.flag || "🌐";
+}
+
+function Dropdown({ title, options, value, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -24,27 +30,28 @@ function Dropdown({ title, options, value, onChange, withGlobe }) {
   }, []);
   const current = options.find((o) => o.key === value) || options[0];
   return (
-    <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[10px] text-white font-medium leading-none">{title}</span>
+    <div className="flex flex-col items-center gap-1">
+      <span className="text-[10px] text-white/60 font-medium leading-none">{title}</span>
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-primary text-primary text-xs font-bold whitespace-nowrap"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-primary/70 bg-primary/10 text-primary text-sm font-bold whitespace-nowrap min-h-[38px]"
         >
-          {withGlobe && <Globe className="w-3 h-3" />}
-          <span>{current.label}</span>
-          <ChevronDown className="w-3 h-3" />
+          {current?.icon && <span className="text-base leading-none">{current.icon}</span>}
+          <span>{current?.label}</span>
+          <ChevronDown className="w-3.5 h-3.5" />
         </button>
         {open && (
-          <div className="absolute left-0 top-full mt-1 z-50 bg-popover border border-border rounded-xl shadow-2xl py-1 min-w-[150px]">
+          <div className="absolute left-0 top-full mt-1.5 z-50 bg-popover border border-border rounded-xl shadow-2xl py-1 min-w-[180px]">
             {options.map((o) => (
               <button
                 key={o.key}
                 onClick={() => { onChange(o.key); setOpen(false); }}
-                className={`w-full text-left px-3 py-2 text-xs hover:bg-secondary/60 flex items-center justify-between ${value === o.key ? "text-primary font-bold" : "text-foreground"}`}
+                className={`w-full text-left px-3.5 py-2.5 text-sm hover:bg-secondary/60 flex items-center gap-2 ${value === o.key ? "text-primary font-bold" : "text-foreground"}`}
               >
-                {o.label}
-                {value === o.key && <Check className="w-3 h-3" />}
+                {o.icon && <span className="text-base leading-none">{o.icon}</span>}
+                <span className="flex-1">{o.label}</span>
+                {value === o.key && <Check className="w-4 h-4" />}
               </button>
             ))}
           </div>
@@ -54,25 +61,42 @@ function Dropdown({ title, options, value, onChange, withGlobe }) {
   );
 }
 
-export default function TimelineHeader({ meId }) {
+export default function TimelineHeader({ me }) {
   const navigate = useNavigate();
+  const { lang } = useI18n();
   const { room, setRoom, display, setDisplay } = useTimelineFilter();
+
+  const myMainLang = parseLangs(me?.languages)[0] || "";
+
+  const roomOptions = useMemo(() => {
+    const opts = [{ key: "all", icon: "🌏", label: "すべて" }];
+    if (myMainLang) {
+      opts.push({ key: "mylang", icon: langFlag(myMainLang), label: langDisplay(myMainLang, lang) });
+    }
+    return opts;
+  }, [myMainLang, lang]);
+
+  const displayOptions = [
+    { key: "recommended", label: "おすすめ" },
+    { key: "latest", label: "最新" },
+  ];
+
+  // 言語ルーム未選択時は「すべて」にフォールバック
+  const safeRoom = room === "mylang" && !myMainLang ? "all" : room;
+
   return (
-    <div className="flex items-center justify-between px-4 py-2 gap-2">
-      <div className="flex items-center gap-3">
-        <Dropdown title="ルーム" options={ROOMS} value={room} onChange={setRoom} withGlobe />
-        <Dropdown title="表示" options={DISPLAYS} value={display} onChange={setDisplay} />
-      </div>
-      <div className="flex items-center gap-2">
-        <NotificationsBell meId={meId} className="p-1.5" iconClassName="w-5 h-5 text-primary" to="/notifications" />
-        <button
-          onClick={() => navigate("/create-post")}
-          className="w-9 h-9 rounded-xl border border-primary flex items-center justify-center text-primary"
-          aria-label="投稿"
-        >
-          <Plus className="w-5 h-5" />
-        </button>
-      </div>
+    <div className="flex items-center gap-3 px-4 py-3">
+      <Dropdown title="ルーム" options={roomOptions} value={safeRoom} onChange={setRoom} />
+      <Dropdown title="表示" options={displayOptions} value={display} onChange={setDisplay} />
+      <div className="flex-1" />
+      <NotificationsBell meId={me?.id} className="p-2" iconClassName="w-6 h-6 text-white" to="/notifications" />
+      <button
+        onClick={() => navigate("/create-post")}
+        className="w-10 h-10 rounded-xl border border-white/30 flex items-center justify-center text-white active:scale-95 transition"
+        aria-label="投稿"
+      >
+        <Plus className="w-6 h-6" />
+      </button>
     </div>
   );
 }

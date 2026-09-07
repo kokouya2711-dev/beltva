@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, X, Loader2, Image as ImageIcon, Send } from "lucide-react";
-import WorkoutSelect from "@/components/WorkoutSelect";
 import { useT } from "@/lib/i18n";
 import { clearTimelineCache } from "@/lib/timelineScrollCache";
 import { toast } from "@/components/ui/use-toast";
@@ -17,7 +16,6 @@ export default function CreatePost() {
   const navigate = useNavigate();
   const fileRef = useRef(null);
   const [content, setContent] = useState("");
-  const [workoutType, setWorkoutType] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [mediaItems, setMediaItems] = useState([]);
   const [lastImageDate, setLastImageDate] = useState("");
@@ -73,7 +71,6 @@ export default function CreatePost() {
     try {
       await base44.entities.Post.create({
         content: content.trim(),
-        workout_type: workoutType || undefined,
         is_anonymous: false,
         media_url: urls[0] || undefined,
         media_urls: JSON.stringify(urls),
@@ -167,13 +164,6 @@ export default function CreatePost() {
             </button>
           )}
           <input ref={fileRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
-        </div>
-
-        <div>
-          <label className="text-xs text-muted-foreground uppercase tracking-wider">{t("post.bodyPart")}</label>
-          <div className="mt-1.5">
-            <WorkoutSelect value={workoutType} onChange={setWorkoutType} />
-          </div>
         </div>
       </div>
     </div>
