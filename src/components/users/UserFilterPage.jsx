@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import AgeRangeBar from "./AgeRangeBar";
+import LanguageSelectPage from "./LanguageSelectPage";
 import { PURPOSES, LEVELS } from "@/lib/userFilters";
-import { LANGS } from "@/lib/i18n";
 import { useI18n } from "@/lib/i18n";
 
 // 詳細検索の全画面ページ（ボトムシートではなく専用ページ）
@@ -14,7 +14,7 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
   const [purpose, setPurpose] = useState("");
   const [language, setLanguage] = useState("");
   const [level, setLevel] = useState("");
-  const [langOpen, setLangOpen] = useState(false);
+  const [langSelectOpen, setLangSelectOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -23,7 +23,7 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
       setPurpose(initial?.purpose ?? "");
       setLanguage(initial?.language ?? "");
       setLevel(initial?.level ?? "");
-      setLangOpen(false);
+      setLangSelectOpen(false);
     }
   }, [open, allowedMin, allowedMax, initial]);
 
@@ -35,14 +35,13 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
     setPurpose("");
     setLanguage("");
     setLevel("");
-    setLangOpen(false);
+    setLangSelectOpen(false);
   };
 
   const locale = lang === "zh-TW" ? "zh-TW" : lang;
   const langLabel = (code) => {
     try {
-      const dn = new Intl.DisplayNames([locale], { type: "language" });
-      return dn.of(code) || code;
+      return new Intl.DisplayNames([locale], { type: "language" }).of(code) || code;
     } catch { return code; }
   };
   const selectedLangLabel = language ? langLabel(language) : "未選択";
@@ -60,7 +59,7 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 pb-32">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-3 space-y-4 pb-32">
         {/* 年齢 */}
         <section className="rounded-2xl bg-secondary/50 p-4">
           <div className="flex items-center justify-between mb-4">
@@ -92,31 +91,18 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
           </div>
         </section>
 
-        {/* 言語：タップで16言語一覧を開く */}
-        <section className="rounded-2xl bg-secondary/50 overflow-hidden">
+        {/* 言語：タップで全画面の言語選択ページへ */}
+        <section className="rounded-2xl bg-secondary/50">
           <button
-            onClick={() => setLangOpen((o) => !o)}
+            onClick={() => setLangSelectOpen(true)}
             className="w-full flex items-center justify-between p-4"
           >
             <h2 className="text-base font-bold text-foreground">言語</h2>
             <div className="flex items-center gap-1.5">
               <span className={`text-base font-bold ${language ? "text-primary" : "text-muted-foreground"}`}>{selectedLangLabel}</span>
-              <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform ${langOpen ? "rotate-90" : ""}`} />
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </div>
           </button>
-          {langOpen && (
-            <div className="px-4 pb-4 flex flex-wrap gap-2">
-              {LANGS.map((l) => (
-                <button
-                  key={l.code}
-                  onClick={() => setLanguage(language === l.code ? "" : l.code)}
-                  className={`px-3.5 py-2.5 rounded-xl text-sm font-bold border transition ${language === l.code ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"}`}
-                >
-                  <span className="mr-1.5">{l.flag}</span>{langLabel(l.code)}
-                </button>
-              ))}
-            </div>
-          )}
         </section>
 
         {/* レベル */}
@@ -138,7 +124,7 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
 
       {/* 最下部：横幅いっぱいの検索ボタン（下部ナビより前面） */}
       <div
-        className="fixed bottom-0 inset-x-0 bg-background/90 backdrop-blur-md border-t border-border px-4 py-3"
+        className="fixed bottom-0 inset-x-0 bg-background border-t border-border px-4 py-3"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}
       >
         <button
@@ -148,6 +134,14 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
           検索
         </button>
       </div>
+
+      {langSelectOpen && (
+        <LanguageSelectPage
+          selected={language}
+          onClose={() => setLangSelectOpen(false)}
+          onConfirm={(code) => { setLanguage(code); setLangSelectOpen(false); }}
+        />
+      )}
     </div>
   );
 }
