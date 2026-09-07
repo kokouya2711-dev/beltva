@@ -97,6 +97,13 @@ function AppLayoutInner() {
         initNotifStore(u.id);
         initDmUnreadStore(u.id);
       }
+      // 初期設定：メイン言語未設定なら現在の表示言語で確定し保存（以降は表示言語と独立）
+      if (u && !u.main_language) {
+        const fallback = u.language || localStorage.getItem("beltva_lang") || "ja";
+        base44.auth.updateMe({ main_language: fallback })
+          .then(() => setMe((prev) => (prev ? { ...prev, main_language: fallback } : prev)))
+          .catch(() => {});
+      }
     }).catch(() => {});
   }, []);
 

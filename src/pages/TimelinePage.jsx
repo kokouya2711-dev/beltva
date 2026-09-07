@@ -69,7 +69,7 @@ export default function TimelinePage() {
     setLikesByPost(lMap);
 
     if (meUser) {
-      setMyLang(meUser.main_language || "");
+      setMyLang(meUser.main_language || meUser.language || localStorage.getItem("beltva_lang") || "ja");
       const [mutes, blocksByMe, blocksOnMe, hiddenPosts, myFavs, users] = await Promise.all([
         base44.entities.Mute.filter({ muter_id: meUser.id }).catch(() => []),
         base44.entities.Block.filter({ blocker_id: meUser.id }).catch(() => []),
@@ -85,7 +85,7 @@ export default function TimelinePage() {
       myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
       setFavMap(fMap);
       const langMap = {};
-      users.forEach((u) => { langMap[u.id] = u.main_language || ""; });
+      users.forEach((u) => { langMap[u.id] = u.main_language || u.language || "ja"; });
       setUserLangMap(langMap);
     }
 

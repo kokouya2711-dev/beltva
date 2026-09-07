@@ -59,31 +59,25 @@ export default function TimelineHeader({ me }) {
   const { lang } = useI18n();
   const { room, setRoom, display, setDisplay } = useTimelineFilter();
 
-  const myMainLang = me?.main_language || "";
+  const myMainLang = me?.main_language || me?.language || localStorage.getItem("beltva_lang") || "ja";
 
-  const roomOptions = useMemo(() => {
-    const opts = [{ key: "all", icon: "🌏", label: "すべて" }];
-    if (myMainLang) {
-      opts.push({
-        key: "mylang",
-        icon: <Flag code={myMainLang} className="w-5 h-3.5 rounded-[3px] object-cover" />,
-        label: langDisplay(myMainLang, lang),
-      });
-    }
-    return opts;
-  }, [myMainLang, lang]);
+  const roomOptions = useMemo(() => [
+    { key: "all", icon: "🌏", label: "すべて" },
+    {
+      key: "mylang",
+      icon: <Flag code={myMainLang} className="w-5 h-3.5 rounded-[3px] object-cover" />,
+      label: langDisplay(myMainLang, lang),
+    },
+  ], [myMainLang, lang]);
 
   const displayOptions = [
     { key: "recommended", label: "おすすめ" },
     { key: "latest", label: "最新" },
   ];
 
-  // メイン言語未設定時は「すべて」にフォールバック
-  const safeRoom = room === "mylang" && !myMainLang ? "all" : room;
-
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <Dropdown title="ルーム" options={roomOptions} value={safeRoom} onChange={setRoom} />
+      <Dropdown title="ルーム" options={roomOptions} value={room} onChange={setRoom} />
       <Dropdown title="表示" options={displayOptions} value={display} onChange={setDisplay} />
       <div className="flex-1" />
       <NotificationsBell meId={me?.id} className="p-2" iconClassName="w-6 h-6 text-white" to="/notifications" />
