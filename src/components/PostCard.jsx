@@ -17,7 +17,7 @@ import { getMediaUrls } from "@/lib/media";
 import { haptic } from "@/lib/haptics";
 import { getCommentCountUpdate, clearCommentCountUpdate } from "@/lib/commentCountStore";
 
-export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId }) {
+export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId, batchedAuthor, batchedComments, batchedUserMap }) {
   const t = useT();
   const tWorkout = useTWorkout();
   const fmtNum = useFormatNumber();
@@ -27,21 +27,22 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
   const [showEdit, setShowEdit] = useState(false);
   const [currentPost, setCurrentPost] = useState(post);
-  const [author, setAuthor] = useState(post.created_by || null);
+  const [author, setAuthor] = useState(batchedAuthor || post.created_by || null);
   const [viewerIndex, setViewerIndex] = useState(null);
   const [isFavorited, setIsFavorited] = useState(initialFavorited ?? false);
   const [favId, setFavId] = useState(initialFavId ?? null);
   const [bounceKey, setBounceKey] = useState(0);
-  const [previewComments, setPreviewComments] = useState([]);
-  const [commentUsers, setCommentUsers] = useState({});
-  const [hasMoreComments, setHasMoreComments] = useState(false);
+  const [previewComments, setPreviewComments] = useState(batchedComments ? batchedComments.slice(0, 2) : []);
+  const [commentUsers, setCommentUsers] = useState(batchedUserMap || {});
+  const [hasMoreComments, setHasMoreComments] = useState(batchedComments ? batchedComments.length >= 3 : false);
   const mediaUrls = getMediaUrls(currentPost);
 
   useEffect(() => {
+    if (batchedAuthor) { setAuthor(batchedAuthor); return; }
     if (currentPost.is_anonymous || currentPost.created_by) return;
     if (!currentPost.created_by_id) return;
     fetchUser(currentPost.created_by_id).then(setAuthor).catch(() => {});
-  }, [currentPost.created_by_id, currentPost.is_anonymous, currentPost.created_by]);
+  }, [currentPost.created_by_id, currentPost.is_anonymous, currentPost.created_by, batchedAuthor]);
 
   // Only fetch favorite status individually if not provided by parent (batch-fetched)
   useEffect(() => {
@@ -62,9 +63,9 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
     }
   }, [currentPost.id]);
 
-  // Fetch latest comments for preview
+  // Fetch latest comments for preview (skip if batched data provided by parent)
   useEffect(() => {
-    if (!currentPost.id) return;
+    if (batchedComments || !currentPost.id) return;
     base44.entities.Comment.filter({ post_id: currentPost.id }, "-created_date", 3).then(async (cs) => {
       setPreviewComments(cs.slice(0, 2));
       setHasMoreComments(cs.length >= 3);
@@ -76,7 +77,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
         setCommentUsers(m);
       }
     }).catch(() => {});
-  }, [currentPost.id]);
+  }, [currentPost.id, batchedComments]);
 
   // Sync comment count via Post subscription
   useEffect(() => {

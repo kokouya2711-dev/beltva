@@ -50,23 +50,35 @@ export default function TimelinePage() {
   const [hiddenPostIds, setHiddenPostIds] = useState(cached?.hiddenPostIds || null);
   const [favMap, setFavMap] = useState(cached?.favMap || {});
   const [userLangMap, setUserLangMap] = useState(cached?.userLangMap || {});
+  const [userMap, setUserMap] = useState(cached?.userMap || {});
+  const [commentsByPost, setCommentsByPost] = useState(cached?.commentsByPost || {});
   const [myLang, setMyLang] = useState(cached?.myLang || "");
 
   // Keep latest state in a ref so the unmount cleanup always saves current data
-  const stateRef = useRef({ posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, userLangMap, myLang });
-  stateRef.current = { posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, userLangMap, myLang };
+  const stateRef = useRef({ posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, userLangMap, userMap, commentsByPost, myLang });
+  stateRef.current = { posts, me, likesByPost, mutedIds, blockedIds, hiddenPostIds, favMap, userLangMap, userMap, commentsByPost, myLang };
 
   async function load() {
-    const [ps, meUser, allLikes] = await Promise.all([
+    const [ps, meUser, allLikes, allComments] = await Promise.all([
       base44.entities.Post.list("-created_date", 50),
       base44.auth.me().catch(() => null),
-      base44.entities.Like.list("-created_date", 200).catch(() => [])
+      base44.entities.Like.list("-created_date", 200).catch(() => []),
+      base44.entities.Comment.list("-created_date", 200).catch(() => []),
     ]);
     setPosts(ps);
     setMe(meUser);
     const lMap = {};
     allLikes.forEach((l) => { (lMap[l.post_id] = lMap[l.post_id] || []).push(l); });
     setLikesByPost(lMap);
+
+    // Group comments by post_id (latest 3 per post) — replaces per-PostCard fetches
+    const cByPost = {};
+    allComments.forEach((c) => {
+      if (!c.post_id) return;
+      (cByPost[c.post_id] = cByPost[c.post_id] || []).push(c);
+    });
+    Object.keys(cByPost).forEach((pid) => { cByPost[pid] = cByPost[pid].slice(0, 3); });
+    setCommentsByPost(cByPost);
 
     if (meUser) {
       setMyLang(meUser.main_language || meUser.language || localStorage.getItem("beltva_lang") || "ja");
@@ -85,8 +97,13 @@ export default function TimelinePage() {
       myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
       setFavMap(fMap);
       const langMap = {};
-      users.forEach((u) => { langMap[u.id] = u.main_language || u.language || "ja"; });
+      const uMap = {};
+      users.forEach((u) => {
+        langMap[u.id] = u.main_language || u.language || "ja";
+        uMap[u.id] = u;
+      });
       setUserLangMap(langMap);
+      setUserMap(uMap);
     }
 
     setLoading(false);
@@ -150,7 +167,16 @@ export default function TimelinePage() {
             <div>
               {filtered.map((p, i) => (
                 <React.Fragment key={p.id}>
-                  <PostCard post={p} meId={me?.id} initialLikers={likesByPost[p.id] || []} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />
+                  <PostCard
+                    post={p}
+                    meId={me?.id}
+                    initialLikers={likesByPost[p.id] || []}
+                    initialFavorited={favMap[p.id] !== undefined}
+                    initialFavId={favMap[p.id] ?? null}
+                    batchedAuthor={userMap[p.created_by_id] || null}
+                    batchedComments={commentsByPost[p.id] || null}
+                    batchedUserMap={userMap}
+                  />
                   {i < filtered.length - 1 && <div className="-mx-3.5 md:-mx-4 h-[6px] bg-separator" />}
                 </React.Fragment>
               ))}
