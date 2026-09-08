@@ -117,8 +117,8 @@ export default function ProfileEdit() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Top bar */}
-      <header className="sticky top-0 z-30 bg-background flex items-center justify-between px-4 py-3">
+      {/* Top bar — 帯なし、テキスト・ボタンのみ */}
+      <header className="flex items-center justify-between px-4 pt-4 pb-2">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-foreground">
           <ArrowLeft className="w-6 h-6" />
         </button>
