@@ -1,23 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, Loader2, Camera, Check } from "lucide-react";
-import { COUNTRIES, flagEmoji } from "@/lib/profile";
-import { TRAINING_PURPOSES, parseHobbies } from "@/lib/hobbies";
+import { ArrowLeft, Camera, ChevronRight, Loader2 } from "lucide-react";
+import { TRAINING_PURPOSES } from "@/lib/hobbies";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
-import HobbyEditor from "@/components/HobbyEditor";
+import LanguageSelectPage from "@/components/users/LanguageSelectPage";
+import OptionSelectPage from "@/components/OptionSelectPage";
 
-const inputCls = "w-full bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary";
+const LEVELS = [
+  { key: "beginner" },
+  { key: "intermediate" },
+  { key: "advanced" },
+  { key: "expert" }
+];
+
+const LEVEL_COOLDOWN_DAYS = 30;
+
+function calcAge(birthdate) {
+  if (!birthdate) return null;
+  const b = new Date(birthdate);
+  if (isNaN(b.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return age >= 0 ? age : null;
+}
 
 export default function ProfileEdit() {
   const t = useT();
-  const { lang } = useI18n();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [form, setForm] = useState({});
-  const [hobbies, setHobbies] = useState([]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showLangSelect, setShowLangSelect] = useState(false);
+  const [showLevelSelect, setShowLevelSelect] = useState(false);
+  const [showPurposeSelect, setShowPurposeSelect] = useState(false);
+  const [levelLocked, setLevelLocked] = useState(false);
+  const [genderError, setGenderError] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -25,27 +46,18 @@ export default function ProfileEdit() {
       setForm({
         display_name: u.display_name || "",
         bio: u.bio || "",
-        country: u.country || "",
-        region: u.region || "",
         training_purpose: u.training_purpose || "",
+        level: u.level || "",
+        level_updated_at: u.level_updated_at || "",
+        main_language: u.main_language || "",
         avatar_url: u.avatar_url || "",
         gender: u.gender || "",
-        gender_public: u.gender_public === true,
-        languages: parseLanguages(u.languages),
-        age: u.age != null ? String(u.age) : ""
+        birthdate: u.birthdate || "",
       });
-      setHobbies(parseHobbies(u.hobbies));
     }).catch(() => navigate("/"));
   }, [navigate]);
 
   function set(k, v) { setForm((f) => ({ ...f, [k]: v })); }
-  function parseLanguages(s) { try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; } }
-  function toggleLang(code) {
-    setForm((f) => {
-      const has = (f.languages || []).includes(code);
-      return { ...f, languages: has ? f.languages.filter((c) => c !== code) : [...(f.languages || []), code] };
-    });
-  }
 
   async function uploadAvatar(file) {
     setUploading(true);
@@ -55,115 +67,200 @@ export default function ProfileEdit() {
     } finally { setUploading(false); }
   }
 
+  function checkLevelLocked() {
+    if (!form.level_updated_at) return false;
+    const last = new Date(form.level_updated_at);
+    if (isNaN(last.getTime())) return false;
+    const days = (Date.now() - last.getTime()) / (1000 * 60 * 60 * 24);
+    return days < LEVEL_COOLDOWN_DAYS;
+  }
+
   async function save() {
+    if (!form.gender) { setGenderError(true); return; }
+    setGenderError(false);
     setSaving(true);
     try {
+      const age = calcAge(form.birthdate);
       await base44.auth.updateMe({
         display_name: form.display_name,
         bio: form.bio,
-        country: form.country,
-        region: form.region,
         training_purpose: form.training_purpose,
+        level: form.level,
         avatar_url: form.avatar_url,
-        hobbies: JSON.stringify(hobbies),
-        gender: form.gender || undefined,
-        gender_public: form.gender_public,
-        languages: JSON.stringify(form.languages || []),
-        age: form.age ? Number(form.age) : undefined
+        gender: form.gender,
+        birthdate: form.birthdate,
+        main_language: form.main_language,
+        ...(age != null ? { age } : {}),
       });
-      navigate(`/profile/${me.id}`);
+      navigate(-1);
     } finally { setSaving(false); }
   }
 
   if (!me) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
 
-  return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
-      <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40"><ArrowLeft className="w-5 h-5" /></button>
-      <h1 className="text-2xl font-bold">{t("profile.editTitle")}</h1>
+  const levelLabel = (key) => key ? t("level." + key) : "";
+  const purposeLabel = (key) => key ? t("purpose." + key) : "";
+  const langLabel = (code) => {
+    const l = LANGS.find((x) => x.code === code);
+    return l ? l.label : code;
+  };
 
-      <div className="glass rounded-2xl border border-border p-4 flex items-center gap-4">
-        {form.avatar_url ? (
-          <img src={form.avatar_url} alt="avatar" className="w-16 h-16 rounded-full object-cover" />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xs text-muted-foreground">{t("profile.noAvatar")}</div>
-        )}
-        <label className="flex items-center gap-1.5 text-sm bg-secondary/60 border border-border px-3 py-2 rounded-lg cursor-pointer hover:border-primary">
-          <Camera className="w-4 h-4" /> {t("profile.editAvatar")}
+  return (
+    <div className="max-w-2xl mx-auto">
+      {/* Top bar */}
+      <header className="sticky top-0 z-30 bg-background flex items-center justify-between px-4 py-3">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-foreground">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="text-base font-bold text-foreground">{t("profile.editTitle")}</span>
+        <button onClick={save} disabled={saving} className="text-base font-bold text-primary disabled:opacity-50">
+          {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : t("common.done")}
+        </button>
+      </header>
+
+      {/* Avatar */}
+      <div className="flex justify-center py-6">
+        <label className="relative cursor-pointer">
+          {form.avatar_url ? (
+            <img src={form.avatar_url} alt="avatar" className="w-24 h-24 rounded-full object-cover" />
+          ) : (
+            <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">
+              {(form.display_name || "?").slice(0, 2).toUpperCase()}
+            </div>
+          )}
+          <span className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center ring-2 ring-background">
+            <Camera className="w-4 h-4 text-primary-foreground" />
+          </span>
           <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadAvatar(e.target.files[0])} />
-          {uploading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+          {uploading && <span className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-white" /></span>}
         </label>
       </div>
 
-      <Field label={t("common.displayName")}><input value={form.display_name} onChange={(e) => set("display_name", e.target.value)} className={inputCls} placeholder={t("profile.namePlaceholder")} /></Field>
-      <Field label={t("common.bio")}><textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} rows={3} className={inputCls} placeholder={t("profile.bioPlaceholder")} /></Field>
-      <Field label={t("common.country")}>
-        <select value={form.country} onChange={(e) => set("country", e.target.value)} className={inputCls}>
-          <option value="">{t("common.selectCountry")}</option>
-          {COUNTRIES.map((c) => {
-            let name = c.name;
-            try { name = new Intl.DisplayNames([lang], { type: "region" }).of(c.code) || c.name; } catch {}
-            return <option key={c.code} value={c.code}>{flagEmoji(c.code)} {name}</option>;
-          })}
-        </select>
-      </Field>
-      <Field label={t("common.regionOptional")}>
-        <input value={form.region} onChange={(e) => set("region", e.target.value)} className={inputCls} placeholder={t("common.regionPlaceholder")} />
-      </Field>
-      <Field label={t("common.purpose")}>
-        <select value={form.training_purpose} onChange={(e) => set("training_purpose", e.target.value)} className={inputCls}>
-          <option value="">{t("profile.purposePlaceholder")}</option>
-          {TRAINING_PURPOSES.map((p) => <option key={p.key} value={p.key}>{t("purpose." + p.key)}</option>)}
-        </select>
-      </Field>
-      <Field label={t("common.gender")}>
-        <div className="flex items-center gap-2 flex-wrap">
-          <select value={form.gender} onChange={(e) => set("gender", e.target.value)} className={inputCls + " flex-1 min-w-[140px]"}>
+      {/* Profile section */}
+      <div className="px-4">
+        {/* 名前 */}
+        <div className="py-3 border-b border-border">
+          <label className="text-xs text-muted-foreground">{t("profile.name")}</label>
+          <input
+            value={form.display_name}
+            onChange={(e) => set("display_name", e.target.value)}
+            className="w-full bg-transparent text-sm mt-1 outline-none"
+            placeholder={t("profile.namePlaceholder")}
+          />
+        </div>
+        {/* 自己紹介 */}
+        <div className="py-3 border-b border-border">
+          <label className="text-xs text-muted-foreground">{t("common.bio")}</label>
+          <textarea
+            value={form.bio}
+            onChange={(e) => set("bio", e.target.value)}
+            rows={3}
+            className="w-full bg-transparent text-sm mt-1 outline-none resize-none"
+            placeholder={t("profile.bioPlaceholder")}
+          />
+        </div>
+        {/* 目的 */}
+        <button onClick={() => setShowPurposeSelect(true)} className="w-full flex items-center justify-between py-3.5 border-b border-border">
+          <span className="text-sm">{t("common.purpose")}</span>
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            {form.training_purpose ? purposeLabel(form.training_purpose) : ""}
+            <ChevronRight className="w-4 h-4" />
+          </span>
+        </button>
+        {/* レベル */}
+        <button
+          onClick={() => {
+            if (checkLevelLocked()) { setLevelLocked(true); return; }
+            setShowLevelSelect(true);
+          }}
+          className="w-full flex items-center justify-between py-3.5 border-b border-border"
+        >
+          <span className="text-sm">{t("profile.level")}</span>
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            {form.level ? levelLabel(form.level) : ""}
+            <ChevronRight className="w-4 h-4" />
+          </span>
+        </button>
+        {/* メイン言語 */}
+        <button onClick={() => setShowLangSelect(true)} className="w-full flex items-center justify-between py-3.5 border-b border-border">
+          <span className="text-sm">{t("profile.mainLanguage")}</span>
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            {form.main_language ? langLabel(form.main_language) : ""}
+            <ChevronRight className="w-4 h-4" />
+          </span>
+        </button>
+      </div>
+
+      {/* Basic info section */}
+      <div className="px-4 mt-6">
+        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2">{t("profile.basicInfo")}</div>
+        {/* 性別 */}
+        <div className="py-3 border-b border-border">
+          <label className="text-xs text-muted-foreground">{t("common.gender")} *</label>
+          <select
+            value={form.gender}
+            onChange={(e) => { set("gender", e.target.value); setGenderError(false); }}
+            className="w-full bg-transparent text-sm mt-1 outline-none"
+          >
             <option value="">{t("common.genderUndisclosed")}</option>
             <option value="male">{t("common.genderMale")}</option>
             <option value="female">{t("common.genderFemale")}</option>
             <option value="undisclosed">{t("common.genderUndisclosed")}</option>
           </select>
-          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
-            <input type="checkbox" checked={form.gender_public} onChange={(e) => set("gender_public", e.target.checked)} className="accent-primary" />
-            {t("common.genderPublic")}
-          </label>
+          {genderError && <p className="text-xs text-destructive mt-1">{t("profile.genderRequired")}</p>}
         </div>
-      </Field>
-
-      <Field label={t("common.languages")}>
-        <div className="flex flex-wrap gap-1.5">
-          {LANGS.map((l) => {
-            const active = (form.languages || []).includes(l.code);
-            return (
-              <button
-                key={l.code}
-                type="button"
-                onClick={() => toggleLang(l.code)}
-                className={`text-xs px-2.5 py-1 rounded-full border transition ${active ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}
-              >
-                {l.label}
-              </button>
-            );
-          })}
+        {/* 生年月日 */}
+        <div className="py-3 border-b border-border">
+          <label className="text-xs text-muted-foreground">{t("profile.birthdate")}</label>
+          <input
+            type="date"
+            value={form.birthdate}
+            onChange={(e) => set("birthdate", e.target.value)}
+            className="w-full bg-transparent text-sm mt-1 outline-none"
+          />
         </div>
-      </Field>
-      <Field label={t("common.ageOptional")}>
-        <input type="number" value={form.age} onChange={(e) => set("age", e.target.value)} className={inputCls} placeholder={t("profile.agePlaceholder")} min="13" max="120" />
-      </Field>
-
-      <div className="glass rounded-2xl border border-border p-4">
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{t("profile.hobbiesMax10")}</div>
-        <HobbyEditor value={hobbies} onChange={setHobbies} max={10} />
       </div>
 
-      <button onClick={save} disabled={saving} className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50">
-        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} {t("common.save")}
-      </button>
+      {/* Overlays */}
+      {showLangSelect && (
+        <LanguageSelectPage
+          selected={form.main_language}
+          onClose={() => setShowLangSelect(false)}
+          onConfirm={(code) => { if (code) set("main_language", code); setShowLangSelect(false); }}
+        />
+      )}
+      {showLevelSelect && (
+        <OptionSelectPage
+          title={t("profile.level")}
+          items={LEVELS.map((l) => ({ key: l.key, label: t("level." + l.key) }))}
+          selected={form.level}
+          onClose={() => setShowLevelSelect(false)}
+          onConfirm={(key) => {
+            if (key) {
+              set("level", key);
+              set("level_updated_at", new Date().toISOString());
+            }
+            setShowLevelSelect(false);
+          }}
+        />
+      )}
+      {showPurposeSelect && (
+        <OptionSelectPage
+          title={t("common.purpose")}
+          items={TRAINING_PURPOSES.map((p) => ({ key: p.key, label: t("purpose." + p.key) }))}
+          selected={form.training_purpose}
+          onClose={() => setShowPurposeSelect(false)}
+          onConfirm={(key) => { if (key) set("training_purpose", key); setShowPurposeSelect(false); }}
+        />
+      )}
+      {levelLocked && (
+        <div className="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center px-8" onClick={() => setLevelLocked(false)}>
+          <div className="bg-card rounded-xl p-5 text-center" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm text-foreground">{t("profile.levelLocked")}</p>
+            <button onClick={() => setLevelLocked(false)} className="mt-4 text-sm font-bold text-primary">{t("common.close")}</button>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
-
-function Field({ label, children }) {
-  return <div><label className="text-xs text-muted-foreground uppercase tracking-wider">{label}</label><div className="mt-1.5">{children}</div></div>;
 }
