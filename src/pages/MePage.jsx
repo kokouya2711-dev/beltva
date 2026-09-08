@@ -69,20 +69,20 @@ export default function MePage() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Top bar: empty left, independent edit + settings right (tappable) */}
-      <div className="flex items-center justify-end gap-2 px-4 pt-3 pb-1">
+      <div className="flex items-center justify-end gap-3 px-4 pt-4 pb-1">
         <button
           onClick={() => navigate("/profile/edit")}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
+          className="w-12 h-12 rounded-full flex items-center justify-center text-foreground bg-secondary hover:bg-secondary/70 transition"
           aria-label={t("me.editProfile")}
         >
-          <Pencil className="w-5 h-5" />
+          <Pencil className="w-6 h-6" />
         </button>
         <button
           onClick={() => navigate("/settings")}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
+          className="w-12 h-12 rounded-full flex items-center justify-center text-foreground bg-secondary hover:bg-secondary/70 transition"
           aria-label={t("me.settings")}
         >
-          <SettingsIcon className="w-5 h-5" />
+          <SettingsIcon className="w-6 h-6" />
         </button>
       </div>
 
