@@ -58,7 +58,7 @@ export default function GenderSelectPage({ selected, onClose, onConfirm }) {
       {confirming && (
         <div className="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center px-8" onClick={() => setConfirming(false)}>
           <div className="bg-card rounded-xl p-5 text-center max-w-xs" onClick={(e) => e.stopPropagation()}>
-            <p className="text-sm text-foreground leading-relaxed">この変更を確定すると、性別の変更回数を1回消費します（残り0回になります）。変更しますか？</p>
+            <p className="text-sm text-foreground leading-relaxed">性別の変更は1回までです。<br />変更しますか？</p>
             <div className="flex gap-3 mt-4">
               <button onClick={() => setConfirming(false)} className="flex-1 py-2 text-sm font-bold text-muted-foreground rounded-lg bg-secondary">キャンセル</button>
               <button onClick={() => onConfirm(val)} className="flex-1 py-2 text-sm font-bold text-primary-foreground rounded-lg bg-primary">変更する</button>
