@@ -26,11 +26,11 @@ function Dropdown({ title, options, value, onChange }) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/70 bg-primary/10 text-primary text-sm font-bold whitespace-nowrap min-h-[34px]"
+        className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/70 bg-primary/10 text-primary text-base font-bold whitespace-nowrap min-h-[40px]"
       >
         {current?.icon != null && <span className="leading-none flex items-center">{current.icon}</span>}
         <span>{current?.label}</span>
-        <ChevronDown className="w-3.5 h-3.5" />
+        <ChevronDown className="w-4 h-4" />
       </button>
       {open && (
         <div className="absolute left-0 top-full mt-1.5 z-50 bg-popover border border-border rounded-xl shadow-2xl py-1 min-w-[180px]">
