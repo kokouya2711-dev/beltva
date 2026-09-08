@@ -70,7 +70,7 @@ export default function MePage() {
     <div className="max-w-2xl mx-auto">
       {/* Top bar: small screen title left, edit + settings right */}
       <div className="flex items-center justify-between px-4 pt-4 pb-1">
-        <h1 className="text-sm font-medium text-muted-foreground">{t("home.you")}</h1>
+        <h1 className="text-base font-semibold text-muted-foreground">{t("home.you")}</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate("/profile/edit")}
