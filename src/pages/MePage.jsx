@@ -1,55 +1,158 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
-import { User, Activity, Settings as SettingsIcon, HelpCircle, ChevronRight, Pencil, Bookmark } from "lucide-react";
+import { Pencil, Settings as SettingsIcon, Loader2, FileText, Bookmark } from "lucide-react";
+import PostCard from "@/components/PostCard";
+import { displayName } from "@/lib/profile";
 
 export default function MePage() {
   const t = useT();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("posts");
+  const [posts, setPosts] = useState([]);
+  const [favPosts, setFavPosts] = useState([]);
+  const [favMap, setFavMap] = useState({});
+  const [likesByPost, setLikesByPost] = useState({});
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
 
   useEffect(() => {
-    base44.auth.me().then(setMe).catch(() => {});
+    (async () => {
+      try {
+        const meUser = await base44.auth.me();
+        setMe(meUser);
+        if (!meUser) return;
+
+        const [myPosts, myFavs, fols, fols2, allLikes] = await Promise.all([
+          base44.entities.Post.filter({ created_by_id: meUser.id }, "-created_date", 100).catch(() => []),
+          base44.entities.Favorite.filter({ created_by_id: meUser.id }).catch(() => []),
+          base44.entities.Follow.filter({ followee_id: meUser.id }).catch(() => []),
+          base44.entities.Follow.filter({ follower_id: meUser.id }).catch(() => []),
+          base44.entities.Like.list("-created_date", 200).catch(() => []),
+        ]);
+
+        setPosts(myPosts);
+        setFollowers(fols.length);
+        setFollowing(fols2.length);
+
+        const fMap = {};
+        myFavs.forEach((f) => { fMap[f.post_id] = f.id; });
+        setFavMap(fMap);
+
+        const lMap = {};
+        allLikes.forEach((l) => { (lMap[l.post_id] = lMap[l.post_id] || []).push(l); });
+        setLikesByPost(lMap);
+
+        // Fetch favorite posts
+        if (myFavs.length) {
+          const favPostIds = myFavs.map((f) => f.post_id);
+          const allPosts = await base44.entities.Post.list("-created_date", 200).catch(() => []);
+          setFavPosts(allPosts.filter((p) => favPostIds.includes(p.id)));
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const sections = [
-    { icon: User, label: t("me.profile"), to: me ? `/profile/${me.id}` : "/" },
-    { icon: Bookmark, label: t("me.favorites"), to: "/favorites" },
-    { icon: Activity, label: t("me.activity"), to: "/activity" },
-    { icon: SettingsIcon, label: t("me.settings"), to: "/settings" },
-    { icon: HelpCircle, label: t("me.support"), to: "/support" },
-  ];
+  if (loading) {
+    return <div className="flex justify-center py-20"><Loader2 className="w-7 h-7 animate-spin text-muted-foreground" /></div>;
+  }
+  if (!me) return null;
+
+  const name = displayName(me);
+  const handle = me.email ? me.email.split("@")[0] : me.id;
+  const list = tab === "posts" ? posts : favPosts;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
-      {me && (
-        <div className="glass rounded-2xl border border-border p-5 flex items-center gap-4">
-          {me.avatar_url ? (
-            <img src={me.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />
-          ) : (
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xl font-bold text-muted-foreground">
-              {(me.display_name || me.email || "?")[0]?.toUpperCase()}
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="font-bold text-lg truncate">{me.display_name || me.email?.split("@")[0]}</div>
-            <div className="text-sm text-muted-foreground truncate">@{me.email?.split("@")[0]}</div>
-          </div>
-          <button onClick={() => navigate("/profile/edit")} className="flex items-center gap-1.5 text-sm bg-secondary/60 border border-border px-3 py-2 rounded-lg hover:border-primary shrink-0">
-            <Pencil className="w-3.5 h-3.5" /> {t("me.editProfile")}
-          </button>
-        </div>
-      )}
+    <div className="max-w-2xl mx-auto">
+      {/* Top bar: empty left, edit + settings right */}
+      <div className="flex items-center justify-end gap-2 px-4 pt-3 pb-1">
+        <button
+          onClick={() => navigate("/profile/edit")}
+          className="w-9 h-9 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
+          aria-label={t("me.editProfile")}
+        >
+          <Pencil className="w-[18px] h-[18px]" />
+        </button>
+        <button
+          onClick={() => navigate("/settings")}
+          className="w-9 h-9 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
+          aria-label={t("me.settings")}
+        >
+          <SettingsIcon className="w-[19px] h-[19px]" />
+        </button>
+      </div>
 
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        {sections.map((s, i) => (
-          <button key={i} onClick={() => navigate(s.to)} className="w-full flex items-center gap-3 px-4 py-4 text-sm hover:bg-secondary/40 text-left">
-            <s.icon className="w-5 h-5 text-primary" />
-            <span className="flex-1 font-medium">{s.label}</span>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </button>
-        ))}
+      {/* Profile header */}
+      <div className="flex flex-col items-center text-center px-4 pt-2 pb-4">
+        {me.avatar_url ? (
+          <img src={me.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover" />
+        ) : (
+          <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
+        )}
+        <h1 className="text-lg font-bold mt-3">{name}</h1>
+        <div className="text-sm text-muted-foreground mt-0.5">@{handle}</div>
+
+        <div className="flex items-center gap-7 mt-4 text-sm">
+          <Link to={`/profile/${me.id}/followers`} className="hover:text-primary text-center">
+            <div className="font-bold text-foreground">{followers}</div>
+            <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
+          </Link>
+          <Link to={`/profile/${me.id}/following`} className="hover:text-primary text-center">
+            <div className="font-bold text-foreground">{following}</div>
+            <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
+          </Link>
+          <div className="text-center">
+            <div className="font-bold text-foreground">{posts.length}</div>
+            <div className="text-xs text-muted-foreground">{t("common.post")}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-border sticky top-0 bg-background z-10">
+        <button
+          onClick={() => setTab("posts")}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition ${tab === "posts" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
+        >
+          <FileText className="w-4 h-4" /> {t("common.post")}
+        </button>
+        <button
+          onClick={() => setTab("favorites")}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition ${tab === "favorites" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
+        >
+          <Bookmark className="w-4 h-4" /> {t("me.favorites")}
+        </button>
+      </div>
+
+      {/* Tab content */}
+      <div className="px-3.5 md:px-4">
+        {list.length === 0 ? (
+          <div className="py-16 flex flex-col items-center gap-2 text-muted-foreground">
+            {tab === "posts" ? <FileText className="w-9 h-9 opacity-30" /> : <Bookmark className="w-9 h-9 opacity-30" />}
+            <div className="text-sm">{tab === "posts" ? t("profile.noPosts") : t("favorites.empty")}</div>
+          </div>
+        ) : (
+          <div>
+            {list.map((p, i) => (
+              <React.Fragment key={p.id}>
+                <PostCard
+                  post={p}
+                  meId={me.id}
+                  initialLikers={likesByPost[p.id] || []}
+                  initialFavorited={favMap[p.id] !== undefined}
+                  initialFavId={favMap[p.id] ?? null}
+                  batchedAuthor={me}
+                />
+                {i < list.length - 1 && <div className="-mx-3.5 md:-mx-4 h-[6px] bg-separator" />}
+              </React.Fragment>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
