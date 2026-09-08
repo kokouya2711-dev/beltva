@@ -6,15 +6,15 @@ import { TRAINING_PURPOSES } from "@/lib/hobbies";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import LanguageSelectPage from "@/components/users/LanguageSelectPage";
 import OptionSelectPage from "@/components/OptionSelectPage";
+import LevelSelectPage from "@/components/LevelSelectPage";
 
 const LEVELS = [
   { key: "beginner" },
   { key: "intermediate" },
-  { key: "advanced" },
-  { key: "expert" }
+  { key: "advanced" }
 ];
 
-const LEVEL_COOLDOWN_DAYS = 30;
+const LEVEL_COOLDOWN_DAYS = 365;
 
 function calcAge(birthdate) {
   if (!birthdate) return null;
@@ -75,6 +75,13 @@ export default function ProfileEdit() {
     return days < LEVEL_COOLDOWN_DAYS;
   }
 
+  function getLevelUnlockDate() {
+    if (!form.level_updated_at) return null;
+    const last = new Date(form.level_updated_at);
+    if (isNaN(last.getTime())) return null;
+    return new Date(last.getTime() + LEVEL_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+  }
+
   async function save() {
     if (!form.gender) { setGenderError(true); return; }
     setGenderError(false);
@@ -86,6 +93,7 @@ export default function ProfileEdit() {
         bio: form.bio,
         training_purpose: form.training_purpose,
         level: form.level,
+        level_updated_at: form.level_updated_at || "",
         avatar_url: form.avatar_url,
         gender: form.gender,
         birthdate: form.birthdate,
@@ -169,10 +177,7 @@ export default function ProfileEdit() {
         </button>
         {/* レベル */}
         <button
-          onClick={() => {
-            if (checkLevelLocked()) { setLevelLocked(true); return; }
-            setShowLevelSelect(true);
-          }}
+          onClick={() => setShowLevelSelect(true)}
           className="w-full flex items-center justify-between py-3.5 border-b border-border"
         >
           <span className="text-sm">{t("profile.level")}</span>
@@ -230,12 +235,14 @@ export default function ProfileEdit() {
         />
       )}
       {showLevelSelect && (
-        <OptionSelectPage
+        <LevelSelectPage
           title={t("profile.level")}
           items={LEVELS.map((l) => ({ key: l.key, label: t("level." + l.key) }))}
           selected={form.level}
+          lockedUntil={checkLevelLocked() ? getLevelUnlockDate() : null}
           onClose={() => setShowLevelSelect(false)}
           onConfirm={(key) => {
+            if (checkLevelLocked()) { setLevelLocked(true); return; }
             if (key) {
               set("level", key);
               set("level_updated_at", new Date().toISOString());

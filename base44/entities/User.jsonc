@@ -81,8 +81,7 @@
       "enum": [
         "beginner",
         "intermediate",
-        "advanced",
-        "expert"
+        "advanced"
       ]
     },
     "level_updated_at": {
