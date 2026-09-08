@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowLeft, Check } from "lucide-react";
 import { LANGS } from "@/lib/i18n";
 import { useI18n } from "@/lib/i18n";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 // 言語コード → 国コード（flagcdn用・真っ直ぐなフラット国旗）
 const FLAG = {
@@ -14,6 +15,7 @@ const FLAG = {
 export default function LanguageSelectPage({ selected, onClose, onConfirm }) {
   const { lang } = useI18n();
   const [val, setVal] = useState(selected || "");
+  useScrollLock();
   const locale = lang === "zh-TW" ? "zh-TW" : lang;
   const langLabel = (code) => {
     try {

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { ArrowLeft, Check } from "lucide-react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 // 汎用フルスクリーン選択ページ（目的などに使用）
 // 区切り線付き・1画面内・スクロールなし
 export default function OptionSelectPage({ title, items, selected, onClose, onConfirm }) {
   const [val, setVal] = useState(selected || "");
+  useScrollLock();
 
   return (
     <div className="fixed inset-0 z-[70] bg-background flex flex-col overflow-hidden overscroll-none">

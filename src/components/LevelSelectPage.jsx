@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { ArrowLeft, Check } from "lucide-react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 // レベル選択専用フルスクリーンページ
 // 説明文（変更頻度）をタイトル下・選択肢上に常時表示
 export default function LevelSelectPage({ title, items, selected, lockedUntil, onClose, onConfirm }) {
   const [val, setVal] = useState(selected || "");
+  useScrollLock();
 
   const locked = !!lockedUntil;
   const dateStr = locked
