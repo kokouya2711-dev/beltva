@@ -26,7 +26,7 @@
     },
     "region": {
       "type": "string",
-      "title": "\u5730\u57df/\u90fd\u9053\u5e9c\u770c"
+      "title": "\u5730\u57df/\u90fd\u5e9c\u770c"
     },
     "hobbies": {
       "type": "string",
@@ -45,6 +45,11 @@
         "female",
         "undisclosed"
       ]
+    },
+    "gender_change_count": {
+      "type": "number",
+      "title": "\u6027\u5225\u5909\u66f4\u56de\u6570",
+      "default": 0
     },
     "gender_public": {
       "type": "boolean",
@@ -65,6 +70,17 @@
       "type": "string",
       "format": "date",
       "title": "\u751f\u5e74\u6708\u65e5"
+    },
+    "birthdate_change_count": {
+      "type": "number",
+      "title": "\u751f\u5e74\u6708\u65e5\u5909\u66f4\u56de\u6570",
+      "default": 0
+    },
+    "registered_birthdate": {
+      "type": "string",
+      "format": "date",
+      "title": "\u767b\u9332\u6642\u751f\u5e74\u6708\u65e5",
+      "description": "\u672a\u6210\u5e74/\u6210\u4eba\u533a\u5206\u5224\u5b9a\u7528\u306e\u521d\u671f\u767b\u9332\u6642\u751f\u5e74\u6708\u65e5"
     },
     "age": {
       "type": "number",

@@ -7,6 +7,8 @@ import { useT, useI18n } from "@/lib/i18n";
 import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import OptionSelectPage from "@/components/OptionSelectPage";
 import LevelSelectPage from "@/components/LevelSelectPage";
+import GenderSelectPage from "@/components/GenderSelectPage";
+import BirthdateSelectPage from "@/components/BirthdateSelectPage";
 
 const LEVELS = [
   { key: "beginner" },
@@ -37,6 +39,8 @@ export default function ProfileEdit() {
   const [uploading, setUploading] = useState(false);
   const [showLevelSelect, setShowLevelSelect] = useState(false);
   const [showPurposeSelect, setShowPurposeSelect] = useState(false);
+  const [showGenderSelect, setShowGenderSelect] = useState(false);
+  const [showBirthdateSelect, setShowBirthdateSelect] = useState(false);
   const [levelLocked, setLevelLocked] = useState(false);
   const [genderError, setGenderError] = useState(false);
 
@@ -52,7 +56,10 @@ export default function ProfileEdit() {
         main_language: u.main_language || "",
         avatar_url: u.avatar_url || "",
         gender: u.gender || "",
+        gender_change_count: u.gender_change_count || 0,
         birthdate: u.birthdate || "",
+        birthdate_change_count: u.birthdate_change_count || 0,
+        registered_birthdate: u.registered_birthdate || "",
       });
     }).catch(() => navigate("/"));
   }, [navigate]);
@@ -82,6 +89,38 @@ export default function ProfileEdit() {
     return new Date(last.getTime() + LEVEL_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
   }
 
+  function genderLabel(v) { return v === "male" ? t("common.genderMale") : v === "female" ? t("common.genderFemale") : ""; }
+  function birthdateLabel(v) {
+    if (!v) return "";
+    const d = new Date(v);
+    if (isNaN(d)) return v;
+    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  }
+
+  async function applyGender(val) {
+    const newCount = (form.gender_change_count || 0) + 1;
+    set("gender", val);
+    set("gender_change_count", newCount);
+    setShowGenderSelect(false);
+    await base44.auth.updateMe({ gender: val, gender_change_count: newCount });
+  }
+
+  async function applyBirthdate(val) {
+    const newCount = (form.birthdate_change_count || 0) + 1;
+    const regBd = form.registered_birthdate || form.birthdate || "";
+    set("birthdate", val);
+    set("birthdate_change_count", newCount);
+    set("registered_birthdate", regBd);
+    setShowBirthdateSelect(false);
+    const age = calcAge(val);
+    await base44.auth.updateMe({
+      birthdate: val,
+      birthdate_change_count: newCount,
+      registered_birthdate: regBd,
+      ...(age != null ? { age } : {}),
+    });
+  }
+
   async function save() {
     if (!form.gender) { setGenderError(true); return; }
     setGenderError(false);
@@ -98,6 +137,9 @@ export default function ProfileEdit() {
         gender: form.gender,
         birthdate: form.birthdate,
         main_language: form.main_language,
+        gender_change_count: form.gender_change_count,
+        birthdate_change_count: form.birthdate_change_count,
+        registered_birthdate: form.registered_birthdate,
         ...(age != null ? { age } : {}),
       });
       navigate(-1);
@@ -188,33 +230,48 @@ export default function ProfileEdit() {
       <div className="px-4 mt-8">
         <div className="text-[13px] text-muted-foreground/80 uppercase tracking-wider mb-3">{t("profile.basicInfo")}</div>
         {/* 性別 */}
-        <div className="py-4 border-b border-border">
-          <label className="text-sm text-muted-foreground">{t("common.gender")} *</label>
-          <select
-            value={form.gender}
-            onChange={(e) => { set("gender", e.target.value); setGenderError(false); }}
-            className="w-full bg-transparent text-base mt-1.5 outline-none"
-          >
-            <option value="">{t("common.genderUndisclosed")}</option>
-            <option value="male">{t("common.genderMale")}</option>
-            <option value="female">{t("common.genderFemale")}</option>
-            <option value="undisclosed">{t("common.genderUndisclosed")}</option>
-          </select>
-          {genderError && <p className="text-xs text-destructive mt-1">{t("profile.genderRequired")}</p>}
-        </div>
+        <button
+          type="button"
+          onClick={() => { if ((form.gender_change_count || 0) < 1) { setGenderError(false); setShowGenderSelect(true); } }}
+          className={`w-full flex items-center justify-between py-4 border-b border-border ${(form.gender_change_count || 0) >= 1 ? "opacity-60" : ""}`}
+        >
+          <span className="text-base">{t("common.gender")} *</span>
+          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
+            {genderLabel(form.gender)}
+            {(form.gender_change_count || 0) < 1 && <ChevronRight className="w-5 h-5" />}
+          </span>
+        </button>
+        {genderError && <p className="text-xs text-destructive mt-1">{t("profile.genderRequired")}</p>}
         {/* 生年月日 */}
-        <div className="py-4 border-b border-border">
-          <label className="text-sm text-muted-foreground">{t("profile.birthdate")}</label>
-          <input
-            type="date"
-            value={form.birthdate}
-            onChange={(e) => set("birthdate", e.target.value)}
-            className="w-full bg-transparent text-base mt-1.5 outline-none"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => { if ((form.birthdate_change_count || 0) < 1) setShowBirthdateSelect(true); }}
+          className={`w-full flex items-center justify-between py-4 border-b border-border ${(form.birthdate_change_count || 0) >= 1 ? "opacity-60" : ""}`}
+        >
+          <span className="text-base">{t("profile.birthdate")}</span>
+          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
+            {birthdateLabel(form.birthdate)}
+            {(form.birthdate_change_count || 0) < 1 && <ChevronRight className="w-5 h-5" />}
+          </span>
+        </button>
       </div>
 
       {/* Overlays */}
+      {showGenderSelect && (
+        <GenderSelectPage
+          selected={form.gender}
+          onClose={() => setShowGenderSelect(false)}
+          onConfirm={applyGender}
+        />
+      )}
+      {showBirthdateSelect && (
+        <BirthdateSelectPage
+          selected={form.birthdate}
+          registeredBirthdate={form.registered_birthdate}
+          onClose={() => setShowBirthdateSelect(false)}
+          onConfirm={applyBirthdate}
+        />
+      )}
       {showLevelSelect && (
         <LevelSelectPage
           title={t("profile.level")}
