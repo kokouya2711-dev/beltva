@@ -17,7 +17,7 @@ import { getMediaUrls } from "@/lib/media";
 import { haptic } from "@/lib/haptics";
 import { getCommentCountUpdate, clearCommentCountUpdate } from "@/lib/commentCountStore";
 
-export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId, batchedAuthor, batchedComments, batchedUserMap }) {
+export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId, batchedAuthor, batchedComments, batchedUserMap, hideAuthor = false }) {
   const t = useT();
   const tWorkout = useTWorkout();
   const fmtNum = useFormatNumber();
@@ -138,34 +138,52 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   return (
     <div className="pt-5 pb-5 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
-      <div className="flex items-center gap-3 mb-2" onClick={(e) => e.stopPropagation()}>
-        {currentPost.is_anonymous ? (
-          <div className="flex items-center gap-2 flex-1">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xs font-bold shrink-0">匿</div>
-            <span className="text-sm font-medium">{t("post.anonymousLabel")}</span>
-          </div>
-        ) : (
-          <>
-            <UserLink user={author} size="lg" />
-            <div className="flex-1" />
-            {!isOwner && author?.id && (
-              <FollowButton targetId={author.id} meId={meId} size="compact" />
+      {hideAuthor ? (
+        <div className="flex items-center justify-between mb-2" onClick={(e) => e.stopPropagation()}>
+          <div className="text-xs text-muted-foreground">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
+          <PostMenu
+            post={currentPost}
+            meId={meId}
+            isOwner={isOwner}
+            onEdit={() => setShowEdit(true)}
+            onDelete={deletePost}
+            onFavoriteToggle={toggleFavorite}
+            isFavorited={isFavorited}
+            onHidden={() => window.location.reload()}
+          />
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-3 mb-2" onClick={(e) => e.stopPropagation()}>
+            {currentPost.is_anonymous ? (
+              <div className="flex items-center gap-2 flex-1">
+                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xs font-bold shrink-0">匿</div>
+                <span className="text-sm font-medium">{t("post.anonymousLabel")}</span>
+              </div>
+            ) : (
+              <>
+                <UserLink user={author} size="lg" />
+                <div className="flex-1" />
+                {!isOwner && author?.id && (
+                  <FollowButton targetId={author.id} meId={meId} size="compact" />
+                )}
+              </>
             )}
-          </>
-        )}
-        <span className="w-1 shrink-0" />
-        <PostMenu
-          post={currentPost}
-          meId={meId}
-          isOwner={isOwner}
-          onEdit={() => setShowEdit(true)}
-          onDelete={deletePost}
-          onFavoriteToggle={toggleFavorite}
-          isFavorited={isFavorited}
-          onHidden={() => window.location.reload()}
-        />
-      </div>
-      <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
+            <span className="w-1 shrink-0" />
+            <PostMenu
+              post={currentPost}
+              meId={meId}
+              isOwner={isOwner}
+              onEdit={() => setShowEdit(true)}
+              onDelete={deletePost}
+              onFavoriteToggle={toggleFavorite}
+              isFavorited={isFavorited}
+              onHidden={() => window.location.reload()}
+            />
+          </div>
+          <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
+        </>
+      )}
 
       <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 

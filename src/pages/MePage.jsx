@@ -90,9 +90,9 @@ export default function MePage() {
       <div className="px-4 pt-1 pb-3">
         <div className="flex items-center gap-4">
           {me.avatar_url ? (
-            <img src={me.avatar_url} alt={name} className="w-16 h-16 rounded-full object-cover shrink-0" />
+            <img src={me.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover shrink-0" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-lg font-bold shrink-0">{name.slice(0, 2).toUpperCase()}</div>
+            <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-xl font-bold shrink-0">{name.slice(0, 2).toUpperCase()}</div>
           )}
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold truncate leading-tight">{name}</h1>
@@ -148,6 +148,7 @@ export default function MePage() {
                   initialFavorited={favMap[p.id] !== undefined}
                   initialFavId={favMap[p.id] ?? null}
                   batchedAuthor={me}
+                  hideAuthor={tab === "posts"}
                 />
                 {i < list.length - 1 && <div className="-mx-3.5 md:-mx-4 h-[6px] bg-separator" />}
               </React.Fragment>
