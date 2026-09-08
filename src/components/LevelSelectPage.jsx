@@ -12,7 +12,7 @@ export default function LevelSelectPage({ title, items, selected, lockedUntil, o
     : null;
 
   return (
-    <div className="fixed inset-0 z-[70] bg-background flex flex-col">
+    <div className="fixed inset-0 z-[70] bg-background flex flex-col overflow-hidden overscroll-none">
       <header className="flex items-center justify-between px-4 py-3 shrink-0">
         <button onClick={onClose} className="p-2 -ml-2 text-foreground" aria-label="戻る">
           <ArrowLeft className="w-6 h-6" />
@@ -36,7 +36,7 @@ export default function LevelSelectPage({ title, items, selected, lockedUntil, o
       </div>
 
       {/* 選択肢 — 区切り線付き、1画面内 */}
-      <div className="flex-1 min-h-0">
+      <div className="shrink-0">
         <ul>
           {items.map((item, i) => {
             const active = val === item.key;
