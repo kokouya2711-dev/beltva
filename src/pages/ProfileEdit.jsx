@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Camera, ChevronRight, Loader2 } from "lucide-react";
 import { TRAINING_PURPOSES } from "@/lib/hobbies";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
+import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import LanguageSelectPage from "@/components/users/LanguageSelectPage";
 import OptionSelectPage from "@/components/OptionSelectPage";
 import LevelSelectPage from "@/components/LevelSelectPage";
@@ -29,6 +30,7 @@ function calcAge(birthdate) {
 
 export default function ProfileEdit() {
   const t = useT();
+  const { lang } = useI18n();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
   const [form, setForm] = useState({});
@@ -107,7 +109,7 @@ export default function ProfileEdit() {
   if (!me) return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
 
   const levelLabel = (key) => key ? t("level." + key) : "";
-  const purposeLabel = (key) => key ? t("purpose." + key) : "";
+  const purposeLbl = (key) => key ? purposeLabel(lang, key) : "";
   const langLabel = (code) => {
     const l = LANGS.find((x) => x.code === code);
     return l ? l.label : code;
@@ -171,7 +173,7 @@ export default function ProfileEdit() {
         <button onClick={() => setShowPurposeSelect(true)} className="w-full flex items-center justify-between py-3.5 border-b border-border">
           <span className="text-sm">{t("common.purpose")}</span>
           <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            {form.training_purpose ? purposeLabel(form.training_purpose) : ""}
+            {form.training_purpose ? purposeLbl(form.training_purpose) : ""}
             <ChevronRight className="w-4 h-4" />
           </span>
         </button>
@@ -254,7 +256,7 @@ export default function ProfileEdit() {
       {showPurposeSelect && (
         <OptionSelectPage
           title={t("common.purpose")}
-          items={TRAINING_PURPOSES.map((p) => ({ key: p.key, label: t("purpose." + p.key) }))}
+          items={TRAINING_PURPOSES.map((p) => ({ key: p.key, label: purposeLabel(lang, p.key) }))}
           selected={form.training_purpose}
           onClose={() => setShowPurposeSelect(false)}
           onConfirm={(key) => { if (key) set("training_purpose", key); setShowPurposeSelect(false); }}

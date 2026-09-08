@@ -2,7 +2,7 @@
 
 export const PURPOSES = [
   { key: "health", labelKey: "health", match: ["health"] },
-  { key: "appearance", labelKey: "bodymake", match: ["hypertrophy", "diet"] },
+  { key: "appearance", labelKey: "bodymake", match: ["hypertrophy", "diet", "bodymake"] },
   { key: "contest", labelKey: "contest", match: ["contest"] },
   { key: "friends", labelKey: "friends", match: ["friends"] },
 ];

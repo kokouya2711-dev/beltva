@@ -276,9 +276,8 @@ export function hobbyCategoryLabel(key, lang) {
 }
 
 export const TRAINING_PURPOSES = [
-  { key: "hypertrophy" },
-  { key: "diet" },
   { key: "health" },
+  { key: "bodymake" },
   { key: "contest" },
   { key: "friends" }
 ];
