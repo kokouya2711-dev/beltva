@@ -121,20 +121,20 @@ export default function MePage() {
       <div className="flex">
         <button
           onClick={() => setTab("posts")}
-          className={`flex-1 py-2.5 text-sm font-semibold text-center transition ${tab === "posts" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
+          className={`flex-1 py-2.5 text-sm font-semibold text-center transition ${tab === "posts" ? "text-primary" : "text-muted-foreground"}`}
         >
-          {t("common.post")}
+          <span className={`inline-block pb-1 border-b-2 ${tab === "posts" ? "border-primary" : "border-transparent"}`}>{t("common.post")}</span>
         </button>
         <button
           onClick={() => setTab("favorites")}
-          className={`flex-1 py-2.5 text-sm font-semibold text-center transition ${tab === "favorites" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
+          className={`flex-1 py-2.5 text-sm font-semibold text-center transition ${tab === "favorites" ? "text-primary" : "text-muted-foreground"}`}
         >
-          {t("me.favorites")}
+          <span className={`inline-block pb-1 border-b-2 ${tab === "favorites" ? "border-primary" : "border-transparent"}`}>{t("me.favorites")}</span>
         </button>
       </div>
 
       {/* Tab content */}
-      <div className="px-3.5 md:px-4">
+      <div className="px-3.5 md:px-4 pt-4">
         {list.length === 0 ? (
           <div className="py-16 flex flex-col items-center gap-2 text-muted-foreground">
             {tab === "posts" ? <FileText className="w-9 h-9 opacity-30" /> : <Bookmark className="w-9 h-9 opacity-30" />}
