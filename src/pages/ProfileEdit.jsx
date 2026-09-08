@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Camera, ChevronRight, Loader2 } from "lucide-react";
 import { TRAINING_PURPOSES } from "@/lib/hobbies";
-import { useT, useI18n, LANGS } from "@/lib/i18n";
+import { useT, useI18n } from "@/lib/i18n";
 import { purposeLabel } from "@/lib/i18nPurposeFilter";
-import LanguageSelectPage from "@/components/users/LanguageSelectPage";
 import OptionSelectPage from "@/components/OptionSelectPage";
 import LevelSelectPage from "@/components/LevelSelectPage";
 
@@ -36,7 +35,6 @@ export default function ProfileEdit() {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [showLangSelect, setShowLangSelect] = useState(false);
   const [showLevelSelect, setShowLevelSelect] = useState(false);
   const [showPurposeSelect, setShowPurposeSelect] = useState(false);
   const [levelLocked, setLevelLocked] = useState(false);
@@ -110,10 +108,6 @@ export default function ProfileEdit() {
 
   const levelLabel = (key) => key ? t("level." + key) : "";
   const purposeLbl = (key) => key ? purposeLabel(lang, key) : "";
-  const langLabel = (code) => {
-    const l = LANGS.find((x) => x.code === code);
-    return l ? l.label : code;
-  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -188,14 +182,6 @@ export default function ProfileEdit() {
             <ChevronRight className="w-5 h-5" />
           </span>
         </button>
-        {/* メイン言語 */}
-        <button onClick={() => setShowLangSelect(true)} className="w-full flex items-center justify-between py-4 border-b border-border">
-          <span className="text-base">{t("profile.mainLanguage")}</span>
-          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
-            {form.main_language ? langLabel(form.main_language) : ""}
-            <ChevronRight className="w-5 h-5" />
-          </span>
-        </button>
       </div>
 
       {/* Basic info section */}
@@ -229,13 +215,6 @@ export default function ProfileEdit() {
       </div>
 
       {/* Overlays */}
-      {showLangSelect && (
-        <LanguageSelectPage
-          selected={form.main_language}
-          onClose={() => setShowLangSelect(false)}
-          onConfirm={(code) => { if (code) set("main_language", code); setShowLangSelect(false); }}
-        />
-      )}
       {showLevelSelect && (
         <LevelSelectPage
           title={t("profile.level")}
