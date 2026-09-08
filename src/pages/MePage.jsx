@@ -69,63 +69,67 @@ export default function MePage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Top bar: empty left, edit + settings right */}
-      <div className="flex items-center justify-end gap-2 px-4 pt-3 pb-1">
+      {/* Top bar: empty left, small edit + settings right */}
+      <div className="flex items-center justify-end gap-1.5 px-4 pt-2.5 pb-1">
         <button
           onClick={() => navigate("/profile/edit")}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
           aria-label={t("me.editProfile")}
         >
-          <Pencil className="w-[18px] h-[18px]" />
+          <Pencil className="w-4 h-4" />
         </button>
         <button
           onClick={() => navigate("/settings")}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition"
           aria-label={t("me.settings")}
         >
-          <SettingsIcon className="w-[19px] h-[19px]" />
+          <SettingsIcon className="w-[18px] h-[18px]" />
         </button>
       </div>
 
-      {/* Profile header */}
-      <div className="flex flex-col items-center text-center px-4 pt-2 pb-4">
-        {me.avatar_url ? (
-          <img src={me.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover" />
-        ) : (
-          <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
-        )}
-        <h1 className="text-lg font-bold mt-3">{name}</h1>
-        <div className="text-sm text-muted-foreground mt-0.5">@{handle}</div>
+      {/* Compact profile header — avatar left, name/ID right, stats row below */}
+      <div className="px-4 pt-1 pb-3">
+        <div className="flex items-center gap-3">
+          {me.avatar_url ? (
+            <img src={me.avatar_url} alt={name} className="w-14 h-14 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-base font-bold shrink-0">{name.slice(0, 2).toUpperCase()}</div>
+          )}
+          <div className="min-w-0">
+            <h1 className="text-base font-bold truncate leading-tight">{name}</h1>
+            <div className="text-xs text-muted-foreground mt-0.5 truncate">@{handle}</div>
+          </div>
+        </div>
 
-        <div className="flex items-center gap-7 mt-4 text-sm">
-          <Link to={`/profile/${me.id}/followers`} className="hover:text-primary text-center">
-            <div className="font-bold text-foreground">{followers}</div>
+        <div className="grid grid-cols-3 gap-2 mt-3">
+          <Link to={`/profile/${me.id}/followers`} className="text-center hover:text-primary transition">
+            <div className="font-bold text-foreground text-sm">{followers}</div>
             <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
           </Link>
-          <Link to={`/profile/${me.id}/following`} className="hover:text-primary text-center">
-            <div className="font-bold text-foreground">{following}</div>
+          <Link to={`/profile/${me.id}/following`} className="text-center hover:text-primary transition">
+            <div className="font-bold text-foreground text-sm">{following}</div>
             <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
           </Link>
           <div className="text-center">
-            <div className="font-bold text-foreground">{posts.length}</div>
+            <div className="font-bold text-foreground text-sm">{posts.length}</div>
             <div className="text-xs text-muted-foreground">{t("common.post")}</div>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-border sticky top-0 bg-background z-10">
+      {/* Tabs — low height, text + selected underline only, no bar */}
+      <div className="flex px-4 gap-6">
         <button
           onClick={() => setTab("posts")}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition ${tab === "posts" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
+          className={`py-2 text-sm font-semibold transition ${tab === "posts" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
         >
-          <FileText className="w-4 h-4" /> {t("common.post")}
+          {t("common.post")}
         </button>
         <button
           onClick={() => setTab("favorites")}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition ${tab === "favorites" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
+          className={`py-2 text-sm font-semibold transition ${tab === "favorites" ? "text-primary border-b-2 border-primary" : "text-muted-foreground"}`}
         >
-          <Bookmark className="w-4 h-4" /> {t("me.favorites")}
+          {t("me.favorites")}
         </button>
       </div>
 

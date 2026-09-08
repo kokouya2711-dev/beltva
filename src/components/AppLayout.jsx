@@ -208,7 +208,7 @@ function AppLayoutInner() {
         <header className="md:hidden sticky top-0 z-30 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <TimelineHeader me={me} />
         </header>
-      ) : location.pathname.startsWith("/posts/") || location.pathname === "/create-post" || location.pathname === "/messages" || location.pathname === "/users" ? null : (
+      ) : location.pathname.startsWith("/posts/") || location.pathname === "/create-post" || location.pathname === "/messages" || location.pathname === "/users" || location.pathname === "/me" ? null : (
         <header className="md:hidden sticky top-0 z-30 glass border-b border-border flex items-center justify-between px-4 py-2 transition-transform duration-300 ease-out" style={{ transform: headerHidden ? "translateY(-100%)" : "translateY(0)" }}>
           <div className="flex items-center gap-2">
             <Image src={LOGO_URL} alt="BELTVA" className="w-8 h-8 rounded-lg shrink-0" fittingType="fill" />
