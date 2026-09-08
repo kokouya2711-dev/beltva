@@ -122,24 +122,24 @@ export default function ProfileEdit() {
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-foreground">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <span className="text-base font-bold text-foreground">{t("profile.editTitle")}</span>
+        <span className="text-lg font-extrabold text-foreground">{t("profile.editTitle")}</span>
         <button onClick={save} disabled={saving} className="text-base font-bold text-primary disabled:opacity-50">
           {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : t("common.done")}
         </button>
       </header>
 
       {/* Avatar */}
-      <div className="flex justify-center py-6">
+      <div className="flex justify-center py-8">
         <label className="relative cursor-pointer">
           {form.avatar_url ? (
-            <img src={form.avatar_url} alt="avatar" className="w-24 h-24 rounded-full object-cover" />
+            <img src={form.avatar_url} alt="avatar" className="w-28 h-28 rounded-full object-cover" />
           ) : (
-            <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">
+            <div className="w-28 h-28 rounded-full bg-secondary flex items-center justify-center text-3xl font-bold">
               {(form.display_name || "?").slice(0, 2).toUpperCase()}
             </div>
           )}
-          <span className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center ring-2 ring-background">
-            <Camera className="w-4 h-4 text-primary-foreground" />
+          <span className="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-primary flex items-center justify-center ring-2 ring-background">
+            <Camera className="w-5 h-5 text-primary-foreground" />
           </span>
           <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadAvatar(e.target.files[0])} />
           {uploading && <span className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-white" /></span>}
@@ -149,65 +149,65 @@ export default function ProfileEdit() {
       {/* Profile section */}
       <div className="px-4">
         {/* 名前 */}
-        <div className="py-3 border-b border-border">
-          <label className="text-xs text-muted-foreground">{t("profile.name")}</label>
+        <div className="py-4 border-b border-border">
+          <label className="text-sm text-muted-foreground">{t("profile.name")}</label>
           <input
             value={form.display_name}
             onChange={(e) => set("display_name", e.target.value)}
-            className="w-full bg-transparent text-sm mt-1 outline-none"
+            className="w-full bg-transparent text-base mt-1.5 outline-none"
             placeholder={t("profile.namePlaceholder")}
           />
         </div>
         {/* 自己紹介 */}
-        <div className="py-3 border-b border-border">
-          <label className="text-xs text-muted-foreground">{t("common.bio")}</label>
+        <div className="py-4 border-b border-border">
+          <label className="text-sm text-muted-foreground">{t("common.bio")}</label>
           <textarea
             value={form.bio}
             onChange={(e) => set("bio", e.target.value)}
             rows={3}
-            className="w-full bg-transparent text-sm mt-1 outline-none resize-none"
+            className="w-full bg-transparent text-base mt-1.5 outline-none resize-none"
             placeholder={t("profile.bioPlaceholder")}
           />
         </div>
         {/* 目的 */}
-        <button onClick={() => setShowPurposeSelect(true)} className="w-full flex items-center justify-between py-3.5 border-b border-border">
-          <span className="text-sm">{t("common.purpose")}</span>
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+        <button onClick={() => setShowPurposeSelect(true)} className="w-full flex items-center justify-between py-4 border-b border-border">
+          <span className="text-base">{t("common.purpose")}</span>
+          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
             {form.training_purpose ? purposeLbl(form.training_purpose) : ""}
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </span>
         </button>
         {/* レベル */}
         <button
           onClick={() => setShowLevelSelect(true)}
-          className="w-full flex items-center justify-between py-3.5 border-b border-border"
+          className="w-full flex items-center justify-between py-4 border-b border-border"
         >
-          <span className="text-sm">{t("profile.level")}</span>
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <span className="text-base">{t("profile.level")}</span>
+          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
             {form.level ? levelLabel(form.level) : ""}
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </span>
         </button>
         {/* メイン言語 */}
-        <button onClick={() => setShowLangSelect(true)} className="w-full flex items-center justify-between py-3.5 border-b border-border">
-          <span className="text-sm">{t("profile.mainLanguage")}</span>
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+        <button onClick={() => setShowLangSelect(true)} className="w-full flex items-center justify-between py-4 border-b border-border">
+          <span className="text-base">{t("profile.mainLanguage")}</span>
+          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
             {form.main_language ? langLabel(form.main_language) : ""}
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </span>
         </button>
       </div>
 
       {/* Basic info section */}
-      <div className="px-4 mt-6">
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2">{t("profile.basicInfo")}</div>
+      <div className="px-4 mt-8">
+        <div className="text-[13px] text-muted-foreground/80 uppercase tracking-wider mb-3">{t("profile.basicInfo")}</div>
         {/* 性別 */}
-        <div className="py-3 border-b border-border">
-          <label className="text-xs text-muted-foreground">{t("common.gender")} *</label>
+        <div className="py-4 border-b border-border">
+          <label className="text-sm text-muted-foreground">{t("common.gender")} *</label>
           <select
             value={form.gender}
             onChange={(e) => { set("gender", e.target.value); setGenderError(false); }}
-            className="w-full bg-transparent text-sm mt-1 outline-none"
+            className="w-full bg-transparent text-base mt-1.5 outline-none"
           >
             <option value="">{t("common.genderUndisclosed")}</option>
             <option value="male">{t("common.genderMale")}</option>
@@ -217,13 +217,13 @@ export default function ProfileEdit() {
           {genderError && <p className="text-xs text-destructive mt-1">{t("profile.genderRequired")}</p>}
         </div>
         {/* 生年月日 */}
-        <div className="py-3 border-b border-border">
-          <label className="text-xs text-muted-foreground">{t("profile.birthdate")}</label>
+        <div className="py-4 border-b border-border">
+          <label className="text-sm text-muted-foreground">{t("profile.birthdate")}</label>
           <input
             type="date"
             value={form.birthdate}
             onChange={(e) => set("birthdate", e.target.value)}
-            className="w-full bg-transparent text-sm mt-1 outline-none"
+            className="w-full bg-transparent text-base mt-1.5 outline-none"
           />
         </div>
       </div>
