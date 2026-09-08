@@ -1124,21 +1124,21 @@ export const uiTranslations2 = {
 
 // "Training" label for the in-session button
 export const uiTranslations3 = {
-  ja: { "nav.training": "トレ中", "profile.namePlaceholder": "BELTVA太郎", "profile.bioPlaceholder": "筋トレ歴3年。ベンチ100kg目指中！", "profile.agePlaceholder": "例: 25" },
-  en: { "nav.training": "Training", "profile.namePlaceholder": "e.g. John", "profile.bioPlaceholder": "3 years training. Aiming for 100kg bench!", "profile.agePlaceholder": "e.g. 25" },
-  zh: { "nav.training": "训练中", "profile.namePlaceholder": "例如: 张三", "profile.bioPlaceholder": "训练3年。目标卧推100kg！", "profile.agePlaceholder": "例: 25" },
-  ko: { "nav.training": "운동 중", "profile.namePlaceholder": "예: 김철수", "profile.bioPlaceholder": "운동 3년. 벤치 100kg 목표!", "profile.agePlaceholder": "예: 25" },
-  es: { "nav.training": "Entrenando", "profile.namePlaceholder": "ej: Juan", "profile.bioPlaceholder": "3 años entrenando. ¡Meta: 100kg en banco!", "profile.agePlaceholder": "ej: 25" },
-  fr: { "nav.training": "En entraînement", "profile.namePlaceholder": "ex: Jean", "profile.bioPlaceholder": "3 ans d'entraînement. Objectif: 100kg au banc!", "profile.agePlaceholder": "ex: 25" },
-  de: { "nav.training": "Trainiert", "profile.namePlaceholder": "z.B. Max", "profile.bioPlaceholder": "3 Jahre Training. Ziel: 100kg Bankdrücken!", "profile.agePlaceholder": "z.B. 25" },
-  pt: { "nav.training": "Treinando", "profile.namePlaceholder": "ex: João", "profile.bioPlaceholder": "3 anos treinando. Meta: 100kg supino!", "profile.agePlaceholder": "ex: 25" },
-  it: { "nav.training": "In allenamento", "profile.namePlaceholder": "es: Marco", "profile.bioPlaceholder": "3 anni di allenamento. Obiettivo: 100kg panca!", "profile.agePlaceholder": "es: 25" },
-  ru: { "nav.training": "Тренируется", "profile.namePlaceholder": "напр: Иван", "profile.bioPlaceholder": "3 года тренировок. Цель: 100кг жим!", "profile.agePlaceholder": "напр: 25" },
-  vi: { "nav.training": "Đang tập", "profile.namePlaceholder": "vd: Nam", "profile.bioPlaceholder": "Tập 3 năm. Mục tiêu đẩy gối 100kg!", "profile.agePlaceholder": "vd: 25" },
-  id: { "nav.training": "Latihan", "profile.namePlaceholder": "cth: Budi", "profile.bioPlaceholder": "3 tahun latihan. Target bench 100kg!", "profile.agePlaceholder": "cth: 25" },
-  th: { "nav.training": "กำลังฝึก", "profile.namePlaceholder": "เช่น: สมชาย", "profile.bioPlaceholder": "ฝึก 3 ปี เป้าหมายเบนช์ 100กก.!", "profile.agePlaceholder": "เช่น: 25" },
-  hi: { "nav.training": "प्रशिक्षण", "profile.namePlaceholder": "जैसे: राहुल", "profile.bioPlaceholder": "3 साल प्रशिक्षण। लक्ष्य: 100किग्रा बेंच!", "profile.agePlaceholder": "जैसे: 25" },
-  ar: { "nav.training": "يتدرّب", "profile.namePlaceholder": "مث: أحمد", "profile.bioPlaceholder": "3 سنوات تمرين. الهدف: 100كجم بنش!", "profile.agePlaceholder": "مث: 25" },
-  tr: { "nav.training": "Antrenman", "profile.namePlaceholder": "ör: Ahmet", "profile.bioPlaceholder": "3 yıldır antrenman. Hedef: 100kg bench!", "profile.agePlaceholder": "ör: 25" },
-  "zh-TW": { "nav.training": "訓練中", "profile.namePlaceholder": "例如: 張三", "profile.bioPlaceholder": "訓練3年。目標臥推100kg！", "profile.agePlaceholder": "例: 25" }
+  ja: { "nav.training": "トレ中", "profile.namePlaceholder": "BELTVA太郎", "profile.bioPlaceholder": "自己紹介を入力", "profile.agePlaceholder": "例: 25" },
+  en: { "nav.training": "Training", "profile.namePlaceholder": "e.g. John", "profile.bioPlaceholder": "Enter your bio", "profile.agePlaceholder": "e.g. 25" },
+  zh: { "nav.training": "训练中", "profile.namePlaceholder": "例如: 张三", "profile.bioPlaceholder": "输入简介", "profile.agePlaceholder": "例: 25" },
+  ko: { "nav.training": "운동 중", "profile.namePlaceholder": "예: 김철수", "profile.bioPlaceholder": "소개를 입력하세요", "profile.agePlaceholder": "예: 25" },
+  es: { "nav.training": "Entrenando", "profile.namePlaceholder": "ej: Juan", "profile.bioPlaceholder": "Escribe tu bio", "profile.agePlaceholder": "ej: 25" },
+  fr: { "nav.training": "En entraînement", "profile.namePlaceholder": "ex: Jean", "profile.bioPlaceholder": "Écris ta bio", "profile.agePlaceholder": "ex: 25" },
+  de: { "nav.training": "Trainiert", "profile.namePlaceholder": "z.B. Max", "profile.bioPlaceholder": "Bio eingeben", "profile.agePlaceholder": "z.B. 25" },
+  pt: { "nav.training": "Treinando", "profile.namePlaceholder": "ex: João", "profile.bioPlaceholder": "Escreva sua bio", "profile.agePlaceholder": "ex: 25" },
+  it: { "nav.training": "In allenamento", "profile.namePlaceholder": "es: Marco", "profile.bioPlaceholder": "Scrivi la tua bio", "profile.agePlaceholder": "es: 25" },
+  ru: { "nav.training": "Тренируется", "profile.namePlaceholder": "напр: Иван", "profile.bioPlaceholder": "Введите описание", "profile.agePlaceholder": "напр: 25" },
+  vi: { "nav.training": "Đang tập", "profile.namePlaceholder": "vd: Nam", "profile.bioPlaceholder": "Nhập tiểu sử", "profile.agePlaceholder": "vd: 25" },
+  id: { "nav.training": "Latihan", "profile.namePlaceholder": "cth: Budi", "profile.bioPlaceholder": "Tulis bio", "profile.agePlaceholder": "cth: 25" },
+  th: { "nav.training": "กำลังฝึก", "profile.namePlaceholder": "เช่น: สมชาย", "profile.bioPlaceholder": "แนะนำตัว", "profile.agePlaceholder": "เช่น: 25" },
+  hi: { "nav.training": "प्रशिक्षण", "profile.namePlaceholder": "जैसे: राहुल", "profile.bioPlaceholder": "अपना परिचय दर्ज करें", "profile.agePlaceholder": "जैसे: 25" },
+  ar: { "nav.training": "يتدرّب", "profile.namePlaceholder": "مث: أحمد", "profile.bioPlaceholder": "أدخل نبذتك", "profile.agePlaceholder": "مث: 25" },
+  tr: { "nav.training": "Antrenman", "profile.namePlaceholder": "ör: Ahmet", "profile.bioPlaceholder": "Biyografi gir", "profile.agePlaceholder": "ör: 25" },
+  "zh-TW": { "nav.training": "訓練中", "profile.namePlaceholder": "例如: 張三", "profile.bioPlaceholder": "輸入簡介", "profile.agePlaceholder": "例: 25" }
 };
