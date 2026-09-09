@@ -230,7 +230,7 @@ function AppLayoutInner() {
 
       {/* Mobile bottom tab bar — glass pill with bounce animation */}
       <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen || isPostDetail ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
-        <div className="flex items-center w-full max-w-sm bg-card/50 backdrop-blur-xl rounded-full border border-white/10 px-2 py-2 shadow-2xl shadow-black/50">
+        <div className="flex items-center w-full max-w-sm bg-card rounded-full border border-border px-2 py-2 shadow-2xl shadow-black/50">
           {nav.map((n) => (
             <NavItem key={n.to} n={n} active={location.pathname === n.to} t={t} />
           ))}
