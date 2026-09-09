@@ -12,7 +12,7 @@ export function initNotifStore(id) {
   if (id === meId && pollTimer) return;
   meId = id;
   if (pollTimer) clearInterval(pollTimer);
-  pollTimer = setInterval(poll, 15000);
+  pollTimer = setInterval(poll, 60000);
   poll();
   if (!eventAdded) {
     window.addEventListener("notifications-changed", poll);
