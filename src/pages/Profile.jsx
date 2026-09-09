@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, fetchUser } from "@/lib/profile";
@@ -8,6 +8,7 @@ import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
+import { getDemoUser } from "@/lib/demoUsers";
 import { Pencil, Mail, Loader2, ArrowLeft, Copy, Target, BarChart3 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -56,13 +57,31 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [favMap, setFavMap] = useState({});
   const [bioExpanded, setBioExpanded] = useState(false);
+  const [bioClamped, setBioClamped] = useState(false);
   const [copied, setCopied] = useState(false);
+  const bioRef = useRef(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!bioRef.current || bioExpanded) { setBioClamped(false); return; }
+    setBioClamped(bioRef.current.scrollHeight > bioRef.current.clientHeight + 2);
+  }, [user?.bio, bioExpanded, loading]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
+        // デモユーザー（モック）の場合はAPIを呼ばずモックデータを使用
+        const demo = getDemoUser(id);
+        if (demo) {
+          const meUser = await base44.auth.me().catch(() => null);
+          setUser(demo);
+          setMe(meUser);
+          setPosts([]);
+          setFollowers(0);
+          setFollowing(0);
+          return;
+        }
         const [u, meUser, ps, fols, fols2] = await Promise.all([
           fetchUser(id),
           base44.auth.me().catch(() => null),
@@ -96,7 +115,6 @@ export default function Profile() {
   const handle = user.email ? "@" + user.email.split("@")[0] : "";
   const levelLabel = user.level ? t("level." + user.level) : "";
   const purposeLbl = user.training_purpose ? purposeLabel(lang, user.training_purpose) : "";
-  const bioLong = user.bio && user.bio.length > 120;
 
   async function startDm() {
     if (blocked) return;
