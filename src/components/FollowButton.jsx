@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
 import { UserPlus, UserCheck } from "lucide-react";
 import { notify } from "@/lib/dm";
 import { useT } from "@/lib/i18n";
 import { useToast } from "@/components/ui/use-toast";
+import { initFollowStore, subscribeFollow, toggleFollow, isFollowStoreInitialized } from "@/lib/followStore";
 
 export default function FollowButton({ targetId, meId, onChange, size = "md" }) {
   const t = useT();
@@ -13,31 +13,25 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
   const inFlight = useRef(false);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      if (!meId || !targetId || meId === targetId) { setLoading(false); return; }
-      const f = await base44.entities.Follow.filter({ follower_id: meId, followee_id: targetId });
-      if (active) { setFollowing(f.length > 0); setLoading(false); }
-    })();
-    return () => { active = false; };
+    if (!meId || !targetId || meId === targetId) { setLoading(false); return; }
+    initFollowStore(meId);
+    const unsub = subscribeFollow(targetId, (isFollowing) => {
+      setFollowing(isFollowing);
+      if (isFollowStoreInitialized()) setLoading(false);
+    });
+    return unsub;
   }, [meId, targetId]);
 
   async function toggle() {
     if (inFlight.current || loading) return;
     inFlight.current = true;
-    const prev = following;
-    setFollowing(!prev); // Optimistic UI update — no intermediate state
     try {
-      if (prev) {
-        const existing = await base44.entities.Follow.filter({ follower_id: meId, followee_id: targetId });
-        for (const f of existing) await base44.entities.Follow.delete(f.id);
-      } else {
-        await base44.entities.Follow.create({ follower_id: meId, followee_id: targetId });
+      const result = await toggleFollow(targetId);
+      if (result.following) {
         notify(targetId, meId, "follow", t("notif.followed"), meId).catch(() => {});
       }
       onChange && onChange();
     } catch (err) {
-      setFollowing(prev); // Revert only on failure
       toast({ description: "通信エラーが発生しました" });
     } finally {
       inFlight.current = false;

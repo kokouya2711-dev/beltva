@@ -16,6 +16,7 @@ import NotificationsBell from "@/components/NotificationsBell";
 import { updatePresence, markOffline } from "@/lib/dm";
 import { initNotifStore, subscribeNotif } from "@/lib/notifStore";
 import { initDmUnreadStore, subscribeDmUnread } from "@/lib/dmUnreadStore";
+import { initFollowStore } from "@/lib/followStore";
 import { useT } from "@/lib/i18n";
 import { TrainingProvider } from "@/lib/trainingContext";
 import { Image } from "@/components/ui/image";
@@ -97,6 +98,7 @@ function AppLayoutInner() {
       if (u?.id) {
         initNotifStore(u.id);
         initDmUnreadStore(u.id);
+        initFollowStore(u.id);
       }
       // 初期設定：メイン言語未設定なら現在の表示言語で確定し保存（以降は表示言語と独立）
       if (u && !u.main_language) {
