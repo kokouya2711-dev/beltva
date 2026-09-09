@@ -29,7 +29,7 @@ export default function UserMenu({ meId, targetId }) {
   if (!meId || !targetId || meId === targetId) return null;
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen((v) => !v)} className="p-2 rounded-lg hover:bg-secondary"><MoreVertical className="w-4 h-4" /></button>
+      <button onClick={() => setOpen((v) => !v)} className="p-1.5 -mr-1.5 rounded-full hover:bg-secondary transition"><MoreVertical className="w-6 h-6" /></button>
       {open && (
         <div className="absolute right-0 top-10 z-50 glass border border-border rounded-xl py-1 w-40">
           <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? t("common.unmute") : t("common.mute")}</button>
