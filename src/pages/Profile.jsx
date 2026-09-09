@@ -9,7 +9,7 @@ import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { getDemoUser } from "@/lib/demoUsers";
-import { Pencil, Mail, Loader2, ArrowLeft, Copy, Target, BarChart3 } from "lucide-react";
+import { Mail, Loader2, ArrowLeft, Copy, Target, BarChart3 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 // 性別＋年齢ピル（デザイン参照）
@@ -19,7 +19,7 @@ function GenderAgePill({ gender, age, agePublic }) {
   const showAge = agePublic && age != null;
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold shrink-0 ${isMale ? "bg-primary text-primary-foreground" : "bg-[#FF6699] text-white"}`}>
-      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
         {isMale ? (
           <>
             <circle cx="10" cy="14" r="6" />
@@ -33,7 +33,7 @@ function GenderAgePill({ gender, age, agePublic }) {
           </>
         )}
       </svg>
-      {showAge && <span>{age}</span>}
+      {showAge && <span className="leading-none">{age}</span>}
     </span>
   );
 }
@@ -150,21 +150,15 @@ export default function Profile() {
   return (
     <div className="max-w-2xl mx-auto px-4 pb-10">
       {/* Header */}
-      <header className="flex items-center justify-between py-3">
+      <header className="flex items-center justify-between pt-5 pb-2">
         <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-full hover:bg-secondary transition">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        {isMe ? (
-          <button onClick={() => navigate("/profile/edit")} className="p-1.5 -mr-1.5 rounded-full hover:bg-secondary transition">
-            <Pencil className="w-5 h-5" />
-          </button>
-        ) : (
-          <UserMenu meId={me?.id} targetId={id} />
-        )}
+        {!isMe && <UserMenu meId={me?.id} targetId={id} />}
       </header>
 
       {/* Identity: avatar + name/gender-age + handle */}
-      <div className="flex items-start gap-4 mt-2">
+      <div className="flex items-start gap-4 mt-1">
         <div className="relative shrink-0">
           {user.avatar_url ? (
             <img src={user.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover" />
@@ -181,7 +175,7 @@ export default function Profile() {
             <GenderAgePill gender={user.gender} age={user.age} agePublic={user.age_public} />
           </div>
           {handle && (
-            <button onClick={copyHandle} className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
+            <button onClick={copyHandle} className="flex items-center gap-1 mt-1 text-sm text-foreground/55 font-medium">
               <span className="truncate">{handle}</span>
               <Copy className="w-3.5 h-3.5 shrink-0" />
               {copied && <span className="text-primary text-xs">✓</span>}
@@ -192,7 +186,7 @@ export default function Profile() {
 
       {/* Bio — full width, max 4 lines + more */}
       {user.bio && (
-        <div className="mt-3 text-[15px] text-foreground/90 leading-relaxed">
+        <div className="mt-3 text-[15px] text-foreground/90 leading-relaxed font-medium">
           <p ref={bioRef} className={`whitespace-pre-wrap ${bioExpanded ? "" : "line-clamp-4"}`}>{user.bio}</p>
           {(bioClamped || bioExpanded) && (
             <button onClick={() => setBioExpanded(v => !v)} className="text-primary text-xs font-semibold mt-1">
@@ -206,20 +200,20 @@ export default function Profile() {
       <div className="flex gap-2 mt-4">
         {purposeLbl && (
           <div className="flex-1 bg-secondary/60 rounded-xl p-3">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs text-foreground/55 font-medium">
               <Target className="w-3.5 h-3.5 text-primary" />
               {t("common.purpose")}
             </div>
-            <div className="text-sm font-semibold mt-1">{purposeLbl}</div>
+            <div className="text-sm font-bold mt-1">{purposeLbl}</div>
           </div>
         )}
         {levelLabel && (
           <div className="flex-1 bg-secondary/60 rounded-xl p-3">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs text-foreground/55 font-medium">
               <BarChart3 className="w-3.5 h-3.5 text-primary" />
               {t("profile.level")}
             </div>
-            <div className="text-sm font-semibold mt-1">{levelLabel}</div>
+            <div className="text-sm font-bold mt-1">{levelLabel}</div>
           </div>
         )}
       </div>
@@ -228,18 +222,18 @@ export default function Profile() {
       <div className="grid grid-cols-3 mt-5 py-2">
         <div className="flex flex-col items-center">
           <div className="font-bold text-lg">{postsCount}</div>
-          <div className="text-xs text-muted-foreground">{t("common.post")}</div>
+          <div className="text-xs text-foreground/55 font-medium">{t("common.post")}</div>
         </div>
         <div className="flex flex-col items-center border-x border-border">
           <Link to={`/profile/${id}/following`} className="flex flex-col items-center">
             <div className="font-bold text-lg">{following}</div>
-            <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
+            <div className="text-xs text-foreground/55 font-medium">{t("profile.following")}</div>
           </Link>
         </div>
         <div className="flex flex-col items-center">
           <Link to={`/profile/${id}/followers`} className="flex flex-col items-center">
             <div className="font-bold text-lg">{followers}</div>
-            <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
+            <div className="text-xs text-foreground/55 font-medium">{t("profile.followers")}</div>
           </Link>
         </div>
       </div>
