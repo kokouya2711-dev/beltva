@@ -46,6 +46,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   // Only fetch favorite status individually if not provided by parent (batch-fetched)
   useEffect(() => {
+    if (currentPost.isDummy) return;
     if (initialFavorited !== undefined) return;
     if (!meId || !currentPost.id) return;
     base44.entities.Favorite.filter({ post_id: currentPost.id, created_by_id: meId }).then((fs) => {
@@ -65,6 +66,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   // Fetch latest comments for preview (skip if batched data provided by parent)
   useEffect(() => {
+    if (currentPost.isDummy) return;
     if (batchedComments || !currentPost.id) return;
     base44.entities.Comment.filter({ post_id: currentPost.id }, "-created_date", 3).then(async (cs) => {
       setPreviewComments(cs.slice(0, 2));
@@ -81,7 +83,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   // Sync comment count via Post subscription
   useEffect(() => {
-    if (!currentPost.id) return;
+    if (currentPost.isDummy || !currentPost.id) return;
     const unsub = base44.entities.Post.subscribe((event) => {
       if (event.data?.id === currentPost.id && event.type === "update" && event.data.comments_count !== undefined) {
         setCommentsCount(event.data.comments_count);
