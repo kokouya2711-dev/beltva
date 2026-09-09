@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { UserPlus, UserCheck, Loader2 } from "lucide-react";
+import { UserPlus, UserCheck } from "lucide-react";
 import { notify } from "@/lib/dm";
 import { useT } from "@/lib/i18n";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function FollowButton({ targetId, meId, onChange, size = "md" }) {
   const t = useT();
+  const { toast } = useToast();
   const [following, setFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [pending, setPending] = useState(false);
+  const inFlight = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -21,21 +23,24 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
   }, [meId, targetId]);
 
   async function toggle() {
-    if (pending || loading) return;
-    setPending(true);
+    if (inFlight.current || loading) return;
+    inFlight.current = true;
+    const prev = following;
+    setFollowing(!prev); // Optimistic UI update — no intermediate state
     try {
-      if (following) {
+      if (prev) {
         const existing = await base44.entities.Follow.filter({ follower_id: meId, followee_id: targetId });
         for (const f of existing) await base44.entities.Follow.delete(f.id);
-        setFollowing(false);
       } else {
         await base44.entities.Follow.create({ follower_id: meId, followee_id: targetId });
-        setFollowing(true);
         notify(targetId, meId, "follow", t("notif.followed"), meId).catch(() => {});
       }
       onChange && onChange();
+    } catch (err) {
+      setFollowing(prev); // Revert only on failure
+      toast({ description: "通信エラーが発生しました" });
     } finally {
-      setPending(false);
+      inFlight.current = false;
     }
   }
 
@@ -45,30 +50,28 @@ export default function FollowButton({ targetId, meId, onChange, size = "md" }) 
     return (
       <button
         onClick={toggle}
-        disabled={loading || pending}
-        className={`text-xs font-semibold px-2.5 py-1 rounded-md border transition disabled:opacity-50 ${
+        className={`text-xs font-semibold px-2.5 py-1 rounded-md border transition ${
           following
-            ? "bg-secondary/40 border-border text-muted-foreground hover:border-red-500/40 hover:text-red-400"
-            : "bg-primary text-primary-foreground border-primary hover:opacity-90"
+            ? "bg-secondary/40 border-border text-muted-foreground"
+            : "bg-primary text-primary-foreground border-primary"
         }`}
       >
-        {pending ? "…" : following ? t("common.following") : t("common.follow")}
+        {following ? t("common.following") : t("common.follow")}
       </button>
     );
   }
 
-  const pad = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm";
+  const pad = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2.5 text-sm";
   return (
     <button
       onClick={toggle}
-      disabled={loading || pending}
-      className={`flex items-center gap-1.5 font-semibold rounded-xl border transition disabled:opacity-50 ${pad} ${
+      className={`flex items-center justify-center gap-1.5 font-semibold rounded-xl border transition ${pad} ${
         following
-          ? "bg-secondary/60 border-border text-muted-foreground hover:border-red-500/40 hover:text-red-400"
-          : "bg-primary text-primary-foreground border-primary hover:opacity-90"
+          ? "bg-secondary/60 border-border text-muted-foreground"
+          : "bg-primary text-primary-foreground border-primary"
       }`}
     >
-      {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : following ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+      {following ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
       {following ? t("common.following") : t("common.follow")}
     </button>
   );

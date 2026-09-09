@@ -19,7 +19,6 @@ import UsersPage from '@/pages/UsersPage';
 import SettingsPage from '@/pages/SettingsPage';
 import Profile from '@/pages/Profile';
 import ProfileEdit from '@/pages/ProfileEdit';
-import FollowList from '@/pages/FollowList';
 import Messages from '@/pages/Messages';
 import Chat from '@/pages/Chat';
 import PostDetail from '@/pages/PostDetail';
@@ -78,8 +77,6 @@ const AuthenticatedApp = () => {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/profile/:id" element={<Profile />} />
-          <Route path="/profile/:id/followers" element={<FollowList type="followers" />} />
-          <Route path="/profile/:id/following" element={<FollowList type="following" />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/messages/:conversationId" element={<Chat />} />
           <Route path="/posts/:id" element={<PostDetail />} />

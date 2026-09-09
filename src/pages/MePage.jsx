@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import { Pencil, Settings as SettingsIcon, Loader2, FileText, Bookmark } from "lucide-react";
@@ -108,14 +108,14 @@ export default function MePage() {
                 <div className="text-xs text-muted-foreground">{t("common.post")}</div>
                 <div className="font-bold text-foreground text-sm">{posts.length}</div>
               </div>
-              <Link to={`/profile/${me.id}/following`} className="text-center hover:text-primary transition">
+              <div className="text-center">
                 <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
                 <div className="font-bold text-foreground text-sm">{following}</div>
-              </Link>
-              <Link to={`/profile/${me.id}/followers`} className="text-center hover:text-primary transition">
+              </div>
+              <div className="text-center">
                 <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
                 <div className="font-bold text-foreground text-sm">{followers}</div>
-              </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 // 開発・テスト環境用ダミーユーザー（モックデータ）
 // Userレコードはプラットフォーム上で作成できないため、フィード表示・
 // 公開プロフィール確認用のモック。isDummyフラグで本番と区別。
-// import.meta.env.DEV が true（開発・プレビュー）の時のみフィードに表示。
+// 当アプリの未成年許可範囲（13〜17歳）のみで作成。
 
 export function isDevMode() {
   return import.meta.env.DEV === true;
@@ -20,7 +20,7 @@ export const DEMO_USERS = {
     age: 16,
     age_public: true,
     level: "beginner",
-    training_purpose: "muscle",
+    training_purpose: "bodymake",
     followers_count: 12,
     following_count: 8,
     posts_count: 2
@@ -34,30 +34,13 @@ export const DEMO_USERS = {
     bio: "ヨガとランニングを楽しんでいます🌿 心身ともに健康に！",
     country: "JP",
     gender: "female",
-    age: 24,
+    age: 15,
     age_public: false,
-    level: "intermediate",
+    level: "beginner",
     training_purpose: "health",
     followers_count: 45,
     following_count: 30,
     posts_count: 1
-  },
-  "demo-kohei": {
-    id: "demo-kohei",
-    isDummy: true,
-    display_name: "コウヘイ",
-    email: "kohei@beltva.demo",
-    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=KoheiLift&backgroundColor=3b82f6",
-    bio: "30代の会社員です。学生時代からラグビーをやっていて、今はフィットネスが趣味です。\n週3回ジムに通っていて、主に筋力トレーニングと有酸素運動を組み合わせています。\n最近はパワーリフティングに興味があり、スクワットの自己ベスト更新を目指しています。\n同じようにトレーニングしている仲間と情報交換できたら嬉しいです。\nよろしくお願いします！💪",
-    country: "JP",
-    gender: "male",
-    age: 32,
-    age_public: true,
-    level: "advanced",
-    training_purpose: "strength",
-    followers_count: 128,
-    following_count: 56,
-    posts_count: 2
   }
 };
 
@@ -99,29 +82,6 @@ export const DEMO_POSTS = [
     likes: 7,
     comments_count: 0,
     workout_type: "ランニング",
-    is_anonymous: false
-  },
-  {
-    id: "demo-post-4",
-    isDummy: true,
-    content: "今日は背中の日！デッドリフトで自己ベスト更新🎯\nフォーム意識したら安定感全然違う。",
-    created_date: _hoursAgo(1),
-    created_by_id: "demo-kohei",
-    created_by: DEMO_USERS["demo-kohei"],
-    likes: 15,
-    comments_count: 0,
-    workout_type: "デッドリフト",
-    is_anonymous: false
-  },
-  {
-    id: "demo-post-5",
-    isDummy: true,
-    content: "ジム仲間募集！一緒にトレーニングできる人いたら気軽に絡んでください🔥\n平日夕方〜夜に通ってます。",
-    created_date: _hoursAgo(20),
-    created_by_id: "demo-kohei",
-    created_by: DEMO_USERS["demo-kohei"],
-    likes: 8,
-    comments_count: 0,
     is_anonymous: false
   }
 ];

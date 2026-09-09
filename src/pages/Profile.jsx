@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, fetchUser } from "@/lib/profile";
 import { useT, useI18n } from "@/lib/i18n";
@@ -128,7 +128,7 @@ export default function Profile() {
   const handle = user.email ? "@" + user.email.split("@")[0] : "";
   const levelLabel = user.level ? t("level." + user.level) : "";
   const purposeLbl = user.training_purpose ? purposeLabel(lang, user.training_purpose) : "";
-  const postsCount = user?.posts_count ?? posts.length;
+  const postsCount = posts.length;
 
   async function startDm() {
     if (blocked) return;
@@ -225,16 +225,16 @@ export default function Profile() {
           <div className="text-xs text-foreground/55 font-medium">{t("common.post")}</div>
         </div>
         <div className="flex flex-col items-center border-x border-border">
-          <Link to={`/profile/${id}/following`} className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <div className="font-bold text-lg">{following}</div>
             <div className="text-xs text-foreground/55 font-medium">{t("profile.following")}</div>
-          </Link>
+          </div>
         </div>
         <div className="flex flex-col items-center">
-          <Link to={`/profile/${id}/followers`} className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <div className="font-bold text-lg">{followers}</div>
             <div className="text-xs text-foreground/55 font-medium">{t("profile.followers")}</div>
-          </Link>
+          </div>
         </div>
       </div>
 
@@ -246,7 +246,7 @@ export default function Profile() {
           </div>
           <div className="pl-2 border-l border-border">
             <button onClick={startDm} disabled={blocked} className="w-full flex items-center justify-center gap-1.5 bg-secondary text-foreground px-4 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
-              <Mail className="w-4 h-4" /> {t("common.message")}
+              <Mail className="w-4 h-4" /> {t("nav.messages")}
             </button>
           </div>
         </div>
