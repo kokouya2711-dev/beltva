@@ -185,7 +185,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
         </>
       )}
 
-      <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
+      <div className="text-base leading-relaxed whitespace-pre-wrap break-words mb-3">{currentPost.content}</div>
 
       {mediaUrls.length > 0 && (
         <MediaGrid mediaUrls={mediaUrls} onTap={(i) => setViewerIndex(i)} />
