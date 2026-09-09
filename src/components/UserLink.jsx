@@ -9,7 +9,7 @@ function CountryFlagBadge({ code, sizeCls }) {
   const cc = String(code).toLowerCase();
   const badge = sizeCls === "w-12 h-12" ? "w-4 h-4" : sizeCls === "w-10 h-10" ? "w-3.5 h-3.5" : "w-3 h-3";
   return (
-    <span className={`absolute -bottom-0.5 -right-0.5 ${badge} rounded-[3px] overflow-hidden`}>
+    <span className={`absolute -bottom-0.5 -right-0.5 ${badge} overflow-hidden ring-1 ring-background`}>
       <img
         src={`https://flagcdn.com/w40/${cc}.png`}
         srcSet={`https://flagcdn.com/w80/${cc}.png 2x`}
