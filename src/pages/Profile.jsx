@@ -179,8 +179,8 @@ export default function Profile() {
       {/* Bio — max 4 lines + more */}
       {user.bio && (
         <div className="mt-4 text-sm text-muted-foreground leading-relaxed">
-          <p className={`whitespace-pre-wrap ${bioExpanded ? "" : "line-clamp-4"}`}>{user.bio}</p>
-          {bioLong && (
+          <p ref={bioRef} className={`whitespace-pre-wrap ${bioExpanded ? "" : "line-clamp-4"}`}>{user.bio}</p>
+          {(bioClamped || bioExpanded) && (
             <button onClick={() => setBioExpanded(v => !v)} className="text-primary text-xs font-semibold mt-1">
               {bioExpanded ? t("common.close") : t("common.more")}
             </button>
