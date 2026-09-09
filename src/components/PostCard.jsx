@@ -198,11 +198,11 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
         <div className="flex items-center gap-4 text-sm">
           <button onClick={toggleLike} className={`flex items-center gap-1.5 transition ${liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}>
             <span key={bounceKey} className={bounceKey > 0 ? "heart-bounce" : "inline-flex"}>
-              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+              <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
             </span> {fmtNum(likes)}
           </button>
           <button onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
-            <MessageCircle className="w-4 h-4" /> {fmtNum(commentsCount)}
+            <MessageCircle className="w-5 h-5" /> {fmtNum(commentsCount)}
           </button>
         </div>
 
@@ -213,28 +213,28 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
               const name = u ? displayName(u) : "...";
               const initials = name.slice(0, 2).toUpperCase();
               return (
-                <div key={c.id} className="flex items-start gap-2 text-sm leading-snug">
+                <div key={c.id} className="flex items-start gap-2.5 text-[15px] leading-snug">
                   <Link
                     to={u ? `/profile/${u.id}` : "#"}
                     onClick={(e) => e.stopPropagation()}
                     className="shrink-0"
                   >
                     {u?.avatar_url ? (
-                      <img src={u.avatar_url} alt={name} className="w-6 h-6 rounded-full object-cover" />
+                      <img src={u.avatar_url} alt={name} className="w-8 h-8 rounded-full object-cover" />
                     ) : (
-                      <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold">{initials}</div>
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{initials}</div>
                     )}
                   </Link>
                   <div className="min-w-0 flex-1">
                     <Link
                       to={u ? `/profile/${u.id}` : "#"}
                       onClick={(e) => e.stopPropagation()}
-                      className="font-medium mr-1.5 hover:text-primary transition"
+                      className="font-semibold mr-1.5 hover:text-primary transition"
                     >
                       {name}
                     </Link>
                     <span
-                      className="text-muted-foreground whitespace-pre-wrap break-words cursor-pointer"
+                      className="text-foreground/90 text-[15px] whitespace-pre-wrap break-words cursor-pointer"
                       onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }}
                     >
                       {c.content}
