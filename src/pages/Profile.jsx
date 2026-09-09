@@ -1,22 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { displayName, flagEmoji, fetchUser } from "@/lib/profile";
-import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
+import { displayName, fetchUser } from "@/lib/profile";
 import { useT, useI18n } from "@/lib/i18n";
+import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
-import { Pencil, Mail, Loader2, ArrowLeft } from "lucide-react";
+import { Pencil, Mail, Loader2, ArrowLeft, Copy, Target, BarChart3 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+
+// 性別＋年齢ピル（デザイン参照）
+function GenderAgePill({ gender, age, agePublic }) {
+  if (!gender || gender === "undisclosed") return null;
+  const isMale = gender === "male";
+  const showAge = agePublic && age != null;
+  return (
+    <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-bold shrink-0 ${isMale ? "bg-primary text-primary-foreground" : "bg-[#FF6699] text-white"}`}>
+      <span>{isMale ? "♂" : "♀"}</span>
+      {showAge && <span>{age}</span>}
+    </span>
+  );
+}
+
+// 四角形の国旗（user.countryはISO 3166-1 alpha-2）
+function SquareFlag({ country }) {
+  if (!country || country.length !== 2) return null;
+  const cc = country.toLowerCase();
+  return (
+    <span className="block w-6 h-4 rounded-[3px] overflow-hidden ring-2 ring-background">
+      <img
+        src={`https://flagcdn.com/w40/${cc}.png`}
+        srcSet={`https://flagcdn.com/w80/${cc}.png 2x`}
+        alt=""
+        className="w-full h-full object-cover"
+        loading="lazy"
+        draggable={false}
+      />
+    </span>
+  );
+}
 
 export default function Profile() {
   const t = useT();
   const { lang } = useI18n();
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const [user, setUser] = useState(null);
   const [me, setMe] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -25,6 +55,8 @@ export default function Profile() {
   const [blocked, setBlocked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [favMap, setFavMap] = useState({});
+  const [bioExpanded, setBioExpanded] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -60,9 +92,11 @@ export default function Profile() {
   if (!user) return <div className="text-center py-20 text-muted-foreground">{t("profile.notFound")}</div>;
 
   const isMe = me && me.id === id;
-  const fromLikers = location.state?.from === "likers";
   const name = displayName(user);
-  const hobbies = parseHobbies(user.hobbies);
+  const handle = user.email ? "@" + user.email.split("@")[0] : "";
+  const levelLabel = user.level ? t("level." + user.level) : "";
+  const purposeLbl = user.training_purpose ? purposeLabel(lang, user.training_purpose) : "";
+  const bioLong = user.bio && user.bio.length > 120;
 
   async function startDm() {
     if (blocked) return;
@@ -72,97 +106,131 @@ export default function Profile() {
     navigate(`/messages/${conv.id}`);
   }
 
+  function copyHandle() {
+    if (!handle) return;
+    try {
+      navigator.clipboard?.writeText(handle);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  }
+
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-5">
-      {fromLikers && (
-        <div className="flex items-center gap-2">
-          <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-full hover:bg-secondary transition">
-            <ArrowLeft className="w-5 h-5" />
+    <div className="max-w-2xl mx-auto px-4 pb-10">
+      {/* Header */}
+      <header className="flex items-center justify-between py-3">
+        <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-full hover:bg-secondary transition">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        {isMe ? (
+          <button onClick={() => navigate("/profile/edit")} className="p-1.5 -mr-1.5 rounded-full hover:bg-secondary transition">
+            <Pencil className="w-5 h-5" />
           </button>
-          <span className="text-sm text-muted-foreground">{t("common.back")}</span>
-        </div>
-      )}
-      {/* Header card */}
-      <div className="glass rounded-3xl border border-border p-6 relative overflow-hidden">
-        <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-primary/15 blur-3xl" />
-        <div className="relative flex flex-col items-center text-center">
+        ) : (
+          <UserMenu meId={me?.id} targetId={id} />
+        )}
+      </header>
+
+      {/* Identity: avatar + name/gender-age + handle */}
+      <div className="flex items-start gap-3 mt-1">
+        <div className="relative shrink-0">
           {user.avatar_url ? (
-            <img src={user.avatar_url} alt={name} className="w-24 h-24 rounded-full object-cover border-2 border-border" />
+            <img src={user.avatar_url} alt={name} className="w-16 h-16 rounded-full object-cover" />
           ) : (
-            <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
           )}
-          <div className="flex items-center gap-2 mt-3">
-            <h1 className="text-xl font-bold">{name}</h1>
-            {user.country && <span className="text-xl">{flagEmoji(user.country)}</span>}
+          <span className="absolute -bottom-0.5 -right-0.5">
+            <SquareFlag country={user.country} />
+          </span>
+        </div>
+        <div className="min-w-0 flex-1 pt-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-bold truncate">{name}</h1>
+            <GenderAgePill gender={user.gender} age={user.age} agePublic={user.age_public} />
           </div>
-          {user.country && (() => {
-            let cname = user.country;
-            try { cname = new Intl.DisplayNames([lang], { type: "region" }).of(user.country) || user.country; } catch {}
-            return (
-              <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1 justify-center flex-wrap">
-                <span>{cname}</span>
-                {user.region && <span>· {user.region}</span>}
-              </div>
-            );
-          })()}
-          {user.bio && <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap max-w-md">{user.bio}</p>}
-
-          <div className="flex items-center gap-6 mt-4 text-sm">
-            <Link to={`/profile/${id}/followers`} className="hover:text-primary text-center">
-              <div className="font-bold text-foreground">{followers}</div>
-              <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
-            </Link>
-            <Link to={`/profile/${id}/following`} className="hover:text-primary text-center">
-              <div className="font-bold text-foreground">{following}</div>
-              <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-2 mt-5">
-            {isMe ? (
-              <button onClick={() => navigate("/profile/edit")} className="flex items-center gap-1.5 bg-secondary/60 border border-border px-4 py-2 rounded-xl text-sm font-semibold hover:border-primary">
-                <Pencil className="w-4 h-4" /> {t("common.edit")}
-              </button>
-            ) : (
-              <>
-                <FollowButton targetId={id} meId={me?.id} />
-                <button onClick={startDm} disabled={blocked} className="flex items-center gap-1.5 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90 disabled:opacity-50">
-                  <Mail className="w-4 h-4" /> {t("common.message")}
-                </button>
-                <UserMenu meId={me?.id} targetId={id} />
-              </>
-            )}
-          </div>
+          {handle && (
+            <button onClick={copyHandle} className="flex items-center gap-1 mt-0.5 text-sm text-muted-foreground">
+              <span className="truncate">{handle}</span>
+              <Copy className="w-3 h-3 shrink-0" />
+              {copied && <span className="text-primary text-xs">✓</span>}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Hobbies */}
-      {hobbies.length > 0 && (
-        <div className="glass rounded-2xl border border-border p-4">
-          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2">{t("common.hobbies")}</div>
-          <div className="flex flex-wrap gap-1.5">
-            {hobbies.map((h) => <span key={h} className="text-xs bg-secondary/60 border border-border rounded-full px-2.5 py-1">{hobbyLabel(h, lang)}</span>)}
+      {/* Bio — max 4 lines + more */}
+      {user.bio && (
+        <div className="mt-4 text-sm text-muted-foreground leading-relaxed">
+          <p className={`whitespace-pre-wrap ${bioExpanded ? "" : "line-clamp-4"}`}>{user.bio}</p>
+          {bioLong && (
+            <button onClick={() => setBioExpanded(v => !v)} className="text-primary text-xs font-semibold mt-1">
+              {bioExpanded ? t("common.close") : t("common.more")}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Tags: Goal + Level */}
+      <div className="flex gap-2 mt-4">
+        {purposeLbl && (
+          <div className="flex-1 bg-secondary/60 rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Target className="w-3.5 h-3.5 text-primary" />
+              {t("common.purpose")}
+            </div>
+            <div className="text-sm font-semibold mt-1">{purposeLbl}</div>
           </div>
-        </div>
-      )}
-
-      {/* Training purpose */}
-      {user.training_purpose && (
-        <div className="glass rounded-2xl border border-border p-4">
-          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{t("common.purpose")}</div>
-          <div className="text-sm font-medium text-primary">{t("purpose." + user.training_purpose)}</div>
-        </div>
-      )}
-
-      {/* Posts */}
-      <div>
-        <h2 className="font-bold text-lg mb-3">{t("profile.posts")}</h2>
-        {posts.length === 0 ? (
-          <div className="glass rounded-2xl border border-border py-10 text-center text-sm text-muted-foreground">{t("profile.noPosts")}</div>
-        ) : (
-          <div className="space-y-4">{posts.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />)}</div>
+        )}
+        {levelLabel && (
+          <div className="flex-1 bg-secondary/60 rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <BarChart3 className="w-3.5 h-3.5 text-primary" />
+              {t("profile.level")}
+            </div>
+            <div className="text-sm font-semibold mt-1">{levelLabel}</div>
+          </div>
         )}
       </div>
+
+      {/* Stats: posts / following / followers */}
+      <div className="flex items-center justify-around mt-4 py-1">
+        <div className="text-center">
+          <div className="font-bold">{posts.length}</div>
+          <div className="text-xs text-muted-foreground">{t("common.post")}</div>
+        </div>
+        <div className="w-px h-8 bg-border" />
+        <Link to={`/profile/${id}/following`} className="text-center">
+          <div className="font-bold">{following}</div>
+          <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
+        </Link>
+        <div className="w-px h-8 bg-border" />
+        <Link to={`/profile/${id}/followers`} className="text-center">
+          <div className="font-bold">{followers}</div>
+          <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
+        </Link>
+      </div>
+
+      {/* Action bar — only for others */}
+      {!isMe && (
+        <div className="flex gap-2 mt-4">
+          <div className="flex-1 [&>button]:w-full">
+            <FollowButton targetId={id} meId={me?.id} />
+          </div>
+          <button onClick={startDm} disabled={blocked} className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground px-4 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
+            <Mail className="w-4 h-4" /> {t("common.message")}
+          </button>
+        </div>
+      )}
+
+      {/* Posts header — centered */}
+      <h2 className="text-center text-base font-bold mt-8 mb-3">{t("common.post")}</h2>
+
+      {/* Posts — directly on background, no card */}
+      {posts.length === 0 ? (
+        <div className="text-center py-10 text-sm text-muted-foreground">{t("profile.noPosts")}</div>
+      ) : (
+        <div className="space-y-4">{posts.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />)}</div>
+      )}
     </div>
   );
 }
