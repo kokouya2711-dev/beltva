@@ -18,8 +18,21 @@ function GenderAgePill({ gender, age, agePublic }) {
   const isMale = gender === "male";
   const showAge = agePublic && age != null;
   return (
-    <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-bold shrink-0 ${isMale ? "bg-primary text-primary-foreground" : "bg-[#FF6699] text-white"}`}>
-      <span>{isMale ? "♂" : "♀"}</span>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold shrink-0 ${isMale ? "bg-primary text-primary-foreground" : "bg-[#FF6699] text-white"}`}>
+      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        {isMale ? (
+          <>
+            <circle cx="10" cy="14" r="6" />
+            <path d="M14 10 L20 4 M20 4 L15.5 4 M20 4 L20 8.5" />
+          </>
+        ) : (
+          <>
+            <circle cx="12" cy="9" r="6" />
+            <line x1="12" y1="15" x2="12" y2="22" />
+            <line x1="9" y1="19" x2="15" y2="19" />
+          </>
+        )}
+      </svg>
       {showAge && <span>{age}</span>}
     </span>
   );
@@ -30,7 +43,7 @@ function SquareFlag({ country }) {
   if (!country || country.length !== 2) return null;
   const cc = country.toLowerCase();
   return (
-    <span className="block w-6 h-4 rounded-[3px] overflow-hidden ring-2 ring-background">
+    <span className="block w-6 h-6 overflow-hidden ring-2 ring-background">
       <img
         src={`https://flagcdn.com/w40/${cc}.png`}
         srcSet={`https://flagcdn.com/w80/${cc}.png 2x`}
@@ -78,8 +91,8 @@ export default function Profile() {
           setUser(demo);
           setMe(meUser);
           setPosts([]);
-          setFollowers(0);
-          setFollowing(0);
+          setFollowers(demo.followers_count || 0);
+          setFollowing(demo.following_count || 0);
           return;
         }
         const [u, meUser, ps, fols, fols2] = await Promise.all([
@@ -115,6 +128,7 @@ export default function Profile() {
   const handle = user.email ? "@" + user.email.split("@")[0] : "";
   const levelLabel = user.level ? t("level." + user.level) : "";
   const purposeLbl = user.training_purpose ? purposeLabel(lang, user.training_purpose) : "";
+  const postsCount = user?.posts_count ?? posts.length;
 
   async function startDm() {
     if (blocked) return;
@@ -150,35 +164,35 @@ export default function Profile() {
       </header>
 
       {/* Identity: avatar + name/gender-age + handle */}
-      <div className="flex items-start gap-3 mt-1">
+      <div className="flex items-start gap-4 mt-2">
         <div className="relative shrink-0">
           {user.avatar_url ? (
-            <img src={user.avatar_url} alt={name} className="w-16 h-16 rounded-full object-cover" />
+            <img src={user.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
+            <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
           )}
-          <span className="absolute -bottom-0.5 -right-0.5">
+          <span className="absolute -bottom-1 -right-1">
             <SquareFlag country={user.country} />
           </span>
         </div>
-        <div className="min-w-0 flex-1 pt-0.5">
+        <div className="min-w-0 flex-1 pt-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-bold truncate">{name}</h1>
+            <h1 className="text-xl font-bold truncate">{name}</h1>
             <GenderAgePill gender={user.gender} age={user.age} agePublic={user.age_public} />
           </div>
           {handle && (
-            <button onClick={copyHandle} className="flex items-center gap-1 mt-0.5 text-sm text-muted-foreground">
+            <button onClick={copyHandle} className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
               <span className="truncate">{handle}</span>
-              <Copy className="w-3 h-3 shrink-0" />
+              <Copy className="w-3.5 h-3.5 shrink-0" />
               {copied && <span className="text-primary text-xs">✓</span>}
             </button>
           )}
         </div>
       </div>
 
-      {/* Bio — max 4 lines + more */}
+      {/* Bio — full width, max 4 lines + more */}
       {user.bio && (
-        <div className="mt-4 text-sm text-muted-foreground leading-relaxed">
+        <div className="mt-3 text-[15px] text-foreground/90 leading-relaxed">
           <p ref={bioRef} className={`whitespace-pre-wrap ${bioExpanded ? "" : "line-clamp-4"}`}>{user.bio}</p>
           {(bioClamped || bioExpanded) && (
             <button onClick={() => setBioExpanded(v => !v)} className="text-primary text-xs font-semibold mt-1">
@@ -210,44 +224,48 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Stats: posts / following / followers */}
-      <div className="flex items-center justify-around mt-4 py-1">
-        <div className="text-center">
-          <div className="font-bold">{posts.length}</div>
+      {/* Stats: posts / following / followers — 3 equal columns with dividers */}
+      <div className="grid grid-cols-3 mt-5 py-2">
+        <div className="flex flex-col items-center">
+          <div className="font-bold text-lg">{postsCount}</div>
           <div className="text-xs text-muted-foreground">{t("common.post")}</div>
         </div>
-        <div className="w-px h-8 bg-border" />
-        <Link to={`/profile/${id}/following`} className="text-center">
-          <div className="font-bold">{following}</div>
-          <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
-        </Link>
-        <div className="w-px h-8 bg-border" />
-        <Link to={`/profile/${id}/followers`} className="text-center">
-          <div className="font-bold">{followers}</div>
-          <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
-        </Link>
+        <div className="flex flex-col items-center border-x border-border">
+          <Link to={`/profile/${id}/following`} className="flex flex-col items-center">
+            <div className="font-bold text-lg">{following}</div>
+            <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
+          </Link>
+        </div>
+        <div className="flex flex-col items-center">
+          <Link to={`/profile/${id}/followers`} className="flex flex-col items-center">
+            <div className="font-bold text-lg">{followers}</div>
+            <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
+          </Link>
+        </div>
       </div>
 
-      {/* Action bar — only for others */}
+      {/* Action bar — only for others, equal width with center divider */}
       {!isMe && (
-        <div className="flex gap-2 mt-4">
-          <div className="flex-1 [&>button]:w-full">
+        <div className="grid grid-cols-2 mt-4">
+          <div className="pr-2 [&>button]:w-full">
             <FollowButton targetId={id} meId={me?.id} />
           </div>
-          <button onClick={startDm} disabled={blocked} className="flex-1 flex items-center justify-center gap-1.5 bg-secondary text-foreground px-4 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
-            <Mail className="w-4 h-4" /> {t("common.message")}
-          </button>
+          <div className="pl-2 border-l border-border">
+            <button onClick={startDm} disabled={blocked} className="w-full flex items-center justify-center gap-1.5 bg-secondary text-foreground px-4 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
+              <Mail className="w-4 h-4" /> {t("common.message")}
+            </button>
+          </div>
         </div>
       )}
 
       {/* Posts header — centered */}
-      <h2 className="text-center text-base font-bold mt-8 mb-3">{t("common.post")}</h2>
+      <h2 className="text-center text-base font-bold mt-5 mb-1">{t("common.post")}</h2>
 
-      {/* Posts — directly on background, no card */}
+      {/* Posts — no card, separated by full-width divider */}
       {posts.length === 0 ? (
         <div className="text-center py-10 text-sm text-muted-foreground">{t("profile.noPosts")}</div>
       ) : (
-        <div className="space-y-4">{posts.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />)}</div>
+        <div className="divide-y divide-border">{posts.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />)}</div>
       )}
     </div>
   );

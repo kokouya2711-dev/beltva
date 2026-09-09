@@ -1,22 +1,9 @@
 // 表示確認用のデモユーザー（モックデータ）
-// Userレコードはプラットーム上で作成できないため、公開プロフィール画面の
+// Userレコードはプラットフォーム上で作成できないため、公開プロフィール画面の
 // 他者ビュー（フォロー／チャット表示）確認用に3人分のモックを用意。
-// /profile/demo-emma /profile/demo-brock /profile/demo-luna でアクセス可能。
+// /profile/demo-brock /profile/demo-luna /profile/demo-emma でアクセス可能。
 
 export const DEMO_USERS = {
-  "demo-emma": {
-    id: "demo-emma",
-    display_name: "Emma",
-    email: "emmmmu@beltva.demo",
-    avatar_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop",
-    bio: "Just a girl who loves lifting and becoming a better version of herself. Upper pull day is my favorite. Always pushing for one more rep!",
-    country: "US",
-    gender: "female",
-    age: 21,
-    age_public: true,
-    level: "intermediate",
-    training_purpose: "bodymake"
-  },
   "demo-brock": {
     id: "demo-brock",
     display_name: "Brockton",
@@ -28,7 +15,10 @@ export const DEMO_USERS = {
     age: 16,
     age_public: true,
     level: "intermediate",
-    training_purpose: "bodymake"
+    training_purpose: "bodymake",
+    followers_count: 5,
+    following_count: 6,
+    posts_count: 81
   },
   "demo-luna": {
     id: "demo-luna",
@@ -41,7 +31,26 @@ export const DEMO_USERS = {
     age: 24,
     age_public: false,
     level: "advanced",
-    training_purpose: "health"
+    training_purpose: "health",
+    followers_count: 368,
+    following_count: 250,
+    posts_count: 64
+  },
+  "demo-emma": {
+    id: "demo-emma",
+    display_name: "Emma",
+    email: "emmmmu@beltva.demo",
+    avatar_url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop",
+    bio: "Just a girl who loves lifting and becoming a better version of herself. Upper pull day is my favorite. Always pushing for one more rep! Training 5x a week, focused on hypertrophy and strength. My goal is to compete in my first bikini competition next year. Let's get it! 💪",
+    country: "US",
+    gender: "female",
+    age: 21,
+    age_public: true,
+    level: "intermediate",
+    training_purpose: "bodymake",
+    followers_count: 968,
+    following_count: 368,
+    posts_count: 64
   }
 };
 
