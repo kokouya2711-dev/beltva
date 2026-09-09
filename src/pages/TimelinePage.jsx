@@ -7,6 +7,7 @@ import { Plus, Loader2, MessageSquare } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useTimelineFilter } from "@/lib/timelineFilterContext";
 import { saveTimelineCache, getTimelineCache, getTimelineScrollY } from "@/lib/timelineScrollCache";
+import { getDemoPosts } from "@/lib/demoUsers";
 
 function parseLangs(s) {
   try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; }
@@ -65,7 +66,10 @@ export default function TimelinePage() {
       base44.entities.Like.list("-created_date", 200).catch(() => []),
       base44.entities.Comment.list("-created_date", 200).catch(() => []),
     ]);
-    setPosts(ps);
+    const merged = [...getDemoPosts(), ...ps].sort(
+      (a, b) => new Date(b.created_date) - new Date(a.created_date)
+    );
+    setPosts(merged);
     setMe(meUser);
     const lMap = {};
     allLikes.forEach((l) => { (lMap[l.post_id] = lMap[l.post_id] || []).push(l); });

@@ -1,4 +1,5 @@
 import { base44 } from "@/api/base44Client";
+import { getDemoUser } from "@/lib/demoUsers";
 
 export function displayName(user) {
   if (!user) return "匿名";
@@ -165,6 +166,8 @@ const _userCache = new Map();
 
 export async function fetchUser(id) {
   if (!id) return null;
+  const demo = getDemoUser(id);
+  if (demo) { _userCache.set(id, demo); return demo; }
   if (_userCache.has(id)) return _userCache.get(id);
   try {
     const u = await base44.entities.User.get(id);

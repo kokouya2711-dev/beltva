@@ -118,6 +118,16 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   async function toggleLike(e) {
     e.stopPropagation();
     if (!meId) return;
+    if (currentPost.isDummy) {
+      if (myLikeId) {
+        setLikes((l) => Math.max(0, l - 1));
+        setLikers((arr) => arr.filter((l) => l.id !== myLikeId));
+      } else {
+        setLikes((l) => l + 1);
+        setLikers((arr) => [...arr, { id: "demo-like-" + Date.now(), created_by_id: meId }]);
+      }
+      return;
+    }
     if (myLikeId) {
       setLikes((l) => Math.max(0, l - 1));
       setLikers((arr) => arr.filter((l) => l.id !== myLikeId));
@@ -137,7 +147,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   }
 
   return (
-    <div className="pt-5 pb-5 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
+    <div className={`pt-5 pb-5 ${currentPost.isDummy ? "" : "cursor-pointer"}`} onClick={() => { if (!currentPost.isDummy) navigate(`/posts/${post.id}`); }}>
       {hideAuthor ? (
         <div className="flex items-center justify-between mb-2" onClick={(e) => e.stopPropagation()}>
           <div className="text-xs text-muted-foreground">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
@@ -201,7 +211,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
               <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
             </span> {fmtNum(likes)}
           </button>
-          <button onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
+          <button onClick={(e) => { e.stopPropagation(); !currentPost.isDummy && navigate(`/posts/${post.id}?scroll=comments`); }} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition">
             <MessageCircle className="w-5 h-5" /> {fmtNum(commentsCount)}
           </button>
         </div>
@@ -235,7 +245,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
                     </Link>
                     <span
                       className="text-foreground/90 text-[15px] whitespace-pre-wrap break-words cursor-pointer"
-                      onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }}
+                      onClick={(e) => { e.stopPropagation(); !currentPost.isDummy && navigate(`/posts/${post.id}?scroll=comments`); }}
                     >
                       {c.content}
                     </span>
@@ -245,7 +255,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
             })}
             {hasMoreComments && (
               <button
-                onClick={(e) => { e.stopPropagation(); navigate(`/posts/${post.id}?scroll=comments`); }}
+                onClick={(e) => { e.stopPropagation(); !currentPost.isDummy && navigate(`/posts/${post.id}?scroll=comments`); }}
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
                 {t("post.viewAllComments")}

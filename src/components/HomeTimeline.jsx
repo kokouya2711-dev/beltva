@@ -5,6 +5,7 @@ import { Loader2, MessageSquare } from "lucide-react";
 import { POST_CATEGORIES, CATEGORY_STYLE } from "@/lib/community";
 import { useT } from "@/lib/i18n";
 import { useTCategory } from "@/lib/i18nHelpers";
+import { getDemoPosts } from "@/lib/demoUsers";
 
 const TABS = [
   { key: "recommended", labelKey: "post.tab_recommended" },
@@ -29,7 +30,10 @@ export default function HomeTimeline() {
       base44.entities.Post.list("-created_date", 100),
       base44.auth.me().catch(() => null)
     ]);
-    setPosts(ps);
+    const merged = [...getDemoPosts(), ...ps].sort(
+      (a, b) => new Date(b.created_date) - new Date(a.created_date)
+    );
+    setPosts(merged);
     setMe(meUser);
     setLoading(false);
   }
