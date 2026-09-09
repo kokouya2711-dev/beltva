@@ -131,5 +131,5 @@ export function getDemoUser(id) {
 }
 
 export function getDemoPosts() {
-  return isDevMode() ? DEMO_POSTS : [];
+  return DEMO_POSTS;
 }
