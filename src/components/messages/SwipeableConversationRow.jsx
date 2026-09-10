@@ -173,7 +173,7 @@ export default function SwipeableConversationRow({
 
         {/* Sliding content */}
         <div
-          className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none"
+          className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none bg-background"
           style={{
             transform: `translateX(${offset}px)`,
             transition: animating ? "transform 0.25s ease-out" : "none",
