@@ -206,7 +206,7 @@ export default function SwipeableConversationRow({
                 {myMuted && <BellOff className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
                 <span className="font-medium truncate">{displayName(o)}</span>
               </div>
-              <span className="text-xs text-muted-foreground shrink-0 ml-2">{conv.last_message_at ? timeAgo(conv.last_message_at) : ""}</span>
+              <span className="text-xs text-muted-foreground shrink-0 ml-2">{conv.last_message_at ? (() => { const dd = new Date(conv.last_message_at); return Date.now() - dd.getTime() > 24 * 60 * 60 * 1000 ? `${dd.getMonth() + 1}/${dd.getDate()}` : timeAgo(conv.last_message_at); })() : ""}</span>
             </div>
             <div className={`text-sm truncate ${unread ? "text-foreground font-medium" : "text-muted-foreground"}`}>
               {conv.last_message ? t(conv.last_message) : t("messages.startChat")}
