@@ -173,7 +173,7 @@ export default function SwipeableConversationRow({
 
         {/* Sliding content */}
         <div
-          className="bg-card flex items-center gap-3 px-4 py-3 cursor-pointer select-none"
+          className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none"
           style={{
             transform: `translateX(${offset}px)`,
             transition: animating ? "transform 0.25s ease-out" : "none",
@@ -197,14 +197,18 @@ export default function SwipeableConversationRow({
                 {displayName(o).slice(0, 2).toUpperCase()}
               </div>
             )}
-            {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-card" />}
+            {o?.country && o.country.length === 2 && (
+              <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 overflow-hidden ring-1 ring-background">
+                <img src={`https://flagcdn.com/w40/${o.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${o.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
+              </span>
+            )}
+            {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-background" />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1 min-w-0">
                 {myPinned && <Pin className="w-3.5 h-3.5 text-primary shrink-0" />}
                 {myMuted && <BellOff className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
-                {o?.country && o.country.length === 2 && <img src={`https://flagcdn.com/w40/${o.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${o.country.toLowerCase()}.png 2x`} alt="" className="w-4 h-4 object-cover shrink-0" loading="lazy" />}
                 <span className="font-medium truncate">{displayName(o)}</span>
               </div>
               <span className="text-xs text-muted-foreground shrink-0 ml-2">{conv.last_message_at ? (() => { const dd = new Date(conv.last_message_at); return Date.now() - dd.getTime() > 24 * 60 * 60 * 1000 ? `${dd.getMonth() + 1}/${dd.getDate()}` : timeAgo(conv.last_message_at); })() : ""}</span>

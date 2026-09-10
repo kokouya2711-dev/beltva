@@ -8,9 +8,7 @@ export default function MessageBubble({ message, meId, read }) {
   const mine = message.sender_id === meId;
   const grouped = groupReactions(parseReactions(message.reactions));
   const d = new Date(message.created_date);
-  const time = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
-  const isOld = Date.now() - d.getTime() > 24 * 60 * 60 * 1000;
-  const displayTime = isOld ? `${d.getMonth() + 1}/${d.getDate()} ${time}` : time;
+  const displayTime = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
   return (
     <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
       <div className={`max-w-[78%] flex flex-col ${mine ? "items-end" : "items-start"}`}>
