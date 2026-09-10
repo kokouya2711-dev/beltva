@@ -7,6 +7,7 @@ import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
 import UserSearchOverlay from "@/components/users/UserSearchOverlay";
 import UserFilterPage from "@/components/users/UserFilterPage";
 import { PURPOSES, LEVEL_KEYS, levelKeyForYears, parseTrainingYears } from "@/lib/userFilters";
+import { DEMO_USERS } from "@/lib/demoUsers";
 
 const ONLINE_WINDOW = 30000;
 
@@ -56,7 +57,9 @@ export default function UsersPage() {
       setMe(meUser);
 
       const ageOk = (u) => u.age != null && (meIsMinor ? (u.age >= 13 && u.age <= 17) : (u.age >= 18 && u.age <= 99));
-      setUsers(us.filter((u) => u.id !== meUser?.id && ageOk(u)));
+      const realUsers = us.filter((u) => u.id !== meUser?.id && ageOk(u));
+      const demoList = Object.values(DEMO_USERS).filter((u) => u.id !== meUser?.id);
+      setUsers([...realUsers, ...demoList]);
 
       const pm = {};
       pres.forEach((p) => { pm[p.created_by_id] = p.last_seen; });
@@ -238,7 +241,7 @@ export default function UsersPage() {
       ) : filtered.length === 0 ? (
         <div className="text-center text-sm text-muted-foreground py-16">表示できる仲間がいません</div>
       ) : (
-        <div className="space-y-3 px-4 py-3">
+        <div className="divide-y divide-border">
           {filtered.map(({ u, common }) => (
             <UserCard
               key={u.id}

@@ -1,19 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { displayName, flagEmoji } from "@/lib/profile";
+import { displayName } from "@/lib/profile";
 import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
 import { useT, useI18n } from "@/lib/i18n";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { Mail, Flame } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import FollowButton from "@/components/FollowButton";
-
-function countryName(code, lang) {
-  try {
-    const dn = new Intl.DisplayNames([lang || "ja"], { type: "region" });
-    return dn.of(code) || code;
-  } catch { return code; }
-}
 
 export default function UserCard({ user, me, isOnline, isTraining, reason, commonHobbies }) {
   const navigate = useNavigate();
@@ -44,9 +37,9 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
   }
 
   return (
-    <div className="glass rounded-2xl border border-border p-4 flex gap-3">
-      <Link to={`/profile/${user.id}`} className="shrink-0">
-        <div className={`w-16 h-16 rounded-full p-0.5 ${ringClass}`}>
+    <div className="flex gap-3 py-3 px-4">
+      <Link to={`/profile/${user.id}`} className="shrink-0 relative">
+        <div className={`w-14 h-14 rounded-full p-0.5 ${ringClass}`}>
           {user.avatar_url ? (
             <img src={user.avatar_url} className="w-full h-full rounded-full object-cover border-2 border-card" />
           ) : (
@@ -55,13 +48,17 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
             </div>
           )}
         </div>
+        {user.country && user.share_country !== false && (
+          <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 overflow-hidden ring-2 ring-background">
+            <img src={`https://flagcdn.com/w40/${user.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${user.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
+          </span>
+        )}
       </Link>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <Link to={`/profile/${user.id}`} className="font-semibold truncate hover:text-primary">{name}</Link>
-          {user.country && user.share_country !== false && <span className="text-base leading-none">{flagEmoji(user.country)}</span>}
-          {user.country && user.share_country !== false && <span className="text-[10px] text-muted-foreground truncate">{countryName(user.country, lang)}{user.region ? ` · ${user.region}` : ""}</span>}
+          {user.region && <span className="text-[10px] text-muted-foreground truncate">· {user.region}</span>}
         </div>
         {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{user.bio}</p>}
         <div className="flex flex-wrap gap-1 mt-1.5">

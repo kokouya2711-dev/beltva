@@ -20,6 +20,8 @@ export const DEMO_USERS = {
     age: 16,
     age_public: true,
     level: "beginner",
+    training_history: "0.5年",
+    languages: '["ja"]',
     training_purpose: "bodymake",
     followers_count: 12,
     following_count: 8,
@@ -36,10 +38,31 @@ export const DEMO_USERS = {
     gender: "female",
     age: 15,
     age_public: false,
-    level: "beginner",
+    level: "intermediate",
+    training_history: "2年",
+    languages: '["ja"]',
     training_purpose: "health",
     followers_count: 45,
     following_count: 30,
+    posts_count: 1
+  },
+  "demo-alex": {
+    id: "demo-alex",
+    isDummy: true,
+    display_name: "Alex",
+    email: "alex@beltva.demo",
+    avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexLift&backgroundColor=3b82f6",
+    bio: "Powerlifter aiming for nationals. Squat 180kg and counting! 💪",
+    country: "US",
+    gender: "male",
+    age: 17,
+    age_public: true,
+    level: "advanced",
+    training_history: "4年",
+    languages: '["en"]',
+    training_purpose: "contest",
+    followers_count: 78,
+    following_count: 52,
     posts_count: 1
   }
 };
@@ -86,6 +109,19 @@ export const DEMO_POSTS = [
     workout_type: "ランニング",
     is_anonymous: false,
     languageCode: "ja"
+  },
+  {
+    id: "demo-post-4",
+    isDummy: true,
+    content: "New PR! Squat 180kg today. Working towards 200kg by next meet. 🏋️",
+    created_date: _hoursAgo(3),
+    created_by_id: "demo-alex",
+    created_by: DEMO_USERS["demo-alex"],
+    likes: 15,
+    comments_count: 2,
+    workout_type: "スクワット",
+    is_anonymous: false,
+    languageCode: "en"
   }
 ];
 

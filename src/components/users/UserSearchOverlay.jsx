@@ -47,7 +47,7 @@ export default function UserSearchOverlay({ users, me, isOnline, isTraining, onC
           />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto divide-y divide-border">
         {nq && results.length === 0 && (
           <div className="text-center text-sm text-muted-foreground py-12">該当するユーザーが見つかりません</div>
         )}
