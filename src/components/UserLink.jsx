@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { displayName } from "@/lib/profile";
 import { useT } from "@/lib/i18n";
-import AvatarViewer from "@/components/AvatarViewer";
 
 // 投稿者プロフィール画像右下の小さな正方形国旗バッジ（フラット・真っ直ぐ・角丸）
 function CountryFlagBadge({ code, sizeCls }) {
@@ -25,32 +24,24 @@ function CountryFlagBadge({ code, sizeCls }) {
 
 export default function UserLink({ user, size = "sm", showName = true, className = "" }) {
   const t = useT();
-  const [viewing, setViewing] = useState(false);
   if (!user) return <span className="text-muted-foreground">{t("common.anonymous")}</span>;
   const name = displayName(user);
   const initials = name.slice(0, 2).toUpperCase();
   const sizeCls = size === "lg" ? "w-12 h-12" : size === "md" ? "w-10 h-10" : "w-8 h-8";
   const textCls = size === "lg" ? "text-base" : "text-sm";
   return (
-    <>
-      <div className={`flex items-center gap-2 min-w-0 group ${className}`}>
-        <button
-          type="button"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (user.avatar_url) setViewing(true); }}
-          className="relative shrink-0"
-        >
-          {user.avatar_url ? (
-            <img src={user.avatar_url} alt={name} className={`${sizeCls} rounded-full object-cover`} />
-          ) : (
-            <div className={`${sizeCls} rounded-full bg-secondary flex items-center justify-center font-bold text-xs`}>{initials}</div>
-          )}
-          <CountryFlagBadge code={user.country} sizeCls={sizeCls} />
-        </button>
-        {showName && (
-          <Link to={`/profile/${user.id}`} className={`font-medium ${textCls} truncate group-hover:text-primary transition`}>{name}</Link>
+    <div className={`flex items-center gap-2 min-w-0 group ${className}`}>
+      <Link to={`/profile/${user.id}`} className="relative shrink-0">
+        {user.avatar_url ? (
+          <img src={user.avatar_url} alt={name} className={`${sizeCls} rounded-full object-cover`} />
+        ) : (
+          <div className={`${sizeCls} rounded-full bg-secondary flex items-center justify-center font-bold text-xs`}>{initials}</div>
         )}
-      </div>
-      {viewing && <AvatarViewer url={user.avatar_url} name={name} onClose={() => setViewing(false)} />}
-    </>
+        <CountryFlagBadge code={user.country} sizeCls={sizeCls} />
+      </Link>
+      {showName && (
+        <Link to={`/profile/${user.id}`} className={`font-medium ${textCls} truncate group-hover:text-primary transition`}>{name}</Link>
+      )}
+    </div>
   );
 }
