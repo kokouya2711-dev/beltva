@@ -42,6 +42,10 @@
       "type": "string",
       "title": "\u30e1\u30c7\u30a3\u30a2URL\u4e00\u89a7",
       "default": "[]"
+    },
+    "languageCode": {
+      "type": "string",
+      "title": "\u8a00\u8a9e\u30b3\u30fc\u30c9"
     }
   },
   "required": [

@@ -59,7 +59,8 @@ export const DEMO_POSTS = [
     likes: 3,
     comments_count: 0,
     workout_type: "ベンチプレス",
-    is_anonymous: false
+    is_anonymous: false,
+    languageCode: "ja"
   },
   {
     id: "demo-post-2",
@@ -70,7 +71,8 @@ export const DEMO_POSTS = [
     created_by: DEMO_USERS["demo-taro"],
     likes: 1,
     comments_count: 0,
-    is_anonymous: false
+    is_anonymous: false,
+    languageCode: "ja"
   },
   {
     id: "demo-post-3",
@@ -82,7 +84,8 @@ export const DEMO_POSTS = [
     likes: 7,
     comments_count: 0,
     workout_type: "ランニング",
-    is_anonymous: false
+    is_anonymous: false,
+    languageCode: "ja"
   }
 ];
 

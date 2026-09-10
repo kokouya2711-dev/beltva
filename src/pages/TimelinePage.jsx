@@ -13,14 +13,14 @@ function parseLangs(s) {
   try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch { return []; }
 }
 
-// おすすめ順：新しさ（3日以内は強めに優先）＋反応数をスコア化し、同じ投稿者が連続しないよう多様化
+// おすすめ順：人気（いいね＋コメント）を主軸、新しさでタイブレーク
 function recommendedSort(posts) {
   const now = Date.now();
   const scored = posts.map((p) => {
     const ageHours = (now - new Date(p.created_date).getTime()) / 3600000;
-    const recency = Math.max(0, 72 - ageHours); // 3日窓で線形減衰
-    const reactions = (p.likes || 0) + (p.comments_count || 0) * 2;
-    return { p, score: recency * 1.5 + reactions };
+    const recency = Math.max(0, 168 - ageHours); // 7日窓で線形減衰
+    const popularity = (p.likes || 0) + (p.comments_count || 0) * 2;
+    return { p, score: popularity * 10 + recency };
   });
   scored.sort((a, b) => b.score - a.score);
   // 同一投稿者が連続しないようインターリーブ
@@ -140,9 +140,9 @@ export default function TimelinePage() {
   if (blockedIds) filtered = filtered.filter((p) => !blockedIds.has(p.created_by_id));
   if (hiddenPostIds) filtered = filtered.filter((p) => !hiddenPostIds.has(p.id));
 
-  // 言語ルーム：投稿者のメイン言語が自分のメイン言語と同じ投稿のみ
+  // 言語ルーム：投稿の languageCode が自分のメイン言語と同じ投稿のみ
   if (room === "mylang" && myLang) {
-    filtered = filtered.filter((p) => userLangMap[p.created_by_id] === myLang);
+    filtered = filtered.filter((p) => p.languageCode === myLang);
   }
 
   // 表示：おすすめ＝新しさ＋反応＋多様性、最新＝新着順（リスト既定）

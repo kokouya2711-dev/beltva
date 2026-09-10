@@ -18,12 +18,16 @@ export default function CreatePost() {
   const [submitting, setSubmitting] = useState(false);
   const [mediaItems, setMediaItems] = useState([]);
   const [lastImageDate, setLastImageDate] = useState("");
+  const [myLang, setMyLang] = useState("ja");
   const [limitMsg, setLimitMsg] = useState(false);
   const anyUploading = mediaItems.some((it) => it.uploading);
   const limitTimer = useRef(null);
 
   useEffect(() => {
-    base44.auth.me().then((u) => setLastImageDate(u?.last_image_upload_date || "")).catch(() => {});
+    base44.auth.me().then((u) => {
+      setLastImageDate(u?.last_image_upload_date || "");
+      setMyLang(u?.main_language || u?.language || localStorage.getItem("beltva_lang") || "ja");
+    }).catch(() => {});
     return () => { if (limitTimer.current) clearTimeout(limitTimer.current); };
   }, []);
 
@@ -79,7 +83,8 @@ export default function CreatePost() {
         media_url: urls[0] || undefined,
         media_urls: JSON.stringify(urls),
         likes: 0,
-        comments_count: 0
+        comments_count: 0,
+        languageCode: myLang
       });
       if (urls.length > 0) {
         await base44.auth.updateMe({ last_image_upload_date: getTodayStr() }).catch(() => {});
