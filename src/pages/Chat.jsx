@@ -121,9 +121,17 @@ export default function Chat() {
       <div className="flex items-center gap-2 mb-3">
         <button onClick={() => navigate("/messages")} className="p-1.5"><ArrowLeft className="w-5 h-5" /></button>
         <Link to={`/profile/${otherId}`} className="flex items-center gap-2 flex-1 min-w-0">
-          {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
+          <div className="relative shrink-0">
+            {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
+            {other?.country && other.country.length === 2 && (
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 overflow-hidden ring-1 ring-background">
+                <img src={`https://flagcdn.com/w40/${other.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${other.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
+              </span>
+            )}
+            {online && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border border-background" />}
+          </div>
           <div className="min-w-0">
-            <div className="font-semibold truncate flex items-center gap-1.5">{other?.country && other.country.length === 2 && <img src={`https://flagcdn.com/w40/${other.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${other.country.toLowerCase()}.png 2x`} alt="" className="w-4 h-4 object-cover shrink-0" loading="lazy" />}{displayName(other)} {online && <span className="w-2 h-2 rounded-full bg-green-500" />}</div>
+            <div className="font-semibold truncate flex items-center gap-1.5">{displayName(other)}</div>
             <div className="text-xs text-muted-foreground">{online ? t("common.online") : t("common.offline")}</div>
           </div>
         </Link>
