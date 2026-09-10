@@ -64,6 +64,11 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
     }
   }, [currentPost.id]);
 
+  // Sync comment count from parent post prop (timeline subscription updates)
+  useEffect(() => {
+    if (post.comments_count != null) setCommentsCount(post.comments_count);
+  }, [post.comments_count]);
+
   // Fetch latest comments for preview (skip if batched data provided by parent)
   useEffect(() => {
     if (currentPost.isDummy) return;
@@ -81,16 +86,17 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
     }).catch(() => {});
   }, [currentPost.id, batchedComments]);
 
-  // Sync comment count via Post subscription
+  // Sync comment count via Post subscription — skip when parent batches (timeline handles updates)
   useEffect(() => {
     if (currentPost.isDummy || !currentPost.id) return;
+    if (batchedComments !== undefined) return;
     const unsub = base44.entities.Post.subscribe((event) => {
       if (event.data?.id === currentPost.id && event.type === "update" && event.data.comments_count !== undefined) {
         setCommentsCount(event.data.comments_count);
       }
     });
     return unsub;
-  }, [currentPost.id]);
+  }, [currentPost.id, batchedComments]);
 
   const myLikeId = useMemo(() => likers.find((l) => l.created_by_id === meId)?.id || null, [likers, meId]);
 

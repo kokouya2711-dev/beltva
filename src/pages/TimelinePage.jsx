@@ -128,6 +128,8 @@ export default function TimelinePage() {
     const unsub = base44.entities.Post.subscribe((event) => {
       if (event.type === "create") {
         setPosts((prev) => prev.some((p) => p.id === event.data.id) ? prev : [event.data, ...prev]);
+      } else if (event.type === "update") {
+        setPosts((prev) => prev.map((p) => p.id === event.data.id ? { ...p, ...event.data } : p));
       }
     });
     return unsub;
@@ -178,7 +180,7 @@ export default function TimelinePage() {
                     initialFavorited={favMap[p.id] !== undefined}
                     initialFavId={favMap[p.id] ?? null}
                     batchedAuthor={userMap[p.created_by_id] || null}
-                    batchedComments={commentsByPost[p.id] || null}
+                    batchedComments={commentsByPost[p.id] || []}
                     batchedUserMap={userMap}
                   />
                   {i < filtered.length - 1 && <div className="-mx-3.5 md:-mx-4 h-[6px] bg-separator" />}
