@@ -143,7 +143,7 @@ export default function SwipeableConversationRow({
         style={{ touchAction: "pan-y" }}
       >
         {/* Left action (revealed on right swipe): mute */}
-        <div className="absolute inset-y-0 left-0 flex items-stretch">
+        <div className="absolute inset-y-0 left-0 flex items-stretch transition-opacity duration-200" style={{ opacity: offset > 0 ? 1 : 0 }}>
           <button
             onClick={toggleMute}
             className="w-[80px] flex flex-col items-center justify-center gap-1 bg-slate-600 text-white"
@@ -154,7 +154,7 @@ export default function SwipeableConversationRow({
         </div>
 
         {/* Right actions (revealed on left swipe): pin + delete (delete outermost) */}
-        <div className="absolute inset-y-0 right-0 flex items-stretch">
+        <div className="absolute inset-y-0 right-0 flex items-stretch transition-opacity duration-200" style={{ opacity: offset < 0 ? 1 : 0 }}>
           <button
             onClick={togglePin}
             className="w-[75px] flex flex-col items-center justify-center gap-1 bg-primary text-primary-foreground"
@@ -173,7 +173,7 @@ export default function SwipeableConversationRow({
 
         {/* Sliding content */}
         <div
-          className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none bg-background"
+          className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none bg-transparent"
           style={{
             transform: `translateX(${offset}px)`,
             transition: animating ? "transform 0.25s ease-out" : "none",
