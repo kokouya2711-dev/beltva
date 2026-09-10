@@ -72,9 +72,9 @@ export default function Messages() {
   }, [convs, query, me, others]);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 pt-4 md:pt-6 pb-4">
+    <div className="max-w-2xl mx-auto pt-4 md:pt-6 pb-4">
       {/* Search bar — wide, no extra buttons */}
-      <div className="relative mb-4">
+      <div className="relative mb-4 px-4 md:px-8">
         <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           value={query}
@@ -88,7 +88,7 @@ export default function Messages() {
         <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : convs.length === 0 ? (
         /* Empty state — no card, centered directly on screen */
-        <div className="flex flex-col items-center justify-center text-center px-6" style={{ minHeight: "60vh" }}>
+        <div className="flex flex-col items-center justify-center text-center px-4 md:px-8" style={{ minHeight: "60vh" }}>
           <h2 className="text-xl font-bold text-foreground">{t("messages.emptyTitle")}</h2>
           <p className="text-sm text-muted-foreground mt-2">{t("messages.emptySub")}</p>
           <button
