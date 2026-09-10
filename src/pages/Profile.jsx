@@ -7,6 +7,7 @@ import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
+import AvatarViewer from "@/components/AvatarViewer";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { subscribeFollowChanges } from "@/lib/followStore";
 import { getDemoUser } from "@/lib/demoUsers";
@@ -71,6 +72,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [favMap, setFavMap] = useState({});
   const [bioExpanded, setBioExpanded] = useState(false);
+  const [viewingAvatar, setViewingAvatar] = useState(false);
   const [bioClamped, setBioClamped] = useState(false);
   const [copied, setCopied] = useState(false);
   const bioRef = useRef(null);
@@ -171,12 +173,14 @@ export default function Profile() {
       {/* Identity: avatar + name/gender-age + handle */}
       <div className="flex items-start gap-4 mt-1">
         <div className="relative shrink-0">
-          {user.avatar_url ? (
-            <img src={user.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover" />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
-          )}
-          <span className="absolute -bottom-1 -right-1">
+          <button type="button" onClick={() => user.avatar_url && setViewingAvatar(true)} className="block">
+            {user.avatar_url ? (
+              <img src={user.avatar_url} alt={name} className="w-20 h-20 rounded-full object-cover" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
+            )}
+          </button>
+          <span className="absolute -bottom-1 -right-1 pointer-events-none">
             <SquareFlag country={user.country} />
           </span>
         </div>
@@ -267,6 +271,10 @@ export default function Profile() {
         <div className="text-center py-10 text-sm text-muted-foreground">{t("profile.noPosts")}</div>
       ) : (
         <div className="divide-y divide-border">{posts.map((p) => <PostCard key={p.id} post={p} meId={me?.id} initialFavorited={favMap[p.id] !== undefined} initialFavId={favMap[p.id] ?? null} />)}</div>
+      )}
+
+      {viewingAvatar && user?.avatar_url && (
+        <AvatarViewer url={user.avatar_url} name={name} onClose={() => setViewingAvatar(false)} />
       )}
     </div>
   );
