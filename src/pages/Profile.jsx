@@ -235,11 +235,11 @@ export default function Profile() {
           <div className="font-bold text-lg">{postsCount}</div>
           <div className="text-xs text-foreground/55 font-medium">{t("common.post")}</div>
         </div>
-        <button onClick={() => navigate(`/users/${id}/follows/following`)} className="flex flex-col items-center border-x border-border hover:opacity-70 transition">
+        <button onClick={isMe ? () => navigate(`/users/${id}/follows/following`) : undefined} disabled={!isMe} className={`flex flex-col items-center border-x border-border ${isMe ? "hover:opacity-70 transition" : "cursor-default"}`}>
           <div className="font-bold text-lg">{following}</div>
           <div className="text-xs text-foreground/55 font-medium">{t("profile.following")}</div>
         </button>
-        <button onClick={() => navigate(`/users/${id}/follows/followers`)} className="flex flex-col items-center hover:opacity-70 transition">
+        <button onClick={isMe ? () => navigate(`/users/${id}/follows/followers`) : undefined} disabled={!isMe} className={`flex flex-col items-center ${isMe ? "hover:opacity-70 transition" : "cursor-default"}`}>
           <div className="font-bold text-lg">{followers}</div>
           <div className="text-xs text-foreground/55 font-medium">{t("profile.followers")}</div>
         </button>

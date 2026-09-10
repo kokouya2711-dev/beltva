@@ -14,11 +14,15 @@ export default function FollowListPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
+  const [denied, setDenied] = useState(false);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
+        // Only the profile owner can view their follow lists
+        const meUser = await base44.auth.me().catch(() => null);
+        if (!meUser || meUser.id !== id) { setDenied(true); return; }
         const follows = type === "followers"
           ? await base44.entities.Follow.filter({ followee_id: id }).catch(() => [])
           : await base44.entities.Follow.filter({ follower_id: id }).catch(() => []);
@@ -31,6 +35,20 @@ export default function FollowListPage() {
       }
     })();
   }, [id, type, tick]);
+
+  if (denied) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 pb-10">
+        <header className="flex items-center gap-3 pt-5 pb-3">
+          <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-full hover:bg-secondary transition">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-lg font-bold">{title}</h1>
+        </header>
+        <div className="text-center py-20 text-sm text-muted-foreground">—</div>
+      </div>
+    );
+  }
 
   const title = type === "followers" ? t("profile.followers") : t("profile.following");
 
