@@ -7,6 +7,8 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavo
   const t = useT();
   const [open, setOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [menuPos, setMenuPos] = useState(null);
+  const btnRef = useRef(null);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -15,6 +17,23 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavo
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, [open]);
+
+  function openMenu() {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const MENU_HEIGHT = 230; // approx 5 items × ~44px + padding
+      const BOTTOM_NAV = 80;
+      const spaceBelow = window.innerHeight - rect.bottom - BOTTOM_NAV;
+      const spaceAbove = rect.top;
+      const placeBelow = spaceBelow >= MENU_HEIGHT || spaceBelow >= spaceAbove;
+      if (placeBelow) {
+        setMenuPos({ top: rect.bottom + 4, left: rect.right - 176 });
+      } else {
+        setMenuPos({ top: rect.top - MENU_HEIGHT - 4, left: rect.right - 176 });
+      }
+    }
+    setOpen(true);
+  }
 
   async function handleMute() {
     setOpen(false);
@@ -61,14 +80,19 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavo
   return (
     <div className="relative shrink-0" ref={ref}>
       <button
-        onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+        ref={btnRef}
+        onClick={(e) => { e.stopPropagation(); open ? setOpen(false) : openMenu(); }}
         className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition"
       >
         <MoreVertical className="w-4 h-4" />
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-popover border border-border rounded-xl shadow-xl py-1" onClick={(e) => e.stopPropagation()}>
+      {open && menuPos && (
+        <div
+          className="fixed z-[60] w-44 bg-popover border border-border rounded-xl shadow-xl py-1"
+          style={{ top: `${menuPos.top}px`, left: `${menuPos.left}px` }}
+          onClick={(e) => e.stopPropagation()}
+        >
           {isOwner ? (
             <>
               <MenuItem icon={Pencil} label={t("common.edit")} onClick={() => { setOpen(false); onEdit?.(); }} />
