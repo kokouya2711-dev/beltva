@@ -47,7 +47,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   // Subscribe to global fav store for real-time sync across screens
   useEffect(() => {
-    if (!meId || !currentPost.id || currentPost.isDummy) return;
+    if (!meId || !currentPost.id) return;
     initFavStore(meId);
     return subscribeFavPost(currentPost.id, (fid) => {
       setIsFavorited(!!fid);
@@ -113,7 +113,6 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   async function toggleFavorite() {
     if (!meId) return;
-    if (currentPost.isDummy) return;
     try { await toggleFav(currentPost.id); } catch {}
   }
 
