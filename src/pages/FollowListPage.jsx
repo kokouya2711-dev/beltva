@@ -15,6 +15,7 @@ export default function FollowListPage() {
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
   const [denied, setDenied] = useState(false);
+  const title = type === "followers" ? t("profile.followers") : t("profile.following");
 
   useEffect(() => {
     (async () => {
@@ -49,8 +50,6 @@ export default function FollowListPage() {
       </div>
     );
   }
-
-  const title = type === "followers" ? t("profile.followers") : t("profile.following");
 
   return (
     <div className="max-w-2xl mx-auto px-4 pb-10">
