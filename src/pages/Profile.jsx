@@ -224,18 +224,14 @@ export default function Profile() {
           <div className="font-bold text-lg">{postsCount}</div>
           <div className="text-xs text-foreground/55 font-medium">{t("common.post")}</div>
         </div>
-        <div className="flex flex-col items-center border-x border-border">
-          <div className="flex flex-col items-center">
-            <div className="font-bold text-lg">{following}</div>
-            <div className="text-xs text-foreground/55 font-medium">{t("profile.following")}</div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <div className="font-bold text-lg">{followers}</div>
-            <div className="text-xs text-foreground/55 font-medium">{t("profile.followers")}</div>
-          </div>
-        </div>
+        <button onClick={() => navigate(`/users/${id}/follows/following`)} className="flex flex-col items-center border-x border-border hover:opacity-70 transition">
+          <div className="font-bold text-lg">{following}</div>
+          <div className="text-xs text-foreground/55 font-medium">{t("profile.following")}</div>
+        </button>
+        <button onClick={() => navigate(`/users/${id}/follows/followers`)} className="flex flex-col items-center hover:opacity-70 transition">
+          <div className="font-bold text-lg">{followers}</div>
+          <div className="text-xs text-foreground/55 font-medium">{t("profile.followers")}</div>
+        </button>
       </div>
 
       {/* Action bar — only for others, equal width with center divider */}

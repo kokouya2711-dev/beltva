@@ -116,14 +116,14 @@ export default function MePage() {
                 <div className="text-xs text-muted-foreground">{t("common.post")}</div>
                 <div className="font-bold text-foreground text-sm">{posts.length}</div>
               </div>
-              <div className="text-center">
+              <button onClick={() => navigate(`/users/${me.id}/follows/following`)} className="text-center hover:opacity-70 transition">
                 <div className="text-xs text-muted-foreground">{t("profile.following")}</div>
                 <div className="font-bold text-foreground text-sm">{following}</div>
-              </div>
-              <div className="text-center">
+              </button>
+              <button onClick={() => navigate(`/users/${me.id}/follows/followers`)} className="text-center hover:opacity-70 transition">
                 <div className="text-xs text-muted-foreground">{t("profile.followers")}</div>
                 <div className="font-bold text-foreground text-sm">{followers}</div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
