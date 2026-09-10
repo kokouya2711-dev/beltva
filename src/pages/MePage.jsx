@@ -7,6 +7,7 @@ import PostCard from "@/components/PostCard";
 import { displayName } from "@/lib/profile";
 import { DEMO_POSTS } from "@/lib/demoUsers";
 import { subscribeFavUpdates, getFavState, isFavStoreInitialized } from "@/lib/favStore";
+import { subscribeFollowChanges } from "@/lib/followStore";
 
 export default function MePage() {
   const t = useT();
@@ -26,6 +27,16 @@ export default function MePage() {
     const unsub = subscribeFavUpdates(() => setFavTick(t => t + 1));
     return unsub;
   }, []);
+
+  // Re-fetch following count when any follow/unfollow happens
+  useEffect(() => {
+    if (!me) return;
+    const unsub = subscribeFollowChanges(() => {
+      base44.entities.Follow.filter({ follower_id: me.id }).then(fols2 => setFollowing(fols2.length)).catch(() => {});
+      base44.entities.Follow.filter({ followee_id: me.id }).then(fols => setFollowers(fols.length)).catch(() => {});
+    });
+    return unsub;
+  }, [me]);
 
   useEffect(() => {
     (async () => {

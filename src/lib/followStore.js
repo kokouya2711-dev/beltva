@@ -9,6 +9,7 @@ let state = {};       // { [targetId]: { following: bool, recordId: string|null 
 let listeners = {};   // { [targetId]: Set<fn> }
 let initialized = false;
 let initPromise = null;
+let countListeners = new Set(); // global follow-change listeners
 
 export function initFollowStore(id) {
   if (!id) return;
@@ -44,6 +45,16 @@ export function getFollowState(targetId) {
   return state[targetId]?.following ?? false;
 }
 
+// Global follow-change subscription — fires on every successful follow/unfollow.
+export function subscribeFollowChanges(fn) {
+  countListeners.add(fn);
+  return () => { countListeners.delete(fn); };
+}
+
+function notifyFollowChange(targetId, isFollowing) {
+  countListeners.forEach(fn => fn(targetId, isFollowing));
+}
+
 export function subscribeFollow(targetId, fn) {
   if (!listeners[targetId]) listeners[targetId] = new Set();
   listeners[targetId].add(fn);
@@ -68,6 +79,7 @@ export async function toggleFollow(targetId) {
     notifyListeners(targetId);
     try {
       if (prevRecordId) await base44.entities.Follow.delete(prevRecordId);
+      notifyFollowChange(targetId, false);
       return { following: false };
     } catch (err) {
       state[targetId] = { following: true, recordId: prevRecordId };
@@ -82,6 +94,7 @@ export async function toggleFollow(targetId) {
       const rec = await base44.entities.Follow.create({ follower_id: meId, followee_id: targetId });
       state[targetId] = { following: true, recordId: rec.id };
       notifyListeners(targetId);
+      notifyFollowChange(targetId, true);
       return { following: true };
     } catch (err) {
       state[targetId] = { following: false, recordId: prevRecordId };

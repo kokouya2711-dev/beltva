@@ -8,6 +8,7 @@ import FollowButton from "@/components/FollowButton";
 import UserMenu from "@/components/UserMenu";
 import PostCard from "@/components/PostCard";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
+import { subscribeFollowChanges } from "@/lib/followStore";
 import { getDemoUser } from "@/lib/demoUsers";
 import { Mail, Loader2, ArrowLeft, Copy, Target, BarChart3 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -79,6 +80,16 @@ export default function Profile() {
     if (!bioRef.current || bioExpanded) { setBioClamped(false); return; }
     setBioClamped(bioRef.current.scrollHeight > bioRef.current.clientHeight + 2);
   }, [user?.bio, bioExpanded, loading]);
+
+  // Re-fetch counts when any follow/unfollow happens (affects this profile's stats)
+  useEffect(() => {
+    if (!id || getDemoUser(id)) return;
+    const unsub = subscribeFollowChanges(() => {
+      base44.entities.Follow.filter({ followee_id: id }).then(fols => setFollowers(fols.length)).catch(() => {});
+      base44.entities.Follow.filter({ follower_id: id }).then(fols2 => setFollowing(fols2.length)).catch(() => {});
+    });
+    return unsub;
+  }, [id]);
 
   useEffect(() => {
     (async () => {
