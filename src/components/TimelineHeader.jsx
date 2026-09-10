@@ -77,10 +77,10 @@ export default function TimelineHeader({ me }) {
       <Dropdown title="ルーム" options={roomOptions} value={room} onChange={setRoom} />
       <Dropdown title="表示" options={displayOptions} value={display} onChange={setDisplay} />
       <div className="flex-1" />
-      <NotificationsBell meId={me?.id} className="p-2" iconClassName="w-6 h-6 text-white" to="/notifications" />
+      <NotificationsBell meId={me?.id} className="p-2 shrink-0" iconClassName="w-6 h-6 text-white" to="/notifications" />
       <button
         onClick={() => navigate("/create-post")}
-        className="w-10 h-10 rounded-xl border border-white/30 flex items-center justify-center text-white active:scale-95 transition"
+        className="w-10 h-10 shrink-0 rounded-xl border border-white/30 flex items-center justify-center text-white active:scale-95 transition"
         aria-label="投稿"
       >
         <Plus className="w-6 h-6" />
