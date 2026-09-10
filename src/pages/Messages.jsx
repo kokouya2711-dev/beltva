@@ -101,7 +101,7 @@ export default function Messages() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-10 text-sm text-muted-foreground">{t("messages.noResults")}</div>
       ) : (
-        <div className="glass rounded-2xl border border-border overflow-hidden">
+        <div>
           {filtered.map((c) => {
             const otherId = c.a_id === me.id ? c.b_id : c.a_id;
             const o = others[otherId];

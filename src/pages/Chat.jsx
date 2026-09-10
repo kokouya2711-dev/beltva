@@ -8,6 +8,12 @@ import ReportDialog from "@/components/ReportDialog";
 import { useT } from "@/lib/i18n";
 import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
 
+const DAY_NAMES = ["日", "月", "火", "水", "木", "金", "土"];
+function formatDateLabel(dateStr) {
+  const d = new Date(dateStr);
+  return `${d.getMonth() + 1}/${d.getDate()}(${DAY_NAMES[d.getDay()]})`;
+}
+
 export default function Chat() {
   const t = useT();
   const { conversationId: id } = useParams();
@@ -117,7 +123,7 @@ export default function Chat() {
         <Link to={`/profile/${otherId}`} className="flex items-center gap-2 flex-1 min-w-0">
           {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
           <div className="min-w-0">
-            <div className="font-semibold truncate flex items-center gap-1.5">{displayName(other)} {online && <span className="w-2 h-2 rounded-full bg-green-500" />}</div>
+            <div className="font-semibold truncate flex items-center gap-1.5">{other?.country && other.country.length === 2 && <img src={`https://flagcdn.com/w40/${other.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${other.country.toLowerCase()}.png 2x`} alt="" className="w-4 h-4 object-cover shrink-0" loading="lazy" />}{displayName(other)} {online && <span className="w-2 h-2 rounded-full bg-green-500" />}</div>
             <div className="text-xs text-muted-foreground">{online ? t("common.online") : t("common.offline")}</div>
           </div>
         </Link>
@@ -136,19 +142,28 @@ export default function Chat() {
       {blocked && <div className="glass rounded-xl border border-border p-3 mb-3 text-sm text-muted-foreground">{t("messages.blocked")}</div>}
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-3">
-        {messages.map((m) => {
+        {messages.map((m, i) => {
           const read = m.sender_id === me.id && otherReadAt && new Date(otherReadAt).getTime() >= new Date(m.created_date).getTime();
+          const prev = messages[i - 1];
+          const showDateSep = !prev || new Date(prev.created_date).toDateString() !== new Date(m.created_date).toDateString();
           return (
-            <div key={m.id} onClick={() => setReactFor(reactFor === m.id ? null : m.id)}>
-              <MessageBubble message={m} meId={me.id} read={read} />
-              {reactFor === m.id && (
-                <div className="flex gap-1 mt-1 justify-end">
-                  {["👍", "❤️", "🔥", "😂", "💪"].map((e) => (
-                    <button key={e} onClick={(ev) => { ev.stopPropagation(); react(e); }} className="text-lg hover:scale-125 transition">{e}</button>
-                  ))}
+            <React.Fragment key={m.id}>
+              {showDateSep && (
+                <div className="flex justify-center my-3">
+                  <span className="text-xs text-muted-foreground bg-secondary/60 rounded-full px-3 py-1">{formatDateLabel(m.created_date)}</span>
                 </div>
               )}
-            </div>
+              <div onClick={() => setReactFor(reactFor === m.id ? null : m.id)}>
+                <MessageBubble message={m} meId={me.id} read={read} />
+                {reactFor === m.id && (
+                  <div className="flex gap-1 mt-1 justify-end">
+                    {["👍", "❤️", "🔥", "😂", "💪"].map((e) => (
+                      <button key={e} onClick={(ev) => { ev.stopPropagation(); react(e); }} className="text-lg hover:scale-125 transition">{e}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </React.Fragment>
           );
         })}
       </div>

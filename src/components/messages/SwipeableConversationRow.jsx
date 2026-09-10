@@ -204,6 +204,7 @@ export default function SwipeableConversationRow({
               <div className="flex items-center gap-1 min-w-0">
                 {myPinned && <Pin className="w-3.5 h-3.5 text-primary shrink-0" />}
                 {myMuted && <BellOff className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
+                {o?.country && o.country.length === 2 && <img src={`https://flagcdn.com/w40/${o.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${o.country.toLowerCase()}.png 2x`} alt="" className="w-4 h-4 object-cover shrink-0" loading="lazy" />}
                 <span className="font-medium truncate">{displayName(o)}</span>
               </div>
               <span className="text-xs text-muted-foreground shrink-0 ml-2">{conv.last_message_at ? (() => { const dd = new Date(conv.last_message_at); return Date.now() - dd.getTime() > 24 * 60 * 60 * 1000 ? `${dd.getMonth() + 1}/${dd.getDate()}` : timeAgo(conv.last_message_at); })() : ""}</span>
