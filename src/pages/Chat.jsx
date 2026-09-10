@@ -111,7 +111,7 @@ export default function Chat() {
   async function toggleMute() { if (muted) { await unmuteUser(me.id, otherId); setMuted(false); } else { await muteUser(me.id, otherId); setMuted(true); } setMenuOpen(false); }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-6 flex flex-col h-[calc(100dvh-7rem)] md:h-[calc(100dvh-3rem)]">
+    <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-6 flex flex-col h-[calc(100dvh-2rem)] md:h-[calc(100dvh-3rem)]">
       <div className="flex items-center gap-2 mb-3">
         <button onClick={() => navigate("/messages")} className="p-1.5"><ArrowLeft className="w-5 h-5" /></button>
         <Link to={`/profile/${otherId}`} className="flex items-center gap-2 flex-1 min-w-0">

@@ -7,6 +7,8 @@ export default function MessageBubble({ message, meId, read }) {
   const t = useT();
   const mine = message.sender_id === meId;
   const grouped = groupReactions(parseReactions(message.reactions));
+  const d = new Date(message.created_date);
+  const time = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
   return (
     <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
       <div className={`max-w-[78%] flex flex-col ${mine ? "items-end" : "items-start"}`}>
@@ -21,11 +23,10 @@ export default function MessageBubble({ message, meId, read }) {
             ))}
           </div>
         )}
-        {mine && (
-          <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-0.5">
-            {read ? <><CheckCheck className="w-3 h-3" /> {t("common.read")}</> : <Check className="w-3 h-3" />}
-          </div>
-        )}
+        <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+          {mine && (read ? <><CheckCheck className="w-3 h-3" /> {t("common.read")}</> : <Check className="w-3 h-3" />)}
+          <span>{time}</span>
+        </div>
       </div>
     </div>
   );

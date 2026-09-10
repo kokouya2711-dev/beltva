@@ -92,6 +92,7 @@ function AppLayoutInner() {
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const headerHidden = useScrollDirection([location.pathname]);
   const isPostDetail = location.pathname.startsWith("/posts/");
+  const isChatDetail = location.pathname.startsWith("/messages/") && location.pathname !== "/messages";
 
   React.useEffect(() => {
     base44.auth.me().then((u) => {
@@ -228,12 +229,12 @@ function AppLayoutInner() {
       )}
 
       {/* Main content */}
-      <main className={`flex-1 min-w-0 md:pb-8 ${keyboardOpen ? "pb-4" : isPostDetail ? "pb-0" : "pb-28"}`}>
+      <main className={`flex-1 min-w-0 md:pb-8 ${keyboardOpen ? "pb-4" : isPostDetail || isChatDetail ? "pb-0" : "pb-28"}`}>
         <MemoizedOutlet />
       </main>
 
       {/* Mobile bottom tab bar — glass pill with bounce animation */}
-      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen || isPostDetail ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
+      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen || isPostDetail || isChatDetail ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
         <div className="flex items-center w-full max-w-sm bg-card rounded-full border border-border px-2 py-2 shadow-2xl shadow-black/50">
           {nav.map((n) => (
             <NavItem key={n.to} n={n} active={location.pathname === n.to} t={t} />
