@@ -5,6 +5,7 @@ import { useT } from "@/lib/i18n";
 import { Pencil, Settings as SettingsIcon, Loader2, FileText, Bookmark } from "lucide-react";
 import PostCard from "@/components/PostCard";
 import { displayName } from "@/lib/profile";
+import { DEMO_POSTS } from "@/lib/demoUsers";
 
 export default function MePage() {
   const t = useT();
@@ -46,11 +47,12 @@ export default function MePage() {
         allLikes.forEach((l) => { (lMap[l.post_id] = lMap[l.post_id] || []).push(l); });
         setLikesByPost(lMap);
 
-        // Fetch favorite posts
+        // Fetch favorite posts — get each post by ID, and include matching demo posts
         if (myFavs.length) {
           const favPostIds = myFavs.map((f) => f.post_id);
-          const allPosts = await base44.entities.Post.list("-created_date", 200).catch(() => []);
-          setFavPosts(allPosts.filter((p) => favPostIds.includes(p.id)));
+          const realPosts = await Promise.all(myFavs.map((f) => base44.entities.Post.get(f.post_id).catch(() => null)));
+          const demoFavPosts = DEMO_POSTS.filter((p) => favPostIds.includes(p.id));
+          setFavPosts([...realPosts.filter(Boolean), ...demoFavPosts]);
         }
       } finally {
         setLoading(false);
@@ -65,6 +67,12 @@ export default function MePage() {
 
   const name = displayName(me);
   const list = tab === "posts" ? posts : favPosts;
+
+  async function removeFav(favId, postId) {
+    await base44.entities.Favorite.delete(favId).catch(() => {});
+    setFavMap((prev) => { const n = { ...prev }; delete n[postId]; return n; });
+    setFavPosts((prev) => prev.filter((p) => p.id !== postId));
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -148,15 +156,25 @@ export default function MePage() {
           <div>
             {list.map((p, i) => (
               <React.Fragment key={p.id}>
-                <PostCard
-                  post={p}
-                  meId={me.id}
-                  initialLikers={likesByPost[p.id] || []}
-                  initialFavorited={favMap[p.id] !== undefined}
-                  initialFavId={favMap[p.id] ?? null}
-                  batchedAuthor={me}
-                  hideAuthor={tab === "posts"}
-                />
+                <div className="relative">
+                  <PostCard
+                    post={p}
+                    meId={me.id}
+                    initialLikers={likesByPost[p.id] || []}
+                    initialFavorited={favMap[p.id] !== undefined}
+                    initialFavId={favMap[p.id] ?? null}
+                    batchedAuthor={tab === "posts" ? me : undefined}
+                    hideAuthor={tab === "posts"}
+                  />
+                  {tab === "favorites" && favMap[p.id] && (
+                    <button
+                      onClick={() => removeFav(favMap[p.id], p.id)}
+                      className="absolute top-2 right-2 z-10 text-xs px-2.5 py-1 rounded-lg bg-secondary/80 border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 transition"
+                    >
+                      {t("post.unfavorite")}
+                    </button>
+                  )}
+                </div>
                 {i < list.length - 1 && <div className="-mx-3.5 md:-mx-4 h-[6px] bg-separator" />}
               </React.Fragment>
             ))}
