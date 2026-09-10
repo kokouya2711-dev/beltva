@@ -74,14 +74,16 @@ export default function Messages() {
   return (
     <div className="max-w-2xl mx-auto pt-4 md:pt-6 pb-4">
       {/* Search bar — wide, no extra buttons */}
-      <div className="relative mb-4 px-4 md:px-8">
-        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("messages.searchPlaceholder")}
-          className="w-full bg-secondary/60 border border-border rounded-full pl-10 pr-4 py-2.5 text-sm outline-none focus:border-primary"
-        />
+      <div className="mb-4 px-4 md:px-8">
+        <div className="relative">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("messages.searchPlaceholder")}
+            className="w-full bg-secondary/60 border border-border rounded-full pl-10 pr-4 py-2.5 text-sm outline-none focus:border-primary"
+          />
+        </div>
       </div>
 
       {loading ? (
