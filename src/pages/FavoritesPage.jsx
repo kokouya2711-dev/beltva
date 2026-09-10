@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Bookmark, Loader2, ArrowLeft } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import PostCard from "@/components/PostCard";
+import { subscribeFavUpdates, getFavState, isFavStoreInitialized } from "@/lib/favStore";
 
 export default function FavoritesPage() {
   const t = useT();
@@ -11,6 +12,12 @@ export default function FavoritesPage() {
   const [favs, setFavs] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [, setFavTick] = useState(0);
+
+  useEffect(() => {
+    const unsub = subscribeFavUpdates(() => setFavTick(t => t + 1));
+    return unsub;
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -24,12 +31,6 @@ export default function FavoritesPage() {
       setLoading(false);
     })();
   }, []);
-
-  async function removeFav(favId, postId) {
-    await base44.entities.Favorite.delete(favId).catch(() => {});
-    setFavs((prev) => prev.filter((f) => f.id !== favId));
-    setPosts((prev) => prev.filter((p) => p.id !== postId));
-  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
@@ -47,18 +48,10 @@ export default function FavoritesPage() {
         </div>
       ) : (
         <div>
-          {posts.map((p, i) => (
+          {posts.filter((p) => isFavStoreInitialized() ? getFavState(p.id) !== null : true).map((p, i, arr) => (
             <React.Fragment key={p.id}>
-              <div className="relative">
-                <PostCard post={p} meId={me?.id} initialFavorited={true} initialFavId={favs.find((f) => f.post_id === p.id)?.id ?? null} />
-                <button
-                  onClick={() => removeFav(favs.find((f) => f.post_id === p.id)?.id, p.id)}
-                  className="absolute top-2 right-2 z-10 text-xs px-2 py-1 rounded-lg bg-secondary/80 border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 transition"
-                >
-                  {t("post.unfavorite")}
-                </button>
-              </div>
-              {i < posts.length - 1 && <div className="-mx-2 md:-mx-4 h-[10px] bg-separator" />}
+              <PostCard post={p} meId={me?.id} initialFavorited={true} initialFavId={favs.find((f) => f.post_id === p.id)?.id ?? null} />
+              {i < arr.length - 1 && <div className="-mx-2 md:-mx-4 h-[10px] bg-separator" />}
             </React.Fragment>
           ))}
         </div>

@@ -16,6 +16,7 @@ import { notify } from "@/lib/dm";
 import { getMediaUrls } from "@/lib/media";
 import { haptic } from "@/lib/haptics";
 import { getCommentCountUpdate, clearCommentCountUpdate } from "@/lib/commentCountStore";
+import { initFavStore, subscribeFavPost, toggleFav } from "@/lib/favStore";
 
 export default function PostCard({ post, meId, initialLikers = [], initialFavorited, initialFavId, batchedAuthor, batchedComments, batchedUserMap, hideAuthor = false }) {
   const t = useT();
@@ -44,15 +45,15 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
     fetchUser(currentPost.created_by_id).then(setAuthor).catch(() => {});
   }, [currentPost.created_by_id, currentPost.is_anonymous, currentPost.created_by, batchedAuthor]);
 
-  // Only fetch favorite status individually if not provided by parent (batch-fetched)
+  // Subscribe to global fav store for real-time sync across screens
   useEffect(() => {
-    if (currentPost.isDummy) return;
-    if (initialFavorited !== undefined) return;
-    if (!meId || !currentPost.id) return;
-    base44.entities.Favorite.filter({ post_id: currentPost.id, created_by_id: meId }).then((fs) => {
-      if (fs.length) { setIsFavorited(true); setFavId(fs[0].id); }
-    }).catch(() => {});
-  }, [meId, currentPost.id, initialFavorited]);
+    if (!meId || !currentPost.id || currentPost.isDummy) return;
+    initFavStore(meId);
+    return subscribeFavPost(currentPost.id, (fid) => {
+      setIsFavorited(!!fid);
+      setFavId(fid);
+    });
+  }, [meId, currentPost.id]);
 
   // Apply pending comment count update from PostDetail (covers remount after navigation)
   useEffect(() => {
@@ -112,15 +113,8 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
 
   async function toggleFavorite() {
     if (!meId) return;
-    if (isFavorited && favId) {
-      await base44.entities.Favorite.delete(favId).catch(() => {});
-      setIsFavorited(false);
-      setFavId(null);
-    } else {
-      const rec = await base44.entities.Favorite.create({ post_id: currentPost.id });
-      setIsFavorited(true);
-      setFavId(rec.id);
-    }
+    if (currentPost.isDummy) return;
+    try { await toggleFav(currentPost.id); } catch {}
   }
 
   async function toggleLike(e) {
