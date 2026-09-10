@@ -14,6 +14,7 @@ import { displayName, fetchUser } from "@/lib/profile";
 import { notify } from "@/lib/dm";
 import { haptic } from "@/lib/haptics";
 import { setCommentCountUpdate } from "@/lib/commentCountStore";
+import { DEMO_POSTS } from "@/lib/demoUsers";
 
 export default function PostDetail() {
   const t = useT();
@@ -56,9 +57,20 @@ export default function PostDetail() {
     (async () => {
       const me = await base44.auth.me().catch(() => null);
       setMeId(me?.id);
-      const p = await base44.entities.Post.get(id).catch(() => null);
+      let p = await base44.entities.Post.get(id).catch(() => null);
+      if (!p) p = DEMO_POSTS.find((dp) => dp.id === id) || null;
       setPost(p);
       setLikes(p?.likes || 0);
+      if (p?.isDummy) {
+        setComments([]);
+        setLikers([]);
+        if (p.created_by) {
+          setAuthor(p.created_by);
+          setUsers({ [p.created_by_id]: p.created_by });
+        }
+        setLoading(false);
+        return;
+      }
       const cs = await base44.entities.Comment.filter({ post_id: id }, "-created_date", 500).catch(() => []);
       setComments(cs);
       const ls = await base44.entities.Like.filter({ post_id: id }, "-created_date", 100).catch(() => []);

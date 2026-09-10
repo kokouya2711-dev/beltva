@@ -148,7 +148,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
   }
 
   return (
-    <div className={`pt-5 pb-5 ${currentPost.isDummy ? "" : "cursor-pointer"}`} onClick={() => { if (!currentPost.isDummy) navigate(`/posts/${post.id}`); }}>
+    <div className="pt-5 pb-5 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
       {hideAuthor ? (
         <div className="flex items-center justify-between mb-2" onClick={(e) => e.stopPropagation()}>
           <div className="text-xs text-muted-foreground">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
