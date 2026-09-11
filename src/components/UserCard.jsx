@@ -3,10 +3,37 @@ import { Link, useNavigate } from "react-router-dom";
 import { displayName } from "@/lib/profile";
 import { parseHobbies, hobbyLabel } from "@/lib/hobbies";
 import { useT, useI18n } from "@/lib/i18n";
+import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
-import { Mail, Flame } from "lucide-react";
+import { MessageCircleMore, Flame } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import FollowButton from "@/components/FollowButton";
+
+// 性別＋年齢バッジ（男性=ネオンイエロー、女性=ピンク）
+// 年齢非公開の場合は性別マークのみ表示
+function GenderAgePill({ gender, age, agePublic }) {
+  if (!gender || gender === "undisclosed") return null;
+  const isMale = gender === "male";
+  const showAge = agePublic && age != null;
+  return (
+    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${isMale ? "bg-primary text-primary-foreground" : "bg-[#FF6699] text-white"}`}>
+      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+        {isMale ? (
+          <>
+            <circle cx="10" cy="14" r="6" />
+            <path d="M14 10 L20 4 M20 4 L15.5 4 M20 4 L20 8.5" />
+          </>
+        ) : (
+          <>
+            <circle cx="12" cy="9" r="6" />
+            <line x1="12" y1="15" x2="12" y2="22" />
+            <line x1="9" y1="19" x2="15" y2="19" />
+          </>
+        )}
+      </svg>
+      {showAge && <span className="leading-none">{age}</span>}
+    </span>
+  );
+}
 
 export default function UserCard({ user, me, isOnline, isTraining, reason, commonHobbies }) {
   const navigate = useNavigate();
@@ -36,6 +63,8 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
     navigate(`/messages/${conv.id}`);
   }
 
+  const purposeLbl = user.training_purpose ? purposeLabel(lang, user.training_purpose) : "";
+
   return (
     <div className="flex gap-3 py-3 px-4">
       <Link to={`/profile/${user.id}`} className="shrink-0 relative">
@@ -58,6 +87,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <Link to={`/profile/${user.id}`} className="font-semibold truncate hover:text-primary">{name}</Link>
+          <GenderAgePill gender={user.gender} age={user.age} agePublic={user.age_public} />
           {user.region && <span className="text-[10px] text-muted-foreground truncate">· {user.region}</span>}
         </div>
         {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{user.bio}</p>}
@@ -81,20 +111,20 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
           {!isTraining && isOnline && (
             <span className="text-[10px] text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400" /> {t("common.online")}</span>
           )}
-          {user.training_purpose && <span className="text-[10px] text-primary">· {t("purpose." + user.training_purpose)}</span>}
+          {purposeLbl && <span className="text-[10px] text-primary">· {purposeLbl}</span>}
           {reason && reason.length > 0 && (
             <span className="text-[10px] text-muted-foreground">· {reason.join(" · ")}</span>
           )}
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5 justify-center shrink-0">
-        <FollowButton targetId={user.id} meId={me?.id} size="sm" />
+      <div className="flex items-center justify-center shrink-0">
         <button
           onClick={startDm}
-          className="flex items-center justify-center gap-1 text-xs px-3 py-1.5 rounded-xl border border-border bg-secondary/60 hover:border-primary transition"
+          aria-label={t("nav.messages")}
+          className="flex items-center justify-center gap-1 text-xs px-3 py-2 rounded-xl border border-border bg-secondary/60 hover:border-primary transition"
         >
-          <Mail className="w-3.5 h-3.5" /> {t("common.message")}
+          <MessageCircleMore className="w-4 h-4" /> {t("nav.messages")}
         </button>
       </div>
     </div>
