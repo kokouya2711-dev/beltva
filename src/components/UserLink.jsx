@@ -20,7 +20,7 @@ export default function UserLink({ user, size = "sm", showName = true, className
         ) : (
           <div className={`${sizeCls} rounded-full bg-secondary flex items-center justify-center font-bold text-xs`}>{initials}</div>
         )}
-        <CountryFlagBadge country={user.country} />
+        <CountryFlagBadge country={user.country} size={12} />
       </Link>
       {showName && (
         <Link to={`/profile/${user.id}`} className={`font-medium ${textCls} truncate group-hover:text-primary transition`}>{name}</Link>

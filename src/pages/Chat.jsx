@@ -124,7 +124,7 @@ export default function Chat() {
         <Link to={`/profile/${otherId}`} className="flex items-center gap-2 flex-1 min-w-0">
           <div className="relative shrink-0">
             {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
-            {other?.country && other.country.length === 2 && <CountryFlagBadge country={other.country} />}
+            {other?.country && other.country.length === 2 && <CountryFlagBadge country={other.country} size={12} />}
             {online && <span className="absolute bottom-0 left-0 w-2.5 h-2.5 rounded-full bg-green-500 border border-background z-20" />}
           </div>
           <div className="min-w-0">

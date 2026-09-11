@@ -78,7 +78,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
             </div>
           )}
         </div>
-        {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} />}
+        {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} size={14} />}
       </Link>
 
       <div className="flex-1 min-w-0">

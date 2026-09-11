@@ -1,15 +1,15 @@
 import React from "react";
 
-// 全画面共通の国旗バッジ（仲間・チャット・フィード・プロフィールで同一）
-// 18×18pxの小さな正方形、白い1px外枠、内側paddingなし、幅高さ固定。
-// 親要素が `relative` であること。画像右下へ15〜20%だけ重なるよう絶対配置。
-export default function CountryFlagBadge({ country, className = "" }) {
+// 全画面共通の国旗バッジ（仲間・チャット・フィード・プロフィールで同一スタイル）
+// 正方形・黒い1px枠のみ・白背景/paddingなし・幅高さ固定・右下へ3px重ねる。
+// size: 仲間一覧=14, チャット一覧/タイムライン=12
+export default function CountryFlagBadge({ country, size = 14, className = "" }) {
   if (!country || String(country).length !== 2) return null;
   const cc = String(country).toLowerCase();
   return (
     <span
-      className={`absolute block overflow-hidden rounded-[3px] ring-1 ring-white z-10 ${className}`}
-      style={{ width: 18, height: 18, minWidth: 18, minHeight: 18, bottom: -3, right: -3 }}
+      className={`absolute block overflow-hidden rounded-[2px] ring-1 ring-black z-10 ${className}`}
+      style={{ width: size, height: size, minWidth: size, minHeight: size, bottom: -3, right: -3 }}
     >
       <img
         src={`https://flagcdn.com/w40/${cc}.png`}

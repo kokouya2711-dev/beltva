@@ -198,7 +198,7 @@ export default function SwipeableConversationRow({
                 {displayName(o).slice(0, 2).toUpperCase()}
               </div>
             )}
-            {o?.country && o.country.length === 2 && <CountryFlagBadge country={o.country} />}
+            {o?.country && o.country.length === 2 && <CountryFlagBadge country={o.country} size={12} />}
             {isOnline && <span className="absolute bottom-0 left-0 w-3 h-3 rounded-full bg-green-500 border-2 border-background z-20" />}
           </div>
           <div className="flex-1 min-w-0">
