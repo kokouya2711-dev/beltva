@@ -77,7 +77,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
               {name.slice(0, 2).toUpperCase()}
             </div>
           )}
-          {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} size={14} />}
+          {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} size={14} inset={3} />}
         </div>
       </Link>
 
