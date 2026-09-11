@@ -68,17 +68,17 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
 
   return (
     <div className="flex gap-3 py-3 px-4 items-start">
-      <Link to={`/profile/${user.id}`} className="shrink-0 relative">
-        <div className={`w-[84px] h-[84px] rounded-full p-0.5 ${ringClass}`}>
+      <Link to={`/profile/${user.id}`} className="shrink-0">
+        <div className={`relative w-[72px] h-[72px] rounded-full ${ringClass}`}>
           {user.avatar_url ? (
-            <img src={user.avatar_url} className="w-full h-full rounded-full object-cover border-2 border-card" />
+            <img src={user.avatar_url} className="w-full h-full rounded-full object-cover" />
           ) : (
-            <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-lg font-bold border-2 border-card">
+            <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-base font-bold">
               {name.slice(0, 2).toUpperCase()}
             </div>
           )}
+          {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} size={14} />}
         </div>
-        {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} size={14} />}
       </Link>
 
       <div className="flex-1 min-w-0">
