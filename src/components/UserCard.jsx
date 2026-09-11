@@ -78,7 +78,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
           )}
         </div>
         {user.country && user.share_country !== false && (
-          <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 overflow-hidden ring-2 ring-background">
+          <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 overflow-hidden ring-2 ring-background rounded-[3px]">
             <img src={`https://flagcdn.com/w40/${user.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${user.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
           </span>
         )}
@@ -111,20 +111,24 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
           {!isTraining && isOnline && (
             <span className="text-[10px] text-green-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400" /> {t("common.online")}</span>
           )}
-          {purposeLbl && <span className="text-[10px] text-primary">· {purposeLbl}</span>}
           {reason && reason.length > 0 && (
             <span className="text-[10px] text-muted-foreground">· {reason.join(" · ")}</span>
           )}
         </div>
+        {purposeLbl && (
+          <span className="inline-block mt-1.5 text-[10px] font-semibold rounded-full px-2 py-0.5 bg-secondary text-primary">
+            {purposeLbl}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center justify-center shrink-0">
         <button
           onClick={startDm}
           aria-label={t("nav.messages")}
-          className="flex items-center justify-center gap-1 text-xs px-3 py-2 rounded-xl border border-border bg-secondary/60 hover:border-primary transition"
+          className="flex items-center justify-center gap-1 text-xs font-bold px-2.5 py-2 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition"
         >
-          <MessageCircleMore className="w-4 h-4" /> {t("nav.messages")}
+          <MessageCircleMore className="w-[18px] h-[18px]" /> {t("nav.messages")}
         </button>
       </div>
     </div>
