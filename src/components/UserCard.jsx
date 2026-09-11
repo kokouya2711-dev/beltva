@@ -87,12 +87,12 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
           <GenderAgePill gender={user.gender} age={user.age} agePublic={user.age_public} />
           {user.region && <span className="text-[10px] text-muted-foreground truncate">· {user.region}</span>}
         </div>
-        {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{user.bio}</p>}
         {purposeLbl && (
-          <span className="inline-block mt-2 text-[10px] font-semibold rounded-full px-2 py-0.5 bg-secondary text-primary">
+          <span className="inline-block mt-1 text-[10px] font-semibold rounded-full px-2 py-0.5 bg-secondary text-primary">
             {purposeLbl}
           </span>
         )}
+        {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{user.bio}</p>}
         <div className="flex flex-wrap gap-1 mt-1.5">
           {tags.map((h) => (
             <span
