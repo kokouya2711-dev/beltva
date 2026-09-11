@@ -41,6 +41,7 @@ function GenderAgePill({ gender, age, agePublic }) {
 }
 
 import CountryFlagBadge from "@/components/CountryFlagBadge";
+import CountryNamePopup from "@/components/CountryNamePopup";
 
 export default function Profile() {
   const t = useT();
@@ -59,6 +60,7 @@ export default function Profile() {
   const [viewingAvatar, setViewingAvatar] = useState(false);
   const [bioClamped, setBioClamped] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showCountry, setShowCountry] = useState(false);
   const bioRef = useRef(null);
   const { toast } = useToast();
 
@@ -164,7 +166,11 @@ export default function Profile() {
               <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
             )}
           </button>
-          <CountryFlagBadge country={user.country} className="pointer-events-none" />
+          <CountryFlagBadge
+            country={user.country}
+            className="cursor-pointer"
+            onClick={() => user.country && setShowCountry(true)}
+          />
         </div>
         <div className="min-w-0 flex-1 pt-1">
           <div className="flex items-center gap-2">
@@ -257,6 +263,10 @@ export default function Profile() {
 
       {viewingAvatar && user?.avatar_url && (
         <AvatarViewer url={user.avatar_url} name={name} onClose={() => setViewingAvatar(false)} />
+      )}
+
+      {showCountry && (
+        <CountryNamePopup countryCode={user.country} lang={lang} onClose={() => setShowCountry(false)} />
       )}
     </div>
   );
