@@ -92,7 +92,7 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
             {purposeLbl}
           </span>
         )}
-        {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{user.bio}</p>}
+        {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-2.5">{user.bio}</p>}
         <div className="flex flex-wrap gap-1 mt-1.5">
           {tags.map((h) => (
             <span
