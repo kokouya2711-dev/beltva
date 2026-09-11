@@ -151,7 +151,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
     <div className="pt-5 pb-5 cursor-pointer" onClick={() => navigate(`/posts/${post.id}`)}>
       {hideAuthor ? (
         <div className="flex items-center justify-between mb-2" onClick={(e) => e.stopPropagation()}>
-          <div className="text-xs text-muted-foreground">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
+          <div className="text-xs text-muted-foreground">{formatPostListTime(currentPost.created_date)}</div>
           <PostMenu
             post={currentPost}
             meId={meId}
@@ -192,7 +192,7 @@ export default function PostCard({ post, meId, initialLikers = [], initialFavori
               onHidden={() => window.location.reload()}
             />
           </div>
-          <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}{currentPost.workout_type ? ` ${tWorkout(currentPost.workout_type)}` : ""}</div>
+          <div className="text-xs text-muted-foreground mb-2">{formatPostListTime(currentPost.created_date)}</div>
         </>
       )}
 
