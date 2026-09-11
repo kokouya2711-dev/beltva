@@ -168,6 +168,8 @@ export default function Profile() {
           </button>
           <CountryFlagBadge
             country={user.country}
+            size={18}
+            inset={5}
             className="cursor-pointer"
             onClick={() => user.country && setShowCountry(true)}
           />
