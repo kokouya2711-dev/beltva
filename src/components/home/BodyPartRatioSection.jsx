@@ -5,15 +5,16 @@ import { getWorkoutDate, getMonthNav } from "@/lib/activityHelpers";
 
 const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
 
-export default function BodyPartRatioSection() {
-  const [records, setRecords] = useState([]);
-  const [me, setMe] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function BodyPartRatioSection({ me: meProp, records: recordsProp }) {
+  const [records, setRecords] = useState(recordsProp || []);
+  const [me, setMe] = useState(meProp || null);
+  const [loading, setLoading] = useState(!meProp);
   const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
   const touchStartX = useRef(null);
 
   useEffect(() => {
+    if (meProp) { setMe(meProp); setRecords(recordsProp || []); return; }
     (async () => {
       try {
         const user = await base44.auth.me();
@@ -29,7 +30,7 @@ export default function BodyPartRatioSection() {
       } catch { /* ignore */ }
       setLoading(false);
     })();
-  }, []);
+  }, [meProp, recordsProp]);
 
   const now = new Date();
   const currentYear = now.getFullYear();

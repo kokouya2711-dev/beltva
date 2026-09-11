@@ -4,12 +4,13 @@ import WorkoutCalendar from "./WorkoutCalendar";
 import ActivitySection from "./ActivitySection";
 import { getWorkoutDate } from "@/lib/activityHelpers";
 
-export default function MyActivity() {
-  const [records, setRecords] = useState([]);
-  const [me, setMe] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function MyActivity({ me: meProp, records: recordsProp }) {
+  const [records, setRecords] = useState(recordsProp || []);
+  const [me, setMe] = useState(meProp || null);
+  const [loading, setLoading] = useState(!meProp);
 
   useEffect(() => {
+    if (meProp) { setMe(meProp); setRecords(recordsProp || []); return; }
     (async () => {
       try {
         const user = await base44.auth.me();
@@ -21,7 +22,7 @@ export default function MyActivity() {
       } catch { /* ignore */ }
       setLoading(false);
     })();
-  }, []);
+  }, [meProp, recordsProp]);
 
   const now = new Date();
   const currentYear = now.getFullYear();
