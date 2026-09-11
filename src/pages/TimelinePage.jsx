@@ -61,7 +61,7 @@ export default function TimelinePage() {
 
   async function load() {
     const [ps, meUser, allLikes, allComments] = await Promise.all([
-      base44.entities.Post.list("-created_date", 50),
+      base44.entities.Post.list("-created_date", 50).catch(() => []),
       base44.auth.me().catch(() => null),
       base44.entities.Like.list("-created_date", 200).catch(() => []),
       base44.entities.Comment.list("-created_date", 200).catch(() => []),
@@ -192,13 +192,13 @@ export default function TimelinePage() {
 
         <aside className="hidden lg:block">
           <div className="sticky top-4">
-            {me && <SuggestedUsers meId={me.id} />}
+            {me && <SuggestedUsers meId={me.id} posts={posts} />}
           </div>
         </aside>
       </div>
 
       <div className="lg:hidden mt-6">
-        {me && <SuggestedUsers meId={me.id} />}
+        {me && <SuggestedUsers meId={me.id} posts={posts} />}
       </div>
     </div>
   );

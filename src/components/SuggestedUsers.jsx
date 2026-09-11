@@ -5,7 +5,7 @@ import FollowButton from "@/components/FollowButton";
 import { UserPlus } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-export default function SuggestedUsers({ meId }) {
+export default function SuggestedUsers({ meId, posts: postsProp }) {
   const t = useT();
   const [users, setUsers] = useState([]);
   const [tick, setTick] = useState(0);
@@ -13,12 +13,12 @@ export default function SuggestedUsers({ meId }) {
   useEffect(() => {
     (async () => {
       if (!meId) return;
-      const [posts, recs, lives, follows] = await Promise.all([
-        base44.entities.Post.list("-created_date", 50).catch(() => []),
+      const [recs, lives, follows] = await Promise.all([
         base44.entities.WorkoutRecord.list("-created_date", 50).catch(() => []),
         base44.entities.LiveSession.filter({ status: "live" }, "-started_at", 50).catch(() => []),
-        base44.entities.Follow.filter({ follower_id: meId })
+        base44.entities.Follow.filter({ follower_id: meId }).catch(() => [])
       ]);
+      const posts = postsProp || [];
       const followingIds = new Set(follows.map((f) => f.followee_id));
       const map = {};
       [...posts, ...recs, ...lives].forEach((r) => {
