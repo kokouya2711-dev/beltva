@@ -14,6 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import CountryFlagBadge from "@/components/CountryFlagBadge";
 
 const RIGHT_ACTION_WIDTH = 150; // pin + delete
 const LEFT_ACTION_WIDTH = 80; // mute
@@ -197,12 +198,8 @@ export default function SwipeableConversationRow({
                 {displayName(o).slice(0, 2).toUpperCase()}
               </div>
             )}
-            {o?.country && o.country.length === 2 && (
-              <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 overflow-hidden ring-1 ring-background">
-                <img src={`https://flagcdn.com/w40/${o.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${o.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
-              </span>
-            )}
-            {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-background" />}
+            {o?.country && o.country.length === 2 && <CountryFlagBadge country={o.country} />}
+            {isOnline && <span className="absolute bottom-0 left-0 w-3 h-3 rounded-full bg-green-500 border-2 border-background z-20" />}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">

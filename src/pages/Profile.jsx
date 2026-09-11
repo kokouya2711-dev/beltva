@@ -40,23 +40,7 @@ function GenderAgePill({ gender, age, agePublic }) {
   );
 }
 
-// 四角形の国旗（user.countryはISO 3166-1 alpha-2）
-function SquareFlag({ country }) {
-  if (!country || country.length !== 2) return null;
-  const cc = country.toLowerCase();
-  return (
-    <span className="block w-6 h-6 overflow-hidden ring-2 ring-background">
-      <img
-        src={`https://flagcdn.com/w40/${cc}.png`}
-        srcSet={`https://flagcdn.com/w80/${cc}.png 2x`}
-        alt=""
-        className="w-full h-full object-cover"
-        loading="lazy"
-        draggable={false}
-      />
-    </span>
-  );
-}
+import CountryFlagBadge from "@/components/CountryFlagBadge";
 
 export default function Profile() {
   const t = useT();
@@ -180,9 +164,7 @@ export default function Profile() {
               <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-2xl font-bold">{name.slice(0, 2).toUpperCase()}</div>
             )}
           </button>
-          <span className="absolute -bottom-1 -right-1 pointer-events-none">
-            <SquareFlag country={user.country} />
-          </span>
+          <CountryFlagBadge country={user.country} className="pointer-events-none" />
         </div>
         <div className="min-w-0 flex-1 pt-1">
           <div className="flex items-center gap-2">

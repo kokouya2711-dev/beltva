@@ -5,6 +5,7 @@ import { displayName, fetchUser } from "@/lib/profile";
 import { sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteUser, unmuteUser, isMuted, reportUser } from "@/lib/dm";
 import MessageBubble from "@/components/MessageBubble";
 import ReportDialog from "@/components/ReportDialog";
+import CountryFlagBadge from "@/components/CountryFlagBadge";
 import { useT } from "@/lib/i18n";
 import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
 
@@ -123,12 +124,8 @@ export default function Chat() {
         <Link to={`/profile/${otherId}`} className="flex items-center gap-2 flex-1 min-w-0">
           <div className="relative shrink-0">
             {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
-            {other?.country && other.country.length === 2 && (
-              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 overflow-hidden ring-1 ring-background">
-                <img src={`https://flagcdn.com/w40/${other.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${other.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
-              </span>
-            )}
-            {online && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border border-background" />}
+            {other?.country && other.country.length === 2 && <CountryFlagBadge country={other.country} />}
+            {online && <span className="absolute bottom-0 left-0 w-2.5 h-2.5 rounded-full bg-green-500 border border-background z-20" />}
           </div>
           <div className="min-w-0">
             <div className="font-semibold truncate flex items-center gap-1.5">{displayName(other)}</div>

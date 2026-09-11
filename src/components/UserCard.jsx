@@ -7,6 +7,7 @@ import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { MessageCircleMore, Flame } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import CountryFlagBadge from "@/components/CountryFlagBadge";
 
 // 性別＋年齢バッジ（男性=ネオンイエロー、女性=ピンク）
 // 年齢非公開の場合は性別マークのみ表示
@@ -66,22 +67,18 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
   const purposeLbl = user.training_purpose ? purposeLabel(lang, user.training_purpose) : "";
 
   return (
-    <div className="flex gap-3 py-3 px-4">
+    <div className="flex gap-3 py-3 px-4 items-start">
       <Link to={`/profile/${user.id}`} className="shrink-0 relative">
-        <div className={`w-14 h-14 rounded-full p-0.5 ${ringClass}`}>
+        <div className={`w-[84px] h-[84px] rounded-full p-0.5 ${ringClass}`}>
           {user.avatar_url ? (
             <img src={user.avatar_url} className="w-full h-full rounded-full object-cover border-2 border-card" />
           ) : (
-            <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-sm font-bold border-2 border-card">
+            <div className="w-full h-full rounded-full bg-secondary flex items-center justify-center text-lg font-bold border-2 border-card">
               {name.slice(0, 2).toUpperCase()}
             </div>
           )}
         </div>
-        {user.country && user.share_country !== false && (
-          <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 overflow-hidden ring-2 ring-background rounded-[3px]">
-            <img src={`https://flagcdn.com/w40/${user.country.toLowerCase()}.png`} srcSet={`https://flagcdn.com/w80/${user.country.toLowerCase()}.png 2x`} alt="" className="w-full h-full object-cover" loading="lazy" draggable={false} />
-          </span>
-        )}
+        {user.country && user.share_country !== false && <CountryFlagBadge country={user.country} />}
       </Link>
 
       <div className="flex-1 min-w-0">
@@ -91,6 +88,11 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
           {user.region && <span className="text-[10px] text-muted-foreground truncate">· {user.region}</span>}
         </div>
         {user.bio && <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{user.bio}</p>}
+        {purposeLbl && (
+          <span className="inline-block mt-2 text-[10px] font-semibold rounded-full px-2 py-0.5 bg-secondary text-primary">
+            {purposeLbl}
+          </span>
+        )}
         <div className="flex flex-wrap gap-1 mt-1.5">
           {tags.map((h) => (
             <span
@@ -115,14 +117,9 @@ export default function UserCard({ user, me, isOnline, isTraining, reason, commo
             <span className="text-[10px] text-muted-foreground">· {reason.join(" · ")}</span>
           )}
         </div>
-        {purposeLbl && (
-          <span className="inline-block mt-1.5 text-[10px] font-semibold rounded-full px-2 py-0.5 bg-secondary text-primary">
-            {purposeLbl}
-          </span>
-        )}
       </div>
 
-      <div className="flex items-center justify-center shrink-0">
+      <div className="shrink-0 pt-1">
         <button
           onClick={startDm}
           aria-label={t("nav.messages")}
