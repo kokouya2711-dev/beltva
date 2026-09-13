@@ -193,7 +193,7 @@ function NotificationsSection() {
   }
 
   return (
-    <div>
+    <div className="flex flex-col min-h-[calc(100dvh-200px)]">
       {deviceOff && (
         <button onClick={openDeviceSettings} className="w-full flex items-center gap-3 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-left mb-4">
           <BellOff className="w-5 h-5 text-destructive shrink-0" />
@@ -205,23 +205,24 @@ function NotificationsSection() {
         </button>
       )}
 
-      {NOTIF_GROUPS.map((group, gi) => (
-        <div key={group.titleKey} className={gi > 0 ? "mt-5" : ""}>
-          <div className="text-sm font-semibold text-muted-foreground mb-1 px-1">{t(group.titleKey)}</div>
-          <div className="divide-y divide-border">
-            {group.items.map((item) => (
-              <NotifToggleRow
-                key={item.key}
-                label={t(item.labelKey)}
-                desc={item.descKey ? t(item.descKey) : null}
-                checked={!!prefs[item.key]}
-                onChange={() => togglePref(item.key)}
-              />
-            ))}
+      <div className="flex-1 flex flex-col justify-between">
+        {NOTIF_GROUPS.map((group, gi) => (
+          <div key={group.titleKey} className={gi > 0 ? "mt-3" : ""}>
+            <div className="text-sm font-semibold text-muted-foreground mb-1 px-1">{t(group.titleKey)}</div>
+            <div className="divide-y divide-border">
+              {group.items.map((item) => (
+                <NotifToggleRow
+                  key={item.key}
+                  label={t(item.labelKey)}
+                  desc={item.descKey ? t(item.descKey) : null}
+                  checked={!!prefs[item.key]}
+                  onChange={() => togglePref(item.key)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-      <div className="h-12" />
+        ))}
+      </div>
     </div>
   );
 }
@@ -407,7 +408,7 @@ function ToggleRow({ label, checked, onChange }) {
 
 function NotifToggleRow({ label, desc, checked, onChange }) {
   return (
-    <div className="flex items-center justify-between gap-3 py-3.5 text-base">
+    <div className="flex items-center justify-between gap-3 py-3 text-base">
       <div className="min-w-0 flex-1">
         <div>{label}</div>
         {desc && <div className="text-xs text-muted-foreground mt-0.5">{desc}</div>}
