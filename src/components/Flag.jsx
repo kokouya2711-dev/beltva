@@ -2,7 +2,7 @@ import React from "react";
 
 // 言語コード → 国旗(ISO 3166)の対応。真っ直ぐな矩形国旗を flagcdn から表示。
 const LANG_TO_COUNTRY = {
-  ja: "jp", en: "gb", fr: "fr", es: "es", pt: "pt", de: "de", it: "it",
+  ja: "jp", en: "us", fr: "fr", es: "es", pt: "br", de: "de", it: "it",
   ru: "ru", ar: "sa", tr: "tr", ko: "kr", zh: "cn", "zh-TW": "tw",
   id: "id", th: "th", vi: "vn",
 };
