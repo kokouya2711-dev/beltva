@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
+import Flag from "@/components/Flag";
+import { LANG_NAME_BY_LANG, COUNTRY_NAME_BY_LANG } from "@/lib/i18nLangNames";
 import {
   ChevronRight, ArrowLeft, User, Bell, BellOff, Globe, LogOut, Shield,
   ShieldCheck, Ban, Search, Check,
@@ -229,17 +231,22 @@ function NotificationsSection() {
 
 function LanguageSection() {
   const { lang, setLang } = useI18n();
+  const langNames = LANG_NAME_BY_LANG[lang] || LANG_NAME_BY_LANG.en;
+  const countryNames = COUNTRY_NAME_BY_LANG[lang] || COUNTRY_NAME_BY_LANG.en;
   return (
-    <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+    <div className="divide-y divide-border">
       {LANGS.map((l) => (
         <button
           key={l.code}
           onClick={() => setLang(l.code)}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/40 text-left"
+          className="w-full flex items-center gap-4 py-4 hover:bg-secondary/40 text-left"
         >
-          <span className="text-xl">{l.flag}</span>
-          <span className="flex-1">{l.label}</span>
-          {lang === l.code && <Check className="w-4 h-4 text-primary" />}
+          <Flag code={l.code} className="w-11 h-8 rounded-md object-cover shrink-0 border border-border" />
+          <div className="flex-1 min-w-0">
+            <div className="text-base font-medium leading-tight">{langNames[l.code] || l.label}</div>
+            <div className="text-sm text-muted-foreground leading-tight mt-0.5">{countryNames[l.code]}</div>
+          </div>
+          {lang === l.code && <Check className="w-6 h-6 text-primary shrink-0" />}
         </button>
       ))}
     </div>
