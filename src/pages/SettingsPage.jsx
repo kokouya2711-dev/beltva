@@ -7,7 +7,7 @@ import {
   ShieldCheck, Ban, Search, Check,
   EyeOff, Eye, UserSearch, Lock, VolumeX, Mail, KeyRound, Loader2
 } from "lucide-react";
-import DeleteAccountFlow from "@/components/settings/DeleteAccountFlow";
+
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -133,7 +133,7 @@ function AccountSection() {
 
       <div className="pt-16" />
       <button
-        onClick={() => setShowDelete(true)}
+        onClick={() => navigate("/delete-account/confirm")}
         className="w-full py-3.5 text-base font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition"
       >
         {t("settings.deleteAccount")}
@@ -152,8 +152,6 @@ function AccountSection() {
           </div>
         </div>
       )}
-
-      {showDelete && <DeleteAccountFlow email={me?.email || ""} onClose={() => setShowDelete(false)} />}
     </div>
   );
 }

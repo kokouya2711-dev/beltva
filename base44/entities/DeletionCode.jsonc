@@ -1,0 +1,45 @@
+{
+  "name": "DeletionCode",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "\u30e6\u30fc\u30b6\u30fcID"
+    },
+    "code": {
+      "type": "string",
+      "title": "\u8a8d\u8a3c\u30b3\u30fc\u30c9"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u6709\u52b9\u671f\u9650"
+    },
+    "used": {
+      "type": "boolean",
+      "default": false,
+      "title": "\u4f7f\u7528\u6e08\u307f"
+    },
+    "attempts": {
+      "type": "number",
+      "default": 0,
+      "title": "\u8a66\u884c\u56de\u6570"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u8a8d\u8a3c\u5b8c\u4e86\u65e5\u6642"
+    }
+  },
+  "required": [
+    "user_id",
+    "code",
+    "expires_at"
+  ],
+  "rls": {
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  }
+}

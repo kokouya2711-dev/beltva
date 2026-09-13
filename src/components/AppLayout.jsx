@@ -97,6 +97,14 @@ function AppLayoutInner() {
   React.useEffect(() => {
     base44.auth.me().then((u) => {
       setMe(u);
+      // 削除申請中（30日以内）なら復元画面へリダイレクト
+      if (u?.deletion_requested && u?.deletion_requested_at) {
+        const deadline = new Date(u.deletion_requested_at).getTime() + 30 * 24 * 60 * 60 * 1000;
+        if (Date.now() < deadline && !location.pathname.startsWith("/delete-account") && !location.pathname.startsWith("/restore-account")) {
+          navigate("/restore-account", { replace: true });
+          return;
+        }
+      }
       if (u?.id) {
         initNotifStore(u.id);
         initDmUnreadStore(u.id);

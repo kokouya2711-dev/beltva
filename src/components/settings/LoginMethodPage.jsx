@@ -23,7 +23,7 @@ export default function LoginMethodPage() {
   ].filter((m) => m.key === "email" || m.key === "google");
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8">
+    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       <div className="relative flex items-center mb-5">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
           <ArrowLeft className="w-5 h-5" />

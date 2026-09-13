@@ -39,6 +39,10 @@ import RecordWorkout from '@/pages/RecordWorkout';
 import HomeNotificationsPage from '@/pages/HomeNotificationsPage';
 import FollowListPage from '@/pages/FollowListPage';
 import LoginMethodPage from '@/pages/LoginMethodPage';
+import DeleteAccountConfirm from '@/pages/DeleteAccountConfirm';
+import DeleteAccountVerify from '@/pages/DeleteAccountVerify';
+import DeleteAccountFinal from '@/pages/DeleteAccountFinal';
+import RestoreAccount from '@/pages/RestoreAccount';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -100,6 +104,10 @@ const AuthenticatedApp = () => {
           <Route path="/support" element={<SupportPage />} />
         </Route>
         <Route path="/record-workout" element={<RecordWorkout />} />
+        <Route path="/delete-account/confirm" element={<DeleteAccountConfirm />} />
+        <Route path="/delete-account/verify" element={<DeleteAccountVerify />} />
+        <Route path="/delete-account/final" element={<DeleteAccountFinal />} />
+        <Route path="/restore-account" element={<RestoreAccount />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

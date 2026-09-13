@@ -199,6 +199,11 @@
       "type": "boolean",
       "default": false,
       "title": "\u30a2\u30ab\u30a6\u30f3\u30c8\u524a\u9664\u7533\u8acb\u6e08\u307f"
+    },
+    "deletion_requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u524a\u9664\u7533\u8acb\u65e5\u6642"
     }
   },
   "required": [
