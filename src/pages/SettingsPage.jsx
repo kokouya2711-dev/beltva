@@ -56,7 +56,7 @@ export default function SettingsPage() {
         </div>
       ) : (
         <div>
-          <header className="flex items-center justify-between pt-2 pb-6">
+          <header className="flex items-center justify-between pt-2 pb-2">
             <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -74,15 +74,15 @@ function CategoryList({ onSelect }) {
   const t = useT();
   const items = [
     { key: "account", icon: User, label: t("settings.account") },
+    { key: "privacy", icon: Shield, label: t("settings.privacy") },
     { key: "notifications", icon: Bell, label: t("settings.notifications") },
     { key: "language", icon: Globe, label: t("settings.language") },
-    { key: "privacy", icon: Shield, label: t("settings.privacy") },
   ];
   return (
     <div className="divide-y divide-border">
       {items.map((item) => (
-        <button key={item.key} onClick={() => onSelect(item.key)} className="w-full flex items-center gap-3 py-4 text-sm hover:bg-secondary/40 text-left">
-          <item.icon className="w-5 h-5 text-muted-foreground" />
+        <button key={item.key} onClick={() => onSelect(item.key)} className="w-full flex items-center gap-4 py-4 text-base hover:bg-secondary/40 text-left">
+          <item.icon className="w-6 h-6 text-muted-foreground" />
           <span className="flex-1">{item.label}</span>
           <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </button>
