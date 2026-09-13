@@ -202,7 +202,6 @@ function PrivacySection({ onBack }) {
   const t = useT();
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
-    share_country: true,
     show_online_status: true,
     age_public: false,
     searchable: true,
@@ -219,7 +218,6 @@ function PrivacySection({ onBack }) {
     base44.auth.me().then((u) => {
       setSettings((prev) => ({
         ...prev,
-        share_country: u.share_country !== false,
         show_online_status: u.show_online_status !== false,
         age_public: u.age_public === true,
         searchable: u.searchable_by !== "none" && u.searchable_by_id !== false,
@@ -285,7 +283,6 @@ function PrivacySection({ onBack }) {
       <div className="mb-8">
         <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("privacy.profileVisibility")}</h3>
         <div className="divide-y divide-border">
-          <PrivacyToggle label={t("privacy.shareCountry")} checked={settings.share_country} onChange={() => update("share_country", !settings.share_country)} />
           <PrivacyToggle label={t("privacy.showOnlineStatus")} checked={settings.show_online_status} onChange={() => update("show_online_status", !settings.show_online_status)} />
           <PrivacyToggle label={t("privacy.agePublic")} checked={settings.age_public} onChange={() => update("age_public", !settings.age_public)} />
         </div>
