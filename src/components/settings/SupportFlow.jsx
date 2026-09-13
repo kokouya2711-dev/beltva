@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import {
   ArrowLeft, ChevronRight, Mail, FileText, Shield,
-  Lightbulb, AlertTriangle, HelpCircle, Send, Loader2
+  Lightbulb, AlertTriangle, HelpCircle
 } from "lucide-react";
 
 const ICON_CLS = "w-6 h-6 text-muted-foreground shrink-0";
+const SUPPORT_EMAIL = "beltva.support@gmail.com";
 
 export default function SupportFlow({ sub, type, onBack, navigate }) {
   if (!sub) return <SupportRoot onBack={onBack} navigate={navigate} />;
@@ -79,34 +79,16 @@ function ContactForm({ type, onBack }) {
   const t = useT();
   const cfg = FORM_CONFIG[type];
   const [body, setBody] = useState("");
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
 
-  async function submit() {
-    if (!body.trim() || sending) return;
-    setSending(true);
-    setError("");
-    try {
-      const res = await base44.functions.invoke("sendSupportEmail", { type, body });
-      if (res?.data?.error) throw new Error(res.data.error);
-      setSent(true);
-      setTimeout(() => onBack(), 1200);
-    } catch (e) {
-      setError(t("support.send") === "Send" ? "Failed to send" : "送信に失敗しました");
-      setSending(false);
-    }
+  function openMail() {
+    if (!body.trim()) return;
+    const subject = `[BELTVA] ${t(cfg.titleKey)}`;
+    const encodedBody = encodeURIComponent(body).replace(/%0A/g, "%0D%0A");
+    const mailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodedBody}`;
+    window.location.href = mailto;
   }
 
-  if (sent) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-lg font-semibold text-primary">{t("support.sent")}</div>
-      </div>
-    );
-  }
-
-  const canSend = body.trim().length > 0 && !sending;
+  const canOpen = body.trim().length > 0;
 
   return (
     <div className="flex flex-col">
@@ -115,11 +97,11 @@ function ContactForm({ type, onBack }) {
         onBack={onBack}
         right={
           <button
-            onClick={submit}
-            disabled={!canSend}
-            className="px-1 py-1.5 text-base font-semibold text-primary disabled:opacity-40 flex items-center gap-1.5"
+            onClick={openMail}
+            disabled={!canOpen}
+            className="px-1 py-1.5 text-base font-semibold text-primary disabled:opacity-40"
           >
-            {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : t("support.send")}
+            {t("support.openMail")}
           </button>
         }
       />
@@ -130,7 +112,6 @@ function ContactForm({ type, onBack }) {
         autoFocus
         className="w-full flex-1 resize-none bg-transparent outline-none text-base leading-relaxed min-h-[50vh] py-1"
       />
-      {error && <div className="text-sm text-destructive pt-2">{error}</div>}
     </div>
   );
 }
