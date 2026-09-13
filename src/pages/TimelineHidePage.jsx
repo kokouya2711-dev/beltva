@@ -55,7 +55,7 @@ export default function TimelineHidePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       <div className="relative flex items-center mb-6">
-        <button onClick={() => navigate("/settings", { state: { section: "privacy" } })} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("privacy.timelineHideTitle")}</h1>

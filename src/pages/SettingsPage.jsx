@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import Flag from "@/components/Flag";
@@ -50,13 +50,19 @@ export default function SettingsPage() {
   const t = useT();
   const navigate = useNavigate();
   const location = useLocation();
-  const [section, setSection] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  // Migrate legacy location.state.section → query param (replace, no new entry)
   useEffect(() => {
     if (location.state?.section) {
-      setSection(location.state.section);
+      setSearchParams({ section: location.state.section }, { replace: true });
     }
-  }, [location.state]);
+  }, [location.state, setSearchParams]);
+
+  const section = searchParams.get("section");
+  const sub = searchParams.get("sub");
+  const openSection = (s) => navigate(`/settings?section=${s}`);
+  const goBack = () => navigate(-1);
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
@@ -64,20 +70,20 @@ export default function SettingsPage() {
         <div>
           {section === "privacy" ? null : section === "language" || section === "account" || section === "notifications" ? (
             <div className="relative flex items-center mb-5">
-              <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+              <button onClick={goBack} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{section === "language" ? t("settings.language") : section === "account" ? t("settings.account") : t("settings.notifications")}</h2>
             </div>
           ) : (
-            <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-4">
+            <button onClick={goBack} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-4">
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
           {section === "account" && <AccountSection />}
           {section === "notifications" && <NotificationsSection />}
           {section === "language" && <LanguageSection />}
-          {section === "privacy" && <PrivacySection onBack={() => setSection(null)} />}
+          {section === "privacy" && <PrivacySection onBack={goBack} sub={sub} onOpenSub={(s) => navigate(`/settings?section=privacy&sub=${s}`)} onSubBack={goBack} />}
         </div>
       ) : (
         <div>
@@ -88,7 +94,7 @@ export default function SettingsPage() {
             <h1 className="text-xl font-bold">{t("settings.title")}</h1>
             <span className="w-9" />
           </header>
-          <CategoryList onSelect={setSection} />
+          <CategoryList onSelect={openSection} />
         </div>
       )}
     </div>
@@ -249,7 +255,7 @@ function LanguageSection() {
   );
 }
 
-function PrivacySection({ onBack }) {
+function PrivacySection({ onBack, sub, onOpenSub, onSubBack }) {
   const t = useT();
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
@@ -258,7 +264,6 @@ function PrivacySection({ onBack }) {
     searchable: true,
     timeline_visibility: "everyone",
   });
-  const [subPage, setSubPage] = useState(null);
 
   const timelineVisibilityOptions = [
     { key: "everyone", label: t("privacy.timelineEveryone") },
@@ -300,11 +305,11 @@ function PrivacySection({ onBack }) {
 
   const timelineVisibilityLabel = timelineVisibilityOptions.find((o) => o.key === settings.timeline_visibility)?.label || timelineVisibilityOptions[0].label;
 
-  if (subPage === "timelineVisibility") {
+  if (sub === "timelineVisibility") {
     return (
       <div>
         <div className="relative flex items-center mb-5">
-          <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+          <button onClick={onSubBack} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("privacy.timelineVisibility")}</h2>
@@ -344,7 +349,7 @@ function PrivacySection({ onBack }) {
         <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("privacy.searchTimeline")}</h3>
         <div className="divide-y divide-border">
           <PrivacyToggle label={t("privacy.searchable")} checked={settings.searchable} onChange={() => updateSearchable(!settings.searchable)} />
-          <button onClick={() => setSubPage("timelineVisibility")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
+          <button onClick={() => onOpenSub("timelineVisibility")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
             <span className="flex-1">{t("privacy.timelineVisibility")}</span>
             <span className="text-muted-foreground text-sm">{timelineVisibilityLabel}</span>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
