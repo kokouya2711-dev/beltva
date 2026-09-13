@@ -3,6 +3,10 @@
 
 export const privacyTranslations = {
   ja: {
+    "privacy.profileVisibility": "プロフィールの公開",
+    "privacy.searchTimeline": "検索・タイムライン",
+    "privacy.userManagement": "ユーザー管理",
+    "privacy.searchable": "検索結果に表示",
     "privacy.shareCountry": "国／地域を公開",
     "privacy.shareCity": "都市を公開",
     "privacy.updateLocation": "位置情報を更新",
@@ -36,6 +40,10 @@ export const privacyTranslations = {
     "privacy.remove": "解除",
   },
   en: {
+    "privacy.profileVisibility": "Profile visibility",
+    "privacy.searchTimeline": "Search & timeline",
+    "privacy.userManagement": "User management",
+    "privacy.searchable": "Appear in search results",
     "privacy.shareCountry": "Share country/region",
     "privacy.shareCity": "Share city",
     "privacy.updateLocation": "Update location",

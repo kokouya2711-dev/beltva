@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
@@ -32,13 +32,20 @@ const DEFAULT_NOTIF_PREFS = {
 export default function SettingsPage() {
   const t = useT();
   const navigate = useNavigate();
+  const location = useLocation();
   const [section, setSection] = useState(null);
+
+  useEffect(() => {
+    if (location.state?.section) {
+      setSection(location.state.section);
+    }
+  }, [location.state]);
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       {section ? (
         <div>
-          {section === "language" || section === "account" ? (
+          {section === "privacy" ? null : section === "language" || section === "account" ? (
             <div className="relative flex items-center mb-5">
               <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
                 <ArrowLeft className="w-5 h-5" />
@@ -53,7 +60,7 @@ export default function SettingsPage() {
           {section === "account" && <AccountSection />}
           {section === "notifications" && <NotificationsSection />}
           {section === "language" && <LanguageSection />}
-          {section === "privacy" && <PrivacySection />}
+          {section === "privacy" && <PrivacySection onBack={() => setSection(null)} />}
         </div>
       ) : (
         <div>
@@ -191,29 +198,22 @@ function LanguageSection() {
   );
 }
 
-function PrivacySection() {
+function PrivacySection({ onBack }) {
   const t = useT();
   const navigate = useNavigate();
   const [settings, setSettings] = useState({
     share_country: true,
     show_online_status: true,
     age_public: false,
-    searchable_by_id: true,
-    searchable_by: "everyone",
+    searchable: true,
     timeline_visibility: "everyone",
     timeline_gender_restriction: "none",
   });
   const [subPage, setSubPage] = useState(null);
 
-  const searchableByOptions = [
-    { key: "everyone", label: t("privacy.searchableByEveryone") },
-    { key: "followings", label: t("privacy.searchableByFollowings") },
-    { key: "none", label: t("privacy.searchableByNone") },
-  ];
   const timelineVisibilityOptions = [
     { key: "everyone", label: t("privacy.timelineEveryone") },
     { key: "followers", label: t("privacy.timelineFollowers") },
-    { key: "private", label: t("privacy.timelinePrivate") },
   ];
   const genderRestrictionOptions = [
     { key: "none", label: t("privacy.genderNone") },
@@ -228,9 +228,8 @@ function PrivacySection() {
         share_country: u.share_country !== false,
         show_online_status: u.show_online_status !== false,
         age_public: u.age_public === true,
-        searchable_by_id: u.searchable_by_id !== false,
-        searchable_by: u.searchable_by || "everyone",
-        timeline_visibility: u.timeline_visibility || "everyone",
+        searchable: u.searchable_by !== "none" && u.searchable_by_id !== false,
+        timeline_visibility: u.timeline_visibility === "private" ? "everyone" : (u.timeline_visibility || "everyone"),
         timeline_gender_restriction: u.timeline_gender_restriction || "none",
       }));
     }).catch(() => {});
@@ -245,41 +244,35 @@ function PrivacySection() {
     }
   }
 
-  const searchableByLabel = searchableByOptions.find((o) => o.key === settings.searchable_by)?.label || searchableByOptions[0].label;
+  async function updateSearchable(value) {
+    setSettings((prev) => ({ ...prev, searchable: value }));
+    try {
+      await base44.auth.updateMe({
+        searchable_by: value ? "everyone" : "none",
+        searchable_by_id: value,
+      });
+    } catch {
+      setSettings((prev) => ({ ...prev, searchable: !value }));
+    }
+  }
+
   const timelineVisibilityLabel = timelineVisibilityOptions.find((o) => o.key === settings.timeline_visibility)?.label || timelineVisibilityOptions[0].label;
   const genderRestrictionLabel = genderRestrictionOptions.find((o) => o.key === settings.timeline_gender_restriction)?.label || genderRestrictionOptions[0].label;
 
-  if (subPage === "searchableBy") {
-    return (
-      <div className="space-y-5">
-        <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h2 className="font-bold text-lg">{t("privacy.searchableBy")}</h2>
-        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-          {searchableByOptions.map((opt) => (
-            <button key={opt.key} onClick={() => update("searchable_by", opt.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
-              <span className="flex-1">{opt.label}</span>
-              {settings.searchable_by === opt.key && <Check className="w-4 h-4 text-primary" />}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   if (subPage === "timelineVisibility") {
     return (
-      <div className="space-y-5">
-        <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h2 className="font-bold text-lg">{t("privacy.timelineVisibility")}</h2>
-        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+      <div>
+        <div className="relative flex items-center mb-5">
+          <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("privacy.timelineVisibility")}</h2>
+        </div>
+        <div className="divide-y divide-border">
           {timelineVisibilityOptions.map((opt) => (
-            <button key={opt.key} onClick={() => update("timeline_visibility", opt.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
+            <button key={opt.key} onClick={() => update("timeline_visibility", opt.key)} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
               <span className="flex-1">{opt.label}</span>
-              {settings.timeline_visibility === opt.key && <Check className="w-4 h-4 text-primary" />}
+              {settings.timeline_visibility === opt.key && <Check className="w-5 h-5 text-primary" />}
             </button>
           ))}
         </div>
@@ -289,16 +282,18 @@ function PrivacySection() {
 
   if (subPage === "genderRestriction") {
     return (
-      <div className="space-y-5">
-        <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h2 className="font-bold text-lg">{t("privacy.timelineGenderRestriction")}</h2>
-        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+      <div>
+        <div className="relative flex items-center mb-5">
+          <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("privacy.timelineGenderRestriction")}</h2>
+        </div>
+        <div className="divide-y divide-border">
           {genderRestrictionOptions.map((opt) => (
-            <button key={opt.key} onClick={() => update("timeline_gender_restriction", opt.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
+            <button key={opt.key} onClick={() => update("timeline_gender_restriction", opt.key)} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
               <span className="flex-1">{opt.label}</span>
-              {settings.timeline_gender_restriction === opt.key && <Check className="w-4 h-4 text-primary" />}
+              {settings.timeline_gender_restriction === opt.key && <Check className="w-5 h-5 text-primary" />}
             </button>
           ))}
         </div>
@@ -307,49 +302,74 @@ function PrivacySection() {
   }
 
   return (
-    <div className="space-y-5">
-      <h2 className="font-bold text-lg">{t("settings.privacy")}</h2>
-
-      {/* Country sharing toggle */}
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        <ToggleRow label={t("privacy.shareCountry")} checked={settings.share_country} onChange={() => update("share_country", !settings.share_country)} />
-      </div>
-
-      {/* Toggle settings */}
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        <ToggleRowWithDesc icon={Eye} label={t("privacy.showOnlineStatus")} desc={t("privacy.showOnlineStatusDesc")} checked={settings.show_online_status} onChange={() => update("show_online_status", !settings.show_online_status)} />
-        <ToggleRowWithDesc icon={User} label={t("privacy.agePublic")} desc={t("privacy.agePublicDesc")} checked={settings.age_public} onChange={() => update("age_public", !settings.age_public)} />
-        <ToggleRowWithDesc icon={UserSearch} label={t("privacy.searchableById")} desc={t("privacy.searchableByIdDesc")} checked={settings.searchable_by_id} onChange={() => update("searchable_by_id", !settings.searchable_by_id)} />
-      </div>
-
-      {/* Selector settings */}
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        <button onClick={() => setSubPage("searchableBy")} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
-          <UserSearch className="w-4 h-4 text-muted-foreground shrink-0" />
-          <span className="flex-1">{t("privacy.searchableBy")}</span>
-          <span className="text-muted-foreground text-xs">{searchableByLabel}</span>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+    <div>
+      <div className="relative flex items-center mb-5">
+        <button onClick={onBack} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+          <ArrowLeft className="w-5 h-5" />
         </button>
-        <button onClick={() => setSubPage("timelineVisibility")} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
-          <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-          <span className="flex-1">{t("privacy.timelineVisibility")}</span>
-          <span className="text-muted-foreground text-xs">{timelineVisibilityLabel}</span>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </button>
-        <button onClick={() => setSubPage("genderRestriction")} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
-          <User className="w-4 h-4 text-muted-foreground shrink-0" />
-          <span className="flex-1">{t("privacy.timelineGenderRestriction")}</span>
-          <span className="text-muted-foreground text-xs">{genderRestrictionLabel}</span>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </button>
+        <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("settings.privacy")}</h2>
       </div>
 
-      {/* Link rows */}
-      <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-        <Row icon={EyeOff} label={t("privacy.timelineHideTitle")} onClick={() => navigate("/timeline-hide")} />
-        <Row icon={VolumeX} label={t("settings.mutedUsers")} onClick={() => navigate("/muted-users")} />
-        <Row icon={Ban} label={t("settings.blockedUsers")} onClick={() => navigate("/blocked-users")} />
+      {/* Group 1: プロフィールの公開 */}
+      <div className="mb-8">
+        <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("privacy.profileVisibility")}</h3>
+        <div className="divide-y divide-border">
+          <PrivacyToggle label={t("privacy.shareCountry")} checked={settings.share_country} onChange={() => update("share_country", !settings.share_country)} />
+          <PrivacyToggle label={t("privacy.showOnlineStatus")} checked={settings.show_online_status} onChange={() => update("show_online_status", !settings.show_online_status)} />
+          <PrivacyToggle label={t("privacy.agePublic")} checked={settings.age_public} onChange={() => update("age_public", !settings.age_public)} />
+        </div>
       </div>
+
+      {/* Group 2: 検索・タイムライン */}
+      <div className="mb-8">
+        <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("privacy.searchTimeline")}</h3>
+        <div className="divide-y divide-border">
+          <PrivacyToggle label={t("privacy.searchable")} checked={settings.searchable} onChange={() => updateSearchable(!settings.searchable)} />
+          <button onClick={() => setSubPage("timelineVisibility")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
+            <span className="flex-1">{t("privacy.timelineVisibility")}</span>
+            <span className="text-muted-foreground text-sm">{timelineVisibilityLabel}</span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+          <button onClick={() => setSubPage("genderRestriction")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
+            <span className="flex-1">{t("privacy.timelineGenderRestriction")}</span>
+            <span className="text-muted-foreground text-sm">{genderRestrictionLabel}</span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+        </div>
+      </div>
+
+      {/* Group 3: ユーザー管理 */}
+      <div>
+        <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("privacy.userManagement")}</h3>
+        <div className="divide-y divide-border">
+          <button onClick={() => navigate("/timeline-hide")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
+            <EyeOff className="w-5 h-5 text-muted-foreground" />
+            <span className="flex-1">{t("privacy.timelineHideTitle")}</span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+          <button onClick={() => navigate("/muted-users")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
+            <VolumeX className="w-5 h-5 text-muted-foreground" />
+            <span className="flex-1">{t("settings.mutedUsers")}</span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+          <button onClick={() => navigate("/blocked-users")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
+            <Ban className="w-5 h-5 text-muted-foreground" />
+            <span className="flex-1">{t("settings.blockedUsers")}</span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PrivacyToggle({ label, checked, onChange }) {
+  return (
+    <div className="flex items-center justify-between py-4 text-base">
+      <span>{label}</span>
+      <button onClick={onChange} className={`w-11 h-6 rounded-full transition relative shrink-0 ${checked ? "bg-primary" : "bg-secondary border border-border"}`}>
+        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
+      </button>
     </div>
   );
 }
