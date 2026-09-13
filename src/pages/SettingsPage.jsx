@@ -207,18 +207,12 @@ function PrivacySection({ onBack }) {
     age_public: false,
     searchable: true,
     timeline_visibility: "everyone",
-    timeline_gender_restriction: "none",
   });
   const [subPage, setSubPage] = useState(null);
 
   const timelineVisibilityOptions = [
     { key: "everyone", label: t("privacy.timelineEveryone") },
     { key: "followers", label: t("privacy.timelineFollowers") },
-  ];
-  const genderRestrictionOptions = [
-    { key: "none", label: t("privacy.genderNone") },
-    { key: "female_only", label: t("privacy.genderFemaleOnly") },
-    { key: "male_only", label: t("privacy.genderMaleOnly") },
   ];
 
   useEffect(() => {
@@ -230,7 +224,6 @@ function PrivacySection({ onBack }) {
         age_public: u.age_public === true,
         searchable: u.searchable_by !== "none" && u.searchable_by_id !== false,
         timeline_visibility: u.timeline_visibility === "private" ? "everyone" : (u.timeline_visibility || "everyone"),
-        timeline_gender_restriction: u.timeline_gender_restriction || "none",
       }));
     }).catch(() => {});
   }, []);
@@ -257,7 +250,6 @@ function PrivacySection({ onBack }) {
   }
 
   const timelineVisibilityLabel = timelineVisibilityOptions.find((o) => o.key === settings.timeline_visibility)?.label || timelineVisibilityOptions[0].label;
-  const genderRestrictionLabel = genderRestrictionOptions.find((o) => o.key === settings.timeline_gender_restriction)?.label || genderRestrictionOptions[0].label;
 
   if (subPage === "timelineVisibility") {
     return (
@@ -273,27 +265,6 @@ function PrivacySection({ onBack }) {
             <button key={opt.key} onClick={() => update("timeline_visibility", opt.key)} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
               <span className="flex-1">{opt.label}</span>
               {settings.timeline_visibility === opt.key && <Check className="w-5 h-5 text-primary" />}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (subPage === "genderRestriction") {
-    return (
-      <div>
-        <div className="relative flex items-center mb-5">
-          <button onClick={() => setSubPage(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("privacy.timelineGenderRestriction")}</h2>
-        </div>
-        <div className="divide-y divide-border">
-          {genderRestrictionOptions.map((opt) => (
-            <button key={opt.key} onClick={() => update("timeline_gender_restriction", opt.key)} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
-              <span className="flex-1">{opt.label}</span>
-              {settings.timeline_gender_restriction === opt.key && <Check className="w-5 h-5 text-primary" />}
             </button>
           ))}
         </div>
@@ -328,11 +299,6 @@ function PrivacySection({ onBack }) {
           <button onClick={() => setSubPage("timelineVisibility")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
             <span className="flex-1">{t("privacy.timelineVisibility")}</span>
             <span className="text-muted-foreground text-sm">{timelineVisibilityLabel}</span>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-          </button>
-          <button onClick={() => setSubPage("genderRestriction")} className="w-full flex items-center gap-3 py-4 text-base hover:bg-secondary/40 text-left">
-            <span className="flex-1">{t("privacy.timelineGenderRestriction")}</span>
-            <span className="text-muted-foreground text-sm">{genderRestrictionLabel}</span>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
