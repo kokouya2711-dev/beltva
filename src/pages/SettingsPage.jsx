@@ -7,8 +7,9 @@ import { LANG_NAME_BY_LANG } from "@/lib/i18nLangNames";
 import {
   ChevronRight, ArrowLeft, User, Bell, BellOff, Globe, LogOut, Shield,
   ShieldCheck, Ban, Search, Check,
-  EyeOff, Eye, UserSearch, Lock, VolumeX, Mail, KeyRound, Loader2
+  EyeOff, Eye, UserSearch, Lock, VolumeX, Mail, KeyRound, Loader2, Headphones
 } from "lucide-react";
+import SupportFlow from "@/components/settings/SupportFlow";
 
 
 const DM_SCOPE_KEYS = [
@@ -61,6 +62,7 @@ export default function SettingsPage() {
 
   const section = searchParams.get("section");
   const sub = searchParams.get("sub");
+  const type = searchParams.get("type");
   const openSection = (s) => navigate(`/settings?section=${s}`);
   const goBack = () => navigate(-1);
 
@@ -68,7 +70,7 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       {section ? (
         <div>
-          {section === "privacy" ? null : section === "language" || section === "account" || section === "notifications" ? (
+          {section === "privacy" || section === "support" ? null : section === "language" || section === "account" || section === "notifications" ? (
             <div className="relative flex items-center mb-5">
               <button onClick={goBack} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
                 <ArrowLeft className="w-5 h-5" />
@@ -84,6 +86,7 @@ export default function SettingsPage() {
           {section === "notifications" && <NotificationsSection />}
           {section === "language" && <LanguageSection />}
           {section === "privacy" && <PrivacySection onBack={goBack} sub={sub} onOpenSub={(s) => navigate(`/settings?section=privacy&sub=${s}`)} onSubBack={goBack} />}
+          {section === "support" && <SupportFlow sub={sub} type={type} onBack={goBack} navigate={navigate} />}
         </div>
       ) : (
         <div>
@@ -108,6 +111,7 @@ function CategoryList({ onSelect }) {
     { key: "privacy", icon: Shield, label: t("settings.privacy") },
     { key: "notifications", icon: Bell, label: t("settings.notifications") },
     { key: "language", icon: Globe, label: t("settings.language") },
+    { key: "support", icon: Headphones, label: t("support.title") },
   ];
   return (
     <div className="divide-y divide-border">
