@@ -4,10 +4,9 @@ import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
-  ShieldCheck, Ban, Dumbbell, Search, Check, Timer,
+  ShieldCheck, Ban, Search, Check,
   EyeOff, Eye, UserSearch, Lock, VolumeX
 } from "lucide-react";
-import { useTraining } from "@/lib/trainingContext";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -31,6 +30,7 @@ const DEFAULT_NOTIF_PREFS = {
 
 export default function SettingsPage() {
   const t = useT();
+  const navigate = useNavigate();
   const [section, setSection] = useState(null);
 
   return (
@@ -52,12 +52,17 @@ export default function SettingsPage() {
           {section === "account" && <AccountSection />}
           {section === "notifications" && <NotificationsSection />}
           {section === "language" && <LanguageSection />}
-          {section === "training" && <TrainingSection />}
           {section === "privacy" && <PrivacySection />}
         </div>
       ) : (
-        <div className="space-y-5">
-          <h1 className="text-2xl font-bold">{t("settings.title")}</h1>
+        <div>
+          <header className="flex items-center justify-between pt-2 pb-6">
+            <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-xl font-bold">{t("settings.title")}</h1>
+            <span className="w-9" />
+          </header>
           <CategoryList onSelect={setSection} />
         </div>
       )}
@@ -71,16 +76,15 @@ function CategoryList({ onSelect }) {
     { key: "account", icon: User, label: t("settings.account") },
     { key: "notifications", icon: Bell, label: t("settings.notifications") },
     { key: "language", icon: Globe, label: t("settings.language") },
-    { key: "training", icon: Dumbbell, label: t("settings.training") },
     { key: "privacy", icon: Shield, label: t("settings.privacy") },
   ];
   return (
-    <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+    <div className="divide-y divide-border">
       {items.map((item) => (
-        <button key={item.key} onClick={() => onSelect(item.key)} className="w-full flex items-center gap-3 px-4 py-3.5 text-sm hover:bg-secondary/40 text-left">
-          <item.icon className="w-4 h-4 text-muted-foreground" />
+        <button key={item.key} onClick={() => onSelect(item.key)} className="w-full flex items-center gap-3 py-4 text-sm hover:bg-secondary/40 text-left">
+          <item.icon className="w-5 h-5 text-muted-foreground" />
           <span className="flex-1">{item.label}</span>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </button>
       ))}
     </div>
@@ -169,26 +173,6 @@ function LanguageSection() {
           {lang === l.code && <Check className="w-4 h-4 text-primary" />}
         </button>
       ))}
-    </div>
-  );
-}
-
-function TrainingSection() {
-  const t = useT();
-  const { defaultRest, setDefaultRest } = useTraining();
-  return (
-    <div className="space-y-5">
-      <h2 className="font-bold text-lg">{t("settings.training")}</h2>
-      <div className="glass rounded-2xl border border-border p-4">
-        <div className="flex items-center gap-2 text-sm mb-2"><Timer className="w-4 h-4" /> {t("settings.defaultRest")}</div>
-        <div className="flex gap-2 flex-wrap">
-          {[30, 45, 60, 90, 120, 180, 300].map((s) => (
-            <button key={s} onClick={() => setDefaultRest(s)} className={`text-sm px-3 py-1.5 rounded-full border ${defaultRest === s ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>
-              {s >= 60 ? `${s / 60}${t("common.min")}` : `${s}${t("common.sec")}`}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

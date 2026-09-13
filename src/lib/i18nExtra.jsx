@@ -62,7 +62,7 @@ export const extraTranslations = {
     "settings.dmScope": "DM受信範囲", "settings.dmScopeDesc": "だれからDMを受け取るか", "settings.dmEveryone": "誰でも",
     "settings.dmFollowings": "フォロー中のみ", "settings.dmNone": "受信しない",
     "settings.profile": "プロフィール", "settings.languageSettings": "言語設定", "settings.dmSettings": "DM設定",
-    "settings.privacy": "プライバシー設定", "settings.blockedUsers": "ブロックしたユーザー", "settings.other": "その他",
+    "settings.privacy": "プライバシー", "settings.blockedUsers": "ブロックしたユーザー", "settings.other": "その他",
     "settings.terms": "利用規約・プライバシーポリシー", "settings.contact": "お問い合わせ",
     "blocked.title": "ブロックしたユーザー", "blocked.empty": "ブロックしたユーザーはいません", "blocked.unblockConfirm": "ブロックを解除しますか？",
     "terms.title": "利用規約・プライバシーポリシー",
