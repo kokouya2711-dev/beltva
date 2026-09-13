@@ -5,8 +5,9 @@ import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
   ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
   ShieldCheck, Ban, Search, Check,
-  EyeOff, Eye, UserSearch, Lock, VolumeX
+  EyeOff, Eye, UserSearch, Lock, VolumeX, Mail, KeyRound, Loader2
 } from "lucide-react";
+import DeleteAccountFlow from "@/components/settings/DeleteAccountFlow";
 
 const DM_SCOPE_KEYS = [
   { key: "everyone", labelKey: "settings.dmEveryone" },
@@ -37,12 +38,12 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       {section ? (
         <div>
-          {section === "language" ? (
+          {section === "language" || section === "account" ? (
             <div className="relative flex items-center mb-5">
-              <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40">
+              <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("settings.language")}</h2>
+              <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{section === "language" ? t("settings.language") : t("settings.account")}</h2>
             </div>
           ) : (
             <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-4">
@@ -93,31 +94,66 @@ function CategoryList({ onSelect }) {
 
 function AccountSection() {
   const t = useT();
-  const [dmScope, setDmScope] = useState("everyone");
+  const navigate = useNavigate();
+  const [me, setMe] = useState(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then((u) => { if (u.dm_scope) setDmScope(u.dm_scope); }).catch(() => {});
+    base44.auth.me().then(setMe).catch(() => {});
   }, []);
 
-  async function changeDmScope(scope) {
-    setDmScope(scope);
-    try { await base44.auth.updateMe({ dm_scope: scope }); } catch {}
+  async function doLogout() {
+    setLoggingOut(true);
+    try { await base44.auth.logout("/login"); } catch { setLoggingOut(false); }
   }
 
   return (
-    <div className="space-y-5">
-      <h2 className="font-bold text-lg">{t("settings.account")}</h2>
-      <div className="glass rounded-2xl border border-border p-4">
-        <div className="flex items-center gap-2 text-sm mb-2"><Shield className="w-4 h-4" /> {t("settings.dmScopeDesc")}</div>
-        <div className="flex gap-2 flex-wrap">
-          {DM_SCOPE_KEYS.map((s) => (
-            <button key={s.key} onClick={() => changeDmScope(s.key)} className={`text-sm px-3 py-1.5 rounded-full border ${dmScope === s.key ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{t(s.labelKey)}</button>
-          ))}
+    <div className="space-y-6">
+      <div className="divide-y divide-border">
+        <div className="flex items-center gap-4 py-4">
+          <Mail className="w-6 h-6 text-muted-foreground shrink-0" />
+          <span className="text-base flex-1">{t("settings.email")}</span>
+          <span className="text-sm text-muted-foreground truncate max-w-[55%]">{me?.email || ""}</span>
         </div>
+        <button onClick={() => navigate("/login-method")} className="w-full flex items-center gap-4 py-4 text-left hover:bg-secondary/40">
+          <KeyRound className="w-6 h-6 text-muted-foreground shrink-0" />
+          <span className="text-base flex-1">{t("settings.loginMethod")}</span>
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+        </button>
       </div>
-      <button onClick={() => base44.auth.logout("/login")} className="w-full flex items-center justify-center gap-2 bg-secondary/60 border border-border py-3 rounded-xl text-sm font-semibold hover:border-red-500/40">
-        <LogOut className="w-4 h-4" /> {t("settings.logout")}
+
+      <button
+        onClick={() => setShowLogoutConfirm(true)}
+        className="w-full flex items-center justify-center gap-2 bg-secondary/60 border border-border py-3.5 rounded-xl text-base font-semibold hover:border-border"
+      >
+        <LogOut className="w-5 h-5" /> {t("settings.logout")}
       </button>
+
+      <div className="pt-16" />
+      <button
+        onClick={() => setShowDelete(true)}
+        className="w-full py-3.5 text-base font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition"
+      >
+        {t("settings.deleteAccount")}
+      </button>
+
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4" onClick={() => !loggingOut && setShowLogoutConfirm(false)}>
+          <div className="w-full max-w-sm bg-card rounded-2xl border border-border p-5" onClick={(e) => e.stopPropagation()}>
+            <p className="text-base font-medium text-center mb-5">{t("settings.logoutConfirm")}</p>
+            <div className="flex gap-2">
+              <button onClick={() => setShowLogoutConfirm(false)} disabled={loggingOut} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold disabled:opacity-50">{t("settings.cancel")}</button>
+              <button onClick={doLogout} disabled={loggingOut} className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
+                {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : t("settings.logout")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDelete && <DeleteAccountFlow email={me?.email || ""} onClose={() => setShowDelete(false)} />}
     </div>
   );
 }

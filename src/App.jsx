@@ -38,6 +38,7 @@ import CreatePost from '@/pages/CreatePost';
 import RecordWorkout from '@/pages/RecordWorkout';
 import HomeNotificationsPage from '@/pages/HomeNotificationsPage';
 import FollowListPage from '@/pages/FollowListPage';
+import LoginMethodPage from '@/pages/LoginMethodPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -87,6 +88,7 @@ const AuthenticatedApp = () => {
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/muted-users" element={<MutedUsersPage />} />
           <Route path="/users/:id/follows/:type" element={<FollowListPage />} />
+          <Route path="/login-method" element={<LoginMethodPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/home-notifications" element={<HomeNotificationsPage />} />
           <Route path="/create-post" element={<CreatePost />} />
