@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import {
-  ChevronRight, ArrowLeft, User, Bell, Globe, LogOut, Shield,
+  ChevronRight, ArrowLeft, User, Bell, BellOff, Globe, LogOut, Shield,
   ShieldCheck, Ban, Search, Check,
   EyeOff, Eye, UserSearch, Lock, VolumeX, Mail, KeyRound, Loader2
 } from "lucide-react";
@@ -15,18 +15,33 @@ const DM_SCOPE_KEYS = [
   { key: "none", labelKey: "settings.dmNone" }
 ];
 
-const NOTIF_TYPES = [
-  { key: "dm", labelKey: "notif.dm" },
-  { key: "follow", labelKey: "notif.follow" },
-  { key: "like", labelKey: "notif.like" },
-  { key: "comment", labelKey: "notif.comment" },
-  { key: "reaction", labelKey: "notif.reaction" },
-  { key: "trainingStart", labelKey: "notif.trainingStart" },
-  { key: "admin", labelKey: "notif.admin" },
+const NOTIF_GROUPS = [
+  {
+    titleKey: "notif.groupGeneral",
+    items: [
+      { key: "dm", labelKey: "notif.dm" },
+      { key: "follow", labelKey: "notif.follow" },
+      { key: "admin", labelKey: "notif.admin", descKey: "notif.adminDesc" },
+    ],
+  },
+  {
+    titleKey: "notif.groupLike",
+    items: [
+      { key: "likePost", labelKey: "notif.likePost" },
+      { key: "likeComment", labelKey: "notif.likeComment" },
+    ],
+  },
+  {
+    titleKey: "notif.groupComment",
+    items: [
+      { key: "commentPost", labelKey: "notif.commentPost" },
+      { key: "commentReply", labelKey: "notif.commentReply" },
+    ],
+  },
 ];
 
 const DEFAULT_NOTIF_PREFS = {
-  dm: true, follow: true, like: false, comment: true, reaction: true, trainingStart: true, admin: true,
+  dm: true, follow: true, admin: true, likePost: true, likeComment: true, commentPost: true, commentReply: true,
 };
 
 export default function SettingsPage() {
@@ -45,12 +60,12 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       {section ? (
         <div>
-          {section === "privacy" ? null : section === "language" || section === "account" ? (
+          {section === "privacy" ? null : section === "language" || section === "account" || section === "notifications" ? (
             <div className="relative flex items-center mb-5">
               <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-full bg-secondary/60 hover:bg-secondary transition">
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{section === "language" ? t("settings.language") : t("settings.account")}</h2>
+              <h2 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{section === "language" ? t("settings.language") : section === "account" ? t("settings.account") : t("settings.notifications")}</h2>
             </div>
           ) : (
             <button onClick={() => setSection(null)} className="p-2 -ml-2 rounded-lg hover:bg-secondary/40 mb-4">
@@ -146,8 +161,12 @@ function AccountSection() {
 function NotificationsSection() {
   const t = useT();
   const [prefs, setPrefs] = useState(DEFAULT_NOTIF_PREFS);
+  const [deviceOff, setDeviceOff] = useState(false);
 
   useEffect(() => {
+    if (typeof Notification !== "undefined" && Notification.permission === "denied") {
+      setDeviceOff(true);
+    }
     base44.auth.me().then((u) => {
       if (u.notif_prefs) {
         try {
@@ -164,17 +183,44 @@ function NotificationsSection() {
     try { await base44.auth.updateMe({ notif_prefs: JSON.stringify(next) }); } catch {}
   }
 
+  async function openDeviceSettings() {
+    if (typeof Notification !== "undefined" && Notification.requestPermission) {
+      try {
+        const perm = await Notification.requestPermission();
+        setDeviceOff(perm === "denied");
+      } catch {}
+    }
+  }
+
   return (
-    <div className="space-y-5">
-      <h2 className="font-bold text-lg">{t("settings.notifications")}</h2>
-      <div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">{t("notif.smartphone")}</div>
-        <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
-          {NOTIF_TYPES.map((n) => (
-            <ToggleRow key={n.key} label={t(n.labelKey)} checked={prefs[n.key]} onChange={() => togglePref(n.key)} />
-          ))}
+    <div className="space-y-6">
+      {deviceOff && (
+        <button onClick={openDeviceSettings} className="w-full flex items-center gap-3 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-left">
+          <BellOff className="w-5 h-5 text-destructive shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-medium text-destructive">{t("notif.deviceOff")}</div>
+            <div className="text-xs text-muted-foreground">{t("notif.deviceOffAction")}</div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+        </button>
+      )}
+
+      {NOTIF_GROUPS.map((group) => (
+        <div key={group.titleKey}>
+          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t(group.titleKey)}</div>
+          <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+            {group.items.map((item) => (
+              <NotifToggleRow
+                key={item.key}
+                label={t(item.labelKey)}
+                desc={item.descKey ? t(item.descKey) : null}
+                checked={!!prefs[item.key]}
+                onChange={() => togglePref(item.key)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -352,6 +398,20 @@ function ToggleRow({ label, checked, onChange }) {
     <div className="flex items-center justify-between px-4 py-3 text-sm">
       <span>{label}</span>
       <button onClick={onChange} className={`w-11 h-6 rounded-full transition relative ${checked ? "bg-primary" : "bg-secondary border border-border"}`}>
+        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
+      </button>
+    </div>
+  );
+}
+
+function NotifToggleRow({ label, desc, checked, onChange }) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-4 py-3.5 text-sm">
+      <div className="min-w-0 flex-1">
+        <div className="font-medium">{label}</div>
+        {desc && <div className="text-xs text-muted-foreground mt-1">{desc}</div>}
+      </div>
+      <button onClick={onChange} className={`w-11 h-6 rounded-full transition relative shrink-0 ${checked ? "bg-primary" : "bg-secondary border border-border"}`}>
         <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
       </button>
     </div>
