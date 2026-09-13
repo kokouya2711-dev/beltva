@@ -193,9 +193,9 @@ function NotificationsSection() {
   }
 
   return (
-    <div className="space-y-6">
+    <div>
       {deviceOff && (
-        <button onClick={openDeviceSettings} className="w-full flex items-center gap-3 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-left">
+        <button onClick={openDeviceSettings} className="w-full flex items-center gap-3 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-left mb-4">
           <BellOff className="w-5 h-5 text-destructive shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium text-destructive">{t("notif.deviceOff")}</div>
@@ -206,8 +206,8 @@ function NotificationsSection() {
       )}
 
       {NOTIF_GROUPS.map((group, gi) => (
-        <div key={group.titleKey}>
-          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 px-1">{t(group.titleKey)}</div>
+        <div key={group.titleKey} className={gi > 0 ? "mt-5" : ""}>
+          <div className="text-sm font-semibold text-muted-foreground mb-1 px-1">{t(group.titleKey)}</div>
           <div className="divide-y divide-border">
             {group.items.map((item) => (
               <NotifToggleRow
@@ -219,10 +219,9 @@ function NotificationsSection() {
               />
             ))}
           </div>
-          {gi < NOTIF_GROUPS.length - 1 && <div className="h-6" />}
         </div>
       ))}
-      <div className="h-24" />
+      <div className="h-20" />
     </div>
   );
 }
@@ -408,10 +407,10 @@ function ToggleRow({ label, checked, onChange }) {
 
 function NotifToggleRow({ label, desc, checked, onChange }) {
   return (
-    <div className="flex items-center justify-between gap-3 px-4 py-3.5 text-sm">
+    <div className="flex items-center justify-between gap-3 py-3.5 text-base">
       <div className="min-w-0 flex-1">
-        <div className="font-medium">{label}</div>
-        {desc && <div className="text-xs text-muted-foreground mt-1">{desc}</div>}
+        <div>{label}</div>
+        {desc && <div className="text-xs text-muted-foreground mt-0.5">{desc}</div>}
       </div>
       <button onClick={onChange} className={`w-11 h-6 rounded-full transition relative shrink-0 ${checked ? "bg-primary" : "bg-secondary border border-border"}`}>
         <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${checked ? "left-[22px]" : "left-0.5"}`} />
