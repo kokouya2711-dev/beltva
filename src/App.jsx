@@ -43,6 +43,8 @@ import DeleteAccountConfirm from '@/pages/DeleteAccountConfirm';
 import DeleteAccountVerify from '@/pages/DeleteAccountVerify';
 import DeleteAccountFinal from '@/pages/DeleteAccountFinal';
 import RestoreAccount from '@/pages/RestoreAccount';
+import LogoutPage from '@/pages/LogoutPage';
+import ChangeEmailPage from '@/pages/ChangeEmailPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -108,6 +110,8 @@ const AuthenticatedApp = () => {
         <Route path="/delete-account/verify" element={<DeleteAccountVerify />} />
         <Route path="/delete-account/final" element={<DeleteAccountFinal />} />
         <Route path="/restore-account" element={<RestoreAccount />} />
+        <Route path="/logout" element={<LogoutPage />} />
+        <Route path="/change-email" element={<ChangeEmailPage />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

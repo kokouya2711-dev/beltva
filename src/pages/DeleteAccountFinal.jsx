@@ -31,7 +31,7 @@ export default function DeleteAccountFinal() {
     <div className="min-h-screen flex flex-col" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <header className="flex items-center px-3 py-3">
         <button
-          onClick={() => navigate("/delete-account/verify")}
+          onClick={() => navigate(-1)}
           disabled={submitting}
           className="p-2.5 -ml-1 rounded-full bg-secondary/60 hover:bg-secondary transition disabled:opacity-50"
         >
@@ -56,7 +56,7 @@ export default function DeleteAccountFinal() {
       <div className="px-5 pb-8" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 2rem)" }}>
         <div className="flex gap-3">
           <button
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate(-1)}
             disabled={submitting}
             className="flex-1 py-3.5 rounded-xl border border-border text-base font-semibold disabled:opacity-50"
           >

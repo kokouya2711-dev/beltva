@@ -64,7 +64,7 @@ export default function DeleteAccountVerify() {
   return (
     <div className="min-h-screen flex flex-col" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <header className="flex items-center px-3 py-3">
-        <button onClick={() => navigate("/delete-account/confirm")} className="p-2.5 -ml-1 rounded-full bg-secondary/60 hover:bg-secondary transition">
+        <button onClick={() => navigate(-1)} className="p-2.5 -ml-1 rounded-full bg-secondary/60 hover:bg-secondary transition">
           <ArrowLeft className="w-5 h-5" />
         </button>
       </header>
@@ -124,7 +124,7 @@ export default function DeleteAccountVerify() {
 
       <div className="px-5 pb-8" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 2rem)" }}>
         <button
-          onClick={() => navigate("/delete-account/confirm")}
+          onClick={() => navigate(-1)}
           className="w-full py-3.5 rounded-xl border border-border text-base font-semibold"
         >
           {t("settings.cancel")}

@@ -16,14 +16,14 @@ export default function DeleteAccountConfirm() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-      <header className="flex items-center px-3 py-3">
-        <button onClick={() => navigate("/settings")} className="p-2.5 -ml-1 rounded-full bg-secondary/60 hover:bg-secondary transition">
+      <header className="relative flex items-center px-3 py-3">
+        <button onClick={() => navigate(-1)} className="p-2.5 -ml-1 rounded-full bg-secondary/60 hover:bg-secondary transition">
           <ArrowLeft className="w-5 h-5" />
         </button>
+        <h1 className="font-bold text-lg absolute left-1/2 -translate-x-1/2">{t("del.confirmTitle")}</h1>
       </header>
 
       <div className="flex-1 px-5 pt-4">
-        <h1 className="text-xl font-bold mb-3">{t("del.confirmTitle")}</h1>
         <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{t("del.confirmDesc")}</p>
 
         <div className="space-y-3 mb-8">
@@ -45,7 +45,7 @@ export default function DeleteAccountConfirm() {
       <div className="px-5 pb-8" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 2rem)" }}>
         <div className="flex gap-3">
           <button
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate(-1)}
             className="flex-1 py-3.5 rounded-xl border border-border text-base font-semibold"
           >
             {t("settings.cancel")}

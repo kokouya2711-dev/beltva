@@ -96,27 +96,20 @@ function AccountSection() {
   const t = useT();
   const navigate = useNavigate();
   const [me, setMe] = useState(null);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setMe).catch(() => {});
   }, []);
 
-  async function doLogout() {
-    setLoggingOut(true);
-    try { await base44.auth.logout("/login"); } catch { setLoggingOut(false); }
-  }
-
   return (
     <div className="space-y-6">
       <div className="divide-y divide-border">
-        <div className="flex items-center gap-4 py-4">
+        <button onClick={() => navigate("/change-email")} className="w-full flex items-center gap-4 py-4 text-left hover:bg-secondary/40">
           <Mail className="w-6 h-6 text-muted-foreground shrink-0" />
           <span className="text-base flex-1">{t("settings.email")}</span>
-          <span className="text-sm text-muted-foreground truncate max-w-[55%]">{me?.email || ""}</span>
-        </div>
+          <span className="text-sm text-muted-foreground truncate max-w-[45%]">{me?.email || ""}</span>
+          <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
+        </button>
         <button onClick={() => navigate("/login-method")} className="w-full flex items-center gap-4 py-4 text-left hover:bg-secondary/40">
           <KeyRound className="w-6 h-6 text-muted-foreground shrink-0" />
           <span className="text-base flex-1">{t("settings.loginMethod")}</span>
@@ -125,7 +118,7 @@ function AccountSection() {
       </div>
 
       <button
-        onClick={() => setShowLogoutConfirm(true)}
+        onClick={() => navigate("/logout")}
         className="w-full flex items-center justify-center gap-2 bg-secondary/60 border border-border py-3.5 rounded-xl text-base font-semibold hover:border-border"
       >
         <LogOut className="w-5 h-5" /> {t("settings.logout")}
@@ -139,19 +132,6 @@ function AccountSection() {
         {t("settings.deleteAccount")}
       </button>
 
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4" onClick={() => !loggingOut && setShowLogoutConfirm(false)}>
-          <div className="w-full max-w-sm bg-card rounded-2xl border border-border p-5" onClick={(e) => e.stopPropagation()}>
-            <p className="text-base font-medium text-center mb-5">{t("settings.logoutConfirm")}</p>
-            <div className="flex gap-2">
-              <button onClick={() => setShowLogoutConfirm(false)} disabled={loggingOut} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold disabled:opacity-50">{t("settings.cancel")}</button>
-              <button onClick={doLogout} disabled={loggingOut} className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
-                {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : t("settings.logout")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
