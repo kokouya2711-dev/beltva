@@ -205,10 +205,10 @@ function NotificationsSection() {
         </button>
       )}
 
-      {NOTIF_GROUPS.map((group) => (
+      {NOTIF_GROUPS.map((group, gi) => (
         <div key={group.titleKey}>
-          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">{t(group.titleKey)}</div>
-          <div className="glass rounded-2xl border border-border divide-y divide-border overflow-hidden">
+          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 px-1">{t(group.titleKey)}</div>
+          <div className="divide-y divide-border">
             {group.items.map((item) => (
               <NotifToggleRow
                 key={item.key}
@@ -219,8 +219,10 @@ function NotificationsSection() {
               />
             ))}
           </div>
+          {gi < NOTIF_GROUPS.length - 1 && <div className="h-6" />}
         </div>
       ))}
+      <div className="h-24" />
     </div>
   );
 }
