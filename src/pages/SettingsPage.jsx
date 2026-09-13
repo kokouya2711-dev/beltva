@@ -221,7 +221,7 @@ function NotificationsSection() {
           </div>
         </div>
       ))}
-      <div className="h-20" />
+      <div className="h-12" />
     </div>
   );
 }
