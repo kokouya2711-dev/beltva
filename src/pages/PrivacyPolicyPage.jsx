@@ -232,7 +232,7 @@ function Block({ block }) {
 
 export default function PrivacyPolicyPage() {
   const navigate = useNavigate();
-  const goBack = () => navigate("/settings?section=support");
+  const goBack = () => navigate(-1);
 
   return (
     <div className="min-h-[100dvh] bg-background text-foreground">

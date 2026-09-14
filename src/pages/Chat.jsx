@@ -120,7 +120,7 @@ export default function Chat() {
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-4 md:py-6 flex flex-col h-[calc(100dvh-2rem)] md:h-[calc(100dvh-3rem)]">
       <div className="flex items-center gap-2 mb-3">
-        <button onClick={() => navigate("/messages")} className="p-1.5"><ArrowLeft className="w-5 h-5" /></button>
+        <button onClick={() => navigate(-1)} className="p-1.5"><ArrowLeft className="w-5 h-5" /></button>
         <Link to={`/profile/${otherId}`} className="flex items-center gap-2 flex-1 min-w-0">
           <div className="relative shrink-0">
             {other?.avatar_url ? <img src={other.avatar_url} className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">{displayName(other).slice(0, 2).toUpperCase()}</div>}
