@@ -13,7 +13,6 @@ export default function SupportFlow({ sub, type, onBack, navigate }) {
   if (sub === "contact" && !type) return <ContactMenu onBack={onBack} navigate={navigate} />;
   if (sub === "contact" && type) return <ContactForm type={type} onBack={onBack} />;
   if (sub === "terms") return <SimpleScreen titleKey="support.terms" onBack={onBack} />;
-  if (sub === "privacy") return <SimpleScreen titleKey="support.privacy" onBack={onBack} />;
   return null;
 }
 
@@ -48,7 +47,7 @@ function SupportRoot({ onBack, navigate }) {
       <div className="divide-y divide-border">
         <ListRow icon={Mail} label={t("support.contact")} onClick={() => go("&sub=contact")} />
         <ListRow icon={FileText} label={t("support.terms")} onClick={() => go("&sub=terms")} />
-        <ListRow icon={Shield} label={t("support.privacy")} onClick={() => go("&sub=privacy")} />
+        <ListRow icon={Shield} label={t("support.privacy")} onClick={() => navigate("/privacy-policy")} />
       </div>
     </div>
   );

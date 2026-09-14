@@ -30,6 +30,7 @@ import PrivacyPage from '@/pages/PrivacyPage';
 import MePage from '@/pages/MePage';
 import ActivityPage from '@/pages/ActivityPage';
 import SupportPage from '@/pages/SupportPage';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage';
 import TimelineHidePage from '@/pages/TimelineHidePage';
 import FavoritesPage from '@/pages/FavoritesPage';
 import MutedUsersPage from '@/pages/MutedUsersPage';
@@ -105,6 +106,7 @@ const AuthenticatedApp = () => {
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/support" element={<SupportPage />} />
         </Route>
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/record-workout" element={<RecordWorkout />} />
         <Route path="/delete-account/confirm" element={<DeleteAccountConfirm />} />
         <Route path="/delete-account/verify" element={<DeleteAccountVerify />} />
