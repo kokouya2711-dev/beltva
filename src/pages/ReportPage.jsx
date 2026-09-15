@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { showReportSuccess } from "@/lib/reportSuccessStore";
+import { fetchUser, displayName } from "@/lib/profile";
 
 const REASONS = [
   { code: "spam_scam", key: "report.reasonSpamScam" },
@@ -26,10 +27,24 @@ export default function ReportPage() {
   const [detail, setDetail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(false);
+  const [targetName, setTargetName] = useState("");
 
   useEffect(() => {
     base44.auth.me().then((u) => setMeId(u?.id || null)).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (ctx.reported_id && (ctx.target_type === "user" || ctx.target_type === "conversation")) {
+      fetchUser(ctx.reported_id).then((u) => setTargetName(displayName(u))).catch(() => {});
+    }
+  }, [ctx.reported_id, ctx.target_type]);
+
+  const targetType = ctx.target_type || "user";
+  const subtitle = targetType === "user" ? t("report.subtitleUser").replace("{name}", targetName)
+    : targetType === "post" ? t("report.subtitlePost")
+    : targetType === "comment" ? t("report.subtitleComment")
+    : targetType === "conversation" ? t("report.subtitleConversation").replace("{name}", targetName)
+    : "";
 
   const isOther = reason === "other";
   const otherInvalid = isOther && !detail.trim();
@@ -79,6 +94,12 @@ export default function ReportPage() {
           {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : t("common.send")}
         </button>
       </header>
+
+      {subtitle && (
+        <div className="px-4 py-2 text-center text-sm text-muted-foreground border-b border-border">
+          {subtitle}
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto px-4 py-3">
         <div className="divide-y divide-border">

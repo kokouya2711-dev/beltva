@@ -136,7 +136,7 @@ export default function Chat() {
             <div className="absolute right-0 top-9 z-30 glass border border-border rounded-xl py-1 w-40">
               <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? t("common.unmute") : t("common.mute")}</button>
               <button onClick={toggleBlock} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Ban className="w-4 h-4" /> {blocked ? t("common.unblock") : t("common.block")}</button>
-              <button onClick={() => { setMenuOpen(false); navigate("/report", { state: { target_type: "message", target_id: id, reported_id: otherId } }); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> {t("common.report")}</button>
+              <button onClick={() => { setMenuOpen(false); navigate("/report", { state: { target_type: "conversation", target_id: id, reported_id: otherId } }); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> {t("common.report")}</button>
             </div>
           )}
         </div>

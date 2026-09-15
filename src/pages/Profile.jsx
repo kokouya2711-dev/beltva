@@ -11,7 +11,7 @@ import AvatarViewer from "@/components/AvatarViewer";
 import { getOrCreateConversation, blockExists, checkDmScope } from "@/lib/dm";
 import { subscribeFollowChanges } from "@/lib/followStore";
 import { getDemoUser } from "@/lib/demoUsers";
-import { Mail, Loader2, ArrowLeft, Copy, Target, BarChart3 } from "lucide-react";
+import { Mail, Loader2, ArrowLeft, Copy, Target, BarChart3, Pencil } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 // 性別＋年齢ピル（デザイン参照）
@@ -153,7 +153,17 @@ export default function Profile() {
         <button onClick={() => navigate(-1)} className="p-1.5 -ml-1.5 rounded-full hover:bg-secondary transition">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        {!isMe && <UserMenu meId={me?.id} targetId={id} />}
+        {isMe ? (
+          <button
+            onClick={() => navigate("/profile/edit")}
+            className="flex items-center justify-center w-11 h-11 -mr-1.5 rounded-full hover:bg-secondary transition"
+            aria-label={t("profile.editTitle")}
+          >
+            <Pencil className="w-5 h-5" />
+          </button>
+        ) : (
+          <UserMenu meId={me?.id} targetId={id} />
+        )}
       </header>
 
       {/* Identity: avatar + name/gender-age + handle */}
