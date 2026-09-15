@@ -14,6 +14,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "問題の内容を入力してください",
     "report.success": "通報を送信しました。ご協力ありがとうございます。",
     "report.error": "送信に失敗しました。もう一度お試しください。",
+    "report.dialogTitle": "ご協力ありがとうございます",
+    "report.dialogBody": "通報を受け付けました。内容を確認します。",
+    "report.dialogClose": "閉じる",
   },
   en: {
     "report.reasonSpamScam": "Spam or scam",
@@ -27,6 +30,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Please describe the issue.",
     "report.success": "Your report was submitted. Thank you for your help.",
     "report.error": "Submission failed. Please try again.",
+    "report.dialogTitle": "Thank you for your cooperation",
+    "report.dialogBody": "Your report has been received. We will review the content.",
+    "report.dialogClose": "Close",
   },
   zh: {
     "report.reasonSpamScam": "垃圾信息或诈骗",
@@ -40,6 +46,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "请描述问题内容。",
     "report.success": "已提交举报。感谢您的协助。",
     "report.error": "提交失败，请重试。",
+    "report.dialogTitle": "感谢您的协助",
+    "report.dialogBody": "已收到您的举报。我们将核实内容。",
+    "report.dialogClose": "关闭",
   },
   "zh-TW": {
     "report.reasonSpamScam": "垃圾訊息或詐騙",
@@ -53,6 +62,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "請描述問題內容。",
     "report.success": "已提交檢舉。感謝您的協助。",
     "report.error": "提交失敗，請重試。",
+    "report.dialogTitle": "感謝您的協助",
+    "report.dialogBody": "已收到您的檢舉。我們將核實內容。",
+    "report.dialogClose": "關閉",
   },
   ko: {
     "report.reasonSpamScam": "스팸 또는 사기",
@@ -66,6 +78,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "문제 내용을 입력해 주세요.",
     "report.success": "신고가 접수되었습니다. 협조해 주셔서 감사합니다.",
     "report.error": "전송에 실패했습니다. 다시 시도해 주세요.",
+    "report.dialogTitle": "협조해 주셔서 감사합니다",
+    "report.dialogBody": "신고가 접수되었습니다. 내용을 확인하겠습니다.",
+    "report.dialogClose": "닫기",
   },
   es: {
     "report.reasonSpamScam": "Spam o estafa",
@@ -79,6 +94,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Describe el problema.",
     "report.success": "Tu reporte fue enviado. Gracias por tu ayuda.",
     "report.error": "Error al enviar. Inténtalo de nuevo.",
+    "report.dialogTitle": "Gracias por tu cooperación",
+    "report.dialogBody": "Hemos recibido tu reporte. Revisaremos el contenido.",
+    "report.dialogClose": "Cerrar",
   },
   fr: {
     "report.reasonSpamScam": "Spam ou arnaque",
@@ -92,6 +110,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Décris le problème.",
     "report.success": "Ton signalement a été envoyé. Merci pour ton aide.",
     "report.error": "Échec de l'envoi. Réessaie.",
+    "report.dialogTitle": "Merci pour ta coopération",
+    "report.dialogBody": "Ton signalement a été reçu. Nous allons examiner le contenu.",
+    "report.dialogClose": "Fermer",
   },
   de: {
     "report.reasonSpamScam": "Spam oder Betrug",
@@ -105,6 +126,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Beschreibe das Problem.",
     "report.success": "Dein Bericht wurde gesendet. Danke für deine Hilfe.",
     "report.error": "Senden fehlgeschlagen. Bitte erneut versuchen.",
+    "report.dialogTitle": "Danke für deine Mithilfe",
+    "report.dialogBody": "Dein Bericht wurde empfangen. Wir werden den Inhalt prüfen.",
+    "report.dialogClose": "Schließen",
   },
   pt: {
     "report.reasonSpamScam": "Spam ou golpe",
@@ -118,6 +142,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Descreva o problema.",
     "report.success": "Sua denúncia foi enviada. Obrigado pela sua ajuda.",
     "report.error": "Falha no envio. Tente novamente.",
+    "report.dialogTitle": "Obrigado pela sua cooperação",
+    "report.dialogBody": "Sua denúncia foi recebida. Vamos analisar o conteúdo.",
+    "report.dialogClose": "Fechar",
   },
   it: {
     "report.reasonSpamScam": "Spam o truffa",
@@ -131,6 +158,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Descrivi il problema.",
     "report.success": "La tua segnalazione è stata inviata. Grazie per l'aiuto.",
     "report.error": "Invio fallito. Riprova.",
+    "report.dialogTitle": "Grazie per la tua collaborazione",
+    "report.dialogBody": "La tua segnalazione è stata ricevuta. Esamineremo il contenuto.",
+    "report.dialogClose": "Chiudi",
   },
   ru: {
     "report.reasonSpamScam": "Спам или мошенничество",
@@ -144,6 +174,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Опишите проблему.",
     "report.success": "Ваша жалоба отправлена. Спасибо за помощь.",
     "report.error": "Не удалось отправить. Попробуйте снова.",
+    "report.dialogTitle": "Спасибо за сотрудничество",
+    "report.dialogBody": "Ваша жалоба получена. Мы рассмотрим содержание.",
+    "report.dialogClose": "Закрыть",
   },
   vi: {
     "report.reasonSpamScam": "Spam hoặc lừa đảo",
@@ -157,6 +190,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Vui lòng mô tả vấn đề.",
     "report.success": "Báo cáo của bạn đã được gửi. Cảm ơn bạn đã giúp đỡ.",
     "report.error": "Gửi thất bại. Vui lòng thử lại.",
+    "report.dialogTitle": "Cảm ơn sự hợp tác của bạn",
+    "report.dialogBody": "Chúng tôi đã nhận được báo cáo của bạn. Chúng tôi sẽ xem xét nội dung.",
+    "report.dialogClose": "Đóng",
   },
   id: {
     "report.reasonSpamScam": "Spam atau penipuan",
@@ -170,6 +206,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Mohon jelaskan masalahnya.",
     "report.success": "Laporan Anda telah dikirim. Terima kasih atas bantuan Anda.",
     "report.error": "Gagal mengirim. Silakan coba lagi.",
+    "report.dialogTitle": "Terima kasih atas kerja sama Anda",
+    "report.dialogBody": "Laporan Anda telah diterima. Kami akan meninjau isinya.",
+    "report.dialogClose": "Tutup",
   },
   th: {
     "report.reasonSpamScam": "สแปมหรือหลอกลวง",
@@ -183,6 +222,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "กรุณาอธิบายปัญหา",
     "report.success": "ส่งรายงานแล้ว ขอบคุณที่ช่วยเหลือ",
     "report.error": "ส่งไม่สำเร็จ กรุณาลองอีกครั้ง",
+    "report.dialogTitle": "ขอบคุณที่ให้ความร่วมมือ",
+    "report.dialogBody": "ได้รับรายงานของคุณแล้ว เราจะตรวจสอบเนื้อหา",
+    "report.dialogClose": "ปิด",
   },
   hi: {
     "report.reasonSpamScam": "स्पैम या धोखाधड़ी",
@@ -196,6 +238,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "कृपया समस्या बताएँ।",
     "report.success": "आपकी रिपोर्ट भेज दी गई। सहयोग के लिए धन्यवाद।",
     "report.error": "भेजने में विफल। कृपया पुनः प्रयास करें।",
+    "report.dialogTitle": "सहयोग के लिए धन्यवाद",
+    "report.dialogBody": "आपकी रिपोर्ट प्राप्त हो गई है। हम सामग्री की समीक्षा करेंगे।",
+    "report.dialogClose": "बंद करें",
   },
   ar: {
     "report.reasonSpamScam": "رسائل مزعجة أو احتيال",
@@ -209,6 +254,9 @@ export const reportTranslations = {
     "report.otherPlaceholder": "يرجى وصف المشكلة.",
     "report.success": "تم إرسال البلاغ. شكراً لمساعدتك.",
     "report.error": "فشل الإرسال. حاول مرة أخرى.",
+    "report.dialogTitle": "شكراً لتعاونك",
+    "report.dialogBody": "تم استلام بلاغك. سنراجع المحتوى.",
+    "report.dialogClose": "إغلاق",
   },
   tr: {
     "report.reasonSpamScam": "Spam veya dolandırıcılık",
@@ -222,5 +270,8 @@ export const reportTranslations = {
     "report.otherPlaceholder": "Lütfen sorunu açıklayın.",
     "report.success": "Raporunuz gönderildi. Yardımınız için teşekkürler.",
     "report.error": "Gönderme başarısız. Lütfen tekrar deneyin.",
+    "report.dialogTitle": "İşbirliğiniz için teşekkürler",
+    "report.dialogBody": "Raporunuz alındı. İçeriği inceleyeceğiz.",
+    "report.dialogClose": "Kapat",
   },
 };

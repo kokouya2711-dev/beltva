@@ -26,6 +26,7 @@ import { TimelineFilterProvider } from "@/lib/timelineFilterContext";
 import TimelineHeader from "@/components/TimelineHeader";
 import { motion } from "framer-motion";
 import { FriendsIcon, FeedIcon, ChatIcon } from "@/components/NavIcons";
+import ReportSuccessDialog from "@/components/ReportSuccessDialog";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 const nav = [
@@ -250,6 +251,7 @@ function AppLayoutInner() {
         </div>
       </nav>
 
+      <ReportSuccessDialog />
     </div>
   );
 }

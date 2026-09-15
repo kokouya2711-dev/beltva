@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
-import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { showReportSuccess } from "@/lib/reportSuccessStore";
 
 const REASONS = [
   { code: "spam_scam", key: "report.reasonSpamScam" },
@@ -20,7 +20,6 @@ export default function ReportPage() {
   const t = useT();
   const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
   const ctx = location.state || {};
   const [meId, setMeId] = useState(null);
   const [reason, setReason] = useState(null);
@@ -52,7 +51,7 @@ export default function ReportPage() {
         target_content: (ctx.target_content || "").slice(0, 500),
         status: "pending",
       });
-      toast({ description: t("report.success") });
+      showReportSuccess();
       navigate(-1);
     } catch (e) {
       setError(true);
