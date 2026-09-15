@@ -106,17 +106,17 @@ const AuthenticatedApp = () => {
           <Route path="/me" element={<MePage />} />
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/support" element={<SupportPage />} />
-        </Route>
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/record-workout" element={<RecordWorkout />} />
-        <Route path="/delete-account/confirm" element={<DeleteAccountConfirm />} />
-        <Route path="/delete-account/verify" element={<DeleteAccountVerify />} />
-        <Route path="/delete-account/final" element={<DeleteAccountFinal />} />
-        <Route path="/restore-account" element={<RestoreAccount />} />
-        <Route path="/logout" element={<LogoutPage />} />
-        <Route path="/change-email" element={<ChangeEmailPage />} />
-        <Route path="/report" element={<ReportPage />} />
-      </Route>
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/record-workout" element={<RecordWorkout />} />
+          <Route path="/delete-account/confirm" element={<DeleteAccountConfirm />} />
+          <Route path="/delete-account/verify" element={<DeleteAccountVerify />} />
+          <Route path="/delete-account/final" element={<DeleteAccountFinal />} />
+          <Route path="/restore-account" element={<RestoreAccount />} />
+          <Route path="/logout" element={<LogoutPage />} />
+          <Route path="/change-email" element={<ChangeEmailPage />} />
+          <Route path="/report" element={<ReportPage />} />
+          </Route>
+          </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

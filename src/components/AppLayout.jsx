@@ -27,6 +27,7 @@ import TimelineHeader from "@/components/TimelineHeader";
 import { motion } from "framer-motion";
 import { FriendsIcon, FeedIcon, ChatIcon } from "@/components/NavIcons";
 import ReportSuccessDialog from "@/components/ReportSuccessDialog";
+import AnimatedOutlet, { isFullscreenRoute } from "@/components/AnimatedOutlet";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 const nav = [
@@ -36,8 +37,6 @@ const nav = [
   { to: "/timeline", labelKey: "nav.timeline", icon: FeedIcon },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
-
-const MemoizedOutlet = React.memo(() => <Outlet />);
 
 // Red badge for bottom nav items (timeline notifications + DM unread)
 function NavBadge({ to }) {
@@ -95,6 +94,7 @@ function AppLayoutInner() {
   const isPostDetail = location.pathname.startsWith("/posts/");
   const isChatDetail = location.pathname.startsWith("/messages/") && location.pathname !== "/messages";
   const isProfileEdit = location.pathname === "/profile/edit";
+  const isFullscreen = isFullscreenRoute(location.pathname);
 
   React.useEffect(() => {
     base44.auth.me().then((u) => {
@@ -152,6 +152,7 @@ function AppLayoutInner() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Sidebar (desktop) */}
+      {!isFullscreen && (
       <aside className="hidden md:flex flex-col w-60 shrink-0 border-r border-border glass sticky top-0 h-screen">
         <div className="px-4 py-3 flex items-center gap-2">
           <Image src={LOGO_URL} alt="BELTVA" className="w-9 h-9 rounded-lg shrink-0" fittingType="fill" />
@@ -192,6 +193,7 @@ function AppLayoutInner() {
           )}
         </div>
       </aside>
+      )}
 
       {/* Mobile top bar — minimal on timeline, full on other pages, hidden on post detail */}
       {location.pathname === "/" ? (
@@ -239,12 +241,12 @@ function AppLayoutInner() {
       )}
 
       {/* Main content */}
-      <main className={`flex-1 min-w-0 md:pb-8 ${keyboardOpen ? "pb-4" : isPostDetail || isChatDetail || isProfileEdit ? "pb-0" : "pb-28"}`}>
-        <MemoizedOutlet />
+      <main className={`flex-1 min-w-0 md:pb-8 ${keyboardOpen ? "pb-4" : isPostDetail || isChatDetail || isProfileEdit || isFullscreen ? "pb-0" : "pb-28"}`}>
+        <AnimatedOutlet />
       </main>
 
       {/* Mobile bottom tab bar — glass pill with bounce animation */}
-      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen || isPostDetail || isChatDetail || isProfileEdit ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
+      <nav className={`md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-center px-1 ${keyboardOpen || isPostDetail || isChatDetail || isProfileEdit || isFullscreen ? "hidden" : "flex"}`} style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)" }}>
         <div className="flex items-center w-full max-w-sm bg-card rounded-full border border-border px-2 py-2 shadow-2xl shadow-black/50">
           {nav.map((n) => (
             <NavItem key={n.to} n={n} active={location.pathname === n.to} t={t} />
