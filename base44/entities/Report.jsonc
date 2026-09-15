@@ -4,29 +4,87 @@
   "properties": {
     "reporter_id": {
       "type": "string",
-      "title": "\u901a\u5831\u8005"
+      "title": "\u901a\u5831\u3057\u305f\u30e6\u30fc\u30b6\u30fcID"
     },
     "reported_id": {
       "type": "string",
-      "title": "\u901a\u5831\u3055\u308c\u305f\u4eba"
+      "title": "\u901a\u5831\u3055\u308c\u305f\u30e6\u30fc\u30b6\u30fcID"
+    },
+    "reason_code": {
+      "type": "string",
+      "enum": [
+        "spam_scam",
+        "harassment",
+        "discrimination",
+        "inappropriate_content",
+        "violence_danger",
+        "impersonation",
+        "solicitation_advertising",
+        "other"
+      ],
+      "title": "\u901a\u5831\u7406\u7531\u30b3\u30fc\u30c9"
     },
     "reason": {
       "type": "string",
-      "title": "\u7406\u7531"
+      "title": "\u901a\u5831\u7406\u7531\uff08\u30b3\u30fc\u30c9\uff09"
+    },
+    "other_detail": {
+      "type": "string",
+      "title": "\u305d\u306e\u4ed6\u306e\u8a73\u7d30"
     },
     "target_type": {
       "type": "string",
-      "title": "\u5bfe\u8c61\u7a2e\u5225",
+      "enum": [
+        "user",
+        "post",
+        "comment",
+        "message"
+      ],
+      "title": "\u901a\u5831\u5bfe\u8c61\u306e\u7a2e\u985e",
       "default": "user"
     },
     "target_id": {
       "type": "string",
-      "title": "\u5bfe\u8c61ID"
+      "title": "\u901a\u5831\u5bfe\u8c61\u306eID"
+    },
+    "target_content": {
+      "type": "string",
+      "title": "\u5bfe\u8c61\u5185\u5bb9"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewing",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "\u5bfe\u5fdc\u72b6\u614b",
+      "default": "pending"
     }
   },
   "required": [
     "reporter_id",
     "reported_id",
-    "reason"
-  ]
+    "reason_code",
+    "target_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

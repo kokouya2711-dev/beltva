@@ -46,6 +46,7 @@ import DeleteAccountFinal from '@/pages/DeleteAccountFinal';
 import RestoreAccount from '@/pages/RestoreAccount';
 import LogoutPage from '@/pages/LogoutPage';
 import ChangeEmailPage from '@/pages/ChangeEmailPage';
+import ReportPage from '@/pages/ReportPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -114,6 +115,7 @@ const AuthenticatedApp = () => {
         <Route path="/restore-account" element={<RestoreAccount />} />
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="/change-email" element={<ChangeEmailPage />} />
+        <Route path="/report" element={<ReportPage />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

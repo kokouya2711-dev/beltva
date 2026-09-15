@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MoreVertical, Pencil, Trash2, Bookmark, BookmarkCheck, EyeOff, VolumeX, Ban, Flag } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { muteUser, blockUser, reportUser } from "@/lib/dm";
+import { muteUser, blockUser } from "@/lib/dm";
 
 export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavoriteToggle, isFavorited, onHidden }) {
   const t = useT();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [showReport, setShowReport] = useState(false);
   const [menuPos, setMenuPos] = useState(null);
   const btnRef = useRef(null);
   const ref = useRef(null);
@@ -52,11 +53,17 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavo
     onHidden?.();
   }
 
-  async function handleReport(reason) {
-    setShowReport(false);
+  function handleReport() {
+    setOpen(false);
     if (!post.created_by_id) return;
-    await reportUser(meId, post.created_by_id, reason);
-    alert(t("post.reportedDone"));
+    navigate("/report", {
+      state: {
+        target_type: "post",
+        target_id: post.id,
+        reported_id: post.created_by_id,
+        target_content: post.content || "",
+      },
+    });
   }
 
   async function handleHidePost() {
@@ -104,18 +111,10 @@ export default function PostMenu({ post, meId, isOwner, onEdit, onDelete, onFavo
               {!post.is_anonymous && <MenuItem icon={EyeOff} label={t("post.hidePost")} onClick={handleHidePost} />}
               {!post.is_anonymous && <MenuItem icon={VolumeX} label={t("post.muteUser")} onClick={handleMute} />}
               {!post.is_anonymous && <MenuItem icon={Ban} label={t("post.blockUser")} onClick={handleBlock} />}
-              {!post.is_anonymous && <MenuItem icon={Flag} label={t("common.report")} onClick={() => { setOpen(false); setShowReport(true); }} />}
+              {!post.is_anonymous && <MenuItem icon={Flag} label={t("common.report")} onClick={handleReport} />}
             </>
           )}
         </div>
-      )}
-
-      {showReport && (
-        <ReportReasonPicker
-          t={t}
-          onSubmit={handleReport}
-          onClose={() => setShowReport(false)}
-        />
       )}
     </div>
   );
@@ -130,23 +129,5 @@ function MenuItem({ icon: Icon, label, onClick, danger }) {
       <Icon className="w-4 h-4 shrink-0" />
       {label}
     </button>
-  );
-}
-
-function ReportReasonPicker({ t, onSubmit, onClose }) {
-  const REASON_KEYS = ["report.spam", "report.inappropriate", "report.harassment", "report.violent", "report.other"];
-  const [reason, setReason] = useState(REASON_KEYS[0]);
-  return (
-    <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div className="w-full max-w-sm bg-card border border-border rounded-2xl p-5" onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-bold mb-3">{t("common.report")}</h3>
-        <div className="space-y-2 mb-4">
-          {REASON_KEYS.map((r) => (
-            <button key={r} onClick={() => setReason(r)} className={`w-full text-left text-sm px-3 py-2 rounded-lg border ${reason === r ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{t(r)}</button>
-          ))}
-        </div>
-        <button onClick={() => onSubmit(t(reason))} className="w-full bg-red-500 text-white font-semibold py-2.5 rounded-xl">{t("report.submit")}</button>
-      </div>
-    </div>
   );
 }

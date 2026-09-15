@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowLeft, Send, Loader2, Heart, Reply, X } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Heart, Reply, X, Flag } from "lucide-react";
 import MediaGrid from "@/components/MediaGrid";
 import MediaViewer from "@/components/MediaViewer";
 import PostMenu from "@/components/PostMenu";
@@ -341,6 +341,11 @@ export default function PostDetail() {
                         <button onClick={() => setReplyTo(c)} className="text-xs text-muted-foreground hover:text-foreground transition">
                           <Reply className="w-3 h-3 inline mr-0.5 -mt-0.5" /> {t("post.reply")}
                         </button>
+                        {c.created_by_id && c.created_by_id !== meId && (
+                          <button onClick={() => navigate("/report", { state: { target_type: "comment", target_id: c.id, reported_id: c.created_by_id, target_content: c.content || "" } })} className="text-xs text-muted-foreground hover:text-foreground transition flex items-center gap-0.5">
+                            <Flag className="w-3 h-3" /> {t("common.report")}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

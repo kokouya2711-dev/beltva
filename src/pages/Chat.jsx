@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { displayName, fetchUser } from "@/lib/profile";
-import { sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteUser, unmuteUser, isMuted, reportUser } from "@/lib/dm";
+import { sendMessage, toggleReaction, blockExists, blockUser, unblockUser, muteUser, unmuteUser, isMuted } from "@/lib/dm";
 import MessageBubble from "@/components/MessageBubble";
-import ReportDialog from "@/components/ReportDialog";
 import CountryFlagBadge from "@/components/CountryFlagBadge";
 import { useT } from "@/lib/i18n";
 import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2 } from "lucide-react";
@@ -29,7 +28,6 @@ export default function Chat() {
   const [blocked, setBlocked] = useState(false);
   const [muted, setMuted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showReport, setShowReport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reactFor, setReactFor] = useState(null);
   const scrollRef = useRef(null);
@@ -138,7 +136,7 @@ export default function Chat() {
             <div className="absolute right-0 top-9 z-30 glass border border-border rounded-xl py-1 w-40">
               <button onClick={toggleMute} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><BellOff className="w-4 h-4" /> {muted ? t("common.unmute") : t("common.mute")}</button>
               <button onClick={toggleBlock} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Ban className="w-4 h-4" /> {blocked ? t("common.unblock") : t("common.block")}</button>
-              <button onClick={() => { setMenuOpen(false); setShowReport(true); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> {t("common.report")}</button>
+              <button onClick={() => { setMenuOpen(false); navigate("/report", { state: { target_type: "message", target_id: id, reported_id: otherId } }); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-secondary"><Flag className="w-4 h-4" /> {t("common.report")}</button>
             </div>
           )}
         </div>
@@ -184,7 +182,6 @@ export default function Chat() {
         <div className="pt-2 border-t border-border text-center text-xs text-muted-foreground py-3">{t("messages.cantSend")}</div>
       )}
 
-      {showReport && <ReportDialog onClose={() => setShowReport(false)} onSubmit={async (reason) => { await reportUser(me.id, otherId, reason); setShowReport(false); }} />}
     </div>
   );
 }
