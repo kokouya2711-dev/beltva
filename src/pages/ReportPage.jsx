@@ -81,7 +81,7 @@ export default function ReportPage() {
 
   return (
     <div className="h-[100dvh] flex flex-col bg-background" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-      <header className="flex items-center justify-between px-3 h-14 shrink-0 border-b border-border">
+      <header className="flex items-center justify-between px-3 h-14 shrink-0">
         <button onClick={back} disabled={submitting} className="p-2 -ml-2 rounded-full hover:bg-secondary transition">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -96,13 +96,13 @@ export default function ReportPage() {
       </header>
 
       {subtitle && (
-        <div className="px-4 py-2 text-center text-sm text-muted-foreground border-b border-border">
+        <div className="px-4 py-2 text-center text-sm text-foreground/75 border-b border-border">
           {subtitle}
         </div>
       )}
 
       <div className="flex-1 overflow-y-auto px-4 py-3">
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-border/60">
           {REASONS.map((r) => (
             <button
               key={r.code}
