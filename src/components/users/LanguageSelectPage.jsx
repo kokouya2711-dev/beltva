@@ -6,7 +6,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 
 // 言語コード → 国コード（flagcdn用・真っ直ぐなフラット国旗）
 const FLAG = {
-  ja: "jp", en: "gb", fr: "fr", es: "es", pt: "pt", de: "de", it: "it",
+  ja: "jp", en: "us", fr: "fr", es: "es", pt: "br", de: "de", it: "it",
   ru: "ru", ar: "sa", tr: "tr", ko: "kr", zh: "cn", "zh-TW": "tw",
   id: "id", th: "th", vi: "vn"
 };
