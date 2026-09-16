@@ -7,7 +7,7 @@ import MessageBubble from "@/components/MessageBubble";
 import CountryFlagBadge from "@/components/CountryFlagBadge";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/components/ui/use-toast";
-import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2, Reply, Copy, Smile, Pencil, Trash2, X } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2, Reply, Copy, Pencil, Trash2, X } from "lucide-react";
 
 const DAY_NAMES = ["日", "月", "火", "水", "木", "金", "土"];
 function formatDateLabel(dateStr) {
@@ -32,7 +32,6 @@ export default function Chat() {
   const [muted, setMuted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [reactFor, setReactFor] = useState(null);
   const [ctxMenu, setCtxMenu] = useState(null); // { message, x, y }
   const [replyTo, setReplyTo] = useState(null);
   const [editing, setEditing] = useState(null); // { id, value }
@@ -135,12 +134,11 @@ export default function Chat() {
     } finally { setSending(false); }
   }
 
-  async function react(emoji) {
-    if (!reactFor) return;
-    const msg = messages.find((m) => m.id === reactFor);
+  async function react(messageId, emoji) {
+    const msg = messages.find((m) => m.id === messageId);
+    if (!msg) return;
     const next = await toggleReaction(msg, me.id, emoji);
-    setMessages((prev) => prev.map((m) => (m.id === reactFor ? { ...m, reactions: JSON.stringify(next) } : m)));
-    setReactFor(null);
+    setMessages((prev) => prev.map((m) => (m.id === messageId ? { ...m, reactions: JSON.stringify(next) } : m)));
   }
 
   async function toggleBlock() { if (blocked) { await unblockUser(me.id, otherId); setBlocked(false); } else { await blockUser(me.id, otherId); setBlocked(true); } setMenuOpen(false); }
@@ -222,7 +220,6 @@ export default function Chat() {
     const mine = m.sender_id === me.id;
     ctxItems.push({ icon: Reply, label: t("chat.actReply"), onClick: () => { setReplyTo(m); setCtxMenu(null); } });
     if (m.content) ctxItems.push({ icon: Copy, label: t("chat.actCopy"), onClick: () => doCopy(m) });
-    ctxItems.push({ icon: Smile, label: t("chat.actReact"), onClick: () => { setReactFor(m.id); setCtxMenu(null); } });
     if (mine && canMutate(m)) {
       ctxItems.push({ icon: Pencil, label: t("chat.actEdit"), onClick: () => startEdit(m) });
       ctxItems.push({ icon: Trash2, label: t("chat.actUnsend"), onClick: () => askUnsend(m), danger: true });
@@ -231,7 +228,7 @@ export default function Chat() {
   }
 
   // Clamp menu position
-  const menuW = 190, menuH = ctxItems.length * 44 + 16;
+  const menuW = 200, menuH = 48 + ctxItems.length * 44 + 12;
   let menuStyle = {};
   if (ctxMenu) {
     const x = Math.min(ctxMenu.x, window.innerWidth - menuW - 8);
@@ -289,6 +286,7 @@ export default function Chat() {
                   meId={me.id}
                   read={read}
                   replyOrigin={replyOrigin}
+                  replySenderName={m.reply_to_id ? (replyOrigin?.sender_id === me.id ? t("chat.self") : displayName(other)) : ""}
                   onReplyTap={scrollToMessage}
                   onLongPress={openCtxMenu}
                   editing={isEditing}
@@ -296,14 +294,8 @@ export default function Chat() {
                   onEditChange={(v) => setEditing((e) => (e ? { ...e, value: v } : e))}
                   onEditSave={saveEdit}
                   onEditCancel={() => setEditing(null)}
+                  onReact={(emoji) => react(m.id, emoji)}
                 />
-                {reactFor === m.id && (
-                  <div className="flex gap-1 mt-1 justify-end">
-                    {EMOJIS.map((e) => (
-                      <button key={e} onClick={() => react(e)} className="text-lg hover:scale-125 transition">{e}</button>
-                    ))}
-                  </div>
-                )}
               </div>
             </React.Fragment>
           );
@@ -312,13 +304,13 @@ export default function Chat() {
 
       {/* Reply quote bar */}
       {replyTo && (
-        <div className="flex items-center gap-2 px-2 py-1.5 mb-1 border-t border-border bg-secondary/40 rounded-t-lg">
+        <div className="flex items-center gap-2 px-3 py-2 mb-1 border-t border-border bg-secondary/40 rounded-t-lg">
           <Reply className="w-4 h-4 text-primary shrink-0" />
           <button onClick={() => scrollToMessage(replyTo.id)} className="flex-1 min-w-0 text-left">
-            <div className="text-xs text-muted-foreground">{t("chat.replyTo")}: {replyTo.deleted_at ? t("chat.replyCancelled") : displayName(other)}</div>
-            <div className="text-xs truncate">{replyTo.deleted_at ? t("chat.unsent") : (replyTo.content || "").slice(0, 60) || "…"}</div>
+            <div className="text-xs font-semibold truncate">{replyTo.deleted_at ? t("chat.replyCancelled") : (replyTo.sender_id === me.id ? t("chat.self") : displayName(other))}</div>
+            <div className="text-xs truncate opacity-80">{replyTo.deleted_at ? t("chat.unsent") : (replyTo.content || "").slice(0, 80) || "…"}</div>
           </button>
-          <button onClick={() => setReplyTo(null)} className="p-1 rounded-full hover:bg-secondary"><X className="w-4 h-4 text-muted-foreground" /></button>
+          <button onClick={() => setReplyTo(null)} className="p-1.5 rounded-full hover:bg-secondary shrink-0"><X className="w-4 h-4 text-muted-foreground" /></button>
         </div>
       )}
 
@@ -335,7 +327,12 @@ export default function Chat() {
 
       {/* Long-press context menu */}
       {ctxMenu && (
-        <div ref={menuRef} className="fixed z-50 glass border border-border rounded-xl py-1 w-[190px] shadow-xl" style={menuStyle}>
+        <div ref={menuRef} className="fixed z-50 glass border border-border rounded-xl overflow-hidden w-[200px] shadow-xl" style={menuStyle}>
+          <div className="flex items-center justify-around px-2 py-2 border-b border-border">
+            {EMOJIS.map((e) => (
+              <button key={e} onClick={() => { react(ctxMenu.message.id, e); setCtxMenu(null); }} className="text-2xl leading-none w-9 h-9 flex items-center justify-center rounded-full hover:bg-secondary/60 transition">{e}</button>
+            ))}
+          </div>
           {ctxItems.map((it, idx) => (
             <button key={idx} onClick={it.onClick} className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-secondary/60 text-left ${it.danger ? "text-destructive" : ""}`}>
               <it.icon className="w-4 h-4 shrink-0" /> {it.label}

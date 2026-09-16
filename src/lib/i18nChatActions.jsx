@@ -5,7 +5,7 @@
 
 export const chatActionTranslations = {
   ja: {
-    "chat.actReply": "返信", "chat.actCopy": "コピー", "chat.actReact": "リアクション",
+    "chat.actReply": "返信", "chat.actCopy": "コピー", "chat.actReact": "リアクション", "chat.self": "自分",
     "chat.actEdit": "編集", "chat.actUnsend": "送信取消", "chat.actReport": "通報",
     "chat.edited": "編集済み", "chat.unsent": "メッセージの送信を取り消しました",
     "chat.unsentConfirm": "このメッセージの送信を取り消しますか？", "chat.unsentConfirmAction": "取り消す",
@@ -13,7 +13,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "このメッセージを通報",
   },
   en: {
-    "chat.actReply": "Reply", "chat.actCopy": "Copy", "chat.actReact": "React",
+    "chat.actReply": "Reply", "chat.actCopy": "Copy", "chat.actReact": "React", "chat.self": "You",
     "chat.actEdit": "Edit", "chat.actUnsend": "Unsend", "chat.actReport": "Report",
     "chat.edited": "Edited", "chat.unsent": "Message unsent",
     "chat.unsentConfirm": "Unsend this message?", "chat.unsentConfirmAction": "Unsend",
@@ -21,7 +21,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Report this message",
   },
   zh: {
-    "chat.actReply": "回复", "chat.actCopy": "复制", "chat.actReact": "回应",
+    "chat.actReply": "回复", "chat.actCopy": "复制", "chat.actReact": "回应", "chat.self": "自己",
     "chat.actEdit": "编辑", "chat.actUnsend": "撤回", "chat.actReport": "举报",
     "chat.edited": "已编辑", "chat.unsent": "已撤回消息",
     "chat.unsentConfirm": "撤回这条消息？", "chat.unsentConfirmAction": "撤回",
@@ -29,7 +29,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "举报这条消息",
   },
   "zh-TW": {
-    "chat.actReply": "回覆", "chat.actCopy": "複製", "chat.actReact": "回應",
+    "chat.actReply": "回覆", "chat.actCopy": "複製", "chat.actReact": "回應", "chat.self": "自己",
     "chat.actEdit": "編輯", "chat.actUnsend": "收回", "chat.actReport": "檢舉",
     "chat.edited": "已編輯", "chat.unsent": "已收回訊息",
     "chat.unsentConfirm": "收回這則訊息？", "chat.unsentConfirmAction": "收回",
@@ -37,7 +37,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "檢舉這則訊息",
   },
   ko: {
-    "chat.actReply": "답장", "chat.actCopy": "복사", "chat.actReact": "리액션",
+    "chat.actReply": "답장", "chat.actCopy": "복사", "chat.actReact": "리액션", "chat.self": "나",
     "chat.actEdit": "편집", "chat.actUnsend": "전송 취소", "chat.actReport": "신고",
     "chat.edited": "편집됨", "chat.unsent": "메시지 전송이 취소되었습니다",
     "chat.unsentConfirm": "이 메시지 전송을 취소할까요?", "chat.unsentConfirmAction": "취소",
@@ -45,7 +45,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "이 메시지 신고",
   },
   es: {
-    "chat.actReply": "Responder", "chat.actCopy": "Copiar", "chat.actReact": "Reaccionar",
+    "chat.actReply": "Responder", "chat.actCopy": "Copiar", "chat.actReact": "Reaccionar", "chat.self": "Tú",
     "chat.actEdit": "Editar", "chat.actUnsend": "Anular envío", "chat.actReport": "Reportar",
     "chat.edited": "Editado", "chat.unsent": "Envío del mensaje cancelado",
     "chat.unsentConfirm": "¿Anular el envío de este mensaje?", "chat.unsentConfirmAction": "Anular",
@@ -53,7 +53,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Reportar este mensaje",
   },
   fr: {
-    "chat.actReply": "Répondre", "chat.actCopy": "Copier", "chat.actReact": "Réagir",
+    "chat.actReply": "Répondre", "chat.actCopy": "Copier", "chat.actReact": "Réagir", "chat.self": "Vous",
     "chat.actEdit": "Modifier", "chat.actUnsend": "Annuler l'envoi", "chat.actReport": "Signaler",
     "chat.edited": "Modifié", "chat.unsent": "Envoi du message annulé",
     "chat.unsentConfirm": "Annuler l'envoi de ce message ?", "chat.unsentConfirmAction": "Annuler",
@@ -61,7 +61,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Signaler ce message",
   },
   de: {
-    "chat.actReply": "Antworten", "chat.actCopy": "Kopieren", "chat.actReact": "Reagieren",
+    "chat.actReply": "Antworten", "chat.actCopy": "Kopieren", "chat.actReact": "Reagieren", "chat.self": "Du",
     "chat.actEdit": "Bearbeiten", "chat.actUnsend": "Senden widerrufen", "chat.actReport": "Melden",
     "chat.edited": "Bearbeitet", "chat.unsent": "Nachrichtensendung widerrufen",
     "chat.unsentConfirm": "Senden dieser Nachricht widerrufen?", "chat.unsentConfirmAction": "Widerrufen",
@@ -69,7 +69,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Diese Nachricht melden",
   },
   pt: {
-    "chat.actReply": "Responder", "chat.actCopy": "Copiar", "chat.actReact": "Reagir",
+    "chat.actReply": "Responder", "chat.actCopy": "Copiar", "chat.actReact": "Reagir", "chat.self": "Você",
     "chat.actEdit": "Editar", "chat.actUnsend": "Cancelar envio", "chat.actReport": "Denunciar",
     "chat.edited": "Editado", "chat.unsent": "Envio da mensagem cancelado",
     "chat.unsentConfirm": "Cancelar o envio desta mensagem?", "chat.unsentConfirmAction": "Cancelar",
@@ -77,7 +77,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Denunciar esta mensagem",
   },
   it: {
-    "chat.actReply": "Rispondi", "chat.actCopy": "Copia", "chat.actReact": "Reagisci",
+    "chat.actReply": "Rispondi", "chat.actCopy": "Copia", "chat.actReact": "Reagisci", "chat.self": "Tu",
     "chat.actEdit": "Modifica", "chat.actUnsend": "Annulla invio", "chat.actReport": "Segnala",
     "chat.edited": "Modificato", "chat.unsent": "Invio del messaggio annullato",
     "chat.unsentConfirm": "Annullare l'invio di questo messaggio?", "chat.unsentConfirmAction": "Annulla",
@@ -85,7 +85,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Segnala questo messaggio",
   },
   ru: {
-    "chat.actReply": "Ответить", "chat.actCopy": "Копировать", "chat.actReact": "Реакция",
+    "chat.actReply": "Ответить", "chat.actCopy": "Копировать", "chat.actReact": "Реакция", "chat.self": "Вы",
     "chat.actEdit": "Изменить", "chat.actUnsend": "Отменить отправку", "chat.actReport": "Пожаловаться",
     "chat.edited": "Изменено", "chat.unsent": "Отправка сообщения отменена",
     "chat.unsentConfirm": "Отменить отправку этого сообщения?", "chat.unsentConfirmAction": "Отменить",
@@ -93,7 +93,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Пожаловаться на это сообщение",
   },
   vi: {
-    "chat.actReply": "Trả lời", "chat.actCopy": "Sao chép", "chat.actReact": "Bày tỏ",
+    "chat.actReply": "Trả lời", "chat.actCopy": "Sao chép", "chat.actReact": "Bày tỏ", "chat.self": "Bạn",
     "chat.actEdit": "Sửa", "chat.actUnsend": "Thu hồi", "chat.actReport": "Báo cáo",
     "chat.edited": "Đã sửa", "chat.unsent": "Đã thu hồi tin nhắn",
     "chat.unsentConfirm": "Thu hồi tin nhắn này?", "chat.unsentConfirmAction": "Thu hồi",
@@ -101,7 +101,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Báo cáo tin nhắn này",
   },
   id: {
-    "chat.actReply": "Balas", "chat.actCopy": "Salin", "chat.actReact": "Reaksi",
+    "chat.actReply": "Balas", "chat.actCopy": "Salin", "chat.actReact": "Reaksi", "chat.self": "Anda",
     "chat.actEdit": "Edit", "chat.actUnsend": "Batal kirim", "chat.actReport": "Laporkan",
     "chat.edited": "Diedit", "chat.unsent": "Pengiriman pesan dibatalkan",
     "chat.unsentConfirm": "Batalkan pengiriman pesan ini?", "chat.unsentConfirmAction": "Batalkan",
@@ -109,7 +109,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "Laporkan pesan ini",
   },
   th: {
-    "chat.actReply": "ตอบกลับ", "chat.actCopy": "คัดลอก", "chat.actReact": "รีแอกต์",
+    "chat.actReply": "ตอบกลับ", "chat.actCopy": "คัดลอก", "chat.actReact": "รีแอกต์", "chat.self": "ฉัน",
     "chat.actEdit": "แก้ไข", "chat.actUnsend": "เรียกคืน", "chat.actReport": "รายงาน",
     "chat.edited": "แก้ไขแล้ว", "chat.unsent": "เรียกคืนข้อความแล้ว",
     "chat.unsentConfirm": "เรียกคืนข้อความนี้?", "chat.unsentConfirmAction": "เรียกคืน",
@@ -117,7 +117,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "รายงานข้อความนี้",
   },
   hi: {
-    "chat.actReply": "उत्तर दें", "chat.actCopy": "कॉपी करें", "chat.actReact": "प्रतिक्रिया",
+    "chat.actReply": "उत्तर दें", "chat.actCopy": "कॉपी करें", "chat.actReact": "प्रतिक्रिया", "chat.self": "आप",
     "chat.actEdit": "संपादित करें", "chat.actUnsend": "भेजना रद्द करें", "chat.actReport": "रिपोर्ट करें",
     "chat.edited": "संपादित", "chat.unsent": "संदेश भेजना रद्द कर दिया गया",
     "chat.unsentConfirm": "इस संदेश की भेजना रद्द करें?", "chat.unsentConfirmAction": "रद्द करें",
@@ -125,7 +125,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "इस संदेश की रिपोर्ट करें",
   },
   ar: {
-    "chat.actReply": "رد", "chat.actCopy": "نسخ", "chat.actReact": "تفاعل",
+    "chat.actReply": "رد", "chat.actCopy": "نسخ", "chat.actReact": "تفاعل", "chat.self": "أنت",
     "chat.actEdit": "تعديل", "chat.actUnsend": "إلغاء الإرسال", "chat.actReport": "إبلاغ",
     "chat.edited": "معدّل", "chat.unsent": "تم إلغاء إرسال الرسالة",
     "chat.unsentConfirm": "إلغاء إرسال هذه الرسالة؟", "chat.unsentConfirmAction": "إلغاء",
@@ -133,7 +133,7 @@ export const chatActionTranslations = {
     "chat.reportSubtitle": "الإبلاغ عن هذه الرسالة",
   },
   tr: {
-    "chat.actReply": "Yanıtla", "chat.actCopy": "Kopyala", "chat.actReact": "Tepki ver",
+    "chat.actReply": "Yanıtla", "chat.actCopy": "Kopyala", "chat.actReact": "Tepki ver", "chat.self": "Sen",
     "chat.actEdit": "Düzenle", "chat.actUnsend": "Gönderiyi geri al", "chat.actReport": "Bildir",
     "chat.edited": "Düzenlendi", "chat.unsent": "Mesaj gönderimi geri alındı",
     "chat.unsentConfirm": "Bu mesajın gönderimi geri alınsın mı?", "chat.unsentConfirmAction": "Geri al",

@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Check, CheckCheck } from "lucide-react";
-import { parseReactions, groupReactions } from "@/lib/dm";
+import { parseReactions } from "@/lib/dm";
 import { useT } from "@/lib/i18n";
 
 export default function MessageBubble({
@@ -8,6 +8,7 @@ export default function MessageBubble({
   meId,
   read,
   replyOrigin,
+  replySenderName,
   onReplyTap,
   onLongPress,
   editing,
@@ -15,10 +16,13 @@ export default function MessageBubble({
   onEditChange,
   onEditSave,
   onEditCancel,
+  onReact,
 }) {
   const t = useT();
   const mine = message.sender_id === meId;
-  const grouped = groupReactions(parseReactions(message.reactions));
+  const reactions = parseReactions(message.reactions);
+  const myEmojis = reactions.filter((r) => r.user_id === meId).map((r) => r.emoji);
+  const uniqueEmojis = [...new Set(reactions.map((r) => r.emoji))];
   const d = new Date(message.created_date);
   const displayTime = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
   const deleted = !!message.deleted_at;
@@ -47,25 +51,7 @@ export default function MessageBubble({
 
   return (
     <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-[78%] flex flex-col ${mine ? "items-end" : "items-start"}`}>
-        {/* Reply quote */}
-        {message.reply_to_id && (
-          <button
-            type="button"
-            onClick={() => onReplyTap?.(message.reply_to_id)}
-            className={`mb-1 max-w-full text-left text-xs rounded-lg px-2 py-1 border-l-2 truncate ${mine ? "border-primary-foreground/60 bg-primary-foreground/10" : "border-primary/60 bg-primary/10"}`}
-          >
-            {replyOrigin?.deleted_at ? (
-              <span className="italic text-muted-foreground">{t("chat.replyCancelled")}</span>
-            ) : (
-              <span className="block truncate">
-                <span className="opacity-70">{t("chat.replyTo")}: </span>
-                {(replyOrigin?.content || "").slice(0, 60) || "…"}
-              </span>
-            )}
-          </button>
-        )}
-
+      <div className={`max-w-[82%] flex flex-col ${mine ? "items-end" : "items-start"}`}>
         <div
           onContextMenu={handleCtx}
           onTouchStart={startLongPress}
@@ -97,17 +83,45 @@ export default function MessageBubble({
               </div>
             </div>
           ) : (
-            message.content && <div className="whitespace-pre-wrap break-words">{message.content}</div>
+            <React.Fragment>
+              {message.reply_to_id && (
+                <button
+                  type="button"
+                  onClick={() => onReplyTap?.(message.reply_to_id)}
+                  className={`block w-full text-left mb-1.5 rounded-lg overflow-hidden border-l-2 ${mine ? "bg-black/15 border-primary-foreground/50" : "bg-background/50 border-primary"}`}
+                >
+                  <div className="px-2 py-1">
+                    <div className="font-semibold text-sm leading-tight">
+                      {replyOrigin?.deleted_at ? t("chat.replyCancelled") : (replySenderName || "")}
+                    </div>
+                    <div className="text-sm leading-snug opacity-80 line-clamp-3 break-words">
+                      {replyOrigin?.deleted_at ? t("chat.unsent") : (replyOrigin?.content || "…")}
+                    </div>
+                  </div>
+                </button>
+              )}
+              {message.content && <div className="whitespace-pre-wrap break-words">{message.content}</div>}
+            </React.Fragment>
           )}
         </div>
 
-        {Object.keys(grouped).length > 0 && !deleted && (
+        {uniqueEmojis.length > 0 && !deleted && (
           <div className="flex gap-1 mt-1 flex-wrap">
-            {Object.entries(grouped).map(([emoji, count]) => (
-              <span key={emoji} className="text-xs bg-secondary/60 border border-border rounded-full px-1.5 py-0.5">{emoji} {count}</span>
-            ))}
+            {uniqueEmojis.map((emoji) => {
+              const mineReact = myEmojis.includes(emoji);
+              return (
+                <button
+                  key={emoji}
+                  onClick={() => onReact?.(emoji)}
+                  className={`text-lg leading-none rounded-full px-1.5 py-0.5 border transition active:scale-90 ${mineReact ? "border-primary bg-primary/15" : "border-border bg-secondary/60"}`}
+                >
+                  {emoji}
+                </button>
+              );
+            })}
           </div>
         )}
+
         <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
           {mine && !deleted && (read ? <><CheckCheck className="w-3 h-3" /> {t("common.read")}</> : <Check className="w-3 h-3" />)}
           {edited && <span className="italic">{t("chat.edited")}</span>}
