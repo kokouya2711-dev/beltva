@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation, useSearchParams, useNavigationType } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useT, useI18n, LANGS } from "@/lib/i18n";
 import Flag from "@/components/Flag";
@@ -10,6 +10,7 @@ import {
   EyeOff, Eye, UserSearch, Lock, VolumeX, Mail, KeyRound, Loader2, Headphones
 } from "lucide-react";
 import SupportFlow from "@/components/settings/SupportFlow";
+import { motion, useReducedMotion } from "framer-motion";
 
 
 const DM_SCOPE_KEYS = [
@@ -66,8 +67,27 @@ export default function SettingsPage() {
   const openSection = (s) => navigate(`/settings?section=${s}`);
   const goBack = () => navigate(-1);
 
+  // In-page section transition: slide when the query-driven section changes (same route).
+  const navType = useNavigationType();
+  const reduced = useReducedMotion();
+  const sectionKey = section ? (sub ? `${section}/${sub}` : section) : "root";
+  const firstSectionRender = useRef(true);
+  useEffect(() => { firstSectionRender.current = false; }, []);
+  const isBack = navType === "POP";
+  const sectionInitial = firstSectionRender.current || reduced
+    ? false
+    : isBack
+      ? { x: -24, opacity: 0.95 }
+      : { x: 24, opacity: 0.95 };
+
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
+      <motion.div
+        key={sectionKey}
+        initial={sectionInitial}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+      >
       {section ? (
         <div>
           {section === "privacy" || section === "support" ? null : section === "language" || section === "account" || section === "notifications" ? (
@@ -100,6 +120,7 @@ export default function SettingsPage() {
           <CategoryList onSelect={openSection} />
         </div>
       )}
+      </motion.div>
     </div>
   );
 }
