@@ -23,6 +23,20 @@
       "type": "string",
       "title": "\u30ea\u30a2\u30af\u30b7\u30e7\u30f3",
       "default": "[]"
+    },
+    "reply_to_id": {
+      "type": "string",
+      "title": "\u8fd4\u4fe1\u5143\u30e1\u30c3\u30bb\u30fc\u30b8ID"
+    },
+    "edited_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u7de8\u96c6\u65e5\u6642"
+    },
+    "deleted_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u9001\u4fe1\u53d6\u6d88\u65e5\u6642"
     }
   },
   "required": [

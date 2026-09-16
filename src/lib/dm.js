@@ -34,10 +34,11 @@ export async function checkDmScope(meId, otherUser) {
   return { ok: true };
 }
 
-export async function sendMessage(conv, meId, { content, image_url }) {
+export async function sendMessage(conv, meId, { content, image_url, reply_to_id }) {
   const msg = await base44.entities.Message.create({
     conversation_id: conv.id, sender_id: meId,
-    content: content || "", image_url: image_url || "", reactions: "[]"
+    content: content || "", image_url: image_url || "", reactions: "[]",
+    reply_to_id: reply_to_id || ""
   });
   const updates = {
     last_message: image_url ? "dm.imageMessage" : (content || ""),

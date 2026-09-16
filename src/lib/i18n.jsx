@@ -11,6 +11,7 @@ import { regionTranslations } from "@/lib/i18nRegion";
 import { notifTranslations } from "@/lib/i18nNotif";
 import { supportTranslations } from "@/lib/i18nSupport";
 import { reportTranslations } from "@/lib/i18nReport";
+import { chatActionTranslations } from "@/lib/i18nChatActions";
 
 export const LANGS = [
   { code: "ja", label: "日本語", flag: "🇯🇵" },
@@ -281,6 +282,7 @@ for (const _lang of Object.keys(translations)) {
   Object.assign(translations[_lang], notifTranslations[_lang] || {});
   Object.assign(translations[_lang], supportTranslations[_lang] || {});
   Object.assign(translations[_lang], reportTranslations[_lang] || {});
+  Object.assign(translations[_lang], chatActionTranslations[_lang] || {});
 }
 // Add ja identity entries for exercise names so t() doesn't fall through to en
 Object.assign(translations.ja, jaExerciseIdentity.ja || {});

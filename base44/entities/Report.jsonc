@@ -38,7 +38,8 @@
         "user",
         "post",
         "comment",
-        "conversation"
+        "conversation",
+        "message"
       ],
       "title": "\u901a\u5831\u5bfe\u8c61\u306e\u7a2e\u985e",
       "default": "user"
