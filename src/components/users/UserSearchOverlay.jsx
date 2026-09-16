@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import { Search, ArrowLeft } from "lucide-react";
 import { displayName } from "@/lib/profile";
 import UserCard from "@/components/UserCard";
@@ -32,7 +33,7 @@ export default function UserSearchOverlay({ users, me, isOnline, isTraining, onC
   }, [users, nq]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col">
+    <motion.div initial={{ x: 24, opacity: 0.95 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.18, ease: "easeOut" }} className="fixed inset-0 z-50 bg-background flex flex-col">
       <div className="flex items-center gap-2 px-4 py-3">
         <button onClick={onClose} className="p-1.5 -ml-1.5 text-muted-foreground hover:text-foreground" aria-label="戻る">
           <ArrowLeft className="w-5 h-5" />
@@ -55,6 +56,6 @@ export default function UserSearchOverlay({ users, me, isOnline, isTraining, onC
           <UserCard key={u.id} user={u} me={me} isOnline={isOnline(u)} isTraining={isTraining(u)} />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

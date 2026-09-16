@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { ArrowLeft, Check } from "lucide-react";
 import { LANGS } from "@/lib/i18n";
 import { useI18n } from "@/lib/i18n";
@@ -25,7 +26,7 @@ export default function LanguageSelectPage({ selected, onClose, onConfirm }) {
   const flagUrl = (code) => `https://flagcdn.com/w80/${FLAG[code] || code}.png`;
 
   return (
-    <div className="fixed inset-0 z-[70] bg-background flex flex-col">
+    <motion.div initial={{ x: 24, opacity: 0.95 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.18, ease: "easeOut" }} className="fixed inset-0 z-[70] bg-background flex flex-col">
       <header className="flex items-center justify-between px-4 py-3">
         <button onClick={onClose} className="p-2 -ml-2 text-foreground" aria-label="戻る">
           <ArrowLeft className="w-6 h-6" />
@@ -55,6 +56,6 @@ export default function LanguageSelectPage({ selected, onClose, onConfirm }) {
           })}
         </ul>
       </div>
-    </div>
+    </motion.div>
   );
 }

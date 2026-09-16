@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import AgeRangeBar from "./AgeRangeBar";
 import LanguageSelectPage from "./LanguageSelectPage";
@@ -48,7 +49,7 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
   const selectedLangLabel = language ? langLabel(language) : "未選択";
 
   return (
-    <div className="fixed inset-0 z-[60] bg-background flex flex-col">
+    <motion.div initial={{ x: 24, opacity: 0.95 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.18, ease: "easeOut" }} className="fixed inset-0 z-[60] bg-background flex flex-col">
       {/* 上部バー：戻る / 検索 / リセット */}
       <header className="flex items-center justify-between px-4 py-3">
         <button onClick={onClose} className="p-2 -ml-2 text-foreground" aria-label="戻る">
@@ -143,6 +144,6 @@ export default function UserFilterPage({ open, allowedMin, allowedMax, initial, 
           onConfirm={(code) => { setLanguage(code); setLangSelectOpen(false); }}
         />
       )}
-    </div>
+    </motion.div>
   );
 }
