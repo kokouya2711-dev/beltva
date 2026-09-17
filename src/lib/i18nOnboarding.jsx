@@ -1,6 +1,8 @@
 // オンボーディング(ユーザー名/ユーザーID)のi18n
 export const onboardingTranslations = {
   ja: {
+    "auth.genderTitle": "性別を選択してください",
+    "auth.genderSubtitle": "性別は後から1回まで変更できます。",
     "auth.usernameTitle": "ユーザー名を決めましょう",
     "auth.usernameSubtitle": "プロフィールに表示されます。",
     "auth.usernamePlaceholder": "ユーザー名を入力",
@@ -14,6 +16,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "英数字・アンダースコア 3〜20文字、先頭は英字にしてください"
   },
   en: {
+    "auth.genderTitle": "Select your gender",
+    "auth.genderSubtitle": "You can change it once later.",
     "auth.usernameTitle": "Choose your username",
     "auth.usernameSubtitle": "It will be displayed on your profile.",
     "auth.usernamePlaceholder": "Enter username",
@@ -27,6 +31,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "Use 3–20 letters, numbers or underscores; start with a letter"
   },
   fr: {
+    "auth.genderTitle": "Sélectionnez votre sexe",
+    "auth.genderSubtitle": "Vous pouvez le modifier une fois plus tard.",
     "auth.usernameTitle": "Choisissez votre nom",
     "auth.usernameSubtitle": "Il sera affiché sur votre profil.",
     "auth.usernamePlaceholder": "Entrez un nom",
@@ -40,6 +46,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3 à 20 lettres, chiffres ou _ ; commencez par une lettre"
   },
   es: {
+    "auth.genderTitle": "Selecciona tu género",
+    "auth.genderSubtitle": "Puedes cambiarlo una vez más tarde.",
     "auth.usernameTitle": "Elige tu nombre",
     "auth.usernameSubtitle": "Se mostrará en tu perfil.",
     "auth.usernamePlaceholder": "Introduce un nombre",
@@ -53,6 +61,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 letras, números o _; empieza con una letra"
   },
   pt: {
+    "auth.genderTitle": "Selecione seu gênero",
+    "auth.genderSubtitle": "Você pode alterá-lo uma vez depois.",
     "auth.usernameTitle": "Escolha seu nome",
     "auth.usernameSubtitle": "Será exibido no seu perfil.",
     "auth.usernamePlaceholder": "Digite um nome",
@@ -66,6 +76,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 letras, números ou _; comece com uma letra"
   },
   de: {
+    "auth.genderTitle": "Wähle dein Geschlecht",
+    "auth.genderSubtitle": "Du kannst es später einmal ändern.",
     "auth.usernameTitle": "Wähle deinen Namen",
     "auth.usernameSubtitle": "Wird auf deinem Profil angezeigt.",
     "auth.usernamePlaceholder": "Namen eingeben",
@@ -79,6 +91,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 Buchstaben, Zahlen oder _; beginne mit einem Buchstaben"
   },
   it: {
+    "auth.genderTitle": "Seleziona il tuo genere",
+    "auth.genderSubtitle": "Puoi cambiarlo una volta in seguito.",
     "auth.usernameTitle": "Scegli il tuo nome",
     "auth.usernameSubtitle": "Sarà mostrato sul tuo profilo.",
     "auth.usernamePlaceholder": "Inserisci un nome",
@@ -92,6 +106,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 lettere, numeri o _; inizia con una lettera"
   },
   ru: {
+    "auth.genderTitle": "Выберите пол",
+    "auth.genderSubtitle": "Можно изменить один раз позже.",
     "auth.usernameTitle": "Выберите имя",
     "auth.usernameSubtitle": "Будет показано в профиле.",
     "auth.usernamePlaceholder": "Введите имя",
@@ -105,6 +121,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 букв, цифр или _; начинайте с буквы"
   },
   ar: {
+    "auth.genderTitle": "اختر جنسك",
+    "auth.genderSubtitle": "يمكنك تغييره مرة واحدة لاحقاً.",
     "auth.usernameTitle": "اختر اسمك",
     "auth.usernameSubtitle": "سيظهر في ملفك الشخصي.",
     "auth.usernamePlaceholder": "أدخل الاسم",
@@ -118,6 +136,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 حروف أو أرقام أو _؛ ابدأ بحرف"
   },
   tr: {
+    "auth.genderTitle": "Cinsiyetini seç",
+    "auth.genderSubtitle": "Daha sonra bir kez değiştirebilirsin.",
     "auth.usernameTitle": "Adını seç",
     "auth.usernameSubtitle": "Profilinde gösterilir.",
     "auth.usernamePlaceholder": "Ad gir",
@@ -131,6 +151,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 harf, rakam veya _; harfle başla"
   },
   ko: {
+    "auth.genderTitle": "성별을 선택하세요",
+    "auth.genderSubtitle": "나중에 한 번 변경할 수 있어요.",
     "auth.usernameTitle": "사용자 이름을 정하세요",
     "auth.usernameSubtitle": "프로필에 표시됩니다.",
     "auth.usernamePlaceholder": "이름 입력",
@@ -144,6 +166,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "영문/숫자/_ 3~20자, 영문으로 시작"
   },
   zh: {
+    "auth.genderTitle": "选择你的性别",
+    "auth.genderSubtitle": "之后可更改一次。",
     "auth.usernameTitle": "设置你的用户名",
     "auth.usernameSubtitle": "将显示在你的资料页。",
     "auth.usernamePlaceholder": "输入用户名",
@@ -157,6 +181,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20个字母、数字或_；以字母开头"
   },
   "zh-TW": {
+    "auth.genderTitle": "選擇你的性別",
+    "auth.genderSubtitle": "之後可更改一次。",
     "auth.usernameTitle": "設定你的使用者名稱",
     "auth.usernameSubtitle": "將顯示在你的資料頁。",
     "auth.usernamePlaceholder": "輸入使用者名稱",
@@ -170,6 +196,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20個字母、數字或_；以字母開頭"
   },
   id: {
+    "auth.genderTitle": "Pilih jenis kelamin",
+    "auth.genderSubtitle": "Bisa diubah satu kali nanti.",
     "auth.usernameTitle": "Pilih nama Anda",
     "auth.usernameSubtitle": "Akan tampil di profil Anda.",
     "auth.usernamePlaceholder": "Masukkan nama",
@@ -183,6 +211,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 huruf, angka atau _; diawali huruf"
   },
   th: {
+    "auth.genderTitle": "เลือกเพศของคุณ",
+    "auth.genderSubtitle": "เปลี่ยนได้ภายหลังอีกครั้งเดียว",
     "auth.usernameTitle": "ตั้งชื่อผู้ใช้",
     "auth.usernameSubtitle": "จะแสดงในโปรไฟล์ของคุณ",
     "auth.usernamePlaceholder": "กรอกชื่อ",
@@ -196,6 +226,8 @@ export const onboardingTranslations = {
     "auth.userIdInvalid": "3–20 ตัวอักษร ตัวเลข หรือ _; ขึ้นต้นด้วยตัวอักษร"
   },
   vi: {
+    "auth.genderTitle": "Chọn giới tính",
+    "auth.genderSubtitle": "Có thể đổi thêm một lần sau.",
     "auth.usernameTitle": "Chọn tên người dùng",
     "auth.usernameSubtitle": "Sẽ hiển thị trên hồ sơ của bạn.",
     "auth.usernamePlaceholder": "Nhập tên",

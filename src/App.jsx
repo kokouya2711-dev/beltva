@@ -48,6 +48,7 @@ import LogoutPage from '@/pages/LogoutPage';
 import ChangeEmailPage from '@/pages/ChangeEmailPage';
 import ReportPage from '@/pages/ReportPage';
 import BirthdateOnboarding from '@/pages/BirthdateOnboarding';
+import GenderOnboarding from '@/pages/GenderOnboarding';
 import UsernameOnboarding from '@/pages/UsernameOnboarding';
 import UserIdOnboarding from '@/pages/UserIdOnboarding';
 // Add page imports here
@@ -84,6 +85,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/onboarding/birthdate" element={<BirthdateOnboarding />} />
+        <Route path="/onboarding/gender" element={<GenderOnboarding />} />
         <Route path="/onboarding/username" element={<UsernameOnboarding />} />
         <Route path="/onboarding/userid" element={<UserIdOnboarding />} />
         <Route element={<AppLayout />}>
