@@ -30,23 +30,34 @@ export default function MessageBubble({
 
   const lpTimer = useRef(null);
   const lpCoords = useRef({ x: 0, y: 0 });
+  const lpMoved = useRef(false);
 
   const handleCtx = (e) => {
-    if (deleted) return;
+    if (deleted || editing) return;
     e.preventDefault();
     onLongPress?.(message, e);
   };
 
-  const startLongPress = (e) => {
-    if (deleted) return;
-    const touch = e.touches?.[0];
-    lpCoords.current = { x: touch?.clientX ?? 0, y: touch?.clientY ?? 0 };
-    lpTimer.current = setTimeout(() => {
-      onLongPress?.(message, { clientX: lpCoords.current.x, clientY: lpCoords.current.y });
-    }, 480);
-  };
   const cancelLongPress = () => {
     if (lpTimer.current) { clearTimeout(lpTimer.current); lpTimer.current = null; }
+  };
+
+  const startLongPress = (e) => {
+    if (deleted || editing) return;
+    const touch = e.touches?.[0];
+    lpCoords.current = { x: touch?.clientX ?? 0, y: touch?.clientY ?? 0 };
+    lpMoved.current = false;
+    lpTimer.current = setTimeout(() => {
+      if (!lpMoved.current) onLongPress?.(message, { clientX: lpCoords.current.x, clientY: lpCoords.current.y });
+    }, 480);
+  };
+
+  const onTMove = (e) => {
+    const touch = e.touches?.[0];
+    if (!touch) { cancelLongPress(); return; }
+    const dx = touch.clientX - lpCoords.current.x;
+    const dy = touch.clientY - lpCoords.current.y;
+    if (dx * dx + dy * dy > 100) { lpMoved.current = true; cancelLongPress(); }
   };
 
   const Meta = (
@@ -65,11 +76,11 @@ export default function MessageBubble({
           <div
             onContextMenu={handleCtx}
             onTouchStart={startLongPress}
-            onTouchMove={cancelLongPress}
+            onTouchMove={onTMove}
             onTouchEnd={cancelLongPress}
             onTouchCancel={cancelLongPress}
-            style={{ WebkitTouchCallout: "none", userSelect: "none", touchAction: "manipulation" }}
-            className={`rounded-2xl px-3 py-2 text-sm min-w-0 ${mine ? "bg-primary text-primary-foreground rounded-br-md" : "bg-secondary border border-border rounded-bl-md"} ${deleted ? "italic bg-secondary !text-muted-foreground border-0" : ""}`}
+            style={{ touchAction: "manipulation" }}
+            className={`rounded-2xl px-3 py-2 text-sm min-w-0 ${mine ? "bg-primary text-primary-foreground rounded-br-md" : "bg-secondary border border-border rounded-bl-md"} ${deleted ? "italic bg-secondary !text-muted-foreground border-0" : ""} ${editing ? "" : "no-select-bubble"}`}
           >
             {message.image_url && !deleted && (
               <img src={message.image_url} alt="" className="rounded-lg max-h-60 max-w-full object-cover mb-1" draggable={false} />
