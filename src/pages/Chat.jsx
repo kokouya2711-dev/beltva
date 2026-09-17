@@ -8,6 +8,7 @@ import CountryFlagBadge from "@/components/CountryFlagBadge";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/components/ui/use-toast";
 import { ArrowLeft, Send, MoreVertical, Ban, BellOff, Flag, Loader2, Reply, Copy, Pencil, Trash2, X } from "lucide-react";
+import EmojiPickerSheet from "@/components/EmojiPickerSheet";
 
 const DAY_NAMES = ["日", "月", "火", "水", "木", "金", "土"];
 function formatDateLabel(dateStr) {
@@ -36,6 +37,7 @@ export default function Chat() {
   const [replyTo, setReplyTo] = useState(null);
   const [editing, setEditing] = useState(null); // { id, value }
   const [confirmUnsend, setConfirmUnsend] = useState(null);
+  const [pickerFor, setPickerFor] = useState(null);
   const [highlightId, setHighlightId] = useState(null);
   const scrollRef = useRef(null);
   const menuRef = useRef(null);
@@ -332,6 +334,7 @@ export default function Chat() {
             {EMOJIS.map((e) => (
               <button key={e} onClick={() => { react(ctxMenu.message.id, e); setCtxMenu(null); }} className="text-2xl leading-none w-9 h-9 flex items-center justify-center rounded-full hover:bg-secondary/60 transition">{e}</button>
             ))}
+            <button onClick={() => { setPickerFor(ctxMenu.message.id); setCtxMenu(null); }} className="text-2xl leading-none w-9 h-9 flex items-center justify-center rounded-full hover:bg-secondary/60 transition text-muted-foreground border-l border-border pl-1.5 ml-0.5">＋</button>
           </div>
           {ctxItems.map((it, idx) => (
             <button key={idx} onClick={it.onClick} className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-secondary/60 text-left ${it.danger ? "text-destructive" : ""}`}>
@@ -354,6 +357,12 @@ export default function Chat() {
         </div>
       )}
 
+      {pickerFor && (
+        <EmojiPickerSheet
+          onPick={(emoji) => { react(pickerFor, emoji); setPickerFor(null); }}
+          onClose={() => setPickerFor(null)}
+        />
+      )}
     </div>
   );
 }
