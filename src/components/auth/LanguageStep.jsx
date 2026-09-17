@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { ArrowLeft, ChevronRight, Check, Search } from "lucide-react";
+import { ArrowLeft, ChevronRight, Check } from "lucide-react";
 import { useI18n, useT, LANGS } from "@/lib/i18n";
 import Flag from "@/components/Flag";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -14,7 +14,6 @@ export default function LanguageStep({ onBack, onContinue, loading }) {
   const [val, setVal] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [draft, setDraft] = useState("");
-  const [query, setQuery] = useState("");
 
   const locale = lang === "zh-TW" ? "zh-TW" : lang;
   const displayLabel = useMemo(() => {
@@ -28,18 +27,8 @@ export default function LanguageStep({ onBack, onContinue, loading }) {
 
   const selectedLang = useMemo(() => LANGS.find((l) => l.code === val) || null, [val]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return LANGS;
-    return LANGS.filter((l) => {
-      const name = displayLabel(l.code).toLowerCase();
-      return l.label.toLowerCase().includes(q) || name.includes(q) || l.code.toLowerCase().includes(q);
-    });
-  }, [query, displayLabel]);
-
   function openPicker() {
     setDraft(val);
-    setQuery("");
     setPickerOpen(true);
   }
   function confirmPicker() {
@@ -116,23 +105,9 @@ export default function LanguageStep({ onBack, onContinue, loading }) {
             </button>
           </header>
 
-          <div className="px-4 pb-2 shrink-0">
-            <div className="w-full h-11 rounded-xl bg-card border border-border px-3 flex items-center gap-2">
-              <Search className="w-4 h-4 text-muted-foreground shrink-0" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("auth.mainLanguageSearch")}
-                className="flex-1 bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
-                autoFocus
-              />
-            </div>
-          </div>
-
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             <ul>
-              {filtered.map((l) => {
+              {LANGS.map((l) => {
                 const active = draft === l.code;
                 return (
                   <li key={l.code} className="relative">
@@ -155,9 +130,6 @@ export default function LanguageStep({ onBack, onContinue, loading }) {
                   </li>
                 );
               })}
-              {filtered.length === 0 && (
-                <li className="px-4 py-8 text-center text-sm text-muted-foreground">—</li>
-              )}
             </ul>
           </div>
         </div>
