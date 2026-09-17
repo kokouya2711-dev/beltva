@@ -138,10 +138,11 @@ function AppLayoutInner() {
 
   React.useEffect(() => {
     if (!me) return;
-    updatePresence(me.id, false);
-    const i = setInterval(() => updatePresence(me.id, false), 60000);
-    const onVis = () => { if (document.hidden) markOffline(me.id); else updatePresence(me.id, false); };
-    const onHide = () => markOffline(me.id);
+    const safe = (fn) => () => { try { fn(); } catch {} };
+    updatePresence(me.id, false).catch(() => {});
+    const i = setInterval(() => updatePresence(me.id, false).catch(() => {}), 60000);
+    const onVis = () => { if (document.hidden) markOffline(me.id).catch(() => {}); else updatePresence(me.id, false).catch(() => {}); };
+    const onHide = () => markOffline(me.id).catch(() => {});
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("pagehide", onHide);
     return () => { clearInterval(i); document.removeEventListener("visibilitychange", onVis); window.removeEventListener("pagehide", onHide); };
