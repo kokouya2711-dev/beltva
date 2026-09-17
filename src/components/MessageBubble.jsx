@@ -62,7 +62,7 @@ export default function MessageBubble({
 
   const Meta = (
     <div className={`flex flex-col leading-tight text-[10px] text-muted-foreground shrink-0 pb-0.5 ${mine ? "items-end" : "items-start"}`}>
-      {edited && <span className="italic">{t("chat.edited")}</span>}
+      {edited && <span>{t("chat.edited")}</span>}
       {showRead && <span>{t("common.read")}</span>}
       <span>{displayTime}</span>
     </div>
@@ -136,7 +136,7 @@ export default function MessageBubble({
                 <button
                   key={emoji}
                   onClick={() => onReact?.(emoji)}
-                  className={`text-lg leading-none rounded-full px-1.5 py-0.5 border transition active:scale-90 ${mineReact ? "border-primary bg-primary/15" : "border-border bg-secondary/60"}`}
+                  className={`text-lg leading-none rounded-full px-1 py-0.5 transition active:scale-90 ${mineReact ? "bg-primary/15" : "bg-secondary/60"}`}
                 >
                   {emoji}
                 </button>
