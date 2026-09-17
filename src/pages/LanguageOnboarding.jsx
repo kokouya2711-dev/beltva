@@ -21,8 +21,12 @@ export default function LanguageOnboarding() {
         if (cancelled) return;
         const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
         if (me?.main_language && !fresh) {
-          sessionStorage.removeItem("beltva_fresh_register");
-          window.location.href = returnTo;
+          if (me?.country) {
+            sessionStorage.removeItem("beltva_fresh_register");
+            window.location.href = returnTo;
+          } else {
+            navigate("/onboarding/country" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+          }
           return;
         }
       } catch {
@@ -37,8 +41,7 @@ export default function LanguageOnboarding() {
     setSaving(true);
     try {
       await base44.auth.updateMe({ main_language: code });
-      sessionStorage.removeItem("beltva_fresh_register");
-      window.location.href = returnTo;
+      navigate("/onboarding/country" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
     } catch (err) {
       setSaving(false);
       alert(err.message || "保存に失敗しました");
