@@ -2,8 +2,8 @@
 // アプリ表示言語とは別データ。一度決めたら変更不可。
 export const mainLanguageTranslations = {
   ja: {
-    "auth.mainLanguageTitle": "普段使う言語は？",
-    "auth.mainLanguageSubtitle": "フィードなどで使うメイン言語です。後から変更できません",
+    "auth.mainLanguageTitle": "メインで使う言語を選んでください",
+    "auth.mainLanguageSubtitle": "選んだ言語のフィードで投稿を見たり、交流したりできます。登録後は変更できません。",
     "auth.mainLanguageSelect": "言語を選択する",
     "auth.mainLanguageSelectHeader": "言語を選択",
     "auth.mainLanguageSearch": "言語を検索",
