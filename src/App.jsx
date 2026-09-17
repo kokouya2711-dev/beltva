@@ -51,6 +51,7 @@ import BirthdateOnboarding from '@/pages/BirthdateOnboarding';
 import GenderOnboarding from '@/pages/GenderOnboarding';
 import UsernameOnboarding from '@/pages/UsernameOnboarding';
 import UserIdOnboarding from '@/pages/UserIdOnboarding';
+import LanguageOnboarding from '@/pages/LanguageOnboarding';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -88,6 +89,7 @@ const AuthenticatedApp = () => {
         <Route path="/onboarding/gender" element={<GenderOnboarding />} />
         <Route path="/onboarding/username" element={<UsernameOnboarding />} />
         <Route path="/onboarding/userid" element={<UserIdOnboarding />} />
+        <Route path="/onboarding/language" element={<LanguageOnboarding />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/timeline" element={<TimelinePage />} />
