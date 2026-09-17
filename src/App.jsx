@@ -81,6 +81,7 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/onboarding/birthdate" element={<BirthdateOnboarding />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/timeline" element={<TimelinePage />} />
@@ -116,7 +117,6 @@ const AuthenticatedApp = () => {
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/change-email" element={<ChangeEmailPage />} />
           <Route path="/report" element={<ReportPage />} />
-          <Route path="/onboarding/birthdate" element={<BirthdateOnboarding />} />
           </Route>
           </Route>
       <Route path="*" element={<PageNotFound />} />
