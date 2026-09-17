@@ -26,7 +26,8 @@ export default function BirthdateOnboarding() {
       try {
         const me = await base44.auth.me();
         if (cancelled) return;
-        if (me?.birthdate) {
+        const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
+        if (me?.birthdate && !fresh) {
           navigate("/onboarding/gender", { replace: true });
           return;
         }

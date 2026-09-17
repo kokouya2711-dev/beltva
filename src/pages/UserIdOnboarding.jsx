@@ -18,7 +18,8 @@ export default function UserIdOnboarding() {
       try {
         const me = await base44.auth.me();
         if (cancelled) return;
-        if (me?.username) {
+        const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
+        if (me?.username && !fresh) {
           window.location.href = returnTo;
           return;
         }
@@ -42,6 +43,7 @@ export default function UserIdOnboarding() {
         return;
       }
       await base44.auth.updateMe({ username });
+      sessionStorage.removeItem("beltva_fresh_register");
       window.location.href = returnTo;
     } catch (err) {
       setSaving(false);

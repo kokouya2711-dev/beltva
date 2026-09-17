@@ -23,8 +23,11 @@ export default function Register() {
   // 新規登録後は生年月日オンボーディングを挟む。元のreturnToはクエリで引き継ぐ。
   const onboardingUrl = "/onboarding/birthdate" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "");
 
-  const handleGoogle = () => base44.auth.loginWithProvider("google", onboardingUrl);
-  const handleApple = () => base44.auth.loginWithProvider("apple", onboardingUrl);
+  // 新規登録直後はオンボーディングを強制(既存データの自動スキップを無効化)するフラグ
+  const markFreshRegister = () => sessionStorage.setItem("beltva_fresh_register", "1");
+
+  const handleGoogle = () => { markFreshRegister(); base44.auth.loginWithProvider("google", onboardingUrl); };
+  const handleApple = () => { markFreshRegister(); base44.auth.loginWithProvider("apple", onboardingUrl); };
 
   const handleEmailSubmit = async ({ email: em, password: pw }) => {
     setError("");
@@ -49,6 +52,7 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
+      markFreshRegister();
       window.location.href = onboardingUrl;
     } catch (err) {
       setError(err.message || t("auth.verifyFailed"));

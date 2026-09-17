@@ -17,7 +17,8 @@ export default function GenderOnboarding() {
       try {
         const me = await base44.auth.me();
         if (cancelled) return;
-        if (me?.gender && me.gender !== "undisclosed") {
+        const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
+        if (me?.gender && me.gender !== "undisclosed" && !fresh) {
           navigate("/onboarding/username", { replace: true });
           return;
         }
