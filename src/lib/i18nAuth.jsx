@@ -1,7 +1,7 @@
 // 新規登録フロー・言語選択オーバーレイ用の国際化キー
 export const authTranslations = {
   ja: {
-    "auth.tagline": "運動を記録し、仲間とつながろう",
+    "auth.tagline": "運動を記録し、\n仲間とつながろう",
     "auth.newRegistration": "新規登録",
     "auth.haveAccount": "既にアカウントをお持ちですか?",
     "auth.login": "ログイン",

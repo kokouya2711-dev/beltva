@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useI18n, useT, LANGS } from "@/lib/i18n";
 import Flag from "@/components/Flag";
 import LanguageSelectOverlay from "@/components/auth/LanguageSelectOverlay";
+import BeltvaLogo from "@/components/auth/BeltvaLogo";
 
 // 新規登録ウェルカム画面(1枚目)
 // 右上:言語ボタン / 中央:BELTVAロゴ+タグライン / 下:新規登録+ログイン
@@ -14,10 +15,12 @@ export default function WelcomeScreen({ onRegister, onLogin }) {
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-background overflow-hidden">
-      {/* 背景グラデーション */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-20 -right-16 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute top-1/3 -left-20 w-64 h-64 rounded-full bg-accent/10 blur-3xl" />
+      {/* 背景: 左上から右下へのライム帯 */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute -left-1/4 -top-1/4 w-[150%] h-[60%] bg-primary/10 blur-2xl"
+          style={{ transform: "rotate(22deg)", transformOrigin: "top left" }}
+        />
       </div>
 
       {/* 右上 言語ボタン */}
@@ -33,12 +36,9 @@ export default function WelcomeScreen({ onRegister, onLogin }) {
       </div>
 
       {/* 中央 ロゴ+タグライン */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6">
-        <h1 className="flex items-end text-5xl font-extrabold tracking-tight">
-          <span className="text-foreground">BELTV</span>
-          <ChevronUp className="w-9 h-9 text-primary -mt-0.5" strokeWidth={3} />
-        </h1>
-        <p className="mt-4 text-center text-base text-foreground/80 leading-relaxed whitespace-pre-line">
+      <div className="relative flex-1 flex flex-col justify-center px-6 pt-10">
+        <BeltvaLogo className="text-5xl" />
+        <p className="mt-4 text-base text-foreground/80 leading-relaxed whitespace-pre-line">
           {t("auth.tagline")}
         </p>
       </div>
