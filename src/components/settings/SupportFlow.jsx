@@ -12,7 +12,6 @@ export default function SupportFlow({ sub, type, onBack, navigate }) {
   if (!sub) return <SupportRoot onBack={onBack} navigate={navigate} />;
   if (sub === "contact" && !type) return <ContactMenu onBack={onBack} navigate={navigate} />;
   if (sub === "contact" && type) return <ContactForm type={type} onBack={onBack} />;
-  if (sub === "terms") return <SimpleScreen titleKey="support.terms" onBack={onBack} />;
   return null;
 }
 
@@ -46,7 +45,7 @@ function SupportRoot({ onBack, navigate }) {
       <ScreenHeader title={t("support.title")} onBack={onBack} />
       <div className="divide-y divide-border">
         <ListRow icon={Mail} label={t("support.contact")} onClick={() => go("&sub=contact")} />
-        <ListRow icon={FileText} label={t("support.terms")} onClick={() => go("&sub=terms")} />
+        <ListRow icon={FileText} label={t("support.terms")} onClick={() => navigate("/terms")} />
         <ListRow icon={Shield} label={t("support.privacy")} onClick={() => navigate("/privacy-policy")} />
       </div>
     </div>
@@ -111,16 +110,6 @@ function ContactForm({ type, onBack }) {
         autoFocus
         className="w-full flex-1 resize-none bg-transparent outline-none text-base leading-relaxed min-h-[50vh] py-1"
       />
-    </div>
-  );
-}
-
-function SimpleScreen({ titleKey, onBack }) {
-  const t = useT();
-  return (
-    <div>
-      <ScreenHeader title={t(titleKey)} onBack={onBack} />
-      {/* 本文は今後作成 */}
     </div>
   );
 }
