@@ -83,6 +83,10 @@
     from { transform: translateX(100%); opacity: 0.5; }
     to { transform: translateX(0); opacity: 1; }
   }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

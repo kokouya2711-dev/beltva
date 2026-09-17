@@ -47,6 +47,7 @@ import RestoreAccount from '@/pages/RestoreAccount';
 import LogoutPage from '@/pages/LogoutPage';
 import ChangeEmailPage from '@/pages/ChangeEmailPage';
 import ReportPage from '@/pages/ReportPage';
+import BirthdateOnboarding from '@/pages/BirthdateOnboarding';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -115,6 +116,7 @@ const AuthenticatedApp = () => {
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/change-email" element={<ChangeEmailPage />} />
           <Route path="/report" element={<ReportPage />} />
+          <Route path="/onboarding/birthdate" element={<BirthdateOnboarding />} />
           </Route>
           </Route>
       <Route path="*" element={<PageNotFound />} />

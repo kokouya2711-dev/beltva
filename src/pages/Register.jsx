@@ -20,9 +20,11 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const returnTo = safeReturnTo();
+  // 新規登録後は生年月日オンボーディングを挟む。元のreturnToはクエリで引き継ぐ。
+  const onboardingUrl = "/onboarding/birthdate" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "");
 
-  const handleGoogle = () => base44.auth.loginWithProvider("google", returnTo);
-  const handleApple = () => base44.auth.loginWithProvider("apple", returnTo);
+  const handleGoogle = () => base44.auth.loginWithProvider("google", onboardingUrl);
+  const handleApple = () => base44.auth.loginWithProvider("apple", onboardingUrl);
 
   const handleEmailSubmit = async ({ email: em, password: pw }) => {
     setError("");
@@ -47,7 +49,7 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      window.location.href = returnTo;
+      window.location.href = onboardingUrl;
     } catch (err) {
       setError(err.message || t("auth.verifyFailed"));
     } finally {
