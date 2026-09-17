@@ -136,7 +136,7 @@ export default function MessageBubble({
                 <button
                   key={emoji}
                   onClick={() => onReact?.(emoji)}
-                  className={`text-lg leading-none rounded-full px-1 py-0.5 transition active:scale-90 ${mineReact ? "bg-primary/15" : "bg-secondary/60"}`}
+                  className={`text-lg leading-none transition active:scale-90 ${mineReact ? "opacity-100" : "opacity-60"}`}
                 >
                   {emoji}
                 </button>
