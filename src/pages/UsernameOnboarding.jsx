@@ -50,7 +50,7 @@ export default function UsernameOnboarding() {
 
   return (
     <UsernameStep
-      onBack={() => navigate("/onboarding/birthdate", { replace: true })}
+      onBack={() => navigate("/onboarding/gender", { replace: true })}
       onContinue={handleContinue}
       loading={saving}
     />

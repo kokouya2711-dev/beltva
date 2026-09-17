@@ -20,7 +20,13 @@ export default function UserIdOnboarding() {
         if (cancelled) return;
         const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
         if (me?.username && !fresh) {
-          window.location.href = returnTo;
+          if (!me?.main_language) {
+            navigate("/onboarding/language" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+          } else if (!me?.country) {
+            navigate("/onboarding/country" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+          } else {
+            window.location.href = returnTo;
+          }
           return;
         }
       } catch {

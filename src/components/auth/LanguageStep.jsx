@@ -47,7 +47,7 @@ export default function LanguageStep({ onBack, onContinue, loading }) {
         </button>
         <div className="flex-1 flex gap-1.5">
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full ${i === 5 ? "bg-primary" : "bg-border"}`} />
+            <div key={i} className={`h-1 flex-1 rounded-full ${i === 4 ? "bg-primary" : "bg-border"}`} />
           ))}
         </div>
       </header>
