@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowLeft, Check } from "lucide-react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useT } from "@/lib/i18n";
@@ -22,7 +23,7 @@ export default function GenderSelectPage({ selected, onClose, onConfirm }) {
     setConfirming(true);
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[70] bg-background flex flex-col overflow-hidden overscroll-none">
       <header className="flex items-center justify-between px-4 py-3 shrink-0">
         <button onClick={onClose} className="p-2 -ml-2 text-foreground" aria-label="戻る">
@@ -66,6 +67,7 @@ export default function GenderSelectPage({ selected, onClose, onConfirm }) {
           </div>
         </div>
       )}
-    </div>
+    </div>,
+    document.body
   );
 }
