@@ -12,6 +12,11 @@
       "type": "string",
       "title": "\u8868\u793a\u540d"
     },
+    "username": {
+      "type": "string",
+      "title": "\u30e6\u30fc\u30b6\u30fcID(\u30cf\u30f3\u30c9\u30eb)",
+      "description": "\u4e00\u610f\u306e\u516c\u958bID\u3002\u5c0f\u6587\u5b57\u82f1\u6570\u5b57\u30fb\u30a2\u30f3\u30c0\u30fc\u30b9\u30b3\u30a2\u3002@"
+    },
     "avatar_url": {
       "type": "string",
       "title": "\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u753b\u50cf"
