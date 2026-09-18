@@ -9,6 +9,7 @@ import OptionSelectPage from "@/components/OptionSelectPage";
 import LevelSelectPage from "@/components/LevelSelectPage";
 import GenderSelectPage from "@/components/GenderSelectPage";
 import BirthdateSelectPage from "@/components/BirthdateSelectPage";
+import UserIdEditPage from "@/components/UserIdEditPage";
 
 const LEVELS = [
   { key: "beginner" },
@@ -41,6 +42,8 @@ export default function ProfileEdit() {
   const [showPurposeSelect, setShowPurposeSelect] = useState(false);
   const [showGenderSelect, setShowGenderSelect] = useState(false);
   const [showBirthdateSelect, setShowBirthdateSelect] = useState(false);
+  const [showUserIdSelect, setShowUserIdSelect] = useState(false);
+  const [savingUserId, setSavingUserId] = useState(false);
   const [levelLocked, setLevelLocked] = useState(false);
   const [genderError, setGenderError] = useState(false);
 
@@ -60,6 +63,7 @@ export default function ProfileEdit() {
         birthdate: u.birthdate || "",
         birthdate_change_count: u.birthdate_change_count || 0,
         registered_birthdate: u.registered_birthdate || "",
+        username: u.username || "",
       });
     }).catch(() => navigate("/"));
   }, [navigate]);
@@ -121,6 +125,35 @@ export default function ProfileEdit() {
     });
   }
 
+  async function applyUsername(val) {
+    setSavingUserId(true);
+    try {
+      const age = calcAge(form.birthdate);
+      await base44.auth.updateMe({
+        username: val,
+        display_name: form.display_name,
+        bio: form.bio,
+        training_purpose: form.training_purpose,
+        level: form.level,
+        level_updated_at: form.level_updated_at || "",
+        avatar_url: form.avatar_url,
+        gender: form.gender,
+        birthdate: form.birthdate,
+        main_language: form.main_language,
+        gender_change_count: form.gender_change_count,
+        birthdate_change_count: form.birthdate_change_count,
+        registered_birthdate: form.registered_birthdate,
+        ...(age != null ? { age } : {}),
+      });
+      set("username", val);
+    } catch (err) {
+      alert(err.message || "保存に失敗しました");
+    } finally {
+      setSavingUserId(false);
+      setShowUserIdSelect(false);
+    }
+  }
+
   async function save() {
     if (!form.gender) { setGenderError(true); return; }
     setGenderError(false);
@@ -137,6 +170,7 @@ export default function ProfileEdit() {
         gender: form.gender,
         birthdate: form.birthdate,
         main_language: form.main_language,
+        username: form.username,
         gender_change_count: form.gender_change_count,
         birthdate_change_count: form.birthdate_change_count,
         registered_birthdate: form.registered_birthdate,
@@ -229,6 +263,18 @@ export default function ProfileEdit() {
       {/* Basic info section */}
       <div className="px-4 mt-8">
         <div className="text-[13px] text-muted-foreground/80 uppercase tracking-wider mb-3">{t("profile.basicInfo")}</div>
+        {/* ユーザーID */}
+        <button
+          type="button"
+          onClick={() => setShowUserIdSelect(true)}
+          className="w-full flex items-center justify-between py-4 border-b border-border"
+        >
+          <span className="text-base">{t("auth.confirmUserId")}</span>
+          <span className="flex items-center gap-1.5 text-base text-muted-foreground">
+            {form.username ? `@${form.username}` : ""}
+            <ChevronRight className="w-5 h-5" />
+          </span>
+        </button>
         {/* 性別 */}
         <button
           type="button"
@@ -270,6 +316,14 @@ export default function ProfileEdit() {
           registeredBirthdate={form.registered_birthdate}
           onClose={() => setShowBirthdateSelect(false)}
           onConfirm={applyBirthdate}
+        />
+      )}
+      {showUserIdSelect && (
+        <UserIdEditPage
+          selected={form.username}
+          saving={savingUserId}
+          onClose={() => setShowUserIdSelect(false)}
+          onConfirm={applyUsername}
         />
       )}
       {showLevelSelect && (
