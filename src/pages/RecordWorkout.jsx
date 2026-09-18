@@ -5,9 +5,19 @@ import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import WheelPicker from "@/components/workout/WheelPicker";
 import { getWorkoutDateKey } from "@/lib/activityHelpers";
+import { useT } from "@/lib/i18n";
 
-const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
-const PART_GRID = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
+// Canonical data values (Japanese) stored in workout_type — display via t()
+const PART_KEYS = [
+  { data: "胸", key: "body.chest" },
+  { data: "背中", key: "body.back" },
+  { data: "脚", key: "body.legs" },
+  { data: "肩", key: "body.shoulders" },
+  { data: "二頭筋", key: "body.biceps" },
+  { data: "三頭筋", key: "body.triceps" },
+  { data: "腹", key: "body.abs" },
+];
+const CARDIO_DATA = "有酸素運動";
 
 function todayKey() {
   const d = new Date();
@@ -15,6 +25,7 @@ function todayKey() {
 }
 
 export default function RecordWorkout() {
+  const t = useT();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
   const targetDate = params.get("date") || todayKey();
@@ -37,12 +48,12 @@ export default function RecordWorkout() {
         if (!user) { setLoadingEdit(false); return; }
         const recs = await base44.entities.WorkoutRecord.filter({ created_by_id: user.id }, "-created_date", 500);
         const dayRecs = recs.filter((r) => getWorkoutDateKey(r) === targetDate);
-        // 新7部位＋有酸素のみ置換対象。旧「腕」記録は上書き・削除せず残す
-        const replaceable = dayRecs.filter((r) => PARTS.includes(r.workout_type) || r.workout_type === "有酸素運動");
+        const partDataValues = PART_KEYS.map((p) => p.data);
+        const replaceable = dayRecs.filter((r) => partDataValues.includes(r.workout_type) || r.workout_type === CARDIO_DATA);
         setExistingIds(replaceable.map((r) => r.id));
-        const parts = new Set(replaceable.filter((r) => PARTS.includes(r.workout_type)).map((r) => r.workout_type));
+        const parts = new Set(replaceable.filter((r) => partDataValues.includes(r.workout_type)).map((r) => r.workout_type));
         setSelected(parts);
-        const cardioRec = dayRecs.find((r) => r.workout_type === "有酸素運動");
+        const cardioRec = dayRecs.find((r) => r.workout_type === CARDIO_DATA);
         if (cardioRec) {
           const totalMin = Math.round((Number(cardioRec.duration_sec) || 0) / 60);
           setHours(Math.floor(totalMin / 60));
@@ -64,9 +75,9 @@ export default function RecordWorkout() {
     });
   };
 
-  const allSelected = PARTS.every((p) => selected.has(p));
+  const allSelected = PART_KEYS.every((p) => selected.has(p.data));
   const toggleAll = () => {
-    setSelected((prev) => (PARTS.every((p) => prev.has(p)) ? new Set() : new Set(PARTS)));
+    setSelected((prev) => (PART_KEYS.every((p) => prev.has(p.data)) ? new Set() : new Set(PART_KEYS.map((p) => p.data))));
   };
 
   const cardio = hours * 60 + minutes;
@@ -81,7 +92,7 @@ export default function RecordWorkout() {
       records.push({ workout_type: p, sets: 1, reps: 1, weight: 0, duration_sec: 0, volume: 0, notes: memo || undefined, workout_date: targetDate });
     });
     if (cardio > 0) {
-      records.push({ workout_type: "有酸素運動", sets: 0, reps: 0, weight: 0, duration_sec: cardio * 60, volume: 0, notes: memo || undefined, workout_date: targetDate });
+      records.push({ workout_type: CARDIO_DATA, sets: 0, reps: 0, weight: 0, duration_sec: cardio * 60, volume: 0, notes: memo || undefined, workout_date: targetDate });
     }
     try {
       if (isEdit && existingIds.length > 0) {
@@ -95,7 +106,7 @@ export default function RecordWorkout() {
       setTimeout(() => navigate("/"), 850);
     } catch (e) {
       setSaving(false);
-      alert("保存に失敗しました。もう一度お試しください。");
+      alert(t("workout.saveError"));
     }
   }
 
@@ -125,7 +136,7 @@ export default function RecordWorkout() {
             transition={{ delay: 0.15 }}
             className="text-lg font-bold text-foreground"
           >
-            {isEdit ? "変更を保存しました" : "記録しました"}
+            {isEdit ? t("workout.changesSaved") : t("workout.saved")}
           </motion.div>
         </div>
       </div>
@@ -136,11 +147,11 @@ export default function RecordWorkout() {
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-30 bg-background flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="w-9" />
-        <h1 className="text-lg font-bold text-foreground">{isEdit ? "ワークアウトを修正" : "ワークアウトを記録"}</h1>
+        <h1 className="text-lg font-bold text-foreground">{isEdit ? t("workout.editAction") : t("workout.recordAction")}</h1>
         <button
           onClick={() => navigate(-1)}
           className="w-9 h-9 -mr-1 flex items-center justify-center rounded-lg hover:bg-secondary transition-colors"
-          aria-label="閉じる"
+          aria-label={t("common.close")}
         >
           <X className="w-5 h-5" />
         </button>
@@ -148,53 +159,53 @@ export default function RecordWorkout() {
 
       <div className="flex-1 px-4 py-6 space-y-8 max-w-md mx-auto w-full pb-32">
         <section>
-          <h2 className="text-sm font-semibold text-muted-foreground mb-3">部位</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground mb-3">{t("body.part")}</h2>
           <div className="grid grid-cols-2 gap-2.5">
-            {PART_GRID.map((p) => (
+            {PART_KEYS.map((p) => (
               <button
-                key={p}
-                onClick={() => toggle(p)}
-                className={`py-4 rounded-xl font-bold text-base transition active:scale-[0.98] ${
-                  selected.has(p) ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                key={p.data}
+                onClick={() => toggle(p.data)}
+                className={`py-4 rounded-xl font-bold text-base transition active:scale-[0.98] break-words ${
+                  selected.has(p.data) ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                 }`}
               >
-                {p}
+                {t(p.key)}
               </button>
             ))}
           </div>
           <button
             onClick={toggleAll}
-            className={`mt-2.5 w-full py-4 rounded-xl font-bold text-base transition active:scale-[0.98] ${
+            className={`mt-2.5 w-full py-4 rounded-xl font-bold text-base transition active:scale-[0.98] break-words ${
               allSelected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
             }`}
           >
-            全身
+            {t("body.fullbody")}
           </button>
         </section>
 
         <section>
-          <h2 className="text-sm font-semibold text-muted-foreground mb-3">有酸素運動</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground mb-3">{t("workout.cardioTitle")}</h2>
           <div className="bg-secondary/40 rounded-2xl p-3">
             <div className="flex items-end justify-center gap-8">
               <div className="flex flex-col items-center">
                 <WheelPicker values={Array.from({ length: 24 }, (_, i) => i)} value={hours} onChange={setHours} />
-                <span className="text-xs font-semibold text-muted-foreground mt-2">時間</span>
+                <span className="text-xs font-semibold text-muted-foreground mt-2">{t("workout.hourLabel")}</span>
               </div>
               <div className="flex flex-col items-center">
                 <WheelPicker values={Array.from({ length: 60 }, (_, i) => i)} value={minutes} onChange={setMinutes} />
-                <span className="text-xs font-semibold text-muted-foreground mt-2">分</span>
+                <span className="text-xs font-semibold text-muted-foreground mt-2">{t("workout.minLabel")}</span>
               </div>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className="text-sm font-semibold text-muted-foreground mb-3">メモ（任意）</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground mb-3">{t("workout.memoLabel")}</h2>
           <textarea
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             rows={3}
-            placeholder="今日のメモを自由に入力"
+            placeholder={t("workout.memoPlaceholder")}
             className="w-full bg-secondary/60 border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary resize-none"
           />
         </section>
@@ -210,7 +221,7 @@ export default function RecordWorkout() {
             disabled={!canSave || saving}
             className="w-full bg-primary text-primary-foreground font-bold text-base py-4 rounded-2xl disabled:opacity-40 transition active:scale-[0.98]"
           >
-            {saving ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (isEdit ? "変更を保存" : "完了")}
+            {saving ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (isEdit ? t("workout.editButton") : t("common.done"))}
           </button>
         </div>
       </div>

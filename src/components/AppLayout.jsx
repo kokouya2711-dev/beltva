@@ -240,7 +240,7 @@ function AppLayoutInner() {
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform"
           >
             <Plus className="w-5 h-5" />
-            <span>ワークアウトを記録する</span>
+            <span>{t("workout.recordButton")}</span>
           </button>
           <LoginStreak me={me} />
         </div>
