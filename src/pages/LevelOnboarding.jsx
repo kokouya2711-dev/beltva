@@ -4,15 +4,18 @@ import { base44 } from "@/api/base44Client";
 import { Loader2 } from "lucide-react";
 import LevelStep from "@/components/auth/LevelStep";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { isEditMode, confirmUrl } from "@/lib/onboardingNav";
 
 // 新規登録後のトレーニングレベル選択オンボーディング
-// 目的選択の次のステップ。最終ステップでフラグを解除しホームへ遷移。
+// 初期フローでは確認画面へ遷移。編集モード(from=confirm)の場合は保存後確認画面へ戻る。
+// freshフラグは確認画面の「登録を完了する」でのみ解除。
 export default function LevelOnboarding() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [saving, setSaving] = useState(false);
   const [me, setMe] = useState(null);
   const returnTo = safeReturnTo();
+  const editMode = isEditMode();
 
   useEffect(() => {
     let cancelled = false;
@@ -22,7 +25,7 @@ export default function LevelOnboarding() {
         if (cancelled) return;
         setMe(user);
         const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
-        if (user?.level && !fresh) {
+        if (!editMode && user?.level && !fresh) {
           sessionStorage.removeItem("beltva_fresh_register");
           window.location.href = returnTo;
           return;
@@ -33,14 +36,14 @@ export default function LevelOnboarding() {
       if (!cancelled) setChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [returnTo]);
+  }, [returnTo, editMode]);
 
   async function handleContinue(level) {
     setSaving(true);
     try {
       await base44.auth.updateMe({ level, level_updated_at: new Date().toISOString() });
-      sessionStorage.removeItem("beltva_fresh_register");
-      window.location.href = returnTo;
+      // 確認画面へ(freshフラグは確認画面で解除)
+      navigate(confirmUrl(returnTo), { replace: true });
     } catch (err) {
       setSaving(false);
       alert(err.message || "保存に失敗しました");
@@ -57,7 +60,7 @@ export default function LevelOnboarding() {
 
   return (
     <LevelStep
-      onBack={() => navigate("/onboarding/purpose" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true })}
+      onBack={() => editMode ? navigate(confirmUrl(returnTo), { replace: true }) : navigate("/onboarding/purpose" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true })}
       onContinue={handleContinue}
       loading={saving}
       initialValue={me?.level || ""}

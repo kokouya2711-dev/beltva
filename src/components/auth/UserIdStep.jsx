@@ -9,10 +9,10 @@ import { base44 } from "@/api/base44Client";
 // 入力中にバックエンド関数で重複/フォーマットを検証する
 const RE = /^[a-z0-9_]{3,20}$/;
 
-export default function UserIdStep({ onBack, onContinue, loading }) {
+export default function UserIdStep({ onBack, onContinue, loading, initialValue = "" }) {
   const t = useT();
   useScrollLock();
-  const [raw, setRaw] = useState("");
+  const [raw, setRaw] = useState(initialValue);
   const [status, setStatus] = useState("idle"); // idle | checking | ok | taken | invalid
   const timer = useRef(null);
   const reqId = useRef(0);
@@ -58,7 +58,7 @@ export default function UserIdStep({ onBack, onContinue, loading }) {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 flex gap-1.5">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className={`h-1 flex-1 rounded-full ${i === 3 ? "bg-primary" : "bg-border"}`} />
           ))}
         </div>

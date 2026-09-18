@@ -11,7 +11,7 @@ function daysInMonth(y, m) {
 // 登録フロー内の生年月日選択ステップ
 // ルール: 13歳以上。当日から13年前までのみ選択可能(毎日更新)。
 // それより新しい(13歳未満)日付はリストに含めず選択不可。
-export default function BirthdateStep({ onBack, onContinue, loading }) {
+export default function BirthdateStep({ onBack, onContinue, loading, initialValue = "" }) {
   const t = useT();
   useScrollLock();
 
@@ -23,9 +23,19 @@ export default function BirthdateStep({ onBack, onContinue, loading }) {
   );
   const minYear = 1900;
 
-  const [year, setYear] = useState(maxDate.getFullYear());
-  const [month, setMonth] = useState(maxDate.getMonth() + 1);
-  const [day, setDay] = useState(maxDate.getDate());
+  // 既存値があれば初期化(編集モード)
+  const initDate = useMemo(() => {
+    if (!initialValue) return null;
+    try {
+      const d = new Date(initialValue);
+      if (!isNaN(d.getTime())) return d;
+    } catch {}
+    return null;
+  }, [initialValue]);
+
+  const [year, setYear] = useState(initDate ? initDate.getFullYear() : maxDate.getFullYear());
+  const [month, setMonth] = useState(initDate ? initDate.getMonth() + 1 : maxDate.getMonth() + 1);
+  const [day, setDay] = useState(initDate ? initDate.getDate() : maxDate.getDate());
   const [pickerOpen, setPickerOpen] = useState(false);
 
   const years = useMemo(() => {
@@ -123,7 +133,7 @@ export default function BirthdateStep({ onBack, onContinue, loading }) {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 flex gap-1.5">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className={`h-1 flex-1 rounded-full ${i === 0 ? "bg-primary" : "bg-border"}`} />
           ))}
         </div>

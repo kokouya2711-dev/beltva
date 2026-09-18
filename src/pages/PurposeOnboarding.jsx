@@ -4,15 +4,17 @@ import { base44 } from "@/api/base44Client";
 import { Loader2 } from "lucide-react";
 import PurposeStep from "@/components/auth/PurposeStep";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { isEditMode, confirmUrl } from "@/lib/onboardingNav";
 
 // 新規登録後の目的選択オンボーディング
-// 国・地域選択の次のステップ。
+// 編集モード(from=confirm)の場合はスキップせず表示し、保存後確認画面へ戻る
 export default function PurposeOnboarding() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [saving, setSaving] = useState(false);
   const [me, setMe] = useState(null);
   const returnTo = safeReturnTo();
+  const editMode = isEditMode();
 
   useEffect(() => {
     let cancelled = false;
@@ -22,7 +24,7 @@ export default function PurposeOnboarding() {
         if (cancelled) return;
         setMe(user);
         const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
-        if (user?.training_purpose && !fresh) {
+        if (!editMode && user?.training_purpose && !fresh) {
           if (!user?.level) {
             navigate("/onboarding/level" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
           } else {
@@ -37,13 +39,17 @@ export default function PurposeOnboarding() {
       if (!cancelled) setChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [returnTo, navigate]);
+  }, [returnTo, navigate, editMode]);
 
   async function handleContinue(purpose) {
     setSaving(true);
     try {
       await base44.auth.updateMe({ training_purpose: purpose });
-      navigate("/onboarding/level" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+      if (editMode) {
+        navigate(confirmUrl(returnTo), { replace: true });
+      } else {
+        navigate("/onboarding/level" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+      }
     } catch (err) {
       setSaving(false);
       alert(err.message || "保存に失敗しました");
@@ -60,7 +66,7 @@ export default function PurposeOnboarding() {
 
   return (
     <PurposeStep
-      onBack={() => navigate("/onboarding/country" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true })}
+      onBack={() => editMode ? navigate(confirmUrl(returnTo), { replace: true }) : navigate("/onboarding/country" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true })}
       onContinue={handleContinue}
       loading={saving}
       initialValue={me?.training_purpose || ""}

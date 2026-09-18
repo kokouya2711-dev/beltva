@@ -55,6 +55,7 @@ import LanguageOnboarding from '@/pages/LanguageOnboarding';
 import CountryOnboarding from '@/pages/CountryOnboarding';
 import PurposeOnboarding from '@/pages/PurposeOnboarding';
 import LevelOnboarding from '@/pages/LevelOnboarding';
+import ConfirmOnboarding from '@/pages/ConfirmOnboarding';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -96,6 +97,7 @@ const AuthenticatedApp = () => {
         <Route path="/onboarding/country" element={<CountryOnboarding />} />
         <Route path="/onboarding/purpose" element={<PurposeOnboarding />} />
         <Route path="/onboarding/level" element={<LevelOnboarding />} />
+        <Route path="/onboarding/confirm" element={<ConfirmOnboarding />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/timeline" element={<TimelinePage />} />

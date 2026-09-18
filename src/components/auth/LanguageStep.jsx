@@ -7,11 +7,11 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 // 登録フロー内のメイン言語(フィード言語)選択ステップ
 // プログレスバーは6番目(index 5)をハイライト
 // 一度決めたら変更不可。アプリ表示言語とは別データ。
-export default function LanguageStep({ onBack, onContinue, loading }) {
+export default function LanguageStep({ onBack, onContinue, loading, initialValue = "" }) {
   const t = useT();
   const { lang } = useI18n();
   useScrollLock();
-  const [val, setVal] = useState("");
+  const [val, setVal] = useState(initialValue);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -46,7 +46,7 @@ export default function LanguageStep({ onBack, onContinue, loading }) {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 flex gap-1.5">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className={`h-1 flex-1 rounded-full ${i === 4 ? "bg-primary" : "bg-border"}`} />
           ))}
         </div>

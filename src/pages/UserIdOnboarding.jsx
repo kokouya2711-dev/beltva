@@ -4,22 +4,27 @@ import { base44 } from "@/api/base44Client";
 import { Loader2 } from "lucide-react";
 import UserIdStep from "@/components/auth/UserIdStep";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { isEditMode, confirmUrl } from "@/lib/onboardingNav";
 
 // 新規登録後のユーザーID(一意ハンドル)オンボーディング
+// 編集モード(from=confirm)の場合はスキップせず表示し、保存後確認画面へ戻る
 export default function UserIdOnboarding() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [me, setMe] = useState(null);
   const returnTo = safeReturnTo();
+  const editMode = isEditMode();
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const me = await base44.auth.me();
+        const user = await base44.auth.me();
         if (cancelled) return;
+        setMe(user);
         const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
-        if (me?.username && !fresh) {
+        if (!editMode && me?.username && !fresh) {
           if (!me?.main_language) {
             navigate("/onboarding/language" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
           } else if (!me?.country) {
@@ -35,7 +40,7 @@ export default function UserIdOnboarding() {
       if (!cancelled) setChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [returnTo]);
+  }, [returnTo, editMode, navigate]);
 
   async function handleContinue(username) {
     setSaving(true);
@@ -49,8 +54,12 @@ export default function UserIdOnboarding() {
         return;
       }
       await base44.auth.updateMe({ username });
-      // メイン言語選択へ(フラグは最終ステップで解除)
-      navigate("/onboarding/language", { replace: true });
+      if (editMode) {
+        navigate(confirmUrl(returnTo), { replace: true });
+      } else {
+        // メイン言語選択へ(フラグは最終ステップで解除)
+        navigate("/onboarding/language", { replace: true });
+      }
     } catch (err) {
       setSaving(false);
       alert(err.message || "保存に失敗しました");
@@ -67,9 +76,10 @@ export default function UserIdOnboarding() {
 
   return (
     <UserIdStep
-      onBack={() => navigate("/onboarding/username", { replace: true })}
+      onBack={() => editMode ? navigate(confirmUrl(returnTo), { replace: true }) : navigate("/onboarding/username", { replace: true })}
       onContinue={handleContinue}
       loading={saving}
+      initialValue={me?.username || ""}
     />
   );
 }

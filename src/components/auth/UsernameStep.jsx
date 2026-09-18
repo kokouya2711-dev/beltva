@@ -5,10 +5,10 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 
 // 登録フロー内のユーザー名(表示名)ステップ
 // プログレスバーは3番目(index 2)をハイライト
-export default function UsernameStep({ onBack, onContinue, loading }) {
+export default function UsernameStep({ onBack, onContinue, loading, initialValue = "" }) {
   const t = useT();
   useScrollLock();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(initialValue);
   const trimmed = name.trim();
   const canContinue = trimmed.length > 0 && !loading;
 
@@ -19,7 +19,7 @@ export default function UsernameStep({ onBack, onContinue, loading }) {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 flex gap-1.5">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className={`h-1 flex-1 rounded-full ${i === 2 ? "bg-primary" : "bg-border"}`} />
           ))}
         </div>

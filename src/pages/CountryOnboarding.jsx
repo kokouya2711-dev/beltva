@@ -4,15 +4,17 @@ import { base44 } from "@/api/base44Client";
 import { Loader2 } from "lucide-react";
 import CountryStep from "@/components/auth/CountryStep";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { isEditMode, confirmUrl } from "@/lib/onboardingNav";
 
 // 新規登録後の国・地域オンボーディング
-// メイン言語選択の次のステップ。最終ステップでフラグを解除しホームへ遷移。
+// 編集モード(from=confirm)の場合はスキップせず表示し、保存後確認画面へ戻る
 export default function CountryOnboarding() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [saving, setSaving] = useState(false);
   const [me, setMe] = useState(null);
   const returnTo = safeReturnTo();
+  const editMode = isEditMode();
 
   useEffect(() => {
     let cancelled = false;
@@ -22,7 +24,7 @@ export default function CountryOnboarding() {
         if (cancelled) return;
         setMe(user);
         const fresh = sessionStorage.getItem("beltva_fresh_register") === "1";
-        if (user?.country && !fresh) {
+        if (!editMode && user?.country && !fresh) {
           sessionStorage.removeItem("beltva_fresh_register");
           try { sessionStorage.removeItem("beltva_country_draft"); } catch {}
           window.location.href = returnTo;
@@ -34,7 +36,7 @@ export default function CountryOnboarding() {
       if (!cancelled) setChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [returnTo]);
+  }, [returnTo, editMode]);
 
   async function handleContinue(code) {
     setSaving(true);
@@ -48,7 +50,11 @@ export default function CountryOnboarding() {
       } catch {}
       await base44.auth.updateMe({ country: code, country_name: countryName });
       try { sessionStorage.removeItem("beltva_country_draft"); } catch {}
-      navigate("/onboarding/purpose" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+      if (editMode) {
+        navigate(confirmUrl(returnTo), { replace: true });
+      } else {
+        navigate("/onboarding/purpose" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : ""), { replace: true });
+      }
     } catch (err) {
       setSaving(false);
       alert(err.message || "保存に失敗しました");
@@ -67,7 +73,7 @@ export default function CountryOnboarding() {
 
   return (
     <CountryStep
-      onBack={() => navigate("/onboarding/language", { replace: true })}
+      onBack={() => editMode ? navigate(confirmUrl(returnTo), { replace: true }) : navigate("/onboarding/language", { replace: true })}
       onContinue={handleContinue}
       loading={saving}
       initialCountry={me?.country || draftFromStorage || ""}

@@ -10,10 +10,10 @@ const OPTIONS = [
   { key: "female", labelKey: "common.genderFemale", symbol: "♀", color: "#f472b6" }
 ];
 
-export default function GenderStep({ onBack, onContinue, loading }) {
+export default function GenderStep({ onBack, onContinue, loading, initialValue = "" }) {
   const t = useT();
   useScrollLock();
-  const [val, setVal] = useState("");
+  const [val, setVal] = useState(initialValue);
   const canContinue = !!val && !loading;
 
   return (
@@ -23,7 +23,7 @@ export default function GenderStep({ onBack, onContinue, loading }) {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex-1 flex gap-1.5">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div key={i} className={`h-1 flex-1 rounded-full ${i === 1 ? "bg-primary" : "bg-border"}`} />
           ))}
         </div>
