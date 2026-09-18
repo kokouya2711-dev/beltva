@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Loader2 } from "lucide-react";
 import ConfirmStep from "@/components/auth/ConfirmStep";
+import RegistrationSuccess from "@/components/auth/RegistrationSuccess";
 import { safeReturnTo } from "@/lib/authReturnTo";
 
 // 新規登録後の「登録内容を確認」画面
@@ -12,6 +13,7 @@ export default function ConfirmOnboarding() {
   const [checking, setChecking] = useState(true);
   const [saving, setSaving] = useState(false);
   const [me, setMe] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const returnTo = safeReturnTo();
 
   useEffect(() => {
@@ -39,11 +41,16 @@ export default function ConfirmOnboarding() {
     setSaving(true);
     try {
       sessionStorage.removeItem("beltva_fresh_register");
-      window.location.href = returnTo;
+      localStorage.setItem("beltva_show_guide", "1");
+      setShowSuccess(true);
     } catch (err) {
       setSaving(false);
       alert(err.message || "エラーが発生しました");
     }
+  }
+
+  if (showSuccess) {
+    return <RegistrationSuccess onComplete={() => { window.location.href = returnTo; }} />;
   }
 
   if (checking) {

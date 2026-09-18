@@ -27,14 +27,15 @@ import TimelineHeader from "@/components/TimelineHeader";
 import { motion } from "framer-motion";
 import { FriendsIcon, FeedIcon, ChatIcon } from "@/components/NavIcons";
 import ReportSuccessDialog from "@/components/ReportSuccessDialog";
+import FirstTimeGuide from "@/components/home/FirstTimeGuide";
 import AnimatedOutlet, { isFullscreenRoute } from "@/components/AnimatedOutlet";
 
 const LOGO_URL = "https://media.base44.com/images/public/6a7190f1483b67d357e796b4/8a9fd6e06_IMG_2256.png";
 const nav = [
   { to: "/", labelKey: "nav.home", icon: HomeIcon },
-  { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30 },
+  { to: "/users", labelKey: "nav.users", icon: FriendsIcon, iconSize: 30, guideKey: "users" },
   { to: "/messages", labelKey: "nav.messages", icon: ChatIcon, iconSize: 30 },
-  { to: "/timeline", labelKey: "nav.timeline", icon: FeedIcon },
+  { to: "/timeline", labelKey: "nav.timeline", icon: FeedIcon, guideKey: "timeline" },
   { to: "/me", labelKey: "nav.me", icon: User }
 ];
 
@@ -58,6 +59,7 @@ function NavItem({ n, active, t }) {
   return (
     <Link
       to={n.to}
+      data-guide={n.guideKey}
       className={`relative flex-1 flex flex-col items-center gap-1 py-1 rounded-full transition-colors duration-200 ${
         active ? "bg-white/10 text-primary" : "text-muted-foreground"
       }`}
@@ -170,6 +172,7 @@ function AppLayoutInner() {
               <Link
                 key={n.to}
                 to={n.to}
+                data-guide={n.guideKey}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                   active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
                 }`}
@@ -182,6 +185,7 @@ function AppLayoutInner() {
         </nav>
         <div className="p-3">
           <button
+            data-guide="record"
             onClick={() => navigate("/record-workout")}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-primary/20"
           >
@@ -231,6 +235,7 @@ function AppLayoutInner() {
       {location.pathname === "/" && (
         <div className="md:hidden px-4 pt-3 pb-1">
           <button
+            data-guide="record"
             onClick={() => navigate("/record-workout")}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform"
           >
@@ -255,6 +260,7 @@ function AppLayoutInner() {
         </div>
       </nav>
 
+      <FirstTimeGuide />
       <ReportSuccessDialog />
     </div>
   );
