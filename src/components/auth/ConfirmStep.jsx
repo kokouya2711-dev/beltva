@@ -4,14 +4,16 @@ import { useT, useI18n, LANGS } from "@/lib/i18n";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { purposeLabel } from "@/lib/i18nPurposeFilter";
 import { editStepUrl } from "@/lib/onboardingNav";
+import LegalSheet from "@/components/auth/LegalSheet";
 
 // 登録内容確認ステップ
-// プログレスバーは9番目(index 8)をハイライト
+// プログレスバーなし(最終ステップのため)
 export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }) {
   const t = useT();
   const { lang } = useI18n();
   useScrollLock();
   const [agreed, setAgreed] = useState(false);
+  const [sheet, setSheet] = useState(null); // null | "terms" | "privacy"
 
   const locale = lang === "zh-TW" ? "zh-TW" : lang;
 
@@ -56,18 +58,13 @@ export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }
 
   return (
     <div className="relative h-[100dvh] flex flex-col bg-background overflow-hidden">
-      <header className="flex items-center gap-3 px-4 pt-4 shrink-0">
+      <header className="flex items-center px-4 pt-[env(safe-area-inset-top)] shrink-0">
         <button onClick={onBack} className="p-2 -ml-2 text-foreground" aria-label={t("auth.back")}>
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <div className="flex-1 flex gap-1.5">
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full ${i === 8 ? "bg-primary" : "bg-border"}`} />
-          ))}
-        </div>
       </header>
 
-      <div className="flex-1 min-h-0 px-6 pt-8 overflow-y-auto overscroll-contain">
+      <div className="flex-1 min-h-0 px-6 pt-6 overflow-y-auto overscroll-contain">
         <h2 className="text-center text-xl font-bold text-foreground mb-6">{t("auth.confirmTitle")}</h2>
 
         <div className="flex flex-col gap-2.5">
@@ -100,17 +97,16 @@ export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }
         </div>
 
         <div className="flex items-center justify-center gap-1.5 mt-6 text-sm">
-          <a href="/terms" className="text-primary underline">{t("auth.terms")}</a>
+          <button onClick={() => setSheet("terms")} className="text-primary underline">{t("auth.terms")}</button>
           <span className="text-muted-foreground">・</span>
-          <a href="/privacy-policy" className="text-primary underline">{t("auth.privacyPolicy")}</a>
+          <button onClick={() => setSheet("privacy")} className="text-primary underline">{t("auth.privacyPolicy")}</button>
         </div>
 
-        <label className="flex items-center justify-center gap-2 mt-4 cursor-pointer">
+        <label className="flex items-center justify-center gap-2.5 mt-4 mb-2 cursor-pointer select-none py-2.5">
           <span
-            onClick={() => setAgreed(!agreed)}
-            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${agreed ? "border-primary bg-primary" : "border-muted-foreground/40"}`}
+            className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors shrink-0 ${agreed ? "border-primary bg-primary" : "border-muted-foreground/40"}`}
           >
-            {agreed && <Check className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={3} />}
+            {agreed && <Check className="w-4 h-4 text-primary-foreground" strokeWidth={3} />}
           </span>
           <span className="text-sm text-foreground">{t("auth.agreeTerms")}</span>
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="sr-only" />
@@ -126,6 +122,8 @@ export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }
           {t("auth.completeRegistration")}
         </button>
       </div>
+
+      {sheet && <LegalSheet type={sheet} onClose={() => setSheet(null)} />}
     </div>
   );
 }
