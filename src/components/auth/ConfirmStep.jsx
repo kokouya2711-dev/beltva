@@ -55,8 +55,8 @@ export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }
   ];
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-background overflow-hidden">
-      <header className="flex items-center gap-3 px-4 pt-4">
+    <div className="relative h-[100dvh] flex flex-col bg-background overflow-hidden">
+      <header className="flex items-center gap-3 px-4 pt-4 shrink-0">
         <button onClick={onBack} className="p-2 -ml-2 text-foreground" aria-label={t("auth.back")}>
           <ArrowLeft className="w-6 h-6" />
         </button>
@@ -67,7 +67,7 @@ export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col px-6 pt-8 overflow-y-auto">
+      <div className="flex-1 min-h-0 px-6 pt-8 overflow-y-auto overscroll-contain">
         <h2 className="text-center text-xl font-bold text-foreground mb-6">{t("auth.confirmTitle")}</h2>
 
         <div className="flex flex-col gap-2.5">
@@ -117,7 +117,7 @@ export default function ConfirmStep({ me, returnTo, onBack, onComplete, saving }
         </label>
       </div>
 
-      <div className="px-6 pb-10 pt-4">
+      <div className="shrink-0 px-6 pt-4 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
         <button
           onClick={() => agreed && !saving && onComplete()}
           disabled={!agreed || saving}
