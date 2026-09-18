@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { getWorkoutDate, getMonthNav } from "@/lib/activityHelpers";
+import { useI18n, useT } from "@/lib/i18n";
+import { getWorkoutDate, getMonthNav, workoutTypeLabel } from "@/lib/activityHelpers";
 
 const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹"];
 
 export default function BodyPartRatioSection({ me: meProp, records: recordsProp }) {
+  const { lang } = useI18n();
+  const t = useT();
   const [records, setRecords] = useState(recordsProp || []);
   const [me, setMe] = useState(meProp || null);
   const [loading, setLoading] = useState(!meProp);
@@ -102,19 +105,19 @@ export default function BodyPartRatioSection({ me: meProp, records: recordsProp 
     );
   }
 
-  const monthLabel = `${viewMonth + 1}月`;
+  const monthLabel = new Intl.DateTimeFormat(lang === "zh" ? "zh-CN" : lang === "zh-TW" ? "zh-TW" : lang, { month: "long" }).format(new Date(viewYear, viewMonth, 1));
   const activeDot = nav.activeIndex(viewYear, viewMonth);
 
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="flex items-center gap-2 mb-5">
-        <span className="text-xl font-extrabold text-foreground tracking-tight">部位別トレーニング</span>
+        <span className="text-xl font-extrabold text-foreground tracking-tight">{t("activity.byBodyPartTitle")}</span>
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrev}
             disabled={!nav.canPrev(viewYear, viewMonth)}
             className={`p-1 transition-colors ${nav.canPrev(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
-            aria-label="前の月"
+            aria-label={t("common.prevMonth")}
           >
             <ChevronLeft className="w-5 h-5" strokeWidth={3} />
           </button>
@@ -123,7 +126,7 @@ export default function BodyPartRatioSection({ me: meProp, records: recordsProp 
             onClick={handleNext}
             disabled={!nav.canNext(viewYear, viewMonth)}
             className={`p-1 transition-colors ${nav.canNext(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
-            aria-label="次の月"
+            aria-label={t("common.nextMonth")}
           >
             <ChevronRight className="w-5 h-5" strokeWidth={3} />
           </button>
@@ -138,10 +141,10 @@ export default function BodyPartRatioSection({ me: meProp, records: recordsProp 
           return (
             <div key={p}>
               <div className="flex items-baseline justify-between mb-1.5">
-                <span className="text-sm font-semibold text-foreground/80">{p}</span>
+                <span className="text-sm font-semibold text-foreground/80">{workoutTypeLabel(p, t)}</span>
                 <div className="flex items-baseline gap-1.5">
                   <span className={`text-2xl font-extrabold leading-none ${count > 0 ? "text-primary" : "text-foreground"}`}>{pct}<span className="text-base font-bold ml-0.5">%</span></span>
-                  <span className="text-sm font-semibold text-muted-foreground">{count}回</span>
+                  <span className="text-sm font-semibold text-muted-foreground">{count}{t("activity.countSuffix")}</span>
                 </div>
               </div>
               <div className="flex gap-0.5">
@@ -158,7 +161,7 @@ export default function BodyPartRatioSection({ me: meProp, records: recordsProp 
           );
         })}
         {total === 0 && (
-          <p className="text-xs text-muted-foreground text-center mt-1">この月の記録はありません</p>
+          <p className="text-xs text-muted-foreground text-center mt-1">{t("activity.noRecordsThisMonth")}</p>
         )}
       </div>
 

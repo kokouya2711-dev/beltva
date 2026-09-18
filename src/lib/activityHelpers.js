@@ -17,6 +17,18 @@ export function getBodyPart(workoutType) {
   return EXERCISE_TO_BODY_PART[workoutType] || "その他";
 }
 
+// Map stored Japanese workout_type values to translated labels
+const WORKOUT_TYPE_KEY_MAP = {
+  "胸": "body.chest", "背中": "body.back", "脚": "body.legs", "肩": "body.shoulders",
+  "二頭筋": "body.biceps", "三頭筋": "body.triceps", "腹": "body.abs", "腕": "body.arms",
+  "有酸素運動": "workout.cardioTitle", "全身": "body.fullbody",
+  "有酸素": "body.cardio", "ストレッチ": "body.stretch", "その他": "body.other"
+};
+export function workoutTypeLabel(workoutType, t) {
+  const key = WORKOUT_TYPE_KEY_MAP[workoutType];
+  return key ? t(key) : workoutType;
+}
+
 export function formatDuration(seconds, t) {
   const s = Math.round(Number(seconds) || 0);
   if (s <= 0) return t ? t("dur.s").replace("{s}", 0) : "0秒";

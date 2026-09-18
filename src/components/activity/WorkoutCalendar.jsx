@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, useT } from "@/lib/i18n";
 import { getWorkoutDate, getWorkoutDateKey, getMonthNav } from "@/lib/activityHelpers";
 import DayDetailPopup from "./DayDetailPopup";
 
 export default function WorkoutCalendar({ allRecords, appStart, currentYear, currentMonth }) {
   const { lang } = useI18n();
+  const t = useT();
   const navigate = useNavigate();
   const [viewYear, setViewYear] = useState(currentYear);
   const [viewMonth, setViewMonth] = useState(currentMonth);
@@ -115,7 +116,7 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
             onClick={handlePrev}
             disabled={!nav.canPrev(viewYear, viewMonth)}
             className={`p-1.5 -ml-1.5 transition-colors ${nav.canPrev(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
-            aria-label="前の月"
+            aria-label={t("common.prevMonth")}
           >
             <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </button>
@@ -124,14 +125,14 @@ export default function WorkoutCalendar({ allRecords, appStart, currentYear, cur
             onClick={handleNext}
             disabled={!nav.canNext(viewYear, viewMonth)}
             className={`p-1.5 -mr-1.5 transition-colors ${nav.canNext(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
-            aria-label="次の月"
+            aria-label={t("common.nextMonth")}
           >
             <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </button>
         </div>
         <div className="flex items-center gap-1.5 text-[17px] font-extrabold text-foreground mr-2">
           {trainingDays > 0 && <Flame className="w-5 h-5 text-primary" fill="currentColor" strokeWidth={0} />}
-          <span>{trainingDays}/{totalDays}日</span>
+          <span>{trainingDays}/{totalDays}{t("activity.daySuffix")}</span>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-1 mb-1.5">

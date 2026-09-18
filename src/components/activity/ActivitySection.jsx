@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, useT } from "@/lib/i18n";
 import { isCardio, getWorkoutDate, getWorkoutDateKey, getMonthNav } from "@/lib/activityHelpers";
 
 export default function ActivitySection({ allRecords, appStart, currentYear, currentMonth }) {
   const { lang } = useI18n();
+  const t = useT();
   const [viewYear, setViewYear] = useState(currentYear);
   const [viewMonth, setViewMonth] = useState(currentMonth);
   const touchStartX = React.useRef(null);
@@ -35,7 +36,7 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
     else handlePrev();
   };
 
-  const monthLabel = `${viewMonth + 1}月`;
+  const monthLabel = new Intl.DateTimeFormat(lang === "zh" ? "zh-CN" : lang === "zh-TW" ? "zh-TW" : lang, { month: "long" }).format(new Date(viewYear, viewMonth, 1));
 
   const { trainingDays, cardioMinutes } = useMemo(() => {
     const days = new Set();
@@ -52,9 +53,8 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
 
   const h = Math.floor(cardioMinutes / 60);
   const m = cardioMinutes % 60;
-  const cardioText = h > 0 ? `${h}時間${m}分` : `${m}分`;
   const cardioVal = h > 0 ? h : m;
-  const cardioUnit = h > 0 ? "時間" : "分";
+  const cardioUnit = h > 0 ? t("activity.hourUnit") : t("activity.minUnit");
 
   const dayColor = trainingDays > 0 ? "text-primary" : "text-foreground";
   const cardioColor = cardioMinutes > 0 ? "text-primary" : "text-foreground";
@@ -64,13 +64,13 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="flex items-center gap-2 mb-5">
-        <span className="text-xl font-extrabold text-foreground tracking-tight">アクティビティ</span>
+        <span className="text-xl font-extrabold text-foreground tracking-tight">{t("activity.title")}</span>
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrev}
             disabled={!nav.canPrev(viewYear, viewMonth)}
             className={`p-1 transition-colors ${nav.canPrev(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
-            aria-label="前の月"
+            aria-label={t("common.prevMonth")}
           >
             <ChevronLeft className="w-5 h-5" strokeWidth={3} />
           </button>
@@ -79,7 +79,7 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
             onClick={handleNext}
             disabled={!nav.canNext(viewYear, viewMonth)}
             className={`p-1 transition-colors ${nav.canNext(viewYear, viewMonth) ? "text-muted-foreground hover:text-foreground" : "text-muted-foreground/30 cursor-not-allowed"}`}
-            aria-label="次の月"
+            aria-label={t("common.nextMonth")}
           >
             <ChevronRight className="w-5 h-5" strokeWidth={3} />
           </button>
@@ -88,19 +88,19 @@ export default function ActivitySection({ allRecords, appStart, currentYear, cur
 
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-foreground/70">トレーニング日数</span>
+          <span className="text-sm font-semibold text-foreground/70">{t("activity.trainingDays")}</span>
           <div className={`text-3xl font-extrabold leading-none tracking-tight flex items-baseline ${dayColor}`}>
-            {trainingDays}<span className="text-base font-bold text-muted-foreground ml-0.5">日</span>
+            {trainingDays}<span className="text-base font-bold text-muted-foreground ml-0.5">{t("activity.daySuffix")}</span>
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-foreground/70">有酸素 合計時間</span>
+          <span className="text-sm font-semibold text-foreground/70">{t("activity.cardioTotalTime")}</span>
           <div className={`text-3xl font-extrabold leading-none tracking-tight flex items-baseline ${cardioColor}`}>
             {cardioVal}<span className="text-base font-bold text-muted-foreground ml-0.5">{cardioUnit}</span>
             {h > 0 && (
               <>
                 <span className={cardioColor}>{m}</span>
-                <span className="text-base font-bold text-muted-foreground ml-0.5">分</span>
+                <span className="text-base font-bold text-muted-foreground ml-0.5">{t("activity.minUnit")}</span>
               </>
             )}
           </div>

@@ -1,12 +1,14 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatDuration } from "@/lib/activityHelpers";
+import { useT } from "@/lib/i18n";
+import { formatDuration, workoutTypeLabel } from "@/lib/activityHelpers";
 
 // 新7部位＋旧「腕」（既存データの表示を残すため）
 const PARTS = ["胸", "背中", "脚", "肩", "二頭筋", "三頭筋", "腹", "腕"];
 
 export default function DayDetailPopup({ recordedDays, initialDay, onClose, onEdit, onAdd }) {
+  const t = useT();
   const startIndex = useMemo(
     () => recordedDays.findIndex((d) => d.key === initialDay.key),
     [recordedDays, initialDay.key]
@@ -86,45 +88,45 @@ export default function DayDetailPopup({ recordedDays, initialDay, onClose, onEd
       <div className="space-y-3 mb-5">
         {uniqueParts.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-muted-foreground mb-1.5">部位</div>
+            <div className="text-xs font-semibold text-muted-foreground mb-1.5">{t("body.part")}</div>
             <div className="flex flex-wrap gap-1.5">
               {uniqueParts.map((p) => (
-                <span key={p} className="px-2.5 py-1 rounded-full bg-primary/15 text-primary text-sm font-bold">{p}</span>
+                <span key={p} className="px-2.5 py-1 rounded-full bg-primary/15 text-primary text-sm font-bold">{workoutTypeLabel(p, t)}</span>
               ))}
             </div>
           </div>
         )}
         {cardioSec > 0 && (
           <div>
-            <div className="text-xs font-semibold text-muted-foreground mb-1.5">有酸素運動</div>
-            <div className="text-sm font-bold text-foreground">{formatDuration(cardioSec)}</div>
+            <div className="text-xs font-semibold text-muted-foreground mb-1.5">{t("workout.cardioTitle")}</div>
+            <div className="text-sm font-bold text-foreground">{formatDuration(cardioSec, t)}</div>
           </div>
         )}
         {memo && (
           <div>
-            <div className="text-xs font-semibold text-muted-foreground mb-1.5">メモ</div>
+            <div className="text-xs font-semibold text-muted-foreground mb-1.5">{t("workout.memoLabel")}</div>
             <div className="text-sm text-foreground/90 whitespace-pre-wrap break-words">{memo}</div>
           </div>
         )}
         {!hasAny && (
-          <div className="text-center text-sm text-muted-foreground py-2">この日のワークアウト記録はありません</div>
+          <div className="text-center text-sm text-muted-foreground py-2">{t("activity.noRecordsDay")}</div>
         )}
       </div>
       {editable && hasAny && (
         <button onClick={() => onEdit(dateKey)} className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-xl active:scale-[0.98] transition">
-          記録を修正する
+          {t("activity.editRecord")}
         </button>
       )}
       {editable && !hasAny && (
         <button onClick={() => onAdd(dateKey)} className="w-full bg-primary text-primary-foreground font-bold py-3 rounded-xl active:scale-[0.98] transition">
-          記録を追加する
+          {t("activity.addRecord")}
         </button>
       )}
       {!editable && pastReadOnly && hasAny && (
-        <div className="text-center text-xs text-muted-foreground">3日前以前の記録は編集できません</div>
+        <div className="text-center text-xs text-muted-foreground">{t("activity.editExpired")}</div>
       )}
       {!editable && pastReadOnly && !hasAny && (
-        <div className="text-center text-xs text-muted-foreground">3日前以前の記録は追加できません</div>
+        <div className="text-center text-xs text-muted-foreground">{t("activity.addExpired")}</div>
       )}
     </>
   );
@@ -145,7 +147,7 @@ export default function DayDetailPopup({ recordedDays, initialDay, onClose, onEd
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <button onClick={onClose} className="absolute top-3 right-3 p-1 text-muted-foreground hover:text-foreground" aria-label="閉じる">
+        <button onClick={onClose} className="absolute top-3 right-3 p-1 text-muted-foreground hover:text-foreground" aria-label={t("common.close")}>
           <X className="w-5 h-5" />
         </button>
 
@@ -157,7 +159,7 @@ export default function DayDetailPopup({ recordedDays, initialDay, onClose, onEd
               onClick={goPrev}
               disabled={!canPrev}
               className="p-3 -ml-2 text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:hover:text-muted-foreground transition-colors"
-              aria-label="前の記録日"
+              aria-label={t("activity.prevRecordDay")}
             >
               <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
             </button>
@@ -165,7 +167,7 @@ export default function DayDetailPopup({ recordedDays, initialDay, onClose, onEd
               onClick={goNext}
               disabled={!canNext}
               className="p-3 -mr-2 text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:hover:text-muted-foreground transition-colors"
-              aria-label="次の記録日"
+              aria-label={t("activity.nextRecordDay")}
             >
               <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
             </button>
